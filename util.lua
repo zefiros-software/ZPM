@@ -121,7 +121,7 @@ function zpm.util.readAll( file )
 end
 
 function zpm.util.downloadFromArchive( url, pattern )
-    if url:gsub( ".tar.gz", "" ) ~= url then
+    if url:gsub( ".tar.gz", "" ) == url then
         return zpm.util.downloadFromZip( url, pattern )
     end
     return zpm.util.downloadFromTarGz( url, pattern )
@@ -131,7 +131,7 @@ function zpm.util.downloadFromZip( url, pattern )
 
     local hash = os.uuid()
     local zipFile = path.join( zpm.temp, hash .. ".zip" )
-    print(zipFile)
+    
     zpm.wget.download( zipFile, url )
                     
     local zipTemp = path.join( zpm.temp, hash )
@@ -149,7 +149,7 @@ function zpm.util.downloadFromTarGz( url, pattern )
 
     local hash = os.uuid()
     local zipFile = path.join( zpm.temp, hash .. ".tar.gz" )
-    print(zipFile)
+    
     zpm.wget.download( zipFile, url )
                     
     local zipTemp = path.join( zpm.temp, hash )

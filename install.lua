@@ -27,9 +27,6 @@ zpm.install = {}
 
 zpm.install.directory = zpm.config.install.directory
 zpm.install.minReqVersion = zpm.config.install.minReqVersion
-
-
-zpm.install.directory = zpm.config.install.directory
 zpm.install.repository = zpm.config.install.repository
 
 zpm.install.modules = {}
@@ -64,7 +61,7 @@ function zpm.install.getModulesDir()
 end
 
 function zpm.install.getMainRegistry()
-    return path.join( zpm.install.getMainRegistryDir(), zpm.config.install.registry.fileName )
+    return path.join( zpm.install.getMainRegistryDir(), zpm.install.registry.fileName )
 end
 
 function zpm.install.getMainRegistryDir()
@@ -82,7 +79,7 @@ function zpm.install.getDataDir()
     if osStr == "windows" then
         return os.getenv( "APPDATA" )
     elseif osStr == "linux" then
-        return os.getenv( "XDG_DATA_HOME" )  
+        return path.join( os.getenv( "HOME" ), ".local/share/" )  
     elseif osStr == "osx" then 
         return "~/Library/Application Support/"
     else
@@ -249,7 +246,9 @@ function zpm.install.installInPath()
     
     elseif os.get() == "linux" then
     
-        zpm.assert( false, "Current platform '%s' not supported!", os.get() )
+        for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
+            os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
+        end 
     
     elseif os.get() == "osx" then
     
