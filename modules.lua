@@ -175,8 +175,12 @@ end
 
 function zpm.modules.setSearchDir()
 
-    -- override default location
-    bootstrap.directories = table.insertflat( { path.join( zpm.cache, "modules" ) }, bootstrap.directories )
+    if bootstrap ~= nil then
+
+        -- override default location
+        bootstrap.directories = table.insertflat( { path.join( zpm.cache, "modules" ) }, bootstrap.directories )
+    
+    end
 
 end
 
