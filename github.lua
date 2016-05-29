@@ -28,7 +28,7 @@ zpm.GitHub.host = zpm.config.GitHub.host
 zpm.GitHub.apiHost = zpm.config.GitHub.apiHost
 zpm.GitHub.token = zpm.config.GitHub.token
 
-if _OPTION["github-token"] ~= nil then
+if _OPTIONS["github-token"] ~= nil then
     zpm.GitHub.token = _OPTIONS["github-token"]
 end
 
