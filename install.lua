@@ -74,6 +74,8 @@ end
 
 function zpm.install.getDataDir()
 
+    return zpm.install.getSharedDataDir()
+    --[[
     local osStr = os.get()
     
     if osStr == "windows" then
@@ -85,7 +87,7 @@ function zpm.install.getDataDir()
     else
         zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
     end
-
+    ]]
 end
 
 function zpm.install.getSharedDataDir()
