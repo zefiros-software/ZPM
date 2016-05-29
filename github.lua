@@ -29,7 +29,7 @@ zpm.GitHub.apiHost = zpm.config.GitHub.apiHost
 zpm.GitHub.token = zpm.config.GitHub.token
 
 if _OPTION["github-token"] ~= nil then
-    zpm.GitHub.token = _OPTION["github-token"]
+    zpm.GitHub.token = _OPTIONS["github-token"]
 end
 
 function zpm.GitHub.semanticCompare( t1, t2 ) 
