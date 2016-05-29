@@ -57,7 +57,7 @@ zpm.install.extern = {}
 zpm.install.extern.directory = zpm.config.install.extern.directory
 
 function zpm.install.getModulesDir()
-    return path.join( zpm.install.getInstallDir(), zpm.install.modules.directory )
+    return path.join( zpm.install.getSharedInstallDir(), zpm.install.modules.directory )
 end
 
 function zpm.install.getMainRegistry()
@@ -65,7 +65,7 @@ function zpm.install.getMainRegistry()
 end
 
 function zpm.install.getMainRegistryDir()
-    return path.join( zpm.install.getInstallDir(), zpm.install.registry.directory )
+    return path.join( zpm.install.getSharedInstallDir(), zpm.install.registry.directory )
 end
 
 function zpm.install.getExternDirectory()
@@ -88,8 +88,28 @@ function zpm.install.getDataDir()
 
 end
 
+function zpm.install.getSharedDataDir()
+
+    local osStr = os.get()
+    
+    if osStr == "windows" then
+        return os.getenv( "ALLUSERSPROFILE" )
+    elseif osStr == "linux" then
+        return "/usr/share/"  
+    elseif osStr == "osx" then 
+        return "/usr/local/"
+    else
+        zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
+    end
+
+end
+
 function zpm.install.getInstallDir()
     return path.join( zpm.install.getDataDir(), zpm.install.directory )
+end
+
+function zpm.install.getSharedInstallDir()
+    return path.join( zpm.install.getSharedDataDir(), zpm.install.directory )
 end
 
 function zpm.install.getPremakeCmd( version )
