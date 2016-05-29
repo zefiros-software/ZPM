@@ -1,0 +1,43 @@
+{
+    "GitHub": {
+        "host": "https://github.com/",
+        "apiHost": "https://api.github.com/",
+        "token": false
+    },
+    "install": {
+        "repository": "https://zefiros.eu/stash/scm/zpm/zpm.git",
+        "directory": "zpm",
+        "modulesDirectory": "modules",
+        "minReqVersion": ">5.0.0-alpha5",
+        "bootstrap": {
+            "repository": "https://zefiros.eu/stash/scm/zpm/bootstrap.git",
+            "directory": "bootstrap"
+        }  ,
+        "registry": {
+            "repository": "https://zefiros.eu/stash/scm/zpm/manifest.git",
+            "directory": "registry",
+            "directories": "registries",
+            "fileName": "_registries.json"
+        },        
+        "manifests": {
+            "fileName": "_manifest.json"
+        },
+        "modules": {
+            "fileName": "_modules.json",
+            "directory": "modules"
+        },
+        "packages": {
+            "fileName": "_package.json"
+        },
+        "build": {
+            "fileName": "_build.json"
+        },
+        "extern": {
+            "directory": "extern"  
+        }
+    },
+    "wget": {
+        "downloadUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-bin.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459792671&use_mirror=iweb",
+        "dependenciesUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-dep.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459794522&use_mirror=nchc"
+    }
+}
