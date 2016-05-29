@@ -95,7 +95,7 @@ function zpm.install.getSharedDataDir()
     if osStr == "windows" then
         return os.getenv( "ALLUSERSPROFILE" )
     elseif osStr == "linux" then
-        return "/usr/share/"  
+        return "/usr/local/"  
     elseif osStr == "osx" then 
         return "/usr/local/"
     else
