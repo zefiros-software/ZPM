@@ -273,6 +273,10 @@ newaction {
         zpm.install.setup()
         zpm.install.installInPath()
         zpm.install.setupSystem()
+    
+        zpm.registry.load()
+        zpm.manifest.load()
+        zpm.modules.load()
         
     end
 }
