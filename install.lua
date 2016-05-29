@@ -77,9 +77,9 @@ function zpm.install.getDataDir()
     local osStr = os.get()
     
     if osStr == "windows" then
-        return os.getenv( "APPDATA" )
+        return os.getenv( "ALLUSERSPROFILE" )
     elseif osStr == "linux" then
-        return path.join( os.getenv( "HOME" ), ".local/share/" )  
+        return "/usr/share"
     elseif osStr == "osx" then 
         return "~/Library/Application Support/"
     else
