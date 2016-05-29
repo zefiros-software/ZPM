@@ -99,6 +99,7 @@ end
 function zpm.packages.load()
 
     --print( "\nLoading packages..." )
+    
     local externDir = zpm.install.getExternDirectory()
 
     if not os.isdir( externDir ) then    
@@ -114,7 +115,7 @@ function zpm.packages.load()
     
 
     local package = path.join( _MAIN_SCRIPT_DIR, zpm.install.packages.fileName )
-
+    
     local ok, err = pcall( zpm.packages.loadFile, package, true ) 
     
     if not ok then
@@ -199,16 +200,17 @@ end
 
 function zpm.packages.loadFile( packageFile, isRoot, version, pname )
     
-    zpm.assert( os.isfile( packageFile ), "No '_package.json' found" )
+    zpm.assert( os.isfile( packageFile ), "No '_package.json' found" )    
     
     local file = zpm.util.readAll( packageFile )
     local lpackage = zpm.JSON:decode( file )
     
     if pname == nil then
+        zpm.assert( lpackage.name ~= nil, "No 'name' supplied in '_package.json'!" )
         pname = lpackage.name
     end
-    
-    zpm.packages.checkValidity( lpackage, pname )
+        
+    zpm.packages.checkValidity( lpackage, isRoot, pname )
     
     zpm.modules.requestModules( lpackage.modules )
     
@@ -316,8 +318,8 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
 end
 
 
-function zpm.packages.checkValidity( package, pname )
-    
+function zpm.packages.checkValidity( package, isRoot, pname )
+        
     local man = bootstrap.getModule( pname )
     local name = man[2]
     local vendor = man[1]
