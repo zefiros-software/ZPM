@@ -28,6 +28,10 @@ zpm.GitHub.host = zpm.config.GitHub.host
 zpm.GitHub.apiHost = zpm.config.GitHub.apiHost
 zpm.GitHub.token = zpm.config.GitHub.token
 
+if _OPTION["github-token"] ~= nil then
+    zpm.GitHub.token = _OPTION["github-token"]
+end
+
 function zpm.GitHub.semanticCompare( t1, t2 ) 
     return t1.version > t2.version 
 end
@@ -130,3 +134,9 @@ function zpm.GitHub.GetAssetsVersion( str )
     return zpm.semver( verStr )
 
 end
+
+newoption {
+    trigger     = "github-token",
+    value       = "token",
+    description = "Uses the given GitHub token"
+}
