@@ -518,8 +518,6 @@ function zpm.build.load()
     zpm.build.loadBuildPackages()
     
     zpm.build.loadCommands()
-    
-    print(table.tostring(zpm.packages.root, true))
 end
 
 function zpm.build.loadRoot()
