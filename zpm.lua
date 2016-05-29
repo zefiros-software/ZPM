@@ -206,7 +206,7 @@ function zpm.onLoad()
     initialiseCacheFolder()
     zpm.wget.initialise()
         
-    if _ACTION ~= "self-update" then        
+    if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" then        
         
         zpm.modules.setSearchDir()
         
