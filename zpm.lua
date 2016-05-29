@@ -274,12 +274,6 @@ newaction {
         zpm.install.installInPath()
         zpm.install.setupSystem()
         
-        bootstrap = require("bootstrap")
-    
-        zpm.registry.load()
-        zpm.manifest.load()
-        zpm.modules.load()
-        
     end
 }
 

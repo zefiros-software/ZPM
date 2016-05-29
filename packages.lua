@@ -100,21 +100,25 @@ function zpm.packages.load()
 
     --print( "\nLoading packages..." )
     
-    local externDir = zpm.install.getExternDirectory()
-
-    if not os.isdir( externDir ) then    
-            
-        print( "Creating extern directory..." )         
-    
-        assert( os.mkdir( externDir ) )    
-			
-		local file = io.open( externDir .. "/.gitignore", "w" )
-		file:write([[**]])
-		file:close()    
-    end
-    
 
     local package = path.join( _MAIN_SCRIPT_DIR, zpm.install.packages.fileName )
+    
+    if os.ifile( package ) then    
+        
+        local externDir = zpm.install.getExternDirectory()
+
+        if not os.isdir( externDir ) then    
+                
+            print( "Creating extern directory..." )         
+        
+            assert( os.mkdir( externDir ) )    
+                
+            local file = io.open( externDir .. "/.gitignore", "w" )
+            file:write([[**]])
+            file:close()    
+        end
+        
+    end
     
     local ok, err = pcall( zpm.packages.loadFile, package, true ) 
     
