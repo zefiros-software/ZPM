@@ -107,7 +107,7 @@ end
 
 function zpm.wget.get( url, header )
 
-    if header == nil then
+    if header == nil or header == "" then
         return os.outputof( zpm.wget.location .. " -nv -qO- " .. url .. " --no-check-certificate 2> nul" )
     end
     
@@ -117,7 +117,7 @@ end
 
 function zpm.wget.download( destination, url, header )
 
-    if header == nil then
+    if header == nil or header == "" then
         os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate 2> nul" )
     else    
         os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate --header \"" .. header .. "\" 2> nul" )
