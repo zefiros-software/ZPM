@@ -27,7 +27,7 @@ zpm = {}
 zpm._VERSION = "0.1.0-alpha"
 
 -- Dependencies
-zpm.JSON = (loadfile "JSON.lua")()
+zpm.JSON = (loadfile "json.lua")()
 zpm.semver = require "semver"
 zpm.bktree = require "bk-tree"
 
