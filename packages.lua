@@ -103,7 +103,7 @@ function zpm.packages.load()
 
     local package = path.join( _MAIN_SCRIPT_DIR, zpm.install.packages.fileName )
     
-    if os.ifile( package ) then    
+    if os.isfile( package ) then    
         
         local externDir = zpm.install.getExternDirectory()
 
