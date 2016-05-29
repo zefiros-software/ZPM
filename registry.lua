@@ -45,10 +45,10 @@ end
 function zpm.registry.load()
    
     --print( "\nLoading registries..." )
-    
-    zpm.assert( os.isfile( zpm.install.getMainRegistry() ), "The root registry is not found on path '%s'!", zpm.install.getMainRegistry() )
             
     zpm.git.cloneOrPull( zpm.install.getMainRegistryDir(), zpm.install.registry.repository )
+    
+    zpm.assert( os.isfile( zpm.install.getMainRegistry() ), "The root registry is not found on path '%s'!", zpm.install.getMainRegistry() )
     
     local repos = zpm.JSON:decode( zpm.util.readAll( zpm.install.getMainRegistry() ) )
     zpm.registry.dirs = { zpm.install.getMainRegistryDir() }
