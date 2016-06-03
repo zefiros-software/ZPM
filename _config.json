@@ -29,6 +29,10 @@
         "packages": {
             "fileName": "_package.json"
         },
+        "assets": {
+            "fileName": "_assets.json",
+            "directory": "assets"
+        },
         "build": {
             "fileName": "_build.json"
         },

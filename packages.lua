@@ -74,7 +74,7 @@ function zpm.packages.loadDependency( dependency, module )
         repository = zpm.packages.package[vendor][name].shadowRepository
     end
     
-    local depPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "-" .. name, repository ) )
+    local depPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "/" .. name, repository ) )
     
     printf( "Switching to directory '%s'...", depPath )
         
@@ -83,9 +83,9 @@ function zpm.packages.loadDependency( dependency, module )
     local buildPath = depPath
     
     if zpm.packages.package[vendor][name].isShadow then 
-        buildRep = zpm.packages.package[vendor][name].repository
+        local buildRep = zpm.packages.package[vendor][name].repository
         
-        buildPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "-" .. name, buildRep ) )
+        buildPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "/" .. name, buildRep ) )
         
         printf( "Switching to directory '%s'...", buildPath )
             
@@ -131,7 +131,11 @@ function zpm.packages.load()
 end
 
 function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
-                
+    
+    if lpackage.assets ~= nil then
+        zpm.assets.resolveAssets( lpackage.assets, vendor, name )
+    end
+    
     if lpackage.requires ~= nil then
 
         for _, dependency in ipairs( lpackage.requires  ) do
@@ -227,8 +231,6 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname )
     zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )    
     
     zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
-    
-    zpm.packages.search:insert( string.format( "%s/%s", vendor, name ) )
         
 end
 
@@ -244,17 +246,12 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
         
     else    
     
-        if zpm.packages.package[vendor][name] == nil then
-        
-            zpm.packages.package[vendor][name] = {}
-        
-        end
+        zpm.assert( zpm.packages.package[vendor][name] ~= nil, "Package '%s/%s' does not exist!", vendor, name )
         
         if zpm.packages.package[vendor][name][version] == nil then
         
             zpm.packages.package[vendor][name][version] = lpackage
             zpm.packages.package[vendor][name][version].dependencies = {}
-        
         end
     end
 end
@@ -361,26 +358,55 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     if package.keywords ~= nil then
     
         for _, keyword in ipairs( package.keywords ) do
-            zpm.assert( type(keyword) == "string", "The 'keyword' supplied in '_package.json' 'require' field is not a string!" )
-            zpm.assert( keyword:len() <= 50, "The 'keyword' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters" )
+            zpm.assert( type(keyword) == "string", "The 'keyword' supplied in '_package.json' 'keywords' field is not a string!" )
+            zpm.assert( keyword:len() <= 50, "The 'keyword' supplied in '_package.json' 'keywords' field exceeds maximum size of 50 characters" )
         end
         
-        zpm.assert( #package.keywords <= 20, "The 'keywords' supplied in '_package.json' 'require' field exceeds the maximum amount of 20!" )
+        zpm.assert( #package.keywords <= 20, "The 'keywords' supplied in '_package.json' 'keywords' field exceeds the maximum amount of 20!" )
         
     end
 
     if package.modules ~= nil then
     
-        for _, keyword in ipairs( package.modules ) do
+        for _, mod in ipairs( package.modules ) do
         
-            zpm.assert( type(keyword) == "string", "The 'keyword' supplied in '_package.json' 'modules' field is not a string!" )
+            zpm.assert( type(mod) == "string", "The 'module' supplied in '_package.json' 'modules' field is not a string!" )
             
-            local mman = bootstrap.getModule( keyword )
+            local mman = bootstrap.getModule( mod )
             local mname = man[2]
             local mvendor = man[1]
             
             zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'modules' field!" )
             zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'modules' field!" )
+
+            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
+                                      
+            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'modules' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'modules' field must be alpha numeric!" )
+
+        end
+        
+    end
+
+    if package.assets ~= nil then
+    
+        for _, ass in ipairs( package.assets ) do
+        
+            zpm.assert( type(ass.name) == "string", "The 'assets' supplied in '_package.json' 'assets' field is not a string!" )
+            
+            local mman = bootstrap.getModule( ass.name )
+            local mname = man[2]
+            local mvendor = man[1]
+            
+            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'assets' field!" )
+            zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'assets' field!" )
+
+            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
+                                      
+            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'assets' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'assets' field must be alpha numeric!" )
 
         end
         

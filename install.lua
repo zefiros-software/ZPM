@@ -50,6 +50,10 @@ zpm.install.manifests.fileName = zpm.config.install.manifests.fileName
 zpm.install.packages = {}
 zpm.install.packages.fileName = zpm.config.install.packages.fileName
 
+zpm.install.assets = {}
+zpm.install.assets.fileName = zpm.config.install.assets.fileName
+zpm.install.assets.directory = zpm.config.install.assets.directory
+
 zpm.install.build = {}
 zpm.install.build.fileName = zpm.config.install.build.fileName
 
@@ -70,6 +74,10 @@ end
 
 function zpm.install.getExternDirectory()
     return path.join( _MAIN_SCRIPT_DIR, zpm.install.extern.directory )   
+end
+
+function zpm.install.getAssetsDir()
+    return path.join( _MAIN_SCRIPT_DIR, zpm.install.assets.directory )   
 end
 
 function zpm.install.getDataDir()
@@ -243,6 +251,15 @@ end
     premake.action.call( "update-registry" )
 end
 
+function zpm.install.createSymLinks()
+
+
+    for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
+        os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
+    end 
+
+end
+
 function zpm.install.installInPath()
 
     if os.get() == "windows" then
@@ -268,9 +285,7 @@ function zpm.install.installInPath()
     
     elseif os.get() == "linux" then
     
-        for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
-            os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
-        end 
+        zpm.install.createSymLinks()
     
     elseif os.get() == "osx" then
     

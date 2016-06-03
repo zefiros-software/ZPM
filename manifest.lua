@@ -88,6 +88,8 @@ function zpm.manifest.loadFile( file )
             zpm.packages.package[ vendor ][ name ].shadowRepository = manifest.shadowRepository       
             zpm.packages.package[ vendor ][ name ].isShadow = isShadow            
             
+        
+            zpm.packages.search:insert( string.format( "%s/%s", vendor, name ) )
         end
     
     end    

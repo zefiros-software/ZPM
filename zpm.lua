@@ -49,6 +49,7 @@ dofile( "git.lua" )
 dofile( "registry.lua" )
 dofile( "manifest.lua" )
 dofile( "modules.lua" )
+dofile( "assets.lua" )
 dofile( "packages.lua" )
 dofile( "build.lua" )
 dofile( "github.lua" )
@@ -220,6 +221,7 @@ function zpm.onLoad()
            _ACTION ~= "update-module" and
            _ACTION ~= "update-modules" then
             
+            zpm.assets.load()
             zpm.packages.load()
             zpm.build.load()
                     
@@ -243,7 +245,8 @@ newaction {
         premake.action.call( "update-bootstrap" )
         premake.action.call( "update-registry" )
         premake.action.call( "update-zpm" )
-        
+   
+        zpm.install.createSymLinks()     
     end
 }
 

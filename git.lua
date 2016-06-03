@@ -26,6 +26,8 @@
 -- Git
 zpm.git = {}
 
+zpm.git.lfs = {}
+
 function zpm.git.pull( destination )
     
     local current = os.getcwd()
@@ -96,5 +98,48 @@ function zpm.git.cloneOrPull( destination, url )
     
     else
         zpm.git.clone( destination, url )
+    end
+end
+
+
+function zpm.git.lfs.checkout( destination, checkout )
+    
+    local current = os.getcwd()
+    
+    os.chdir( destination )
+    
+    os.execute( "git checkout " .. checkout )
+    os.execute( "git lfs checkout" )
+    
+    os.chdir( current )
+
+end
+
+function zpm.git.lfs.pull( destination )
+    
+    local current = os.getcwd()
+    
+    os.chdir( destination )
+    os.execute( "git pull" )
+    os.execute( "git lfs pull" )
+    os.execute( "git fetch --tags -q" )
+    
+    os.chdir( current )
+    
+end
+
+function zpm.git.lfs.clone( destination, url )
+    
+    os.execute( string.format( "git lfs clone --recurse --progress \"%s\" \"%s\"", url, destination ) )
+    
+end
+
+function zpm.git.lfs.cloneOrPull( destination, url )
+
+    if os.isdir( destination ) then
+        zpm.git.lfs.pull( destination )
+    
+    else
+        zpm.git.lfs.clone( destination, url )
     end
 end
