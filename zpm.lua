@@ -253,7 +253,10 @@ newaction {
 if _ACTION == "self-update" or
    _ACTION == "install-module" or
    _ACTION == "update-module" or
-   _ACTION == "update-modules" then
+   _ACTION == "update-modules" or
+   _ACTION == "update-bootstrap" or
+   _ACTION == "update-registry" or
+   _ACTION == "update-zpm" then
     -- disable main script
     _MAIN_SCRIPT = "."
         
