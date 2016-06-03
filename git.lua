@@ -34,6 +34,7 @@ function zpm.git.pull( destination )
     
     os.chdir( destination )
     
+    os.execute( "git checkout master" )
     os.execute( "git pull" )
     os.execute( "git fetch --tags -q" )
     
@@ -120,6 +121,8 @@ function zpm.git.lfs.pull( destination )
     local current = os.getcwd()
     
     os.chdir( destination )
+    
+    os.execute( "git checkout master" )
     os.execute( "git pull" )
     os.execute( "git lfs pull" )
     os.execute( "git fetch --tags -q" )

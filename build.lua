@@ -391,7 +391,7 @@ function zpm.build.findProject( name, projects )
     
     end
     
-    printf( zpm.colors.error .. "Could not find project '%s'!", name )
+    printf( zpm.colors.error .. "Could not find project '%s', did you load it correctly as a dependency?", name )
     
     return nil
 
@@ -409,7 +409,7 @@ function zpm.build.findRootProject( name )
     
     end
     
-    printf( zpm.colors.error .. "Could not find project '%s'!", name )
+    printf( zpm.colors.error .. "Could not find root project '%s', did you load it correctly as a dependency?", name )
     
     return nil
 

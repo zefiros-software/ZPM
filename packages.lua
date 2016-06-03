@@ -30,7 +30,7 @@ zpm.packages.searchMaxDist = 0.1
 zpm.packages.package = {}
 
 zpm.packages.root = {}
-zpm.packages.root.dependencies = {}
+zpm.packages.root.isLoaded = false
 
 function zpm.packages.suggestPackage( vendor, name ) 
 
@@ -237,11 +237,38 @@ end
 function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
 
     if isRoot then
-    
-        if zpm.packages.root == nil then
+                    
+        if not zpm.packages.root.isLoaded then
         
             zpm.packages.root = lpackage
-        
+            zpm.packages.root.isLoaded = true
+            zpm.packages.root.dependencies = {}
+            
+            if lpackage.dev ~= nil then
+                if lpackage.assets == nil then
+                    zpm.packages.root.assets = {}
+                end
+                
+                if lpackage.dev.assets ~= nil then
+                    zpm.packages.root.assets = zpm.util.concat( zpm.packages.root.assets, lpackage.dev.assets )
+                end
+            
+                if lpackage.requires == nil then
+                    zpm.packages.root.requires = {}
+                end
+                
+                if lpackage.dev.requires ~= nil then
+                    zpm.packages.root.requires = zpm.util.concat( zpm.packages.root.requires, lpackage.dev.requires )
+                end
+                
+                if lpackage.modules == nil then
+                    zpm.packages.root.modules = {}
+                end
+                
+                if lpackage.dev.modules ~= nil then
+                    zpm.packages.root.modules = zpm.util.concat( zpm.packages.root.modules, lpackage.dev.modules )
+                end
+            end
         end
         
     else    
@@ -365,6 +392,19 @@ function zpm.packages.checkValidity( package, isRoot, pname )
         zpm.assert( #package.keywords <= 20, "The 'keywords' supplied in '_package.json' 'keywords' field exceeds the maximum amount of 20!" )
         
     end
+    
+    zpm.packages.checkDependencyValidity( package )
+    
+    if package.dev ~= nil then
+    
+        zpm.packages.checkDependencyValidity( package.dev )
+        
+    end
+    
+end
+
+function zpm.packages.checkDependencyValidity( package )
+
 
     if package.modules ~= nil then
     
@@ -373,8 +413,8 @@ function zpm.packages.checkValidity( package, isRoot, pname )
             zpm.assert( type(mod) == "string", "The 'module' supplied in '_package.json' 'modules' field is not a string!" )
             
             local mman = bootstrap.getModule( mod )
-            local mname = man[2]
-            local mvendor = man[1]
+            local mname = mman[2]
+            local mvendor = mman[1]
             
             zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'modules' field!" )
             zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'modules' field!" )
@@ -396,8 +436,8 @@ function zpm.packages.checkValidity( package, isRoot, pname )
             zpm.assert( type(ass.name) == "string", "The 'assets' supplied in '_package.json' 'assets' field is not a string!" )
             
             local mman = bootstrap.getModule( ass.name )
-            local mname = man[2]
-            local mvendor = man[1]
+            local mname = mman[2]
+            local mvendor = mman[1]
             
             zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'assets' field!" )
             zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'assets' field!" )
@@ -416,9 +456,9 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     
         for _, require in ipairs( package.requires ) do
             
-            local rman = bootstrap.getModule( package.name )
-            local rname = man[2]
-            local rvendor = man[1]
+            local rman = bootstrap.getModule( require.name )
+            local rname = rman[2]
+            local rvendor = rman[1]
             
             zpm.assert( rvendor ~= nil, "No 'vendor' supplied in '_package.json' 'require' field!" )
             zpm.assert( rname ~= nil, "No 'name' supplied in '_package.json' 'require' field!" )
@@ -433,5 +473,5 @@ function zpm.packages.checkValidity( package, isRoot, pname )
         end
         
     end
-    
+
 end

@@ -32,24 +32,17 @@ zpm.assets.searchMaxDist = 0.6
 function zpm.assets.load()
 
     --print( "\nLoading assets..." )
-    
-    local assets = path.join( _MAIN_SCRIPT_DIR, zpm.install.assets.fileName )
-    
-    if os.isfile( assets ) then    
-        
-        local assetsDir = zpm.install.getAssetsDir()
+    local assetsDir = zpm.install.getAssetsDir()
 
-        if not os.isdir( assetsDir ) then    
-                
-            print( "Creating assets directory..." )         
-        
-            assert( os.mkdir( assetsDir ) )    
-                
-            local file = io.open( assetsDir .. "/.gitignore", "w" )
-            file:write([[**]])
-            file:close()    
-        end
-        
+    if not os.isdir( assetsDir ) then    
+            
+        print( "Creating assets directory..." )         
+    
+        assert( os.mkdir( assetsDir ) )    
+            
+        local file = io.open( assetsDir .. "/.gitignore", "w" )
+        file:write([[**]])
+        file:close()    
     end
     
     for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
