@@ -247,7 +247,7 @@ function zpm.assets.suggestAssets( vendor, name )
    
 end
 
-function zpm.assets.resolveAssets( assets, vendor, name, isRoot )
+function zpm.assets.resolveAssets( assets, vendor, name )
     
     for _, asset in ipairs( assets ) do
         
@@ -267,7 +267,7 @@ function zpm.assets.resolveAssets( assets, vendor, name, isRoot )
         
         lassets = zpm.assets.loadAssetsFile( path.join( defPath, zpm.install.assets.fileName ), avendor, aname )
 
-        zpm.assets.extract( assPath, asset.version, assetPackDir, avendor, aname, isRoot  )
+        zpm.assets.extract( assPath, asset.version, assetPackDir, avendor, aname )
     
     
     end    
@@ -376,10 +376,6 @@ function zpm.assets.extract( repo, versions, folder, vendor, name, isRoot )
         zpm.git.lfs.checkout( repo, version )
         
         zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets )
-        
-        if isRoot and zpm.assets.assets[ vendor ][ name ].assets.dev ~= nil then
-            zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets.dev )
-        end
     end
     
     return continue, version, folder
