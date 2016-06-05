@@ -25,9 +25,120 @@
 zpm.assets = {}
 zpm.assets.assets = {}
 
+zpm.assets.commands = {}
+
 zpm.assets.search = zpm.bktree:new()
 zpm.assets.searchMaxDist = 0.6
 
+
+function zpm.assets.addCommand( keywords, func )
+
+    table.insert( zpm.assets.commands, {
+        keywords = keywords,
+        execute = func   
+    })
+
+end
+
+function zpm.assets.overrideCommand( keywords, func )
+
+    for i, command in ipairs( zpm.assets.commands ) do
+    
+        if zpm.util.compare( command.keywords, keywords ) then
+    
+            local oldFunc = zpm.assets.commands[i].execute
+        
+            zpm.assets.commands[i] = {
+                keywords = keywords,
+                execute = function( value, repo, folder )
+                    return func( oldFunc, value, repo, folder )
+                end
+            }
+            
+        end
+    end
+
+end
+
+function zpm.assets.loadCommands()
+
+    zpm.assets.addCommand(
+        { "files" },
+        function( v, repo, folder )
+        
+            for _, pattern in ipairs( v.files ) do
+                for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
+                    local target = path.join( folder, path.getrelative( repo, file) )
+                    local targetDir = path.getdirectory( target )
+                    if not os.isdir( targetDir ) then
+                        zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
+                    end
+                    
+                    os.copyfile( file, target )
+                end 
+            end 
+            
+        end)
+
+    zpm.assets.addCommand(
+        { "urls" },
+        function( v, repo, folder )
+        
+            for _, url in ipairs( v.urls ) do
+                local targetDir = path.join( folder, url.to )
+                if not os.isdir( targetDir ) then
+                    zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
+                end
+                
+                local zipFile = path.join( zpm.temp, "assets.zip" )
+                zpm.wget.download( zipFile, url.url )
+                zip.extract( zipFile, targetDir )
+                os.remove( zipFile )
+                    
+            end 
+            
+        end)
+
+    zpm.assets.addCommand(
+        { "filter", "do" },
+        function( v, repo, folder )    
+            
+            filter( v.filter )
+            
+            zpm.assets.executeCommands( v["do"] )
+            
+            filter {}
+        end)
+
+end
+
+function zpm.assets.executeCommand( value, repo, folder )
+
+    local keywords = {}
+    
+    for kw, _ in pairs( value ) do
+        table.insert( keywords, kw )
+    end
+
+    for i, command in ipairs( zpm.assets.commands ) do
+    
+        if zpm.util.compare( command.keywords, keywords ) then
+    
+            return zpm.assets.commands[i].execute( value, repo, folder )
+            
+        end
+    end
+    
+    printf( zpm.colors.error .. "Unknown assets command '%s':\n", table.tostring( value, true ) )
+end
+
+function zpm.assets.executeCommands( values )
+
+    for _, com in ipairs( values ) do
+        zpm.build.executeCommand( com )  
+    end
+    
+end
 
 function zpm.assets.load()
 
@@ -136,7 +247,7 @@ function zpm.assets.suggestAssets( vendor, name )
    
 end
 
-function zpm.assets.resolveAssets( assets, vendor, name )
+function zpm.assets.resolveAssets( assets, vendor, name, isRoot )
     
     for _, asset in ipairs( assets ) do
         
@@ -156,7 +267,7 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
         lassets = zpm.assets.loadAssetsFile( path.join( defPath, zpm.install.assets.fileName ), avendor, aname )
 
-        zpm.assets.extract( assPath, asset.version, assetPackDir, avendor, aname )
+        zpm.assets.extract( assPath, asset.version, assetPackDir, avendor, aname, isRoot  )
     
     
     end    
@@ -179,7 +290,7 @@ function zpm.assets.loadAssetsFile( assetsFile, vendor, name )
     local lasset = zpm.JSON:decode( file )
 
     zpm.assets.checkValidity( lasset )
-    zpm.assets.storeAssets( lasset, vendor, name  )
+    zpm.assets.storeAssets( lasset, vendor, name )
     
     return lasset
 end
@@ -187,7 +298,7 @@ end
 function zpm.assets.storeAssets( lassets, vendor, name )
 
     zpm.assert( zpm.assets.assets[vendor][name] ~= nil, "Assets '%s/%s' does not exist!", vendor, name )
-    zpm.assets.assets[vendor][name] = lassets
+    zpm.assets.assets[vendor][name].assets = lassets
     
     return lassets
 end
@@ -232,7 +343,7 @@ function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
     return assPath, defPath
 end
 
-function zpm.assets.extract( repo, versions, folder, vendor, name )
+function zpm.assets.extract( repo, versions, folder, vendor, name, isRoot )
 
     local continue = true
     local version = versions
@@ -264,37 +375,10 @@ function zpm.assets.extract( repo, versions, folder, vendor, name )
            
         zpm.git.lfs.checkout( repo, version )
         
-        local filePatterns = zpm.assets.assets[ vendor ][ name ].files
+        zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets )
         
-        if filePatterns ~= nil then
-            for _, pattern in ipairs( filePatterns ) do
-                for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
-                    local target = path.join( folder, path.getrelative( repo, file) )
-                    local targetDir = path.getdirectory( target )
-                    if not os.isdir( targetDir ) then
-                        zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-                    end
-                    
-                    os.copyfile( file, target )
-                end 
-            end 
-        end
-      
-        local urls = zpm.assets.assets[ vendor ][ name ].urls
-        
-        if urls ~= nil then
-            for _, url in ipairs( urls ) do
-                local targetDir = path.join( folder, url.to )
-                if not os.isdir( targetDir ) then
-                    zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-                end
-                
-                local zipFile = path.join( zpm.temp, "assets.zip" )
-                zpm.wget.download( zipFile, url.url )
-                zip.extract( zipFile, targetDir )
-                os.remove( zipFile )
-                    
-            end 
+        if isRoot and zpm.assets.assets[ vendor ][ name ].assets.dev ~= nil then
+            zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets.dev )
         end
     end
     

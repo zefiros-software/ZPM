@@ -133,7 +133,7 @@ end
 function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
     
     if lpackage.assets ~= nil then
-        zpm.assets.resolveAssets( lpackage.assets, vendor, name )
+        zpm.assets.resolveAssets( lpackage.assets, vendor, name, isRoot  )
     end
     
     if lpackage.requires ~= nil then

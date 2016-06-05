@@ -1,6 +1,6 @@
 @echo off
 
-rmdir /s /q "%TEMP%/zpm_cache"
+rmdir /s /q "%TEMP%/zpm-cache"
 rmdir /s /q "%TEMP%/zpm-install"
 
 mkdir "%TEMP%/zpm-install"

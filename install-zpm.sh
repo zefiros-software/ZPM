@@ -1,6 +1,6 @@
 sudo rm -rf ~/zpm-install || true
 sudo rm -rf /usr/local/zpm/ || true
-sudo rm -rf /var/tmp/zpm_cache/ || true
+sudo rm -rf /var/tmp/zpm-cache/ || true
 
 mkdir ~/zpm-install
 cd ~/zpm-install
@@ -16,14 +16,14 @@ git clone https://zefiros.eu/stash/scm/zpm/zpm.git
 
 sudo mkdir /usr/local/zpm/ || true
 
-sudo mkdir /var/tmp/zpm_cache/ || true
+sudo mkdir /var/tmp/zpm-cache/ || true
 
 premake5 --file=zpm/zpm.lua install-zpm
 
 sudo chmod -R 777 /usr/local/zpm/
 sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/
 
-sudo chmod -R 777 /var/tmp/zpm_cache/
-sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm_cache/
+sudo chmod -R 777 /var/tmp/zpm-cache/
+sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
 
 rm -rf ~/zpm-install
