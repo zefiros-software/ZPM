@@ -177,7 +177,7 @@ local function updateRepo( destination, url, name )
         
             print( "Creating " .. name .. "..." )
             os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"%s\"", url, destination ) )
-        
+            --os.execute( "git config core.sharedRepository 0777" )        
     end
 
 end
@@ -225,7 +225,7 @@ newaction {
 if _ACTION ~= "update-bootstrap" and 
    _ACTION ~= "update-zpm" and 
    _ACTION ~= "update-registry" then
-
+   
     if  _ACTION ~= "install-zpm" then
         bootstrap = require( "bootstrap" )
     end
@@ -238,6 +238,8 @@ if _ACTION ~= "update-bootstrap" and
             zpm.__isLoaded = true
         end
     end
+else    
+    _MAIN_SCRIPT = "."
 end
 
 ]] )

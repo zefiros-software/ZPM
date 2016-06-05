@@ -45,6 +45,7 @@ end
 function zpm.git.clone( destination, url )
     
     os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"%s\"", url, destination ) )
+    os.execute( "git config core.sharedRepository 0777" ) 
     
 end
 
@@ -133,7 +134,8 @@ end
 
 function zpm.git.lfs.clone( destination, url )
     
-    os.execute( string.format( "git lfs clone --recurse --progress \"%s\" \"%s\"", url, destination ) )
+    os.execute( string.format( "git lfs clone \"%s\" \"%s\"", url, destination ) )
+    --os.execute( "git config core.sharedRepository 0777" ) 
     
 end
 
