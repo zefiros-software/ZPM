@@ -118,8 +118,17 @@ end
 function zpm.wget.download( destination, url, header )
 
     if header == nil or not header then
-        os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate 2> nul" )
+        os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate" )
     else    
-        os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate --header \"" .. header .. "\" 2> nul" )
+        os.execute( zpm.wget.location .. " -N " .. url .. " -O " .. destination .. " --no-check-certificate --header \"" .. header .. "\"" )
+    end
+end
+
+function zpm.wget.downloadFile( destination, url, header )
+
+    if header == nil or not header then
+        os.execute( zpm.wget.location .. " -N " .. url .. " -P " .. destination .. " --no-check-certificate" )
+    else    
+        os.execute( zpm.wget.location .. " -N " .. url .. " -P " .. destination .. " --no-check-certificate --header \"" .. header .. "\"" )
     end
 end

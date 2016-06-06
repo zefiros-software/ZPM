@@ -89,28 +89,25 @@ function zpm.assets.loadCommands()
                 if not os.isdir( targetDir ) then
                     zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
                 end
-                
-                local zipFile = path.join( zpm.temp, "assets.zip" )
-                zpm.wget.download( zipFile, url.url )
-                zip.extract( zipFile, targetDir )
-                os.remove( zipFile )
+                                
+                zpm.util.download( url.url, targetDir, "*" )
                     
             end 
             
         end)
 
     zpm.assets.addCommand(
-        { "filter", "do" },
-        function( v, repo, folder )    
+        { "system", "do" },
+        function( v, repo, folder )   
             
-            filter( v.filter )
-            
-            zpm.assets.executeCommands( v["do"] )
-            
-            filter {}
+            if os.get() == v.system then
+                zpm.assets.executeCommands( v["do"], repo, folder )
+            end
         end)
 
 end
+
+
 
 function zpm.assets.executeCommand( value, repo, folder )
 
@@ -119,11 +116,11 @@ function zpm.assets.executeCommand( value, repo, folder )
     for kw, _ in pairs( value ) do
         table.insert( keywords, kw )
     end
-
+    
     for i, command in ipairs( zpm.assets.commands ) do
     
         if zpm.util.compare( command.keywords, keywords ) then
-    
+        
             return zpm.assets.commands[i].execute( value, repo, folder )
             
         end
@@ -132,10 +129,10 @@ function zpm.assets.executeCommand( value, repo, folder )
     printf( zpm.colors.error .. "Unknown assets command '%s':\n", table.tostring( value, true ) )
 end
 
-function zpm.assets.executeCommands( values )
+function zpm.assets.executeCommands( values, repo, folder )
 
     for _, com in ipairs( values ) do
-        zpm.build.executeCommand( com )  
+        zpm.assets.executeCommand( com, repo, folder )  
     end
     
 end
@@ -166,6 +163,8 @@ function zpm.assets.load()
             end
         end
     end
+    
+    zpm.assets.loadCommands()
     
 end
 
@@ -264,12 +263,17 @@ function zpm.assets.resolveAssets( assets, vendor, name )
             os.rmdir( assetPackDir )
         end
         os.mkdir( assetPackDir )
-        
-        lassets = zpm.assets.loadAssetsFile( path.join( defPath, zpm.install.assets.fileName ), avendor, aname )
 
-        zpm.assets.extract( assPath, asset.version, assetPackDir, avendor, aname )
+        local continue, version, folder = zpm.assets.getVersion( assPath, asset.version, assetPackDir, avendor, aname )
+        
+        lassets = zpm.assets.loadAssetsFile( defPath, avendor, aname, version, zpm.assets.assets[avendor][aname].isShadow )
+        
+        if continue then
+        
+            zpm.assets.storeAssets( lassets, avendor, aname, version )
     
-    
+            zpm.assets.extract( assPath, folder, version, avendor, aname )
+        end
     end    
 
 end
@@ -282,25 +286,53 @@ function zpm.assets.assetCacheDir( vendor, name, repository )
     
 end
 
-function zpm.assets.loadAssetsFile( assetsFile, vendor, name ) 
-     
+function zpm.assets.loadAssetsFile( defPath, vendor, name, version, isShadow ) 
+
+    local assetsFile = path.join( defPath, zpm.install.assets.fileName )
+    
     zpm.assert( os.isfile( assetsFile ), "No '_assets.json' found" )  
+    
+    if not isShadow then
+        zpm.git.lfs.checkout( defPath, version )
+    else
+        zpm.git.lfs.checkout( defPath, "master" )
+    end
     
     local file = zpm.util.readAll( assetsFile )
     local lasset = zpm.JSON:decode( file )
 
     zpm.assets.checkValidity( lasset )
-    zpm.assets.storeAssets( lasset, vendor, name )
     
     return lasset
 end
 
-function zpm.assets.storeAssets( lassets, vendor, name )
+function zpm.assets.storeAssets( lassets, vendor, name, version )
 
     zpm.assert( zpm.assets.assets[vendor][name] ~= nil, "Assets '%s/%s' does not exist!", vendor, name )
-    zpm.assets.assets[vendor][name].assets = lassets
+    
+    if zpm.assets.assets[vendor][name].isShadow then
+    
+        zpm.assets.assets[vendor][name].assets = zpm.assets.getShadowBuildVersion( lassets, version )    
+        
+    else
+    
+        zpm.assets.assets[vendor][name].assets = lassets
+    
+    end
     
     return lassets
+end
+
+
+function zpm.assets.getShadowBuildVersion( build, version )
+    
+    for _, bversion in pairs( build ) do
+        if premake.checkVersion( version, bversion.version ) then
+            return bversion.projects
+        end    
+    end    
+    
+    error( string.format( "The version '%s' could not be satisfied with the build file!", version ) )
 end
 
 function zpm.assets.checkValidity( assetsFile )
@@ -343,7 +375,7 @@ function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
     return assPath, defPath
 end
 
-function zpm.assets.extract( repo, versions, folder, vendor, name, isRoot )
+function zpm.assets.getVersion( repo, versions, folder, vendor, name )
 
     local continue = true
     local version = versions
@@ -370,15 +402,16 @@ function zpm.assets.extract( repo, versions, folder, vendor, name, isRoot )
         continue, version = zpm.assets.getBestVersion( repo, versions, dest )
         
     end
-   
-    if continue then
-           
-        zpm.git.lfs.checkout( repo, version )
-        
-        zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets )
-    end
     
     return continue, version, folder
+end
+
+function zpm.assets.extract( repo, folder, version, vendor, name )
+
+    zpm.git.lfs.checkout( repo, version )
+    
+    zpm.assets.executeCommands( zpm.assets.assets[ vendor ][ name ].assets, repo, folder )
+
 end
 
 function zpm.assets.getBestVersion( repo, versions )

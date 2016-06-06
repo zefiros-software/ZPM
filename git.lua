@@ -28,6 +28,17 @@ zpm.git = {}
 
 zpm.git.lfs = {}
 
+function zpm.git.share( destination )
+    
+    local current = os.getcwd()
+    
+    os.chdir( destination )
+
+    os.execute( "git config core.sharedRepository 0777" ) 
+    
+    os.chdir( current )
+end
+
 function zpm.git.pull( destination )
     
     local current = os.getcwd()
@@ -45,7 +56,7 @@ end
 function zpm.git.clone( destination, url )
     
     os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"%s\"", url, destination ) )
-    os.execute( "git config core.sharedRepository 0777" ) 
+    zpm.git.share( destination )
     
 end
 
@@ -62,7 +73,7 @@ function zpm.git.getTags( destination )
     
         if s:len() > 0 then
         
-            local version = s:match( "[.-]*(%d+%.%d+%.%d+.*)" )
+            local version = s:match( "[.-]*([%d+%.]+.*)" )
             if pcall( zpm.semver, version ) then
                 table.insert( tags, {
                     version = version,
@@ -135,7 +146,7 @@ end
 function zpm.git.lfs.clone( destination, url )
     
     os.execute( string.format( "git lfs clone \"%s\" \"%s\"", url, destination ) )
-    --os.execute( "git config core.sharedRepository 0777" ) 
+    zpm.git.share( destination )
     
 end
 

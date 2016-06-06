@@ -64,22 +64,38 @@ premake.override(path, "normalize", function(base, p )
     return p
 end)
 
-function zpm.uses( project, options )
+function zpm.uses( projects, options )
 
-    local project = zpm.build.findRootProject( project )
-    
-    if project ~= nil then
-        
-        for _, build in ipairs( project.build ) do
-        
-            local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
-        
-            links( name )
-            includedirs( build.getExportIncludeDirs() )
-        end                
-    
+    if type( projects ) ~= "table" then
+        projects = { projects }
     end
     
+    for _, project in ipairs( projects ) do
+    
+        local project = zpm.build.findRootProject( project )
+        
+        if project ~= nil then
+            
+            for _, build in ipairs( project.build ) do
+            
+                local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
+            
+            
+                if build.getMayLink == nil or build.getMayLink() then
+                    links( name )             
+                end    
+                
+                if build.getExportDefines ~= nil then 
+                    defines( build.getExportDefines() )
+                end
+                
+                if build.getExportIncludeDirs ~= nil then 
+                    includedirs( build.getExportIncludeDirs() )
+                end
+            end                
+        
+        end
+    end
 end
 
 function zpm.buildLibraries()
@@ -99,7 +115,7 @@ function zpm.buildLibraries()
             for _, build in ipairs( dep.build ) do
                 
                 zpm.build._currentBuild = build
-            
+                            
                 zpm.build.queueCommand( function()
                 
                     project( zpm.build.getProjectName( build.project, dep.fullName, dep.version ) )

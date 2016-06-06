@@ -61,7 +61,6 @@ function zpm.build.setCursor( dep )
     zpm.build._currentObjPath = path.join( zpm.build._currentExportPath, "extern/obj" )
     zpm.build._currentDependency = dep
     zpm.build._currentProjects = dep.build
-
 end
 
 function zpm.build.addEasyCommand( func )
@@ -139,7 +138,7 @@ function zpm.build.addReexporCommand( func, getFunc )
                 local values = zpm.build._currentBuild[getFunc]
                 zpm.build._currentBuild[getFunc] = function()
                     
-                    if use.getExportDefines ~= nil then 
+                    if use[getFunc] ~= nil then 
                         return zpm.util.concat( values, use[getFunc]() )
                     end
                     
@@ -157,20 +156,20 @@ function zpm.build.addExportCommand( func, getFunc, call )
     zpm.build.addCommand(
         { func },
         function( v )         
-            
+            local value = v[func]
             if zpm.build._currentBuild[getFunc] == nil then
                 zpm.build._currentBuild[getFunc] = function()
-                    return v[func]
+                    return { value }
                 end
             else
                 local val = zpm.build._currentBuild[getFunc]
                 zpm.build._currentBuild[getFunc] = function()
-                    return zpm.util.concat( val(), v[func] )
+                    return zpm.util.concat( val(), { value } )
                 end            
             end
             
             return function()   
-                _G[call]( v[func] )
+                _G[call]( value )
             end
         end)
 end
@@ -289,6 +288,19 @@ function zpm.build.loadCommands()
     zpm.build.addReexporCommand( "reexportdefines", "getExportDefines" )
 
     zpm.build.addCommand(
+        { "headeronly" },
+        function( v )
+                    
+            zpm.build._currentBuild.getMayLink = function()
+                return v.headeronly ~= true
+            end
+            
+            return function()
+            end
+        end)
+            
+
+    zpm.build.addCommand(
         { "uses" },
         function( v )
         
@@ -296,7 +308,10 @@ function zpm.build.loadCommands()
             local dep = zpm.build._currentDependency
             
             return function()
-                links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )
+            
+                if use.getMayLink == nil or use.getMayLink() then
+                    links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
+                end         
                 
                 if use.getExportDefines ~= nil then 
                     defines( use.getExportDefines() )
@@ -375,6 +390,48 @@ function zpm.build.loadCommands()
             } )               
                 
             return filters
+        end)
+
+    zpm.build.addCommand(
+        { "filter-options", "do" },
+        function( v )    
+        
+            if v["filter-options"] ~= nil and zpm.build._currentBuild.options ~= nil then
+                for option, value in pairs( v["filter-options"] ) do
+          
+                    for boption, bvalue in pairs( zpm.build._currentBuild.options ) do                            
+                        return {}           
+                    end
+                        
+                end    
+            end
+            
+            return zpm.build.getCommands( v["do"] )   
+        end)
+
+    zpm.build.addCommand(
+        { "filter-options", "do", "otherwise" },
+        function( v )    
+        
+            if v["filter-options"] ~= nil and zpm.build._currentBuild.options ~= nil then
+                for option, value in pairs( v["filter-options"] ) do
+          
+                    for boption, bvalue in pairs( zpm.build._currentBuild.options ) do
+                        
+                        if boption == option and value ~= bvalue then
+                            if v.otherwise ~= nil then
+                                return zpm.build.getCommands( v.otherwise ) 
+                            end
+                            
+                            return {}
+                        end
+                    
+                    end
+                        
+                end    
+            end
+            
+            return zpm.build.getCommands( v["do"] )   
         end)
     
 end
@@ -461,7 +518,6 @@ function zpm.build.queueCommands( values )
     if values == nil or type( values ) ~= "table" then
         return nil
     end
-
     zpm.build.queueCommand( zpm.build.getCommands( values ) )        
 
 end
@@ -530,6 +586,7 @@ function zpm.build.loadRoot()
         if ok then
         
             buildFile = zpm.build.patchBuildFile( buildFile, dep.overrides )
+            buildFile = zpm.build.patchOptions( buildFile, dep.options )
             zpm.packages.root.dependencies[i].build = buildFile
         
         else
@@ -541,15 +598,15 @@ function zpm.build.loadRoot()
 
 end
 
-function zpm.build.loadBuildPackages()
+function zpm.build.loadBuildPackages()    
 
     for vendor, vendorTab in pairs( zpm.packages.package ) do
 
         for name, nameTab in pairs( vendorTab ) do
                     
-            for _, version in ipairs( nameTab ) do                
+            for _, version in pairs( nameTab ) do        
 
-                if nameTab.dependencies ~= nil then
+                if nameTab.dependencies ~= nil then 
                 
                     for i, dep in ipairs( version.dependencies ) do
                     
@@ -558,8 +615,8 @@ function zpm.build.loadBuildPackages()
                         local ok, buildFile = pcall( zpm.build.loadBuildFile, buildFile, dep )
                         if ok then
                             buildFile = zpm.build.patchBuildFile( buildFile, dep.overrides )
+                            buildFile = zpm.build.patchOptions( buildFile, dep.options )
                             zpm.packages.package[vendor][name][version].dependencies[i].build = buildFile
-                        
                         else
                         
                             printf( zpm.colors.error .. "Failed to load package build '%s':\n%s", dep.fullName, buildFile )
@@ -571,8 +628,35 @@ function zpm.build.loadBuildPackages()
         
         end
     
+    end     
+end
+
+function zpm.build.patchOptions( buildFile, overrides )
+
+    if overrides == nil then
+        return buildFile
     end
     
+    for _, override in pairs(overrides) do
+        
+        for i, build in pairs(buildFile) do
+                    
+            if override.project == build.project then
+            
+                for option, value in pairs(override.options) do
+                        
+                        zpm.assert( buildFile[i].options[ option ] ~= nil, "Option '%s' does not exist!", option )
+                        buildFile[i].options[ option ] = value
+                    
+                end
+                
+            end
+            
+        end
+    
+    end
+
+    return buildFile
 end
 
 function zpm.build.patchBuildFile( buildFile, overrides )

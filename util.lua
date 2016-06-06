@@ -120,6 +120,17 @@ function zpm.util.readAll( file )
     return content
 end
 
+function zpm.util.download( url, destination, pattern )
+    if url:endswith( ".tar.gz" ) then
+        return zpm.util.downloadFromTarGzTo( url, destination, pattern )
+    elseif url:endswith( ".zip" ) then
+        return zpm.util.downloadFromZipTo( url, destination, pattern )
+    end
+    
+    -- it is a file
+    zpm.wget.downloadFile( destination, url )
+end
+
 function zpm.util.downloadFromArchive( url, pattern )
     if url:gsub( ".tar.gz", "" ) == url then
         return zpm.util.downloadFromZip( url, pattern )
@@ -127,17 +138,14 @@ function zpm.util.downloadFromArchive( url, pattern )
     return zpm.util.downloadFromTarGz( url, pattern )
 end
 
-function zpm.util.downloadFromZip( url, pattern )
+function zpm.util.downloadFromZipTo( url, destination, pattern )
 
     local hash = os.uuid()
     local zipFile = path.join( zpm.temp, hash .. ".zip" )
     
     zpm.wget.download( zipFile, url )
-                    
-    local zipTemp = path.join( zpm.temp, hash )
-    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
 
-    zip.extract( zipFile, zipTemp )
+    zip.extract( zipFile, destination )
     
     local fullPattern = path.join( zipTemp, pattern )
     
@@ -145,7 +153,7 @@ function zpm.util.downloadFromZip( url, pattern )
     
 end
 
-function zpm.util.downloadFromTarGz( url, pattern )
+function zpm.util.downloadFromTarGzTo( url, destination, pattern )
 
     local hash = os.uuid()
     local zipFile = path.join( zpm.temp, hash .. ".tar.gz" )
@@ -155,11 +163,30 @@ function zpm.util.downloadFromTarGz( url, pattern )
     local zipTemp = path.join( zpm.temp, hash )
     zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
 
-    os.execute( "tar xzvf " .. zipFile .. " -C " .. zipTemp )
+    os.execute( "tar xzvf " .. zipFile .. " -C " .. destination )
     
     local fullPattern = path.join( zipTemp, pattern )
     
     return os.matchfiles( fullPattern )
+    
+end
+
+
+function zpm.util.downloadFromZip( url, pattern )
+
+    local zipTemp = path.join( zpm.temp, hash )
+    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
+
+    return zpm.util.downloadFromZipTo( url, zipTemp, pattern )
+    
+end
+
+function zpm.util.downloadFromTarGz( url, pattern )
+
+    local zipTemp = path.join( zpm.temp, hash )
+    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
+
+    return zpm.util.downloadFromTarGzTo( url, zipTemp, pattern )
     
 end
 

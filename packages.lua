@@ -160,7 +160,8 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
                         exportPath = expDir,
                         module = depMod,
                         isShadow = isShadow,
-                        overrides = dependency.overrides
+                        overrides = dependency.overrides,
+                        options = dependency.options
                     }
                     
                     zpm.packages.addDependency( package, isRoot, vendor, name, version )
@@ -294,7 +295,8 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- head of the master branch
     if versions == "@head" then
     
-        if not alreadyInstalled then
+        if alreadyInstalled then
+            print( "Removing existing head..." )
             os.rmdir( folder )
         end
         
@@ -363,7 +365,7 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     end
 
     if package.license ~= nil then    
-        zpm.assert(  package.license:len() <= 30, "The 'license' supplied in '_package.json'field exceeds maximum size of 30 characters!" )        
+        zpm.assert(  package.license:len() <= 60, "The 'license' supplied in '_package.json'field exceeds maximum size of 60 characters!" )        
     end
 
     if package.website ~= nil then    
