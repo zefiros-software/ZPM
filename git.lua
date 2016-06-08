@@ -45,7 +45,7 @@ function zpm.git.pull( destination )
     
     os.chdir( destination )
     
-    os.execute( "git checkout master" )
+    os.execute( "git checkout -q master" )
     os.execute( "git pull" )
     os.execute( "git fetch --tags -q" )
     
@@ -121,7 +121,7 @@ function zpm.git.lfs.checkout( destination, checkout )
     
     os.chdir( destination )
     
-    os.execute( "git checkout " .. checkout )
+    os.execute( "git checkout -q " .. checkout )
     os.execute( "git lfs checkout" )
     
     os.chdir( current )
@@ -134,7 +134,7 @@ function zpm.git.lfs.pull( destination )
     
     os.chdir( destination )
     
-    os.execute( "git checkout master" )
+    os.execute( "git checkout -q master" )
     os.execute( "git pull" )
     os.execute( "git lfs pull" )
     os.execute( "git fetch --tags -q" )
