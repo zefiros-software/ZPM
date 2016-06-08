@@ -23,6 +23,6 @@ sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/
 sudo chmod -R 777 /var/tmp/zpm-cache/
 sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
 
-premake5 --file=zpm/zpm.lua install-zpm
+./premake5 --file=zpm/zpm.lua install-zpm
 
 rm -rf ~/zpm-install
