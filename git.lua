@@ -34,7 +34,7 @@ function zpm.git.share( destination )
     
     os.chdir( destination )
 
-    os.execute( "git config core.sharedRepository 0777" ) 
+    --os.execute( "git config core.sharedRepository 0777" ) 
     
     os.chdir( current )
 end
