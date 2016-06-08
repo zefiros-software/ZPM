@@ -255,11 +255,11 @@ end
 
 function zpm.install.createSymLinks()
 
-
-    for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
-        os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
-    end 
-
+    if os.get() == "linux" then
+        for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
+            os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
+        end 
+    end
 end
 
 function zpm.install.installInPath()
@@ -364,7 +364,7 @@ function zpm.install.updatePremake( checkOnly, verbose )
             else
                 printf( zpm.colors.green .. zpm.colors.bright .. "Updating premake to version '%s' from current version '%s'..." , tostring( version ), _PREMAKE_VERSION )
                 
-                local latestPremake = zpm.util.downloadFromZip( latest.url, "premake*" )[1]
+                local latestPremake = zpm.util.downloadFromArchive( latest.url, "premake*" )[1]
             
                 local premakeFile = _PREMAKE_COMMAND
                 

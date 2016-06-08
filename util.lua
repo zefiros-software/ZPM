@@ -147,7 +147,7 @@ function zpm.util.downloadFromZipTo( url, destination, pattern )
 
     zip.extract( zipFile, destination )
     
-    local fullPattern = path.join( zipTemp, pattern )
+    local fullPattern = path.join( destination, pattern )
     
     return os.matchfiles( fullPattern )
     
@@ -159,13 +159,10 @@ function zpm.util.downloadFromTarGzTo( url, destination, pattern )
     local zipFile = path.join( zpm.temp, hash .. ".tar.gz" )
     
     zpm.wget.download( zipFile, url )
-                    
-    local zipTemp = path.join( zpm.temp, hash )
-    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
 
     os.execute( "tar xzvf " .. zipFile .. " -C " .. destination )
     
-    local fullPattern = path.join( zipTemp, pattern )
+    local fullPattern = path.join( destination, pattern )
     
     return os.matchfiles( fullPattern )
     
