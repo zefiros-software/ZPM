@@ -114,7 +114,7 @@ function zpm.packages.load()
             assert( os.mkdir( externDir ) )    
                 
             local file = io.open( externDir .. "/.gitignore", "w" )
-            file:write([[**]])
+            file:write([[*]])
             file:close()    
         end
         
