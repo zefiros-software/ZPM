@@ -232,6 +232,8 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname )
     zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )    
     
     zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
+    
+    printf( "Resolved package dependencies '%s/%s'...", vendor, name )
         
 end
 
