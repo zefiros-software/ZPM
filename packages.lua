@@ -291,6 +291,10 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     local version = versions
     local folder = string.format( "%s-%s", dest, version )
     local alreadyInstalled = os.isdir( folder )
+
+    if os.isfile( zipFile ) then
+        os.remove( zipFile )
+    end
     
     -- head of the master branch
     if versions == "@head" then
