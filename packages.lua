@@ -322,6 +322,8 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     
     if continue and not alreadyInstalled then
 
+        zpm.assert( os.isfile( zipFile ), "Repository '%s' failed to archive!", repo )
+
         assert( os.mkdir( folder ) )
 
         zip.extract( zipFile, folder )
