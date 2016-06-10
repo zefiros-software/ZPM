@@ -317,6 +317,9 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     end
     
     if continue and not alreadyInstalled then
+
+        assert( os.mkdir( folder ) )
+
         zip.extract( zipFile, folder )
 
         os.remove( zipFile )
