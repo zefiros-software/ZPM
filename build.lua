@@ -581,8 +581,6 @@ function zpm.build.loadRoot()
     if zpm.packages.root.dependencies == nil then
         return nil
     end
-
-    print(table.tostring(zpm.packages.root, true))
                 
     for i, dep in ipairs( zpm.packages.root.dependencies ) do
     
