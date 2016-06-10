@@ -252,7 +252,7 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
                     zpm.packages.root.assets = {}
                 end
                 
-                if lpackage.dev.assets ~= nil the
+                if lpackage.dev.assets ~= nil then
                     zpm.packages.root.assets = zpm.util.concat( zpm.packages.root.assets, lpackage.dev.assets )
                 end
             
