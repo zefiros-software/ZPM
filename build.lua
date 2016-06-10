@@ -37,7 +37,7 @@ zpm.build._currentBuild = nil
 
 function zpm.build.getProjectName( project, name, version )
 
-    return string.format( "%s-%s", project, string.hash( string.format( "%s/%s", name, version ) ) )
+    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s", name, version ) ) )
     
 end
 
@@ -577,6 +577,10 @@ function zpm.build.load()
 end
 
 function zpm.build.loadRoot()
+
+    if zpm.packages.root.dependencies == nil then
+        return nil
+    end
                 
     for i, dep in ipairs( zpm.packages.root.dependencies ) do
     

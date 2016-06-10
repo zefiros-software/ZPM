@@ -25,6 +25,11 @@
 -- Util
 zpm.util = {}
 
+function zpm.util.djb2( str )
+    -- works better
+    return string.sha1( str ):sub( -5 )
+end
+
 function zpm.util.askShellConfirmation( question, yesFunc, noFunc )
 
     printf( "%s, use '--allow-shell' to always accept (Y [enter]/n)?", question )
@@ -106,7 +111,7 @@ end
 
 
 function zpm.util.getRepoDir( name, repository )
-    return name .. "-" .. string.hash( repository )
+    return name .. "-" .. zpm.util.djb2( repository )
 end
 
 function zpm.util.readAll( file )
