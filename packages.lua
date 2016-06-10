@@ -248,27 +248,31 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
             zpm.packages.root.dependencies = {}
             
             if lpackage.dev ~= nil then
-                if zpm.packages.root.assets == nil then
-                    zpm.packages.root.assets = {}
-                end
                 
                 if lpackage.dev.assets ~= nil then
+
+                    if zpm.packages.root.assets == nil then
+                        zpm.packages.root.assets = {}
+                    end
+
                     zpm.packages.root.assets = zpm.util.concat( zpm.packages.root.assets, lpackage.dev.assets )
-                end
-            
-                if zpm.packages.root.requires == nil then
-                    zpm.packages.root.requires = {}
                 end
                 
                 if lpackage.dev.requires ~= nil then
+            
+                    if zpm.packages.root.requires == nil then
+                        zpm.packages.root.requires = {}
+                    end
+
                     zpm.packages.root.requires = zpm.util.concat( zpm.packages.root.requires, lpackage.dev.requires )
                 end
                 
-                if zpm.packages.root.modules == nil then
-                    zpm.packages.root.modules = {}
-                end
+                if lpackage.dev.modules ~= nil then
                 
-                if zpm.packages.root.modules ~= nil then
+                    if zpm.packages.root.modules == nil then
+                        zpm.packages.root.modules = {}
+                    end
+
                     zpm.packages.root.modules = zpm.util.concat( zpm.packages.root.modules, lpackage.dev.modules )
                 end
             end
