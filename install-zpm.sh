@@ -15,10 +15,15 @@ chmod a+x premake5
 git clone https://zefiros.eu/stash/scm/zpm/zpm.git
 
 sudo mkdir /usr/local/zpm/ || true
-
 sudo mkdir /var/tmp/zpm-cache/ || true
 
-premake5 --file=zpm/zpm.lua install-zpm
+sudo chmod -R 777 /usr/local/zpm/
+sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/
+
+sudo chmod -R 777 /var/tmp/zpm-cache/
+sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
+
+./premake5 --file=zpm/zpm.lua install-zpm
 
 sudo chmod -R 777 /usr/local/zpm/
 sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/

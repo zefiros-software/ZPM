@@ -149,7 +149,7 @@ function zpm.assets.load()
         assert( os.mkdir( assetsDir ) )    
             
         local file = io.open( assetsDir .. "/.gitignore", "w" )
-        file:write([[**]])
+        file:write([[*]])
         file:close()    
     end
     

@@ -182,10 +182,10 @@ local function getCacheLocation()
     if os.get() == "windows" then
         local temp = os.getenv("TEMP")
         zpm.assert( temp, "The temp directory could not be found!" )
-        return path.join(temp, "zpm_cache")
+        return path.join(temp, "zpm-cache")
     end
     
-    return "/var/tmp/zpm_cache"
+    return "/var/tmp/zpm-cache"
 end
 
 
