@@ -168,6 +168,7 @@ function zpm.modules.update( head, modPath, module )
             zip.extract( zipFile, verPath )
 
             os.remove( zipFile )
+            zpm.assert( os.isfile( zipFile ) == false, "Zipfile '%s' failed to remove!", zipFile )
         end
     end 
     

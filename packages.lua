@@ -317,9 +317,11 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     end
     
     if continue and not alreadyInstalled then
-        zip.extract( zipFile, folder  )
+        zip.extract( zipFile, folder )
 
         os.remove( zipFile )
+        zpm.assert( os.isfile( zipFile ) == false, "Zipfile '%s' failed to remove!", zipFile )
+        zpm.assert( os.isdir( folder ) == false, "Folder '%s' failed to install!", folder )
     end
     
     return continue, version, folder
@@ -343,6 +345,8 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
             return true, gTag.version, folder, alreadyInstalled
         end
     end
+
+    zpm.assert( false, "Versions '%s' could not by satisfied!" )
     
     return false
 end

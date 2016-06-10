@@ -168,7 +168,7 @@ local function updateRepo( destination, url, name )
             print( "Updating " .. name .. "..." )
     
             os.chdir( destination )
-            
+            os.execute( "git checkout ." )
             os.execute( "git pull" )
             
             os.chdir( current )
