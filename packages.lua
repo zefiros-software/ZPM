@@ -330,7 +330,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
 
         os.remove( zipFile )
         zpm.assert( os.isfile( zipFile ) == false, "Zipfile '%s' failed to remove!", zipFile )
-        zpm.assert( os.isdir( folder ) == false, "Folder '%s' failed to install!", folder )
+        zpm.assert( os.isdir( folder ), "Folder '%s' failed to install!", folder )
     end
     
     return continue, version, folder
