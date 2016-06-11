@@ -37,7 +37,7 @@ zpm.build._currentBuild = nil
 
 function zpm.build.getProjectName( project, name, version )
 
-    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s", name, version ) ) )
+    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s/%s", zpm.build._currentWorkspace, name, version ) ) )
     
 end
 

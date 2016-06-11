@@ -101,8 +101,10 @@ end
 function zpm.buildLibraries()
 
     local curFlter = premake.configset.getFilter(premake.api.scope.current)
+    zpm.build._currentWorkspace = workspace().name
 
-    group "Extern"    
+    filter {}
+    group( string.format( "Extern/%s", zpm.build._currentWorkspace ) )    
     
     zpm.build._currentRoot = zpm.packages.root.dependencies
                     
