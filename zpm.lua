@@ -84,6 +84,10 @@ function zpm.uses( projects, options )
                 if build.getMayLink == nil or build.getMayLink() then
                     links( name )             
                 end    
+            
+                if use.getExportLinks == nil then
+                    links( use.getExportLinks() )             
+                end    
                 
                 if build.getExportDefines ~= nil then 
                     defines( build.getExportDefines() )
