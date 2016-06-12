@@ -259,12 +259,7 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
         local assetPackDir = path.join( zpm.install.getAssetsDir(), vendor, name, avendor, aname )
 
-        if os.isdir( assetPackDir ) then 
-            os.rmdir( assetPackDir )
-        end
-        os.mkdir( assetPackDir )
-
-        local continue, version, folder = zpm.assets.getVersion( assPath, asset.version, assetPackDir, avendor, aname )
+        local continue, version = zpm.assets.getVersion( assPath, asset.version, avendor, aname )
         
         lassets = zpm.assets.loadAssetsFile( defPath, avendor, aname, version, zpm.assets.assets[avendor][aname].isShadow )
         
@@ -272,15 +267,15 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
             zpm.assets.storeAssets( lassets, avendor, aname, version )
     
-            local alreadyInstalled = os.isdir( folder )
+            local alreadyInstalled = os.isdir( assetPackDir )
             if version == "@head" or not alreadyInstalled then                          
                 
                 if alreadyInstalled then
-                    os.rmdir( folder )
-                    os.mkdir( folder )
+                    os.rmdir( assetPackDir )
+                    os.mkdir( assetPackDir )
                 end
 
-                zpm.assets.extract( assPath, folder, version, avendor, aname )
+                zpm.assets.extract( assPath, assetPackDir, version, avendor, aname )
             end
         end
     end    
@@ -384,7 +379,7 @@ function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
     return assPath, defPath
 end
 
-function zpm.assets.getVersion( repo, versions, folder, vendor, name )
+function zpm.assets.getVersion( repo, versions, vendor, name )
 
     local continue = true
     local version = versions
@@ -406,7 +401,7 @@ function zpm.assets.getVersion( repo, versions, folder, vendor, name )
         
     end
     
-    return continue, version, folder
+    return continue, version
 end
 
 function zpm.assets.extract( repo, folder, version, vendor, name )
