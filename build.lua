@@ -280,14 +280,14 @@ function zpm.build.loadCommands()
     
     zpm.build.addExportPathCommand( "exportincludedirs", "getExportIncludeDirs", "includedirs" )
     zpm.build.addExportCommand( "exportdefines", "getExportDefines", "defines" )
-    zpm.build.addExportCommand( "exportlinks", "getExportlinks", "links" )
+    zpm.build.addExportCommand( "exportlinks", "getExportLinks", "links" )
     
     zpm.build.addExportPathCommand( "exportsysincludedirs", "getExportSysIncludeDirs", "sysincludedirs" )
     
     zpm.build.addReexportCommand( "reexportincludedirs", "getExportIncludeDirs" )
     zpm.build.addReexportCommand( "reexportsysincludedirs", "getExportSysIncludeDirs" )
     zpm.build.addReexportCommand( "reexportdefines", "getExportDefines" )
-    zpm.build.addReexportCommand( "reexportlinks", "getExportlinks" )
+    zpm.build.addReexportCommand( "reexportlinks", "getExportLinks" )
 
     zpm.build.addCommand(
         { "headeronly" },
@@ -313,11 +313,16 @@ function zpm.build.loadCommands()
             
                 if use.getMayLink == nil or use.getMayLink() then
                     links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
+                end  
+            
+                if use.getExportLinks == nil then
+                    links( use.getExportLinks() )             
                 end         
                 
                 if use.getExportDefines ~= nil then 
                     defines( use.getExportDefines() )
                 end
+
                 if use.getExportIncludeDirs ~= nil then 
                     includedirs( use.getExportIncludeDirs() )
                 end
