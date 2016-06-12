@@ -86,7 +86,7 @@ function zpm.uses( projects, options )
                 end    
             
                 if build.getExportLinks == nil then
-                    links( use.getExportLinks() )             
+                    links( build.getExportLinks() )             
                 end    
                 
                 if build.getExportDefines ~= nil then 
