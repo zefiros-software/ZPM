@@ -70,11 +70,11 @@ function zpm.modules.isModuleInstalled( vendor, name )
 
     if name ~= nil then
         
-        return os.isdir( path.join( bootstrap.directories[1], path.join( vendor, name ) ) )
+        return os.isdir( path.join( zpm.install.getModulesDir(), path.join( vendor, name ) ) )
     
     end
         
-    return os.isdir( path.join( bootstrap.directories[1], vendor ) )
+    return os.isdir( path.join( zpm.install.getModulesDir(), vendor ) )
     
 end
 
@@ -96,7 +96,7 @@ function zpm.modules.requestModules( modules )
             vendor = suggest[1]
             name = suggest[2]                          
   
-            local modPath = path.join( bootstrap.directories[1], path.join( vendor, name ) )
+            local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
 
             if not os.isdir( modPath ) then
                 
@@ -135,7 +135,7 @@ function zpm.modules.installOrUpdateModule()
     
         module = suggest
 
-        local modPath = path.join( bootstrap.directories[1], path.join( module[1], module[2] ) )
+        local modPath = path.join( zpm.install.getModulesDir(), path.join( module[1], module[2] ) )
         
         local head = path.join( modPath, "head" )
     
@@ -179,7 +179,7 @@ function zpm.modules.setSearchDir()
     if bootstrap ~= nil then
 
         -- override default location
-        bootstrap.directories = table.insertflat( { path.join( zpm.cache, "modules" ) }, bootstrap.directories )
+        bootstrap.directories = zpm.util.concat( { path.join( zpm.cache, "modules" ) }, bootstrap.directories )
     
     end
 
@@ -258,7 +258,7 @@ end
 function zpm.modules.updateModules()
     
     local matches = zpm.modules.listModules()
-    
+
     for _, match in ipairs( matches ) do
     
         local vendor, name = match:match( ".*/(.*)/(.*)" )

@@ -45,6 +45,21 @@ function zpm.util.askShellConfirmation( question, yesFunc, noFunc )
     
 end
 
+function zpm.util.askInstallConfirmation( question, yesFunc, noFunc )
+
+    printf( "%s, use '--allow-install' to always accept (Y [enter]/n)?", question )
+    local answer = io.read()
+    if answer == "Y" or 
+       answer == "y" or 
+       answer == "" or 
+       _OPTIONS["allow-install"] ~= nil then
+        return yesFunc()
+    else
+        return noFunc()
+    end
+    
+end
+
 function zpm.util.isAlphaNumeric( str )
     return str == str:gsub( "[^[%w-_]]*", "" )
 end

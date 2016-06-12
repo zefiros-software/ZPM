@@ -61,7 +61,7 @@ zpm.install.extern = {}
 zpm.install.extern.directory = zpm.config.install.extern.directory
 
 function zpm.install.getModulesDir()
-    return path.join( zpm.install.getSharedInstallDir(), zpm.install.modules.directory )
+    return bootstrap.directories[1]
 end
 
 function zpm.install.getMainRegistry()

@@ -130,6 +130,32 @@ function zpm.packages.load()
     
 end
 
+function zpm.packages.install()
+
+    zpm.packages.installPackage( zpm.packages.root.install, ".", zpm.packages.root.name )
+end
+
+function zpm.packages.installPackage( package, folder, name )
+
+    if type( package ) ~= "table" then
+        package = { package }
+    end
+
+    for _, inst in ipairs( package ) do
+
+        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
+        function()
+            printf( "Installing '%s'...", name )
+            dofile( string.format( "%s/%s", folder, inst ) )
+        end, 
+        function()
+            printf( "Installation declined, we can not guatantee this package works!" )
+        end )
+
+    end
+
+end
+
 function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
     
     if lpackage.assets ~= nil then
@@ -274,6 +300,17 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
                     end
 
                     zpm.packages.root.modules = zpm.util.concat( zpm.packages.root.modules, lpackage.dev.modules )
+                end
+
+                if lpackage.dev.install ~= nil then                
+                
+                    if zpm.packages.root.install == nil then
+                        zpm.packages.root.install = {}
+                    else                
+                        zpm.packages.root.install = { zpm.packages.root.install }
+                    end
+
+                    zpm.packages.root.install = zpm.util.concat( zpm.packages.root.install, { lpackage.dev.install } )
                 end
             end
         end
@@ -425,6 +462,12 @@ function zpm.packages.checkValidity( package, isRoot, pname )
 end
 
 function zpm.packages.checkDependencyValidity( package )
+
+
+    if package.install ~= nil then
+        
+        zpm.assert( type(package.install) == "string", "The 'install' supplied in '_package.json' is not a string!" )
+    end
 
 
     if package.modules ~= nil then

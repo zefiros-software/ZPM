@@ -248,13 +248,18 @@ function zpm.onLoad()
 end 
 
 newoption {
-   trigger     = "allow-shell",
-   description = "Allows the useage of shell commands without confirmation"
+    trigger     = "allow-shell",
+    shortname   = "as",
+    description = "Allows the usage of shell commands without confirmation"
+}
+newoption {
+    trigger     = "allow-install",
+    shortname   = "ai",
+    description = "Allows the usage of install scripts without confirmation"
 }
 
 newaction {
     trigger     = "self-update",
-    shortname   = "Self updater",
     description = "Updates the premake executable to the latest version",
     execute = function ()
 
@@ -270,6 +275,8 @@ newaction {
 
 if _ACTION == "self-update" or
    _ACTION == "install-module" or
+   _ACTION == "install-zpm" or
+   _ACTION == "install-package" or
    _ACTION == "update-module" or
    _ACTION == "update-modules" or
    _ACTION == "update-bootstrap" or
@@ -282,7 +289,6 @@ end
 
 newaction {
     trigger     = "install-zpm",
-    shortname   = "Installs zpm-premake",
     description = "Installs zpm-premake in path",
     execute = function ()
 
@@ -298,6 +304,16 @@ newaction {
         zpm.install.installInPath()
         zpm.install.setupSystem()
         
+    end
+}
+
+newaction {
+    trigger     = "install-package",
+    description = "Installs all package dependencies",
+    execute     = function()
+
+        zpm.packages.install()
+
     end
 }
 

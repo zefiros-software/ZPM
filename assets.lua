@@ -272,7 +272,9 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
             zpm.assets.storeAssets( lassets, avendor, aname, version )
     
-            zpm.assets.extract( assPath, folder, version, avendor, aname )
+            if version == "@head" or not os.isdir( folder ) then
+                zpm.assets.extract( assPath, folder, version, avendor, aname )
+            end
         end
     end    
 
