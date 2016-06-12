@@ -315,7 +315,7 @@ function zpm.build.loadCommands()
                     links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
                 end  
             
-                if use.getExportLinks == nil then
+                if use.getExportLinks ~= nil then
                     links( use.getExportLinks() )             
                 end         
                 
