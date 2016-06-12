@@ -272,7 +272,14 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
             zpm.assets.storeAssets( lassets, avendor, aname, version )
     
-            if version == "@head" or not os.isdir( folder ) then
+            local alreadyInstalled = os.isdir( folder )
+            if version == "@head" or not alreadyInstalled then                          
+                
+                if alreadyInstalled then
+                    os.rmdir( folder )
+                    os.mkdir( folder )
+                end
+
                 zpm.assets.extract( assPath, folder, version, avendor, aname )
             end
         end
@@ -381,12 +388,6 @@ function zpm.assets.getVersion( repo, versions, folder, vendor, name )
 
     local continue = true
     local version = versions
-    local alreadyInstalled = os.isdir( folder )
-    
-    if alreadyInstalled then
-        os.rmdir( folder )
-        os.mkdir( folder )
-    end
     
     -- head of the master branch
     if versions == "@head" then
