@@ -117,7 +117,7 @@ function zpm.build.addExportPathCommand( func, getFunc, call )
         end)
 end
 
-function zpm.build.addReexporCommand( func, getFunc )
+function zpm.build.addReexportCommand( func, getFunc )
 
     zpm.build.addCommand(
         { func },
@@ -284,9 +284,9 @@ function zpm.build.loadCommands()
     
     zpm.build.addExportPathCommand( "exportsysincludedirs", "getExportSysIncludeDirs", "sysincludedirs" )
     
-    zpm.build.addReexporCommand( "reexportincludedirs", "getExportIncludeDirs" )
-    zpm.build.addReexporCommand( "reexportsysincludedirs", "getExportSysIncludeDirs" )
-    zpm.build.addReexporCommand( "reexportdefines", "getExportDefines" )
+    zpm.build.addReexportCommand( "reexportincludedirs", "getExportIncludeDirs" )
+    zpm.build.addReexportCommand( "reexportsysincludedirs", "getExportSysIncludeDirs" )
+    zpm.build.addReexportCommand( "reexportdefines", "getExportDefines" )
     zpm.build.addReexportCommand( "reexportlinks", "getExportlinks" )
 
     zpm.build.addCommand(
