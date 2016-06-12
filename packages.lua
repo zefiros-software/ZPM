@@ -141,19 +141,19 @@ function zpm.packages.installPackage( package, folder, name )
         package = { package }
     end
 
-    for _, inst in ipairs( package ) do
-
+    if #package > 0 then
         zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
         function()
-            printf( "Installing '%s'...", name )
-            dofile( string.format( "%s/%s", folder, inst ) )
+            
+            for _, inst in ipairs( package ) do
+                    printf( "Installing '%s'...", name )
+                    dofile( string.format( "%s/%s", folder, inst ) )
+            end
         end, 
         function()
             printf( "Installation declined, we can not guatantee this package works!" )
         end )
-
     end
-
 end
 
 function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )

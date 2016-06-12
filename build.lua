@@ -280,12 +280,14 @@ function zpm.build.loadCommands()
     
     zpm.build.addExportPathCommand( "exportincludedirs", "getExportIncludeDirs", "includedirs" )
     zpm.build.addExportCommand( "exportdefines", "getExportDefines", "defines" )
+    zpm.build.addExportCommand( "exportlinks", "getExportlinks", "links" )
     
     zpm.build.addExportPathCommand( "exportsysincludedirs", "getExportSysIncludeDirs", "sysincludedirs" )
     
     zpm.build.addReexporCommand( "reexportincludedirs", "getExportIncludeDirs" )
     zpm.build.addReexporCommand( "reexportsysincludedirs", "getExportSysIncludeDirs" )
     zpm.build.addReexporCommand( "reexportdefines", "getExportDefines" )
+    zpm.build.addReexportCommand( "reexportlinks", "getExportlinks" )
 
     zpm.build.addCommand(
         { "headeronly" },
