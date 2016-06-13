@@ -86,15 +86,15 @@ function zpm.uses( projects, options )
                 end    
             
                 if build.getExportLinks ~= nil then
-                    links( build.getExportLinks() )             
+                    build.getExportLinks()            
                 end    
                 
                 if build.getExportDefines ~= nil then 
-                    defines( build.getExportDefines() )
+                    build.getExportDefines()
                 end
                 
                 if build.getExportIncludeDirs ~= nil then 
-                    includedirs( build.getExportIncludeDirs() )
+                    build.getExportIncludeDirs()
                 end
             end                
         
@@ -109,39 +109,8 @@ function zpm.buildLibraries()
 
     filter {}
     group( string.format( "Extern/%s", zpm.build._currentWorkspace ) )    
-    
-    zpm.build._currentRoot = zpm.packages.root.dependencies
-                    
-    for _, dep in ipairs( zpm.packages.root.dependencies ) do
-    
-        if dep.build ~= nil then
-        
-            zpm.build.setCursor( dep )
-            
-            for _, build in ipairs( dep.build ) do
-                
-                zpm.build._currentBuild = build
-                            
-                zpm.build.queueCommand( function()
-                
-                    project( zpm.build.getProjectName( build.project, dep.fullName, dep.version ) )
-                    location( zpm.install.getExternDirectory() )
-                    targetdir( zpm.build._currentTargetPath )
-                    objdir( zpm.build._currentObjPath )
-                
-                end)
-                
-                zpm.build.queueCommands( build["do"] )
-                
-            end    
-            
-            zpm.build.resetCursor()
-        end                
-    end
-    
-    zpm.build.executeCommands()
-    
-    zpm.build._currentRoot = nil
+
+    zpm.build.buildPackage( zpm.packages.root )
     
     group ""
     

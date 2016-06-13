@@ -30,9 +30,19 @@ function zpm.util.djb2( str )
     return string.sha1( str ):sub( -5 )
 end
 
+function zpm.util.rmdir( folder )
+
+    if os.get() == "windows" then
+        os.execute( string.format( "rmdir /Q /S \"%s\"", folder ) )
+    else
+        os.execute( string.format( "rm -rf \"%s\"", folder ) )
+    end
+
+end
+
 function zpm.util.askShellConfirmation( question, yesFunc, noFunc )
 
-    printf( "%s, use '--allow-shell' to always accept (Y [enter]/n)?", question )
+    printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-shell' to always accept (Y [enter]/n)?", question )
     local answer = io.read()
     if answer == "Y" or 
        answer == "y" or 
@@ -47,7 +57,7 @@ end
 
 function zpm.util.askInstallConfirmation( question, yesFunc, noFunc )
 
-    printf( "%s, use '--allow-install' to always accept (Y [enter]/n)?", question )
+    printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-install' to always accept (Y [enter]/n)?", question )
     local answer = io.read()
     if answer == "Y" or 
        answer == "y" or 

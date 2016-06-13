@@ -132,20 +132,21 @@ end
 
 function zpm.packages.install()
 
-    zpm.packages.installPackage( zpm.packages.root.install, ".", zpm.packages.root.name )
+    zpm.packages.installPackage( zpm.packages.root, ".", zpm.packages.root.name )
+
 end
 
 function zpm.packages.installPackage( package, folder, name )
 
-    if type( package ) ~= "table" then
-        package = { package }
+    if type( package.install ) ~= "table" then
+        package.install = { package.install }
     end
 
-    if #package > 0 then
+    if #package.install > 0 then
         zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
         function()
             
-            for _, inst in ipairs( package ) do
+            for _, inst in ipairs( package.install ) do
                     printf( "Installing '%s'...", name )
                     dofile( string.format( "%s/%s", folder, inst ) )
             end
@@ -153,6 +154,17 @@ function zpm.packages.installPackage( package, folder, name )
         function()
             printf( "Installation declined, we can not guatantee this package works!" )
         end )
+    end
+
+    if #package.dependencies > 0 then
+
+        for _, dep in ipairs( package.dependencies ) do
+
+            local depPackage = zpm.packages.package[ dep.module[1] ][ dep.module[2] ][ dep.version ]
+            zpm.packages.installPackage( depPackage, dep.exportPath, dep.fullName )
+
+        end
+
     end
 end
 
@@ -344,7 +356,12 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     
         if alreadyInstalled then
             print( "Removing existing head..." )
-            os.rmdir( folder )
+            zpm.util.rmdir( folder )
+
+            -- continue installation
+            alreadyInstalled = false
+
+            zpm.assert( os.isdir( folder ) == false, "Failed to remove existing head!" )
         end
         
         zpm.git.archive( repo, zipFile, "master", dest )
