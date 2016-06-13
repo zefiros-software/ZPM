@@ -126,7 +126,7 @@ function zpm.assets.executeCommand( value, repo, folder )
         end
     end
     
-    printf( zpm.colors.error .. "Unknown assets command '%s':\n", table.tostring( value, true ) )
+    printf( zpm.colors.error .. "Unknown assets command '%s':\n", table.tostring( value, 20 ) )
 end
 
 function zpm.assets.executeCommands( values, repo, folder )

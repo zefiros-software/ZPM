@@ -40,7 +40,16 @@ zpm.build._previousFilters = {}
 
 function zpm.build.buildPackage( package )
 
-    zpm.build._currentRoot = package.dependencies
+    if #package.dependencies > 0 then
+
+        for _, dep in ipairs( package.dependencies ) do
+
+            if dep.dependencies ~= nil then
+                zpm.build.buildPackage( dep )
+            end
+        end
+
+    end 
                     
     for _, dep in ipairs( package.dependencies ) do
     
@@ -53,7 +62,6 @@ function zpm.build.buildPackage( package )
                 zpm.build._currentBuild = build
                             
                 zpm.build.queueCommand( function()
-                
                     project( zpm.build.getProjectName( build.project, dep.fullName, dep.version ) )
                     location( zpm.install.getExternDirectory() )
                     targetdir( zpm.build._currentTargetPath )
@@ -70,20 +78,6 @@ function zpm.build.buildPackage( package )
     end
     
     zpm.build.executeCommands()
-    
-    zpm.build._currentRoot = nil
-
-    if #package.dependencies > 0 then
-
-        for _, dep in ipairs( package.dependencies ) do
-
-            local depPackage = zpm.packages.package[ dep.module[1] ][ dep.module[2] ][ dep.version ]
-            
-            zpm.build.buildPackage( depPackage )
-
-        end
-
-    end 
 
 end
 
@@ -391,27 +385,37 @@ function zpm.build.loadCommands()
 
     zpm.build.addCommand(
         { "uses" },
-        function( v )
+        function( v )                          
+                
+            if type( v.uses ) ~= "table" then
+                v.uses = { v.uses }
+            end  
+
+            local projects = {}
+            local uses = {}
             local dep = zpm.build._currentDependency
+            for _, use in ipairs( v.uses ) do
 
-            if v.uses:contains( "/" ) then
+                if use:contains( "/" ) then
+                        
+                    table.insert( projects, zpm.build.findProject( use, dep.dependencies ) )
+                    
+                else
+                    local obj = zpm.build.findSubProject( use, zpm.build._currentProjects )
+                    table.insert( uses, { name = use, uses = obj } )
 
-                local projects = zpm.build.findProject( v.uses, zpm.build._currentRoot.dependencies )
-
-                return function()
-                    for _, project in ipairs( projects ) do                    
-                        zpm.useProject( project )
-                    end
                 end
                 
-            else
-        
-                local use = zpm.build.findSubProject( v.uses, zpm.build._currentProjects )
-                
-                return function()
-                
+            end            
+
+            local dep = zpm.build._currentDependency
+            return function()
+
+                for _, use in ipairs( uses ) do
+                    local name = use.name
+                    local use = use.uses
                     if use.getMayLink == nil or use.getMayLink() then
-                        links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
+                        links( zpm.build.getProjectName( name, dep.fullName, dep.version ) )             
                     end  
                 
                     if use.getExportLinks ~= nil then
@@ -426,6 +430,10 @@ function zpm.build.loadCommands()
                         use.getExportIncludeDirs()
                     end
                 end
+
+                for _, project in ipairs( projects ) do                    
+                    zpm.useProject( project )
+                end
             end
         end)
             
@@ -436,22 +444,66 @@ function zpm.build.loadCommands()
                 
             if type( v.reuses ) ~= "table" then
                 v.reuses = { v.reuses }
-            end        
+            end  
 
-            local projects = zpm.build.findProject( v.reuses, zpm.build._currentRoot.dependencies )
+            local projects = {}
+            local dep = zpm.build._currentDependency
+            
+            for _, use in ipairs( v.reuses ) do
 
-            for _, project in ipairs( projects ) do
-        
-                for _, build in ipairs( project.build ) do
-                
-                    local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
-                
-                    zpm.build._currentBuild.getMayLink = build.getMayLink()
-                    zpm.build._currentBuild.getExportLinks = build.getExportLinks
-                    zpm.build._currentBuild.getExportDefines = build.getExportDefines
-                    zpm.build._currentBuild.getExportIncludeDirs = build.getExportIncludeDirs
+                table.insert( projects, zpm.build.findProject( use, dep.dependencies ) )
+
+                for _, project in ipairs( projects ) do
+            
+                    if project.build ~= nil then
+                        for _, build in ipairs( project.build ) do
+                        
+                            local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
+                        
+                            local getMayLink = zpm.build._currentBuild.getMayLink
+                            zpm.build._currentBuild.getMayLink = function()
+                                if getMayLink ~= nil then
+                                    getMayLink()
+                                end
+                                if build.getMayLink ~= nil then
+                                    build.getMayLink()
+                                end
+                            end
+
+                            local getExportLinks = zpm.build._currentBuild.getExportLinks
+                            zpm.build._currentBuild.getExportLinks = function()
+                                if build.getExportLinks ~= nil then
+                                    getExportLinks()
+                                end
+                                if build.getExportLinks ~= nil then
+                                    getExportLinks()
+                                end
+                            end 
+
+                            local getExportDefines = zpm.build._currentBuild.getExportDefines
+                            zpm.build._currentBuild.getExportDefines = function()
+                                if getExportDefines ~= nil then
+                                    getExportDefines()
+                                end
+                                if build.getExportDefines ~= nil then
+                                   build.getExportDefines()
+                                end
+                            end 
+
+                            local getExportIncludeDirs = zpm.build._currentBuild.getExportIncludeDirs
+                            zpm.build._currentBuild.getExportIncludeDirs = function()
+                                if getExportIncludeDirs ~= nil then
+                                    getExportIncludeDirs()
+                                end
+                                if build.getExportIncludeDirs ~= nil then
+                                    build.getExportIncludeDirs()
+                                end
+                            end
+                        end    
+                    end
                 end    
-            end    
+
+            end
 
             return function()
                 for _, project in ipairs( projects ) do                    
@@ -545,13 +597,17 @@ function zpm.build.loadCommands()
             if v["filter-options"] ~= nil and zpm.build._currentBuild.options ~= nil then
                 for option, value in pairs( v["filter-options"] ) do
           
-                    for boption, bvalue in pairs( zpm.build._currentBuild.options ) do                            
-                        return {}           
+                    for boption, bvalue in pairs( zpm.build._currentBuild.options ) do 
+                        
+                        if boption == option and value ~= bvalue then   
+                            print("%%%%%%%%%%%%%%%%%%")                        
+                            return {}     
+                        end      
                     end
                         
                 end    
             end
-            
+            print("@@@@@@@@@@@")
             return zpm.build.getCommands( v["do"] )   
         end)
 
@@ -584,16 +640,18 @@ end
 
 function zpm.build.findSubProject( name, projects )
 
-    for _, project in ipairs( projects ) do
-    
-        if project.project == name then
+    if projects ~= nil then
+        for _, project in ipairs( projects ) do
         
-            return project
+            if project.project == name then
+            
+                return project
+            
+            end
         
         end
-    
     end
-    
+
     printf( zpm.colors.error .. "Could not find sub project '%s', did you load it correctly as a dependency?", name )
     
     return nil
@@ -602,16 +660,18 @@ end
 
 function zpm.build.findProject( name, projects )
 
-    for _, project in ipairs( projects ) do
-    
-        if project.fullName == name then
+    if projects ~= nil then
+        for _, project in ipairs( projects ) do
         
-            return project
+            if project.fullName == name then
+            
+                return project
+            
+            end
         
         end
-    
     end
-    
+
     printf( zpm.colors.error .. "Could not find project '%s', did you load it correctly as a dependency?", name )
     
     return nil
@@ -653,7 +713,7 @@ function zpm.build.getCommand( value )
         end
     end
     
-    printf( zpm.colors.error .. "Unknown build command '%s':\n", table.tostring( value, true ) )
+    printf( zpm.colors.error .. "Unknown build command '%s':\n", table.tostring( value, 20 ) )
 end
 
 function zpm.build.getCommands( values )
@@ -737,22 +797,18 @@ end
 
 function zpm.build.load()
 
-    zpm.build.loadRoot()
-    zpm.build.loadBuildPackages()
-
-    print(table.tostring(zpm.packages.root, 10), "@@@@@@@@@@@@@@@@")
-    print(table.tostring(zpm.packages.package, 10))
+    zpm.packages.root = zpm.build.loadPackages( zpm.packages.root )
     
     zpm.build.loadCommands()
 end
 
-function zpm.build.loadRoot()
+function zpm.build.loadPackages( packages )
 
-    if zpm.packages.root.dependencies == nil then
-        return nil
+    if packages.dependencies == nil then
+        return packages
     end
                 
-    for i, dep in ipairs( zpm.packages.root.dependencies ) do
+    for i, dep in ipairs( packages.dependencies ) do
     
         local buildFile = path.join( dep.buildPath, zpm.install.build.fileName )
     
@@ -761,48 +817,22 @@ function zpm.build.loadRoot()
         
             buildFile = zpm.build.patchBuildFile( buildFile, dep.overrides )
             buildFile = zpm.build.patchOptions( buildFile, dep.options )
-            zpm.packages.root.dependencies[i].build = buildFile
+            packages.dependencies[i].build = buildFile
         
         else
         
             printf( zpm.colors.error .. "Failed to load package build '%s':\n%s", dep.fullName, buildFile )
         
         end                
+    end 
+
+                
+    for i, dep in ipairs( packages.dependencies ) do
+                
+        packages.dependencies[i] = zpm.build.loadPackages( dep )
     end
 
-end
-
-function zpm.build.loadBuildPackages()    
-
-    for vendor, vendorTab in pairs( zpm.packages.package ) do
-
-        for name, nameTab in pairs( vendorTab ) do
-                    
-            for _, version in pairs( nameTab ) do        
-
-                if nameTab.dependencies ~= nil then 
-                
-                    for i, dep in ipairs( version.dependencies ) do
-                    
-                        local buildFile = path.join( dep.buildPath, zpm.install.build.fileName )
-                    
-                        local ok, buildFile = pcall( zpm.build.loadBuildFile, buildFile, dep )
-                        if ok then
-                            buildFile = zpm.build.patchBuildFile( buildFile, dep.overrides )
-                            buildFile = zpm.build.patchOptions( buildFile, dep.options )
-                            zpm.packages.package[vendor][name][version].dependencies[i].build = buildFile
-                        else
-                        
-                            printf( zpm.colors.error .. "Failed to load package build '%s':\n%s", dep.fullName, buildFile )
-                        
-                        end                
-                    end
-                end
-            end
-        
-        end
-    
-    end     
+    return packages
 end
 
 function zpm.build.patchOptions( buildFile, overrides )

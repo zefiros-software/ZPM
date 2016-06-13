@@ -30,7 +30,6 @@ zpm.packages.searchMaxDist = 0.1
 zpm.packages.package = {}
 
 zpm.packages.root = {}
-zpm.packages.root.isLoaded = false
 
 function zpm.packages.suggestPackage( vendor, name ) 
 
@@ -119,12 +118,13 @@ function zpm.packages.load()
         end
         
     end
+        
+    local ok, root = pcall( zpm.packages.loadFile, package, true, zpm.packages.root ) 
     
-    local ok, err = pcall( zpm.packages.loadFile, package, true ) 
-    
-    if not ok then
-    
-        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to and invalid '_package.json':\n%s", package, err )
+    if ok then
+        zpm.packages.root = root
+    else
+        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to and invalid '_package.json':\n%s", package, root )
     
     end
     
@@ -168,29 +168,33 @@ function zpm.packages.installPackage( package, folder, name )
     end
 end
 
-function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
+function zpm.packages.resolveDependencies( lpackage, vendor, name )
+
+    if lpackage == nil then
+        return lpackage
+    end
     
-    if lpackage.assets ~= nil then
-        zpm.assets.resolveAssets( lpackage.assets, vendor, name  )
+    if  lpackage.assets ~= nil then
+        zpm.assets.resolveAssets( lpackage.assets, vendor, name )
     end
     
     if lpackage.requires ~= nil then
 
-        for _, dependency in ipairs( lpackage.requires  ) do
+        for i, dependency in ipairs( lpackage.requires  ) do
         
-            local depMod = bootstrap.getModule( dependency.name )            
+            local depMod = bootstrap.getModule( dependency.name )
             local ok, depPath, buildPath = pcall( zpm.packages.loadDependency, dependency, depMod )
         
             if ok then
 
-                local loaded, version, expDir, err = zpm.packages.loadPackage( depPath, buildPath, dependency, depMod[1], depMod[2] )
+                local loaded, version, expDir, dependencies = zpm.packages.loadPackage( depPath, buildPath, dependency, depMod[1], depMod[2], lpackage.dependencies )
                 
-                if loaded then
-                               
+
+                if loaded then                               
     
                     local isShadow = zpm.packages.package[depMod[1]][depMod[2]].isShadow
                 
-                    local package = {
+                    dependencies = table.merge( dependencies, {
                         fullName = dependency.name,
                         version = version,
                         dependencyPath = depPath,
@@ -200,12 +204,11 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
                         isShadow = isShadow,
                         overrides = dependency.overrides,
                         options = dependency.options
-                    }
-                    
-                    zpm.packages.addDependency( package, isRoot, vendor, name, version )
+                    })
+                    lpackage.dependencies[i] = dependencies
                     
                 else
-                    printf( zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, err )
+                    printf( zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, dependencies )
                 end
             else
                 printf( zpm.colors.error .. "Failed to load package '%s':\n%s", dependency.name, depPath )
@@ -214,38 +217,28 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
         
     end
    
+    return lpackage
 end
 
-function zpm.packages.addDependency( package, isRoot, depMod, vendor, name, version )
-
-    if isRoot then
-    
-        table.insert( zpm.packages.root.dependencies, package )
-        
-    else
-    
-        table.insert( zpm.packages.package[vendor][name][version].dependencies, package )
-    
-    end
-    
-end
-
-function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name )
+function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name, root )
 
     local externDir = zpm.install.getExternDirectory()
     local depDir = path.join( externDir, dependency.name )
     
     local ok, version, expDir = zpm.packages.extract( externDir, depPath, dependency.version, depDir )
+
     zpm.assert( ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!", 
                     vendor, name, dependency.version, dependency.name )
 
     local depPak = path.join( buildPath, zpm.install.packages.fileName )
-    local loaded, err = pcall( zpm.packages.loadFile, depPak, false, version, string.format( "%s/%s", vendor, name ) )
+    local loaded, pack = pcall( zpm.packages.loadFile, depPak, false, version, string.format( "%s/%s", vendor, name ), root )
+
+    root = pack
     
-    return loaded, version, expDir, err
+    return loaded, version, expDir, root
 end
 
-function zpm.packages.loadFile( packageFile, isRoot, version, pname )
+function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
     
     zpm.assert( os.isfile( packageFile ), "No '_package.json' found" )    
     
@@ -267,63 +260,55 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname )
     
     printf( "Loading package '%s/%s'...", vendor, name )
 
-    zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )    
-    
-    zpm.packages.resolveDependencies( lpackage, vendor, name, isRoot )
+    root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
+    root = zpm.packages.resolveDependencies( root, vendor, name )
     
     printf( "Resolved package dependencies '%s/%s'...", vendor, name )
-        
+
+    return root
 end
 
 function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
 
-    if isRoot then
-                    
-        if not zpm.packages.root.isLoaded then
+    if isRoot then            
+        if lpackage.dev ~= nil then
+            
+            if lpackage.dev.assets ~= nil then
+
+                if lpackage.assets == nil then
+                    lpackage.assets = {}
+                end
+
+                lpackage.assets = zpm.util.concat( lpackage.assets, lpackage.dev.assets )
+            end
+            
+            if lpackage.dev.requires ~= nil then
         
-            zpm.packages.root = lpackage
-            zpm.packages.root.isLoaded = true
-            zpm.packages.root.dependencies = {}
+                if lpackage.requires == nil then
+                    lpackage.requires = {}
+                end
+
+                lpackage.requires = zpm.util.concat( lpackage.requires, lpackage.dev.requires )
+            end
             
-            if lpackage.dev ~= nil then
-                
-                if lpackage.dev.assets ~= nil then
-
-                    if zpm.packages.root.assets == nil then
-                        zpm.packages.root.assets = {}
-                    end
-
-                    zpm.packages.root.assets = zpm.util.concat( zpm.packages.root.assets, lpackage.dev.assets )
-                end
-                
-                if lpackage.dev.requires ~= nil then
+            if lpackage.dev.modules ~= nil then
             
-                    if zpm.packages.root.requires == nil then
-                        zpm.packages.root.requires = {}
-                    end
-
-                    zpm.packages.root.requires = zpm.util.concat( zpm.packages.root.requires, lpackage.dev.requires )
-                end
-                
-                if lpackage.dev.modules ~= nil then
-                
-                    if zpm.packages.root.modules == nil then
-                        zpm.packages.root.modules = {}
-                    end
-
-                    zpm.packages.root.modules = zpm.util.concat( zpm.packages.root.modules, lpackage.dev.modules )
+                if lpackage.modules == nil then
+                    lpackage.modules = {}
                 end
 
-                if lpackage.dev.install ~= nil then                
-                
-                    if zpm.packages.root.install == nil then
-                        zpm.packages.root.install = {}
-                    else                
-                        zpm.packages.root.install = { zpm.packages.root.install }
-                    end
+                lpackage.modules = zpm.util.concat( lpackage.modules, lpackage.dev.modules )
+            end
 
-                    zpm.packages.root.install = zpm.util.concat( zpm.packages.root.install, { lpackage.dev.install } )
+            if lpackage.dev.install ~= nil then                
+            
+                if lpackage.install == nil then
+                    lpackage.install = {}
+                else                
+                    lpackage.install = { lpackage.install }
                 end
+
+                lpackage.install = zpm.util.concat( lpackage.install, { lpackage.dev.install } )
             end
         end
         
@@ -331,12 +316,10 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
     
         zpm.assert( zpm.packages.package[vendor][name] ~= nil, "Package '%s/%s' does not exist!", vendor, name )
         
-        if zpm.packages.package[vendor][name][version] == nil then
-        
-            zpm.packages.package[vendor][name][version] = lpackage
-            zpm.packages.package[vendor][name][version].dependencies = {}
-        end
-    end
+    end   
+
+    lpackage.dependencies = {}
+    return lpackage
 end
 
 function zpm.packages.extract( vendorPath, repo, versions, dest )

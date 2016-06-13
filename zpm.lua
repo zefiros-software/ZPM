@@ -65,7 +65,7 @@ premake.override(path, "normalize", function(base, p )
 end)
 
 function zpm.useProject( project )
-    if project ~= nil then
+    if project ~= nil and project.build ~= nil then
             
         for _, build in ipairs( project.build ) do
         
@@ -118,34 +118,6 @@ function zpm.buildLibraries()
     group ""
     
     premake.configset.setFilter(premake.api.scope.current, curFlter)
---[[
-    for vendor, vendorTab in pairs( zpm.packages.package ) do
-
-        for name, nameTab in pairs( vendorTab ) do
-
-            if nameTab.dependencies ~= nil then
-                for i, dep in ipairs( nameTab.dependencies ) do
-                
-                    local buildFile = path.join( dep.buildPath, zpm.install.build.fileName )
-                
-                    local ok, buildFile = pcall( zpm.build.loadBuildFile, buildFile, dep )
-                    if ok then
-                    
-                        buildFile = zpm.build.pathBuildFile( buildFile, dep.overrides )
-                        zpm.packages.package[vendor][name].dependencies[i].build = buildFile
-                    
-                    else
-                    
-                        printf( zpm.colors.error .. "Failed to load package build '%s':\n%s", dep.fullName, buildFile )
-                    
-                    end                
-                end
-            end
-        
-        end
-    
-    end
-]]
 
 end
 
