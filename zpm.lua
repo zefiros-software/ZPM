@@ -64,6 +64,33 @@ premake.override(path, "normalize", function(base, p )
     return p
 end)
 
+function zpm.useProject( project )
+    if project ~= nil then
+            
+        for _, build in ipairs( project.build ) do
+        
+            local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
+        
+            if build.getMayLink == nil or build.getMayLink() then
+                links( name )             
+            end    
+        
+            if build.getExportLinks ~= nil then
+                build.getExportLinks()            
+            end    
+            
+            if build.getExportDefines ~= nil then 
+                build.getExportDefines()
+            end
+            
+            if build.getExportIncludeDirs ~= nil then 
+                build.getExportIncludeDirs()
+            end
+        end                
+    
+    end
+end
+
 function zpm.uses( projects, options )
 
     if type( projects ) ~= "table" then
@@ -74,31 +101,7 @@ function zpm.uses( projects, options )
     
         local project = zpm.build.findRootProject( project )
         
-        if project ~= nil then
-            
-            for _, build in ipairs( project.build ) do
-            
-                local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
-            
-            
-                if build.getMayLink == nil or build.getMayLink() then
-                    links( name )             
-                end    
-            
-                if build.getExportLinks ~= nil then
-                    build.getExportLinks()            
-                end    
-                
-                if build.getExportDefines ~= nil then 
-                    build.getExportDefines()
-                end
-                
-                if build.getExportIncludeDirs ~= nil then 
-                    build.getExportIncludeDirs()
-                end
-            end                
-        
-        end
+        zpm.useProject( project )
     end
 end
 

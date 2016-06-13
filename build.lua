@@ -78,6 +78,7 @@ function zpm.build.buildPackage( package )
         for _, dep in ipairs( package.dependencies ) do
 
             local depPackage = zpm.packages.package[ dep.module[1] ][ dep.module[2] ][ dep.version ]
+            
             zpm.build.buildPackage( depPackage )
 
         end
@@ -187,7 +188,7 @@ function zpm.build.addReexportCommand( func, getFunc )
         { func },
         function( v )
         
-            local use = zpm.build.findProject( v[func], zpm.build._currentProjects )
+            local use = zpm.build.findSubProject( v[func], zpm.build._currentProjects )
 
             local filters = table.arraycopy( zpm.build._currentFilters )
             local prevFilters = table.arraycopy( zpm.build._previousFilters )
@@ -391,29 +392,72 @@ function zpm.build.loadCommands()
     zpm.build.addCommand(
         { "uses" },
         function( v )
-        
-            local use = zpm.build.findProject( v.uses, zpm.build._currentProjects )
             local dep = zpm.build._currentDependency
-            
-            return function()
-            
-                if use.getMayLink == nil or use.getMayLink() then
-                    links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
-                end  
-            
-                if use.getExportLinks ~= nil then
-                    use.getExportLinks()
-                end         
-                
-                if use.getExportDefines ~= nil then 
-                    use.getExportDefines()
-                end
 
-                if use.getExportIncludeDirs ~= nil then 
-                    use.getExportIncludeDirs()
+            if v.uses:contains( "/" ) then
+
+                local projects = zpm.build.findProject( v.uses, zpm.build._currentRoot.dependencies )
+
+                return function()
+                    for _, project in ipairs( projects ) do                    
+                        zpm.useProject( project )
+                    end
+                end
+                
+            else
+        
+                local use = zpm.build.findSubProject( v.uses, zpm.build._currentProjects )
+                
+                return function()
+                
+                    if use.getMayLink == nil or use.getMayLink() then
+                        links( zpm.build.getProjectName( v.uses, dep.fullName, dep.version ) )             
+                    end  
+                
+                    if use.getExportLinks ~= nil then
+                        use.getExportLinks()
+                    end         
+                    
+                    if use.getExportDefines ~= nil then 
+                        use.getExportDefines()
+                    end
+
+                    if use.getExportIncludeDirs ~= nil then 
+                        use.getExportIncludeDirs()
+                    end
                 end
             end
+        end)
             
+
+    zpm.build.addCommand(
+        { "reuses" },
+        function( v )                   
+                
+            if type( v.reuses ) ~= "table" then
+                v.reuses = { v.reuses }
+            end        
+
+            local projects = zpm.build.findProject( v.reuses, zpm.build._currentRoot.dependencies )
+
+            for _, project in ipairs( projects ) do
+        
+                for _, build in ipairs( project.build ) do
+                
+                    local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
+                
+                    zpm.build._currentBuild.getMayLink = build.getMayLink()
+                    zpm.build._currentBuild.getExportLinks = build.getExportLinks
+                    zpm.build._currentBuild.getExportDefines = build.getExportDefines
+                    zpm.build._currentBuild.getExportIncludeDirs = build.getExportIncludeDirs
+                end    
+            end    
+
+            return function()
+                for _, project in ipairs( projects ) do                    
+                    zpm.useProject( project )
+                end
+            end
         end)
 
     zpm.build.addCommand(
@@ -538,11 +582,29 @@ function zpm.build.loadCommands()
     
 end
 
-function zpm.build.findProject( name, projects )
+function zpm.build.findSubProject( name, projects )
 
     for _, project in ipairs( projects ) do
     
         if project.project == name then
+        
+            return project
+        
+        end
+    
+    end
+    
+    printf( zpm.colors.error .. "Could not find sub project '%s', did you load it correctly as a dependency?", name )
+    
+    return nil
+
+end
+
+function zpm.build.findProject( name, projects )
+
+    for _, project in ipairs( projects ) do
+    
+        if project.fullName == name then
         
             return project
         
@@ -677,6 +739,9 @@ function zpm.build.load()
 
     zpm.build.loadRoot()
     zpm.build.loadBuildPackages()
+
+    print(table.tostring(zpm.packages.root, 10), "@@@@@@@@@@@@@@@@")
+    print(table.tostring(zpm.packages.package, 10))
     
     zpm.build.loadCommands()
 end
