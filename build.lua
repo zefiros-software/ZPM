@@ -599,15 +599,13 @@ function zpm.build.loadCommands()
           
                     for boption, bvalue in pairs( zpm.build._currentBuild.options ) do 
                         
-                        if boption == option and value ~= bvalue then   
-                            print("%%%%%%%%%%%%%%%%%%")                        
+                        if boption == option and value ~= bvalue then                 
                             return {}     
                         end      
                     end
                         
                 end    
             end
-            print("@@@@@@@@@@@")
             return zpm.build.getCommands( v["do"] )   
         end)
 
