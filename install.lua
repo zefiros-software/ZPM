@@ -367,13 +367,16 @@ function zpm.install.updatePremake( checkOnly, verbose )
                 local latestPremake = zpm.util.downloadFromArchive( latest.url, "premake*" )[1]
             
                 local premakeFile = _PREMAKE_COMMAND
+                if premakeFile == zpm.install.getPremakeCmd( "5" ) then
                 
-                if os.isfile( premakeFile ) then
-                    zpm.util.hideProtectedFile( premakeFile )
+                    if os.isfile( premakeFile ) then
+                        zpm.util.hideProtectedFile( premakeFile )
+                    end
+                    
+                    zpm.assert( os.rename( latestPremake, premakeFile ), "Failed to install premake '%s'!", premakeFile )
+                
                 end
-                
-                zpm.assert( os.rename( latestPremake, premakeFile ), "Failed to install premake '%s'!", premakeFile )
-            
+
                 if os.isdir( zpm.install.getInstallDir() ) then
             
                     zpm.install.setup( false )
