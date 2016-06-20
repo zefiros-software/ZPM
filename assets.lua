@@ -68,7 +68,7 @@ function zpm.assets.loadCommands()
         
             for _, pattern in ipairs( v.files ) do
                 for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
-                    local target = path.join( folder, path.getrelative( repo, file) )
+                    local target = path.join( folder, path.getrelative( repo, file ) )
                     local targetDir = path.getdirectory( target )
                     if not os.isdir( targetDir ) then
                         zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
@@ -81,27 +81,43 @@ function zpm.assets.loadCommands()
         end)
 
     zpm.assets.addCommand(
-        { "urls" },
+        { "url", "to" },
         function( v, repo, folder )
-        
-            for _, url in ipairs( v.urls ) do
-                local targetDir = path.join( folder, url.to )
-                if not os.isdir( targetDir ) then
-                    zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-                end
-                                
-                zpm.util.download( url.url, targetDir, "*" )
-                    
-            end 
-            
+            local targetDir = path.join( folder, url.to )
+
+            if not os.isdir( targetDir ) then
+                zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
+            end
+                            
+            zpm.util.download( url.url, targetDir, "*" )
         end)
 
     zpm.assets.addCommand(
         { "system", "do" },
         function( v, repo, folder )   
             
-            if os.get() == v.system then
+            if os.is( v.system ) then
                 zpm.assets.executeCommands( v["do"], repo, folder )
+            end
+        end)
+
+    zpm.assets.addCommand(
+        { "is64bit", "do" },
+        function( v, repo, folder )   
+
+            if os.is64bit() == v.is64bit then
+                zpm.assets.executeCommands( v["do"], repo, folder )
+            end
+        end)
+
+    zpm.assets.addCommand(
+        { "is64bit", "do", "otherwise" },
+        function( v, repo, folder )   
+
+            if os.is64bit() == v.is64bit then
+                zpm.assets.executeCommands( v["do"], repo, folder )
+            else
+                zpm.assets.executeCommands( v["otherwise"], repo, folder )
             end
         end)
 
@@ -332,7 +348,7 @@ function zpm.assets.getShadowBuildVersion( build, version )
     
     for _, bversion in pairs( build ) do
         if premake.checkVersion( version, bversion.version ) then
-            return bversion.projects
+            return bversion["do"]
         end    
     end    
     

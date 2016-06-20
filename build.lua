@@ -60,6 +60,10 @@ function zpm.build.buildPackage( package )
             for _, build in ipairs( dep.build ) do
                 
                 zpm.build._currentBuild = build
+                zpm.build._currentBuild.exporting = false
+                if zpm.build._currentBuild.export == nil then
+                    zpm.build._currentBuild.export = {}
+                end
                             
                 zpm.build.queueCommand( function()
                     project( zpm.build.getProjectName( build.project, dep.fullName, dep.version ) )
@@ -72,6 +76,7 @@ function zpm.build.buildPackage( package )
                 zpm.build.queueCommands( build["do"] )
                 
             end    
+            
             
             zpm.build.resetCursor()
         end                
@@ -109,11 +114,90 @@ function zpm.build.setCursor( dep )
     zpm.build._currentProjects = dep.build
 end
 
+function zpm.build.exportProjectBuild( build )
+
+    for name, func in pairs( build.export ) do
+
+        _G[name]( func() )
+
+    end
+
+    return build
+end
+
+function zpm.build.exportReuseProjectBuild( build )
+
+    for name, func in pairs( build.export ) do
+
+        local expFunc = zpm.build._currentBuild.export[name]
+        local hasPrev = expFunc == nil
+
+        zpm.build._currentBuild.export[name] = function()
+            if not hasPrev then
+                expFunc()
+            end
+            if func ~= nil then
+                func()
+            end
+        end
+
+    end
+
+    return build
+end
+
+function zpm.build.exportEasyCommand( func, value )
+
+    local filters = table.arraycopy( zpm.build._currentFilters )
+    local prevFilters = table.arraycopy( zpm.build._previousFilters )
+
+    local export = zpm.build._currentBuild.export[func]
+    local hasPrev = export == nil
+    zpm.build._currentBuild.export[func] = function()
+        if not hasPrev then
+            export()
+        end
+        filter( filters )
+
+        _G[func]( value )
+
+        filter( prevFilters )
+    end  
+end
+
+function zpm.build.reexportCommand( func, use )
+
+    local filters = table.arraycopy( zpm.build._currentFilters )
+    local prevFilters = table.arraycopy( zpm.build._previousFilters )
+
+    local export = zpm.build._currentBuild.export[func]
+    local hasPrev = export == nil
+    zpm.build._currentBuild.export[func] = function()
+        if not hasPrev then
+            export()
+        end
+
+        filter( filters )
+
+        if use[func] ~= nil then 
+
+            use[func]()
+        end
+
+        filter( prevFilters )
+    end  
+end
+
 function zpm.build.addEasyCommand( func )
 
     zpm.build.addCommand(
         { func },
         function( v )
+
+            if zpm.build._currentBuild.exporting then
+                zpm.build.exportEasyCommand( func, v[func] )
+            end
+
             return function()   
                 _G[func]( v[func] )
             end
@@ -124,10 +208,18 @@ function zpm.build.addPathCommand( func )
 
     zpm.build.addCommand(
         { func },
-        function( v )
-                 
+        function( v )                 
+                
+            if type( v[func] ) ~= "table" then
+                v[func] = { v[func] }
+            end  
+
             for i, dir in ipairs( v[func] ) do
                 v[func][i] = path.join( zpm.build._currentExportPath, dir )
+            end
+
+            if zpm.build._currentBuild.exporting then
+                zpm.build.exportEasyCommand( func, v[func] )
             end
             
             return function()   
@@ -136,124 +228,6 @@ function zpm.build.addPathCommand( func )
         end)
 end
 
-function zpm.build.addExportPathCommand( func, getFunc, call )
-
-    zpm.build.addCommand(
-        { func },
-        function( v )
-
-            local filters = table.arraycopy( zpm.build._currentFilters )
-            local prevFilters = table.arraycopy( zpm.build._previousFilters )
-                 
-            for i, dir in ipairs( v[func] ) do
-                v[func][i] = path.join( zpm.build._currentExportPath, dir )
-            end           
-            
-            if zpm.build._currentBuild[getFunc] == nil then
-                zpm.build._currentBuild[getFunc] = function()
-                    filter( filters )
-                    
-                    _G[call]( v[func] )
-
-                    filter( prevFilters )
-                end
-            else
-                local dirs = zpm.build._currentBuild[getFunc]
-                zpm.build._currentBuild[getFunc] = function()
-                    dirs()
-
-                    filter( filters )
-                
-                    _G[call]( v[func] )
-
-                    filter( prevFilters )
-                end            
-            end
-            
-            return function()   
-                _G[call]( v[func] )
-            end
-        end)
-end
-
-function zpm.build.addReexportCommand( func, getFunc )
-
-    zpm.build.addCommand(
-        { func },
-        function( v )
-        
-            local use = zpm.build.findSubProject( v[func], zpm.build._currentProjects )
-
-            local filters = table.arraycopy( zpm.build._currentFilters )
-            local prevFilters = table.arraycopy( zpm.build._previousFilters )
-            
-            if zpm.build._currentBuild[getFunc] == nil then
-                zpm.build._currentBuild[getFunc] = function()
-                    filter( filters )
-                
-                    if use[getFunc] ~= nil then 
-                        use[getFunc]()
-                    end
-
-                    filter( prevFilters )
-                end
-            else
-                local values = zpm.build._currentBuild[getFunc]
-                zpm.build._currentBuild[getFunc] = function()
-                    
-                    values()
-
-                    filter( filters )
-                
-                    if use[getFunc] ~= nil then 
-                        use[getFunc]()
-                    end
-
-                    filter( prevFilters )
-                end            
-            end
-                        
-            return function()
-            end
-        end)
-end
-
-function zpm.build.addExportCommand( func, getFunc, call )
-
-    zpm.build.addCommand(
-        { func },
-        function( v )         
-
-            local filters = table.arraycopy( zpm.build._currentFilters )
-            local prevFilters = table.arraycopy( zpm.build._previousFilters )
-
-            local value = v[func]
-            if zpm.build._currentBuild[getFunc] == nil then
-                zpm.build._currentBuild[getFunc] = function()
-                    filter( filters )
-
-                    _G[call]( value )
-
-                    filter( prevFilters )
-                end
-            else
-                local val = zpm.build._currentBuild[getFunc]
-                zpm.build._currentBuild[getFunc] = function()
-                    val()
-                                        
-                    filter( filters )
-
-                    _G[call]( value )
-
-                    filter( prevFilters )
-                end            
-            end
-            
-            return function()   
-                _G[call]( value )
-            end
-        end)
-end
 
 function zpm.build.addBuildCommand( func )
 
@@ -358,17 +332,39 @@ function zpm.build.loadCommands()
     zpm.build.addPathCommand( "syslibdirs" )
     zpm.build.addPathCommand( "files" )
     zpm.build.addPathCommand( "forceincludes" )
-    
-    zpm.build.addExportPathCommand( "exportincludedirs", "getExportIncludeDirs", "includedirs" )
-    zpm.build.addExportCommand( "exportdefines", "getExportDefines", "defines" )
-    zpm.build.addExportCommand( "exportlinks", "getExportLinks", "links" )
-    
-    zpm.build.addExportPathCommand( "exportsysincludedirs", "getExportSysIncludeDirs", "sysincludedirs" )
-    
-    zpm.build.addReexportCommand( "reexportincludedirs", "getExportIncludeDirs" )
-    zpm.build.addReexportCommand( "reexportsysincludedirs", "getExportSysIncludeDirs" )
-    zpm.build.addReexportCommand( "reexportdefines", "getExportDefines" )
-    zpm.build.addReexportCommand( "reexportlinks", "getExportLinks" )
+
+    zpm.build.addCommand(
+        { "export" },
+        function( v )    
+
+            zpm.build._currentBuild.exporting = true
+
+            local commands = zpm.build.getCommands( v.export )
+
+            zpm.build._currentBuild.exporting = false
+
+            return commands
+        end)
+
+    zpm.build.addCommand(
+        { "reexport" },
+        function( v )    
+            
+            for _, reexport in ipairs( v.reexport ) do
+            
+                for command, project in pairs( reexport ) do
+        
+                    local use = zpm.build.findSubProject( project, zpm.build._currentProjects )
+
+                    if use.export ~= nil then
+                        zpm.build.reexportCommand( command, use.export )
+                    end
+                end
+
+            end
+
+            return commands
+        end)
 
     zpm.build.addCommand(
         { "headeronly" },
@@ -418,17 +414,7 @@ function zpm.build.loadCommands()
                         links( zpm.build.getProjectName( name, dep.fullName, dep.version ) )             
                     end  
                 
-                    if use.getExportLinks ~= nil then
-                        use.getExportLinks()
-                    end         
-                    
-                    if use.getExportDefines ~= nil then 
-                        use.getExportDefines()
-                    end
-
-                    if use.getExportIncludeDirs ~= nil then 
-                        use.getExportIncludeDirs()
-                    end
+                    zpm.build.exportProjectBuild( use )
                 end
 
                 for _, project in ipairs( projects ) do                    
@@ -457,48 +443,9 @@ function zpm.build.loadCommands()
             
                     if project.build ~= nil then
                         for _, build in ipairs( project.build ) do
-                        
-                            local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
-                        
-                            local getMayLink = zpm.build._currentBuild.getMayLink
-                            zpm.build._currentBuild.getMayLink = function()
-                                if getMayLink ~= nil then
-                                    getMayLink()
-                                end
-                                if build.getMayLink ~= nil then
-                                    build.getMayLink()
-                                end
-                            end
 
-                            local getExportLinks = zpm.build._currentBuild.getExportLinks
-                            zpm.build._currentBuild.getExportLinks = function()
-                                if build.getExportLinks ~= nil then
-                                    getExportLinks()
-                                end
-                                if build.getExportLinks ~= nil then
-                                    getExportLinks()
-                                end
-                            end 
+                            build = zpm.build.exportReuseProjectBuild( build )
 
-                            local getExportDefines = zpm.build._currentBuild.getExportDefines
-                            zpm.build._currentBuild.getExportDefines = function()
-                                if getExportDefines ~= nil then
-                                    getExportDefines()
-                                end
-                                if build.getExportDefines ~= nil then
-                                   build.getExportDefines()
-                                end
-                            end 
-
-                            local getExportIncludeDirs = zpm.build._currentBuild.getExportIncludeDirs
-                            zpm.build._currentBuild.getExportIncludeDirs = function()
-                                if getExportIncludeDirs ~= nil then
-                                    getExportIncludeDirs()
-                                end
-                                if build.getExportIncludeDirs ~= nil then
-                                    build.getExportIncludeDirs()
-                                end
-                            end
                         end    
                     end
                 end    

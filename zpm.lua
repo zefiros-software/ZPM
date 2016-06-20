@@ -24,7 +24,7 @@
 
 -- Module initialisation
 zpm = {}
-zpm._VERSION = "0.1.0-alpha"
+zpm._VERSION = "1.0.0-alpha"
 
 -- Dependencies
 zpm.JSON = (loadfile "json.lua")()
@@ -75,17 +75,7 @@ function zpm.useProject( project )
                 links( name )             
             end    
         
-            if build.getExportLinks ~= nil then
-                build.getExportLinks()            
-            end    
-            
-            if build.getExportDefines ~= nil then 
-                build.getExportDefines()
-            end
-            
-            if build.getExportIncludeDirs ~= nil then 
-                build.getExportIncludeDirs()
-            end
+            zpm.build.exportProjectBuild( build )
         end                
     
     end
@@ -173,7 +163,7 @@ function zpm.onLoad()
     initialiseCacheFolder()
     zpm.wget.initialise()
         
-    if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" then        
+    if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" and not _OPTIONS["version"] then        
         
         zpm.modules.setSearchDir()
         
@@ -216,6 +206,7 @@ newaction {
         premake.action.call( "update-bootstrap" )
         premake.action.call( "update-registry" )
         premake.action.call( "update-zpm" )
+        premake.action.call( "update-modules" )
    
         zpm.install.createSymLinks()     
     end

@@ -1,0 +1,58 @@
+site_name: ZPM
+site_url: http://pm.zefiros.eu
+repo_url: https://github.com/Zefiros-Software/ZPM
+site_description: The C++ package manager based on premake5.
+theme: united
+copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
+google_analytics: ['UA-29999374-2', 'pm.zefiros.eu']
+
+pages: 
+    - 'index.md'
+
+    - 'How To Use':
+        - 'how-to-use.md'
+        - 'Basics': 'basics/basics.md'
+        - 'Registries': 'basics/registries.md'
+        - 'Commands': 
+            - 'basics/commands.md'
+            - 'Installing': 'basics/commands/install.md'
+            - 'Updating': 'basics/commands/update.md'
+            - 'Flags': 'basics/commands/flags.md'
+
+    - 'Premake5': 'premake5/premake5.md'
+    - 'Packages': 
+        - 'packages/packages.md'
+        - 'Commands':
+            - 'Premake5': 'packages/commands/premake5.md'
+            - 'Special': 'packages/commands/special.md'
+            - 'Build': 'packages/commands/build.md'
+            - 'Path': 'packages/commands/path.md'
+            - 'Export': 'packages/commands/export.md'
+            - 'Reexport': 'packages/commands/reexport.md'
+            - 'Filters': 'packages/commands/filters.md'
+    #- 'Modules'
+    - 'Assets': 
+        - 'assets/assets.md'
+        - 'Using': 'assets/using.md'
+        - 'Publishing': 'assets/publishing.md'
+        - 'Commands':
+            - 'Download': 'assets/download.md'
+            - 'Filters': 'assets/filters.md'
+    #- 'Installer'
+
+extra_css:
+    - 'docs.css'
+
+extra_javascript:
+    - 'mathjax-loader.js'
+    - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
+markdown_extensions:
+    - toc:
+        permalink: True
+        separator: "_"
+    - admonition
+    - sane_lists
+    - pymdownx.arithmatex
+    - pymdownx.magiclink
+    - markdown_checklist.extension
