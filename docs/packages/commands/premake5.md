@@ -1,4 +1,4 @@
-# Premake5
+# Premake5 Commands
 These type of build command translate **directly** to premake5.
 
 ## Example
@@ -9,7 +9,11 @@ These type of build command translate **directly** to premake5.
         "project": "Example",
         "do": [
             {"architecture": "x86_64"},
-            {"endian": "Little" }
+            {"endian": "Little" },
+            {"links": [
+                "mpi",
+                "pthreads"
+            ]}
         ]
     }
 ]
@@ -75,3 +79,20 @@ These type of build command translate **directly** to premake5.
  * [undefines](https://github.com/premake/premake-core/wiki/undefines)
  * [vectorextensions](https://github.com/premake/premake-core/wiki/vectorextensions)
  * [warnings](https://github.com/premake/premake-core/wiki/warnings)
+ * [buildmessage](https://github.com/premake/premake-core/wiki/buildmessage)
+ * [postbuildmessage](https://github.com/premake/premake-core/wiki/postbuildmessage)
+ * [prebuildmessage](https://github.com/premake/premake-core/wiki/prebuildmessage)
+ * [prelinkmessage](https://github.com/premake/premake-core/wiki/prelinkmessage)
+
+----
+
+## Related Pages
+The following **build** commands are available:  
+
+* [Premake5](premake5) commands
+* [Build](build) commands
+* [Export](export) commands
+* [Reexport](reexport) commands
+* [Filters](filters) commands
+* [Path](path) commands
+* [Special](special) commands

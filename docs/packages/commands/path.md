@@ -1,0 +1,39 @@
+# Path Commands
+All path commands are executed as if they were executed from the (shadow) repository **root**.
+
+## Example
+```
+//_build.json
+[
+    {
+        "project": "Example",
+        "do": [
+            {"files": [
+                "src/*.cpp",
+                "include/*.h"
+            ]}
+        ]
+    }
+]
+```
+
+## Available Commands
+* [includedirs](https://github.com/premake/premake-core/wiki/includedirs)
+* [libdirs](https://github.com/premake/premake-core/wiki/libdirs)
+* [sysincludedirs](https://github.com/premake/premake-core/wiki/sysincludedirs)
+* [syslibdirs](https://github.com/premake/premake-core/wiki/syslibdirs)
+* [files](https://github.com/premake/premake-core/wiki/files)
+* [forceincludes](https://github.com/premake/premake-core/wiki/forceincludes)
+
+----
+
+## Related Pages
+The following **build** commands are available:  
+
+* [Premake5](premake5) commands
+* [Build](build) commands
+* [Export](export) commands
+* [Reexport](reexport) commands
+* [Filters](filters) commands
+* [Path](path) commands
+* [Special](special) commands
