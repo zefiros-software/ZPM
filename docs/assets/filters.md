@@ -1,10 +1,10 @@
 # Filters
 ZPM allows assets to filter different settings for target systems:
 
-* [`system`](#system) filters the target operating system.
-* [`is64bit`](#is64bit) filters the architecture.
+* [`system`](#system_command) filters the target operating system.
+* [`is64bit`](#is64bit_command) filters the architecture.
 
-## `system`
+## `system` Command
 Filters the target **operating system**.
 
 ```json
@@ -21,7 +21,7 @@ Where
 * `<commands>` is a list of **command** objects.
 
 ** Example **
-```
+```json
 //_assets.json
 [
     {"system": "windows",
@@ -35,7 +35,7 @@ Where
 
 ----
 
-## `is64bit`
+## `is64bit` Command
 We can also filter on **architecture** in two ways:
 ```json
 {"is64bit": <is64bit>,
@@ -61,7 +61,7 @@ Where
 * `otherwise` is executed when `is64bit` does **not** match the current system.
 
 ** Example **
-```
+```json
 //_assets.json
 [
     {"is64bit": true,

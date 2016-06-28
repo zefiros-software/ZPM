@@ -8,10 +8,11 @@ Usually the Git LFS repository and `_assets.json` are combined in the same repos
 ### Directory Layout
 Assets have the following *directory layout*:
 
- * [/_assets.json](#the_assetsjson_file) describes how the asset is **used**.
- * /* **files** and **directories** of the asset.
+ * [`/_assets.json`](_assets) describes how the asset is **used**.
+ * `/*` **files** and **directories** of the asset.
 
-Where 
+Where  
+
 * `_assets.json` is of the format `[<commands>]`.
 
 
@@ -27,8 +28,6 @@ Where
     ]}
 ]
 ```
-!!! alert-warning "Note"
-    The build file will always use the **head** of the repository in a shadow repository setting.
 
 ----
 
@@ -38,12 +37,10 @@ This means our `_assets.json` has to be adjusted likewise, and thus we have to s
 each **version** of the asset should be used. All commands are executed as if they
 were done from the shadow repository.
 
-
-
 ### Directory Layout
 Assets have the following *directory layout*:
 
- * [/_assets.json](#the_assetsjson_file) describes how the asset is **used**.
+ * [`/_assets.json`](_assets) describes how the asset is **used**.
 
 This `_assets.json` is of the format:
 
@@ -57,15 +54,15 @@ This `_assets.json` is of the format:
 ```
 Where  
 
-* `<version>` is **checked** against the required version.
+* `<version>` is [checked](../packages/general/versions) against the required version.
 * `do` is the asset build section we execute, we hit **first** when our `<version>` **matches**.
 
 And in the shadow repository:
 
- * /* **files** and **directories** of the asset.
+ * `/*` **files** and **directories** of the asset.
 
 ** Example **
-```
+```json
 //_assets.json
 [
     {
@@ -81,3 +78,6 @@ And in the shadow repository:
     }
 ]
 ```
+
+!!! alert-warning "Note"
+    The build file will always use the **head** of the repository in a shadow repository setting.

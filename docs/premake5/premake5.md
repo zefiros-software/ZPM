@@ -8,11 +8,3 @@ We even make using premake5 **easier**:
 
 !!! alert-success "Note"
     `premake5` always refers to the **newest** version of premake5!
-
-----
-
-## Related Pages
-
-* [Basics](../basics/basics)
-* [Registries](../basics/registries)
-* [Commands](../basics/command)

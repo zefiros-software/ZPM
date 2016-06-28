@@ -4,9 +4,12 @@
 
 We split the Packages section:
 
-* [Using](using) everything about using packages in your project.
-* [Publishing](publishing) publishing your own packages.
+* [Using](using) everything about **using** packages in your project.
+* [Publishing](publishing) **publishing** your own packages.
 
-## Commands
-If you want to know what commands you may use:
+And there are sections that are used by both **using** and **publishing**:
 
+* [_package.json](general/_package) How packages are **defined**.
+* [Versions](general/versions) How **versioning** works in ZPM.
+* [Dev](general/dev) How you can **develop** libraries using ZPM.
+* [Overrides](general/overrides) How you can **override** given build files.

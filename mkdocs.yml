@@ -5,11 +5,12 @@ site_description: The C++ package manager based on premake5.
 theme: united
 copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 google_analytics: ['UA-29999374-2', 'pm.zefiros.eu']
-
+theme_dir: docs
+strict: true
 pages: 
     - 'index.md'
 
-    - 'How To Use':
+    - 'Basics':
         - 'how-to-use.md'
         - 'Basics': 'basics/basics.md'
         - 'Registries': 'basics/registries.md'
@@ -19,18 +20,32 @@ pages:
             - 'Updating': 'basics/commands/update.md'
             - 'Flags': 'basics/commands/flags.md'
 
-    - 'Premake5': 'premake5/premake5.md'
+    - 'Premake5': 
+        - 'premake5/premake5.md'
+
+
     - 'Packages': 
         - 'packages/packages.md'
-        - 'Commands':
-            - 'Premake5': 'packages/commands/premake5.md'
-            - 'Special': 'packages/commands/special.md'
-            - 'Build': 'packages/commands/build.md'
-            - 'Path': 'packages/commands/path.md'
-            - 'Export': 'packages/commands/export.md'
-            - 'Reexport': 'packages/commands/reexport.md'
-            - 'Filters': 'packages/commands/filters.md'
-    #- 'Modules'
+        - 'General':
+            - 'Versions': 'packages/general/versions.md'
+            - 'Dev': 'packages/general/dev.md'
+            - 'Overrides': 'packages/general/overrides.md'
+            - '_package.json': 'packages/general/_package.md'
+        - 'Using': 'packages/using.md'
+        - 'Publishing': 'packages/publishing.md'
+        - 'Build':
+            - '_build.json': 'packages/_build.md'
+            - 'Commands':
+                - 'Premake5': 'packages/commands/premake5.md'
+                - 'Special': 'packages/commands/special.md'
+                - 'Build': 'packages/commands/build.md'
+                - 'Path': 'packages/commands/path.md'
+            - 'Regions':
+                - 'Export': 'packages/regions/export.md'
+                - 'Reexport': 'packages/regions/reexport.md'
+                - 'Filters': 'packages/regions/filters.md'
+                - 'Options': 'packages/regions/options.md'
+
     - 'Assets': 
         - 'assets/assets.md'
         - 'Using': 'assets/using.md'
@@ -38,7 +53,8 @@ pages:
         - 'Commands':
             - 'Download': 'assets/download.md'
             - 'Filters': 'assets/filters.md'
-    #- 'Installer'
+    - 'Installer': 'installer/installer.md'
+
 
 extra_css:
     - 'docs.css'

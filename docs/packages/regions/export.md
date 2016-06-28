@@ -1,11 +1,11 @@
-# Export Commands
+# Export Region
 Sometimes you define commands in your project that you also want
 to **export** to other projects using it. The `export` region allows you
 to do exactly this.
 
 ## Usage
 In the export region
-```
+```json
 {"export": [
     <commands>
 ]}
@@ -14,7 +14,7 @@ you define commands as usual. However these commands are **both**
 executed in the current project, and the projects that use it.
 
 ## Example
-```
+```json
 //_build.json
 [
     {
@@ -33,12 +33,15 @@ executed in the current project, and the projects that use it.
 ----
 
 ## Related Pages
-The following **build** commands are available:  
+These **build** commands are available:  
 
-* [Premake5](premake5) commands
-* [Build](build) commands
-* [Export](export) commands
-* [Reexport](reexport) commands
-* [Filters](filters) commands
-* [Path](path) commands
-* [Special](special) commands
+* [Premake5](../commands/premake5) commands
+* [Special](../commands/special) commands
+* [Build](../commands/build) commands
+* [Path](../commands/path) commands
+
+These **region** commands are available:  
+
+* [Reexport](reexport) regions
+* [Filters](filters) regions
+* [Options](options) regions

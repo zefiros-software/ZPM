@@ -1,10 +1,10 @@
 # Download
 By default ZPM does nothing with cloned assets, and thus we need to move the files.
 
-* [`url`](#url) downloads assets from an **url**.
-* [`files`](#files) downloads files from **Git LFS** to the assets folder.
+* [`url`](#url_command) downloads assets from an **url**.
+* [`files`](#files_command) downloads files from **Git LFS** to the assets folder.
 
-## `url`
+## `url` Command
 Downloads assets form a given archive or file url.
 
 ```json
@@ -20,7 +20,7 @@ Where
 
 ----
 
-## `files`
+## `files` Command
 We also support files from our **Git LFS** repository to be downloaded.
 
 ```json
@@ -35,7 +35,7 @@ Where
   Matched files are copied and we leave the relative path intact.
 
 ** Example **
-```
+```json
 //_assets.json
 [
     {"files": [

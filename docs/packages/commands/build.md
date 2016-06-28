@@ -8,35 +8,38 @@ Due to security concerns ZPM asks **permission** to use these.
 
 
 ## Example
-```
+```json
 //_build.json
 [
     {
         "project": "Example",
         "do": [
-            {"buildcommands": '"luac -o "%{cfg.objdir}/%{file.basename}.out" "%{file.relpath}"'}
+            {"buildcommands": "'luac -o '%{cfg.objdir}/%{file.basename}.out' '%{file.relpath}'"}
         ]
     }
 ]
 ```
 
 ## Available Commands
-* [buildcommands](https://github.com/premake/premake-core/wiki/buildcommands)
-* [debugcommand](https://github.com/premake/premake-core/wiki/debugcommand)
-* [debugconnectcommands](https://github.com/premake/premake-core/wiki/debugconnectcommands)
-* [debugstartupcommands](https://github.com/premake/premake-core/wiki/debugstartupcommands)
-* [postbuildcommands](https://github.com/premake/premake-core/wiki/postbuildcommands)
-* [prebuildcommands](https://github.com/premake/premake-core/wiki/prebuildcommands)
+* [`buildcommands`](https://github.com/premake/premake-core/wiki/buildcommands)
+* [`debugcommand`](https://github.com/premake/premake-core/wiki/debugcommand)
+* [`debugconnectcommands`](https://github.com/premake/premake-core/wiki/debugconnectcommands)
+* [`debugstartupcommands`](https://github.com/premake/premake-core/wiki/debugstartupcommands)
+* [`postbuildcommands`](https://github.com/premake/premake-core/wiki/postbuildcommands)
+* [`prebuildcommands`](https://github.com/premake/premake-core/wiki/prebuildcommands)
 
 ----
 
 ## Related Pages
-The following **build** commands are available:  
+These **build** commands are available:  
 
 * [Premake5](premake5) commands
-* [Build](build) commands
-* [Export](export) commands
-* [Reexport](reexport) commands
-* [Filters](filters) commands
-* [Path](path) commands
 * [Special](special) commands
+* [Path](path) commands
+
+These **region** commands are available:  
+
+* [Export](../regions/export) regions
+* [Reexport](../regions/reexport) regions
+* [Filters](../regions/filters) regions
+* [Options](../regions/options) regions

@@ -35,7 +35,7 @@ ZPM has a few dependencies:
 ```
 ```
 
-!!! alert-danger "Alert"
+!!! alert-danger "Note"
     A restart may be required since the `path` variable has changed.
 
 ### Linux
@@ -54,11 +54,28 @@ Test whether you get output similar to underneath when you run `premake5 --versi
 
 ----
 
+## Bugs
+When a bug is found, please insert it in the issue tracker, so we can resolve it as quickly as we can.
+
+## Contributing
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request
+
+## Authors
+* Mick van Duijn <m.vanduijn@zefiros.eu>
+* Paul Visscher <p.e.visscher@zefiros.eu>
+* Koen Visscher <k.m.visscher@zefiros.eu>
+
+----
+
 ## Citing ZPM
 When you use ZPM as part of a scientific publication, we would love you to cite this project so the word gets spread. This BibTex snippet can be used:
 
 ```
-@misc{bsplib2016,
+@misc{zpm2016,
   author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
   title     = {{ZPM}: the {C++} package manager built for everyone who uses \url{(http://premake.github.io/}.},
   abstract  = {{ZPM} is the {C++} package manager built for everyone who uses \url{http://premake.github.io/}! {ZPM} is designed to make it easy to use libraries, modules and assets.},

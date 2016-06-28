@@ -1,0 +1,119 @@
+# _package.json File
+The `_package.json` is used for both **packages** and the **root package**.
+A `_package.json` is located in the **root** of the project and has the form:
+
+```json
+{
+    "name": "<vendor>/<name>",
+    "description": "<description>",
+    "keywords": [ 
+        <keywords> 
+    ],
+    "website": "<website>",
+    "license": "<license>",
+    "authors": [
+        {
+            "name": "<author-name>",
+            "email": "<author-email>",
+            "website": "<author-website>"
+        }
+    ],
+    "requires": [
+        {
+            "name": "<require-vendor>/<require-name>",
+            "version": "<require-version>",
+            "options": [
+                {"project": "<require-option-project>",
+                 "options": {
+                     <require-options>
+                 }}
+            ],
+            "overrides": [
+                {"project": "<require-override-project>",
+                 "do": [
+                    <require-overrides>
+                ]}
+            ]
+        }
+    ],
+    "assets": [
+        {
+            "name": "<asset-vendor>/<asset-name>",
+            "version": "<asset-version>"
+        }
+    ],
+    "install": [
+        <install>
+    ],
+    "dev": {
+        <dev-settings>
+    }
+}
+```
+Where
+
+** Root Package Required Only**
+The `name` descriptor is only used in the root package.
+
+* `vendor` What vendor is this package from.
+* `name` How is the package called.
+
+** Optional **
+
+* `description` A description of the project.
+* `keywords` An array of strings containing keywords of the project.
+* `websites` The website where the project is hosted.
+* `license` Under what license this project falls.
+
+----
+
+* `author-name` The name of the author.
+* `author-email` The authors email address.
+* `author-website` The authors website.
+
+----
+
+** requires **
+
+* `require-vendor` What vendor are we requiring a package from.
+* `require-name` How is the package called.
+* `require-version` What [version](versions) do you want.  
+
+----
+
+* `require-option-project` What projects are we setting options on in this package.
+* `require-options` What options do we set. See [this](regions/options) for more information.  
+
+----
+
+* `require-override-project` What projects are we adding build settings to in this package.
+* `require-overrides` Specify a new block of commands that will be [appended](overrides).
+
+----
+
+** assets **
+
+* `asset-vendor` What vendor are we requiring a asset from.
+* `asset-name` How is the asset called.
+* `asset-version` What [version](versions) do you want.
+
+----
+
+** install **
+
+* `install` a list of files that contain [installer](../../installer/installer.md) commands.
+
+----
+
+** dev **
+
+* `dev` This section allows you to define `requires`, `assets` and `install` sections that are 
+executed only when this is the **root** package. See [this](dev) for more information.
+
+----
+
+## Related Pages
+
+* [Dev](dev)
+* [Overrides](overrides)
+* [Versions](versions)

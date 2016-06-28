@@ -2,7 +2,7 @@
 All path commands are executed as if they were executed from the (shadow) repository **root**.
 
 ## Example
-```
+```json
 //_build.json
 [
     {
@@ -18,22 +18,25 @@ All path commands are executed as if they were executed from the (shadow) reposi
 ```
 
 ## Available Commands
-* [includedirs](https://github.com/premake/premake-core/wiki/includedirs)
-* [libdirs](https://github.com/premake/premake-core/wiki/libdirs)
-* [sysincludedirs](https://github.com/premake/premake-core/wiki/sysincludedirs)
-* [syslibdirs](https://github.com/premake/premake-core/wiki/syslibdirs)
-* [files](https://github.com/premake/premake-core/wiki/files)
-* [forceincludes](https://github.com/premake/premake-core/wiki/forceincludes)
+* [`includedirs`](https://github.com/premake/premake-core/wiki/includedirs)
+* [`libdirs`](https://github.com/premake/premake-core/wiki/libdirs)
+* [`sysincludedirs`](https://github.com/premake/premake-core/wiki/sysincludedirs)
+* [`syslibdirs`](https://github.com/premake/premake-core/wiki/syslibdirs)
+* [`files`](https://github.com/premake/premake-core/wiki/files)
+* [`forceincludes`](https://github.com/premake/premake-core/wiki/forceincludes)
 
 ----
 
 ## Related Pages
-The following **build** commands are available:  
+These **build** commands are available:  
 
 * [Premake5](premake5) commands
-* [Build](build) commands
-* [Export](export) commands
-* [Reexport](reexport) commands
-* [Filters](filters) commands
-* [Path](path) commands
 * [Special](special) commands
+* [Build](build) commands
+
+These **region** commands are available:  
+
+* [Export](../regions/export) regions
+* [Reexport](../regions/reexport) regions
+* [Filters](../regions/filters) regions
+* [Options](../regions/options) regions

@@ -73,3 +73,7 @@ body {
 .alert-danger .alert-link {
     color: #953b39;
 }
+
+.nav {
+    font-size: 15px;
+}
