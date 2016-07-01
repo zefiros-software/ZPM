@@ -47,7 +47,7 @@ ZPM has a few dependencies:
 
 ## Testing
 Test whether you get output similar to underneath when you run `premake5 --version`.
-<p align="center"><img src="/images/version-check.gif" alt="ZPM Install Check"></p>
+<p align="center"><img src="images/version-check.gif" alt="ZPM Install Check"></p>
 
 ##
 
