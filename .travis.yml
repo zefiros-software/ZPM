@@ -1,10 +1,8 @@
 sudo: required
 dist: trusty
 install:
-    - ./install-docs.sh
-matrix:
-    fast_finish: true
-
-after_deploy:
     - chmod +x deploy-docs.sh
+    - chmod +x install-docs.sh
+    - ./install-docs.sh
+after_deploy:
     - ./deploy-docs.sh
