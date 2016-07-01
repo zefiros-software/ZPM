@@ -467,18 +467,20 @@ To install, pick your os and execute the command!</p>
 <p>Note that both Git and Git LFS need to be available from the command line, and thus need to be installed in your path variable. You can check by typing <code>git --version</code> in your shell.</p>
 </div>
 <h3 id="windows">Windows<a class="headerlink" href="#windows" title="Permanent link">&para;</a></h3>
-<pre><code></code></pre>
+<p>Execute:</p>
+<pre><code>powershell -command &quot;Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/install-zpm.bat -OutFile install.bat&quot; &amp;&amp; install.bat &amp;&amp; rm install.bat
+</code></pre>
 
 <div class="admonition alert-danger">
 <p class="admonition-title">Note</p>
 <p>A restart may be required since the <code>path</code> variable has changed.</p>
 </div>
 <h3 id="linux">Linux<a class="headerlink" href="#linux" title="Permanent link">&para;</a></h3>
-<pre><code></code></pre>
+<pre><code>wget -O - https://github.com/Zefiros-Software/ZPM/blob/master/install-zpm.sh | bash
+</code></pre>
 
 <h3 id="osx">OSX<a class="headerlink" href="#osx" title="Permanent link">&para;</a></h3>
-<pre><code></code></pre>
-
+<p>Currently not yet fully supported.</p>
 <h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permanent link">&para;</a></h2>
 <p>Test whether you get output similar to underneath when you run <code>premake5 --version</code>.
 <p align="center"><img src="images/version-check.gif" alt="ZPM Install Check"></p></p>
@@ -507,7 +509,7 @@ To install, pick your os and execute the command!</p>
   author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
   title     = {{ZPM}: the {C++} package manager built for everyone who uses \url{(http://premake.github.io/}.},
   abstract  = {{ZPM} is the {C++} package manager built for everyone who uses \url{http://premake.github.io/}! {ZPM} is designed to make it easy to use libraries, modules and assets.},
-  howpublished = {\url{http://pm.zefiros.eu/}}
+  howpublished = {\url{http://zpm.zefiros.eu/}}
 }
 </code></pre>
 
