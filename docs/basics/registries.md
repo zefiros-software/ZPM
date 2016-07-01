@@ -1,4 +1,3 @@
-
 # Registries
 A registry is a collection of **modules**, **packages**, **assets**, and sometimes **other** registries.
 
@@ -13,14 +12,15 @@ Registries are loaded in the **order** described above, and duplicate names will
 !!! alert-success "Note"
     Since duplicate names are ignored, the local registries can be used to override other registries.
 
+## Definition
 The registry definition consists of a listing of a name and a repository, and are listed in a `_registries.json`:
 
 ```json
 //_registries.json
 [
     {
-        "name": "Zefiros-Software",
-        "repository": "https://<url-to-repo>/manifest.git"
+        "name": "<name>",
+        "repository": "https://<repository>.git"
     }
 ]
 ```

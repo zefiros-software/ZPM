@@ -14,6 +14,11 @@ pages:
         - 'how-to-use.md'
         - 'Basics': 'basics/basics.md'
         - 'Registries': 'basics/registries.md'
+        - 'Configuration': 'basics/config.md'
+        - 'Adding': 
+            - 'Packages': 'basics/manifest.md'
+            - 'Assets': 'basics/assets.md'
+            - 'Modules': 'basics/modules.md'
         - 'Commands': 
             - 'basics/commands.md'
             - 'Installing': 'basics/commands/install.md'
@@ -22,7 +27,8 @@ pages:
 
     - 'Premake5': 
         - 'premake5/premake5.md'
-
+        - 'Using': 'premake5/using.md'
+        - 'Publishing Modules': 'premake5/publishing.md'
 
     - 'Packages': 
         - 'packages/packages.md'

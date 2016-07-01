@@ -50,15 +50,14 @@ A `_package.json` is located in the **root** of the project and has the form:
     }
 }
 ```
-Where
 
-** Root Package Required Only**
+### Root Package Required Only
 The `name` descriptor is only used in the root package.
 
 * `vendor` What vendor is this package from.
 * `name` How is the package called.
 
-** Optional **
+### Optional
 
 * `description` A description of the project.
 * `keywords` An array of strings containing keywords of the project.
@@ -73,7 +72,7 @@ The `name` descriptor is only used in the root package.
 
 ----
 
-** requires **
+### requires 
 
 * `require-vendor` What vendor are we requiring a package from.
 * `require-name` How is the package called.
@@ -91,7 +90,7 @@ The `name` descriptor is only used in the root package.
 
 ----
 
-** assets **
+### assets 
 
 * `asset-vendor` What vendor are we requiring a asset from.
 * `asset-name` How is the asset called.
@@ -99,13 +98,13 @@ The `name` descriptor is only used in the root package.
 
 ----
 
-** install **
+### install 
 
 * `install` a list of files that contain [installer](../../installer/installer.md) commands.
 
 ----
 
-** dev **
+### dev 
 
 * `dev` This section allows you to define `requires`, `assets` and `install` sections that are 
 executed only when this is the **root** package. See [this](dev) for more information.
