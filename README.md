@@ -2,6 +2,11 @@
 ZPM is the C++ package manager built for everyone who uses [premake](http://premake.github.io/)!  
 We designed it to make it easy to use **libraries**, **modules** and **assets**.
 
+# PLEASE NOTE: THIS PROJECT IS IN BETA
+
+#Documentation is [HERE](http://oss.zefiros.eu/ZPM)
+
+
 ## Why ZPM?
 
 * **Easy, cross-platform** package manager
