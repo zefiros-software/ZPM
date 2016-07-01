@@ -30,8 +30,9 @@ ZPM has a few dependencies:
     Note that both Git and Git LFS need to be available from the command line, and thus need to be installed in your path variable. You can check by typing `git --version` in your shell.
 
 ### Windows
-
+Execute:
 ```
+powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/install-zpm.bat -OutFile install.bat" && install.bat && rm install.bat
 ```
 
 !!! alert-danger "Note"
@@ -39,11 +40,11 @@ ZPM has a few dependencies:
 
 ### Linux
 ```
+wget -O - https://github.com/Zefiros-Software/ZPM/blob/master/install-zpm.sh | bash
 ```
 
 ### OSX
-```
-```
+Currently not yet fully supported.
 
 ## Testing
 Test whether you get output similar to underneath when you run `premake5 --version`.
@@ -78,7 +79,7 @@ When you use ZPM as part of a scientific publication, we would love you to cite 
   author    = {Mick van Duijn and Koen Visscher and Paul Visscher},
   title     = {{ZPM}: the {C++} package manager built for everyone who uses \url{(http://premake.github.io/}.},
   abstract  = {{ZPM} is the {C++} package manager built for everyone who uses \url{http://premake.github.io/}! {ZPM} is designed to make it easy to use libraries, modules and assets.},
-  howpublished = {\url{http://pm.zefiros.eu/}}
+  howpublished = {\url{http://zpm.zefiros.eu/}}
 }
 ```
 
