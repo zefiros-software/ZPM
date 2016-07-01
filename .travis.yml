@@ -6,6 +6,7 @@ python:
 install:
     - chmod +x deploy-docs.sh
     - chmod +x install-docs.sh
+script:
     - ./install-docs.sh
 after_deploy:
     - ./deploy-docs.sh
