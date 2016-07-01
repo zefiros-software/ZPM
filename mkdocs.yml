@@ -4,7 +4,7 @@ repo_url: https://github.com/Zefiros-Software/ZPM
 site_description: The C++ package manager based on premake5.
 theme: united
 copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
-google_analytics: ['UA-29999374-2', 'pm.zefiros.eu']
+google_analytics: ['UA-29999374-3', 'pm.zefiros.eu']
 theme_dir: docs
 pages: 
     - 'index.md'
