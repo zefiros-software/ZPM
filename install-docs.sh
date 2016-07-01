@@ -1,2 +1,4 @@
-pip install pymdown-extensions
-pip install markdown-checklist
+pip install mkdocs -U
+pip install mkdocs-bootswatch -U
+pip install pymdown-extensions -U
+pip install markdown-checklist -U
