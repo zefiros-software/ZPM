@@ -1,9 +1,9 @@
 sudo: required
 dist: trusty
 install:
-- ./install-docs.sh
+    - ./install-docs.sh
 matrix:
     fast_finish: true
 
 after_deploy:
-    ./deploy-docs.sh
+    - ./deploy-docs.sh
