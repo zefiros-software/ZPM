@@ -5,7 +5,7 @@
         "token": false
     },
     "install": {
-        "repository": "https://zefiros.eu/stash/scm/zpm/zpm.git",
+        "repository": "https://github.com/Zefiros-Software/ZPM",
         "directory": "zpm",
         "modulesDirectory": "modules",
         "minReqVersion": ">5.0.0-alpha5",
