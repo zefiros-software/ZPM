@@ -6,4 +6,5 @@ matrix:
     fast_finish: true
 
 after_deploy:
+    - chmod +x deploy-docs.sh
     - ./deploy-docs.sh
