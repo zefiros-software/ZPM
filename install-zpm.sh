@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo rm -rf ~/zpm-install || true
 sudo rm -rf /usr/local/zpm/ || true
 sudo rm -rf /var/tmp/zpm-cache/ || true
