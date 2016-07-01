@@ -6,7 +6,7 @@ theme: united
 copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 google_analytics: ['UA-29999374-2', 'pm.zefiros.eu']
 theme_dir: docs
-strict: true
+
 pages: 
     - 'index.md'
 
