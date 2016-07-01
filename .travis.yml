@@ -1,6 +1,9 @@
 sudo: required
 dist: trusty
+python:
+  - "3.5"
 install:
+    - pip install --upgrade pip
     - chmod +x deploy-docs.sh
     - chmod +x install-docs.sh
     - ./install-docs.sh
