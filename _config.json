@@ -10,11 +10,11 @@
         "modulesDirectory": "modules",
         "minReqVersion": ">5.0.0-alpha5",
         "bootstrap": {
-            "repository": "https://zefiros.eu/stash/scm/zpm/bootstrap.git",
+            "repository": "https://github.com/Zefiros-Software/Bootstrap.git",
             "directory": "bootstrap"
         }  ,
         "registry": {
-            "repository": "https://zefiros.eu/stash/scm/zpm/manifest.git",
+            "repository": "https://github.com/Zefiros-Software/Manifest.git",
             "directory": "registry",
             "directories": "registries",
             "fileName": "_registries.json"
