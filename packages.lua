@@ -485,6 +485,9 @@ function zpm.packages.checkDependencyValidity( package )
 
             zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
             zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
+                
+            zpm.assert( mvendor:len() >= 3, "'vendor' supplied in '_package.json' 'modules' field must at least be 3 characters!" )
+            zpm.assert( mname:len() >= 3, "'name' supplied in '_package.json' 'modules' field must at least be 3 characters!" )
                                       
             zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'modules' field must be alpha numeric!" )
             zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'modules' field must be alpha numeric!" )
@@ -508,6 +511,9 @@ function zpm.packages.checkDependencyValidity( package )
 
             zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
             zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
+                
+            zpm.assert( mvendor:len() >= 3, "'vendor' supplied in '_package.json' 'assets' field must at least be 3 characters!" )
+            zpm.assert( mname:len() >= 3, "'name' supplied in '_package.json' 'assets' field must at least be 3 characters!" )
                                       
             zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'assets' field must be alpha numeric!" )
             zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'assets' field must be alpha numeric!" )
@@ -529,7 +535,10 @@ function zpm.packages.checkDependencyValidity( package )
             
             zpm.assert( rvendor:len() <= 50, "'vendor' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
             zpm.assert( rname:len() <= 50, "'name' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
-                                      
+                
+            zpm.assert( mvendor:len() >= 3, "'vendor' supplied in '_package.json' 'require' field must at least be 3 characters!" )
+            zpm.assert( mname:len() >= 3, "'name' supplied in '_package.json' 'require' field must at least be 3 characters!" )
+
             zpm.assert( zpm.util.isAlphaNumeric( rvendor ), "The 'vendor' supplied in '_package.json' 'require' field must be alpha numeric!" )
             zpm.assert( zpm.util.isAlphaNumeric( rname ), "The 'name' supplied in '_package.json' 'require' field must be alpha numeric!" )
 

@@ -206,16 +206,19 @@ function zpm.assets.loadFile( file )
         zpm.assert( vendor ~= nil, "No 'vendor' supplied in asset definition!" )
         zpm.assert( asset.repository ~= nil, "No 'repository' supplied in asset definition!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in asset defintion must be alpha numeric!" )
-        zpm.assert( name:len() <= 50, "'name' supplied in asset defintion exceeds maximum size of 50 characters!" )
+        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in asset definition must be alpha numeric!" )
+        zpm.assert( name:len() <= 50, "'name' supplied in asset definition exceeds maximum size of 50 characters!" )
+        zpm.assert( name:len() >= 3, "'name' supplied in asset definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in asset defintion must be alpha numeric!" )
-        zpm.assert( vendor:len() <= 50, "'vendor' supplied in asset defintion exceeds maximum size of 50 characters!" )
+
+        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in asset definition must be alpha numeric!" )
+        zpm.assert( vendor:len() <= 50, "'vendor' supplied in asset definition exceeds maximum size of 50 characters!" )
+        zpm.assert( vendor:len() >= 3, "'vendor' supplied in asset definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isGitUrl( asset.repository ), "'repository' supplied in asset defintion is not a valid https git url!" )
+        zpm.assert( zpm.util.isGitUrl( asset.repository ), "'repository' supplied in asset definition is not a valid https git url!" )
                 
         if asset.shadowRepository ~= nil then
-            zpm.assert( zpm.util.isGitUrl( asset.shadowRepository ), "'shadow-repository' supplied in manifest defintion is not a valid https git url!" )
+            zpm.assert( zpm.util.isGitUrl( asset.shadowRepository ), "'shadow-repository' supplied in manifest definition is not a valid https git url!" )
             isShadow = true
         end
         

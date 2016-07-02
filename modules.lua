@@ -222,13 +222,15 @@ function zpm.modules.loadFile( file )
         zpm.assert( vendor ~= nil, "No 'vendor' supplied in module definition!" )
         zpm.assert( module.repository ~= nil, "No 'repository' supplied in module definition!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in module defintion must be alpha numeric!" )
-        zpm.assert( name:len() <= 50, "'name' supplied in module defintion exceeds maximum size of 50 characters!" )
+        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in module definition must be alpha numeric!" )
+        zpm.assert( name:len() <= 50, "'name' supplied in module definition exceeds maximum size of 50 characters!" )
+        zpm.assert( name:len() >= 3, "'name' supplied in module definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in module defintion must be alpha numeric!" )
-        zpm.assert( vendor:len() <= 50, "'vendor' supplied in module defintion exceeds maximum size of 50 characters!" )
+        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in module definition must be alpha numeric!" )
+        zpm.assert( vendor:len() <= 50, "'vendor' supplied in module definition exceeds maximum size of 50 characters!" )
+        zpm.assert( vendor:len() >= 3, "'vendor' supplied in module definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isGitUrl( module.repository ), "'repository' supplied in module defintion is not a valid https git url!" )
+        zpm.assert( zpm.util.isGitUrl( module.repository ), "'repository' supplied in module definition is not a valid https git url!" )
         
         if zpm.modules.modules[ vendor ] == nil then
             zpm.modules.modules[ vendor ] = {}

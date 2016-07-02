@@ -64,16 +64,18 @@ function zpm.manifest.loadFile( file )
         zpm.assert( vendor ~= nil, "No 'vendor' supplied in manifest definition!" )
         zpm.assert( manifest.repository ~= nil, "No 'repository' supplied in manifest definition!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in manifest defintion must be alpha numeric!" )
-        zpm.assert( name:len() <= 50, "'name' supplied in manifest defintion exceeds maximum size of 50 characters!" )
+        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in manifest definition must be alpha numeric!" )
+        zpm.assert( name:len() <= 50, "'name' supplied in manifest definition exceeds maximum size of 50 characters!" )
+        zpm.assert( name:len() >= 3, "'name' supplied in manifest definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in manifest defintion must be alpha numeric!" )
-        zpm.assert( vendor:len() <= 50, "'vendor' supplied in manifest defintion exceeds maximum size of 50 characters!" )
+        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in manifest definition must be alpha numeric!" )
+        zpm.assert( vendor:len() <= 50, "'vendor' supplied in manifest definition exceeds maximum size of 50 characters!" )
+        zpm.assert( vendor:len() >= 3, "'vendor' supplied in manifest definition must at least be 3 characters!" )
         
-        zpm.assert( zpm.util.isGitUrl( manifest.repository ), "'repository' supplied in manifest defintion is not a valid https git url!" )
+        zpm.assert( zpm.util.isGitUrl( manifest.repository ), "'repository' supplied in manifest definition is not a valid https git url!" )
         
         if manifest.shadowRepository ~= nil then
-            zpm.assert( zpm.util.isGitUrl( manifest.shadowRepository ), "'shadow-repository' supplied in manifest defintion is not a valid https git url!" )
+            zpm.assert( zpm.util.isGitUrl( manifest.shadowRepository ), "'shadow-repository' supplied in manifest definition is not a valid https git url!" )
             isShadow = true
         end
         

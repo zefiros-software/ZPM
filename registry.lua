@@ -90,9 +90,10 @@ function zpm.registry.loadFile( registry )
     zpm.assert( registry.name ~= nil, "No 'name' supplied in registry definition!" )
     zpm.assert( registry.repository ~= nil, "No 'repository' supplied in registry definition!" )
     
-    zpm.assert( zpm.util.isAlphaNumeric( registry.name ), "'name' supplied in registry defintion must be alpha numeric!" )
-    zpm.assert( registry.name:len() <= 50, "'name' supplied in registry defintion exceeds maximum size of 50 characters!" )
-    zpm.assert( zpm.util.isGitUrl( registry.repository ), "'repository' supplied in registry defintion is not a valid https git url!" )
+    zpm.assert( zpm.util.isAlphaNumeric( registry.name ), "'name' supplied in registry definition must be alpha numeric!" )
+    zpm.assert( registry.name:len() <= 50, "'name' supplied in registry definition exceeds maximum size of 50 characters!" )
+    zpm.assert( registry.name:len() >= 3, "'name' supplied in registry definition must be at least 3 characters!" )
+    zpm.assert( zpm.util.isGitUrl( registry.repository ), "'repository' supplied in registry definition is not a valid https git url!" )
 
     if zpm.registry.registries[registry.name] ~= nil then
         return nil
