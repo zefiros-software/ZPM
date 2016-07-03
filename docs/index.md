@@ -34,7 +34,7 @@ ZPM has a few dependencies:
 ### Windows
 Execute:
 ```
-powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/install-zpm.bat -OutFile install.bat" && install.bat && rm install.bat
+powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile install.bat" && install.bat && rm install.bat
 ```
 
 !!! alert-danger "Note"
@@ -42,7 +42,7 @@ powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Ze
 
 ### Linux
 ```
-wget -O - https://github.com/Zefiros-Software/ZPM/blob/master/install-zpm.sh | bash
+wget -O - https://github.com/Zefiros-Software/ZPM/blob/master/script/install-zpm.sh | bash
 ```
 
 ### OSX
