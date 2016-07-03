@@ -8,6 +8,7 @@ install:
     - chmod +x ./script/deploy-docs.sh
     - chmod +x ./script/install-docs.sh
 script:
+    - ll
     - cd script/ && python test-install.py && cd ../
     - ./script/install-docs.sh
     - ./script/deploy-docs.sh
