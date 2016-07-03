@@ -8,5 +8,6 @@ install:
     - chmod +x ./script/install-docs.sh
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash ; fi
+    - premake5 --version
     - ./script/install-docs.sh
     - ./script/deploy-docs.sh
