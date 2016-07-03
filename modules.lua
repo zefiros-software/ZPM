@@ -224,11 +224,11 @@ function zpm.modules.loadFile( file )
         
         zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in module definition must be alpha numeric!" )
         zpm.assert( name:len() <= 50, "'name' supplied in module definition exceeds maximum size of 50 characters!" )
-        zpm.assert( name:len() >= 3, "'name' supplied in module definition must at least be 3 characters!" )
+        zpm.assert( name:len() >= 2, "'name' supplied in module definition must at least be 2 characters!" )
         
         zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in module definition must be alpha numeric!" )
         zpm.assert( vendor:len() <= 50, "'vendor' supplied in module definition exceeds maximum size of 50 characters!" )
-        zpm.assert( vendor:len() >= 3, "'vendor' supplied in module definition must at least be 3 characters!" )
+        zpm.assert( vendor:len() >= 2, "'vendor' supplied in module definition must at least be 2 characters!" )
         
         zpm.assert( zpm.util.isGitUrl( module.repository ), "'repository' supplied in module definition is not a valid https git url!" )
         

@@ -4,11 +4,10 @@ language: python
 python:
   - 3.5
 install:
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash ; fi
     - chmod +x ./script/deploy-docs.sh
     - chmod +x ./script/install-docs.sh
 script:
-    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash ; fi
-    - premake5 --version | grep 'Zefiros Package Manager - (c) Zefiros Software 2016' &> /dev/null
-    - if [ $? == 0 ]; then exit -1; fi
+    - python ./script/test-install.py
     - ./script/install-docs.sh
     - ./script/deploy-docs.sh

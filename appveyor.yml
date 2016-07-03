@@ -1,0 +1,10 @@
+platform:
+  - Win32
+environment:
+    PYTHON: "C:\\Python35"
+build: off
+install:
+    - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+    - powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile install.bat" && install.bat && rm install.bat
+test_script:
+    - python ./script/test-install.py

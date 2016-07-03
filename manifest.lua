@@ -66,11 +66,11 @@ function zpm.manifest.loadFile( file )
         
         zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in manifest definition must be alpha numeric!" )
         zpm.assert( name:len() <= 50, "'name' supplied in manifest definition exceeds maximum size of 50 characters!" )
-        zpm.assert( name:len() >= 3, "'name' supplied in manifest definition must at least be 3 characters!" )
+        zpm.assert( name:len() >= 2, "'name' supplied in manifest definition must at least be 2 characters!" )
         
         zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in manifest definition must be alpha numeric!" )
         zpm.assert( vendor:len() <= 50, "'vendor' supplied in manifest definition exceeds maximum size of 50 characters!" )
-        zpm.assert( vendor:len() >= 3, "'vendor' supplied in manifest definition must at least be 3 characters!" )
+        zpm.assert( vendor:len() >= 2, "'vendor' supplied in manifest definition must at least be 2 characters!" )
         
         zpm.assert( zpm.util.isGitUrl( manifest.repository ), "'repository' supplied in manifest definition is not a valid https git url!" )
         
