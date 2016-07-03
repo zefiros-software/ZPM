@@ -42,7 +42,7 @@ powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Ze
 
 ### Linux
 ```
-wget -O - https://github.com/Zefiros-Software/ZPM/blob/master/script/install-zpm.sh | bash
+wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash
 ```
 
 ### OSX
