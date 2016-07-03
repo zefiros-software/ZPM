@@ -1,7 +1,9 @@
 import subprocess
 import os
 
-output = str(subprocess.check_output( "premake5" ))
+output = str(subprocess.check_output( "premake5 gmake", universal_newlines=True ))
+
+print( output )
 
 if ("Zefiros Package Manager - (c) Zefiros Software" not in output or
     "Loading The Zefiros Bootstrap version" not in output or
