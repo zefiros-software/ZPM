@@ -1,10 +1,14 @@
 # [ZPM](http://zpm.zefiros.eu/)
-[![Build Status](https://travis-ci.org/Zefiros-Software/ZPM.svg?branch=master)](https://travis-ci.org/Zefiros-Software/ZPM)
-
 ZPM is the C++ package manager built for everyone who uses [premake](http://premake.github.io/)!  
 We designed it to make it easy to use **libraries**, **modules** and **assets**.
 
 # PLEASE NOTE: THIS PROJECT IS IN BETA
+
+# Status
+OS          | Status
+----------- | -------
+Linux & OSX | [![Build Status](https://travis-ci.org/Zefiros-Software/ZPM.svg?branch=master)](https://travis-ci.org/Zefiros-Software/ZPM)
+Windows     | [![Build status](https://ci.appveyor.com/api/projects/status/88je1aj7pbb0un0y?svg=true)](https://ci.appveyor.com/project/PaulVisscher/zpm)
 
 #Documentation
 The complete documentation can be found [here](http://zpm.zefiros.eu/).
