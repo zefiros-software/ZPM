@@ -38,7 +38,7 @@ ZPM has a few dependencies:
 ### Windows
 Execute:
 ```
-powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat
+powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat && "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
 ```
 
 !!! alert-danger "Note"
