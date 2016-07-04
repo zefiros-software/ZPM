@@ -8,6 +8,7 @@ install:
     - chmod +x ./script/deploy-docs.sh
     - chmod +x ./script/install-docs.sh
 script:
+    - premake5 --version
     - python ./script/test-install.py
     - ./script/install-docs.sh
     - ./script/deploy-docs.sh
