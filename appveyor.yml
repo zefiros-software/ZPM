@@ -8,5 +8,4 @@ install:
     - powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat
 test_script:
     - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
-    - echo %PATH%
     - python ./script/test-install.py

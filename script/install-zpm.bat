@@ -18,5 +18,4 @@ premake5.exe --file=zpm/zpm.lua install-zpm
 
 rmdir /s /q "%TEMP%/zpm-install"
 
-set PATH="%PATH%;%ALLUSERSPROFILE%/zpm"
 echo ZPM is installed, however a restart is required!
