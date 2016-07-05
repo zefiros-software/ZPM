@@ -90,7 +90,7 @@ function zpm.install.getDataDir()
         return os.getenv( "APPDATA" )
     elseif osStr == "linux" then
         return path.join( os.getenv( "HOME" ), ".local/share/" )  
-    elseif osStr == "osx" then 
+    elseif osStr == "macosx" then 
         return "~/Library/Application Support/"
     else
         zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
@@ -106,7 +106,7 @@ function zpm.install.getSharedDataDir()
         return os.getenv( "ALLUSERSPROFILE" )
     elseif osStr == "linux" then
         return "/usr/local/"  
-    elseif osStr == "osx" then 
+    elseif osStr == "macosx" then 
         return "/usr/local/"
     else
         zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
@@ -289,7 +289,7 @@ function zpm.install.installInPath()
     
         zpm.install.createSymLinks()
     
-    elseif os.get() == "osx" then
+    elseif os.get() == "macosx" then
     
         zpm.assert( false, "Current platform '%s' not supported!", os.get() )
     
