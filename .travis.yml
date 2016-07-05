@@ -13,7 +13,6 @@ install:
     - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 script:
-    - ls /usr/bin/
     - python ./script/test-install.py
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi
