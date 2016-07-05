@@ -45,12 +45,31 @@ powershell -command "Invoke-WebRequest -Uri https://raw.githubusercontent.com/Ze
     A restart may be required since the `path` variable has changed.
 
 ### Linux
+Execute:
 ```
 wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash
 ```
 
 ### OSX
-Currently not yet fully supported.
+Execute:
+```
+wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash
+```
+
+### Travis
+Execute:
+```
+install:
+    - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
+```
+
+### AppVeyor
+Execute:
+```
+install:
+    - powershell -command "Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat 
+    - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
+```
 
 ## Testing
 Test whether you get output similar to underneath when you run `premake5 --version`.
