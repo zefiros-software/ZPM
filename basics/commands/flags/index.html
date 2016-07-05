@@ -421,6 +421,10 @@
         
             <li><a href="#allow-shell">allow-shell</a></li>
         
+            <li><a href="#allow-module">allow-module</a></li>
+        
+            <li><a href="#github-token">github-token</a></li>
+        
             <li><a href="#related_pages">Related Pages</a></li>
         
     
@@ -433,6 +437,8 @@
 <ul>
 <li><a href="#allow-install"><code>allow-install</code></a></li>
 <li><a href="#allow-shell"><code>allow-shell</code></a></li>
+<li><a href="#allow-module"><code>allow-module</code></a></li>
+<li><a href="#github-token"><code>github-token</code></a></li>
 </ul>
 <hr />
 <h2 id="allow-install"><code>allow-install</code><a class="headerlink" href="#allow-install" title="Permanent link">&para;</a></h2>
@@ -448,6 +454,20 @@ By default ZPM asks your <strong>permission</strong> to execute these snippets.
 Turning on this flag <strong>allows</strong> all snippets to be run by default.</p>
 <p><strong> Example </strong></p>
 <p><code>premake5 gmake --allow-shell</code></p>
+<hr />
+<h2 id="allow-module"><code>allow-module</code><a class="headerlink" href="#allow-module" title="Permanent link">&para;</a></h2>
+<p>When a module is required to install or update, ZPM asks confirmation of this action.
+By turning on this flag we always accept the changes.</p>
+<p><strong> Example </strong></p>
+<p><code>premake5 install-package --allow-shell</code></p>
+<hr />
+<h2 id="github-token"><code>github-token</code><a class="headerlink" href="#github-token" title="Permanent link">&para;</a></h2>
+<p>Since we use the GitHub api for a number of action, we can run into their
+rate limiting. By adding a GitHub token to the commandline, we can login
+into your account and circumvent this. See <a href="../../config/#github_token">this</a> 
+for a more permanent solution.</p>
+<p><strong> Example </strong></p>
+<p><code>premake5 gmake --github-token=&lt;token&gt;</code></p>
 <hr />
 <h2 id="related_pages">Related Pages<a class="headerlink" href="#related_pages" title="Permanent link">&para;</a></h2>
 <ul>

@@ -454,6 +454,9 @@ A <code>_package.json</code> is located in the <strong>root</strong> of the proj
             &quot;website&quot;: &quot;&lt;author-website&gt;&quot;
         }
     ],
+    &quot;modules&quot;: [
+        &lt;modules&gt;
+    ],
     &quot;requires&quot;: [
         {
             &quot;name&quot;: &quot;&lt;require-vendor&gt;/&lt;require-name&gt;&quot;,
@@ -499,6 +502,10 @@ A <code>_package.json</code> is located in the <strong>root</strong> of the proj
 <li><code>keywords</code> An array of strings containing keywords of the project.</li>
 <li><code>websites</code> The website where the project is hosted.</li>
 <li><code>license</code> Under what license this project falls.</li>
+</ul>
+<hr />
+<ul>
+<li><code>modules</code> A list of modules in the form <code>&lt;vendor&gt;/&lt;name&gt;</code> that get installed or updated when running <code>install-package</code>.</li>
 </ul>
 <hr />
 <ul>
