@@ -101,6 +101,7 @@ end
 function zpm.install.getSharedDataDir()
 
     local osStr = os.get()
+    print(osStr, "@@@@@@@@@@@")
     
     if osStr == "windows" then
         return os.getenv( "ALLUSERSPROFILE" )
