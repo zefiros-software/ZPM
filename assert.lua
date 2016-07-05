@@ -24,6 +24,7 @@
 
 
 function zpm.assert( pred, str, ... )
+    print(os.get())
     if next({...}) ~= nil then
         assert( pred, zpm.colors.error .. string.format( str, ... ) .. "\n" .. debug.traceback() .. zpm.colors.clear )
     else
