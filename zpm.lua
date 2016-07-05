@@ -195,6 +195,11 @@ newoption {
     shortname   = "ai",
     description = "Allows the usage of install scripts without confirmation"
 }
+newoption {
+    trigger     = "allow-module",
+    shortname   = "am",
+    description = "Allows the updating and installing of modules without confirmation"
+}
 
 newaction {
     trigger     = "self-update",

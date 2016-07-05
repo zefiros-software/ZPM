@@ -1,5 +1,5 @@
 # Installer
-ZPM can be used to **install** external dependencies that are used
+ZPM can be used to **install** external dependencies (modules, assets, packages, installer scripts) that are used
 by packages, such as scipy, from command line.
 
 ## Calling 

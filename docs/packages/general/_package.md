@@ -18,6 +18,9 @@ A `_package.json` is located in the **root** of the project and has the form:
             "website": "<author-website>"
         }
     ],
+    "modules": [
+        <modules>
+    ],
     "requires": [
         {
             "name": "<require-vendor>/<require-name>",
@@ -63,6 +66,10 @@ The `name` descriptor is only used in the root package.
 * `keywords` An array of strings containing keywords of the project.
 * `websites` The website where the project is hosted.
 * `license` Under what license this project falls.
+
+----
+
+* `modules` A list of modules in the form `<vendor>/<name>` that get installed or updated when running `install-package`.
 
 ----
 

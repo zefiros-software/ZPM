@@ -97,19 +97,17 @@ function zpm.modules.requestModules( modules )
             name = suggest[2]                          
   
             local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
-
-            if not os.isdir( modPath ) then
-                
-                printf("Install module '%s/%s' (Y [enter]/n)?", vendor, name )
-                local answer = io.read()
-                if answer == "Y" or answer == "y" or answer == "" then
-                
-                    local head = path.join( modPath, "head" )
-                    
-                    zpm.modules.update( head, modPath, {vendor, name} )
-                end
             
-            end
+            zpm.util.askModuleConfirmation( string.format( "Do you want to install or update module '%s/%s'?", vendor, name ),
+            function ()
+                local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
+                    
+                local head = path.join( modPath, "head" )
+                
+                zpm.modules.update( head, modPath, {vendor, name} )
+            end,
+            function()
+            end)
         end
     end 
 
@@ -128,11 +126,11 @@ function zpm.modules.installOrUpdateModules( modules )
                 
         zpm.util.askModuleConfirmation( string.format( "Do you want to install or update module '%s/%s'?", vendor, name ),
         function ()
-        local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
+            local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
+                
+            local head = path.join( modPath, "head" )
             
-        local head = path.join( modPath, "head" )
-        
-        zpm.modules.update( head, modPath, {vendor, name} )
+            zpm.modules.update( head, modPath, {vendor, name} )
         end,
         function()
         end)
