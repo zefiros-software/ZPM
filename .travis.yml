@@ -14,7 +14,6 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash   ; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 script:
-    - premake gmake
     - python ./script/test-install.py
 deploy:
   provider: script
