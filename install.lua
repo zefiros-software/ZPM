@@ -101,7 +101,6 @@ end
 function zpm.install.getSharedDataDir()
 
     local osStr = os.get()
-    print(osStr, "@@@@@@@@@@@")
     
     if osStr == "windows" then
         return os.getenv( "ALLUSERSPROFILE" )
@@ -295,6 +294,7 @@ function zpm.install.installInPath()
         zpm.install.createSymLinks()
     
     else
+        print(os.get(), "@@@@@@@@@@@")
         zpm.assert( false, "Current platform '%s' not supported!", os.get() )
     end
 end
