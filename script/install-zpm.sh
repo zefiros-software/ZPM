@@ -13,7 +13,7 @@ wget -O premake5.tar.gz https://github.com/premake/premake-core/releases/downloa
 
 tar xvzf premake5.tar.gz
 chmod a+x premake5
-git clone https://github.com/Zefiros-Software/ZPM.git
+git clone https://github.com/Zefiros-Software/ZPM.git zpm
 
 sudo mkdir /usr/local/zpm/ || true
 sudo mkdir /var/tmp/zpm-cache/ || true

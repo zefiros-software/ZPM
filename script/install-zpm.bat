@@ -13,7 +13,7 @@ powershell -command Add-Type -AssemblyName System.IO.Compression.FileSystem ^
 
 [System.IO.Compression.ZipFile]::ExtractToDirectory('premake5.zip', '.')"
 
-git clone https://github.com/Zefiros-Software/ZPM.git
+git clone https://github.com/Zefiros-Software/ZPM.git zpm
 premake5.exe --file=zpm/zpm.lua install-zpm
 
 rmdir /s /q "%TEMP%/zpm-install"
