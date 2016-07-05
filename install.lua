@@ -90,7 +90,7 @@ function zpm.install.getDataDir()
         return os.getenv( "APPDATA" )
     elseif osStr == "linux" then
         return path.join( os.getenv( "HOME" ), ".local/share/" )  
-    elseif osStr == "macosx" then 
+    elseif osStr == "osx" then 
         return "~/Library/Application Support/"
     else
         zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
@@ -106,7 +106,7 @@ function zpm.install.getSharedDataDir()
         return os.getenv( "ALLUSERSPROFILE" )
     elseif osStr == "linux" then
         return "/usr/local/"  
-    elseif osStr == "macosx" then 
+    elseif osStr == "osx" then 
         return "/usr/local/"
     else
         zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
@@ -255,7 +255,7 @@ end
 
 function zpm.install.createSymLinks()
 
-    if os.get() == "linux" or os.get() = "macosx" then
+    if os.get() == "linux" then
         for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
             os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
         end 
@@ -289,9 +289,9 @@ function zpm.install.installInPath()
     
         zpm.install.createSymLinks()
     
-    elseif os.get() == "macosx" then
+    elseif os.get() == "osx" then
     
-        zpm.install.createSymLinks()
+        zpm.assert( false, "Current platform '%s' not supported!", os.get() )
     
     else
         zpm.assert( false, "Current platform '%s' not supported!", os.get() )
