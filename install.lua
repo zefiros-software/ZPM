@@ -263,7 +263,7 @@ function zpm.install.createSymLinks()
 
     if  os.get() == "macosx" then
         -- workaround for premake search path in osx
-        os.execute( string.format( "sudo ln -sf %s/premake5-system.lua /usr/bin/premake5-system.lua", zpm.install.getInstallDir() ) )
+        os.execute( string.format( "sudo ln -sf %s/premake-system.lua /usr/bin/premake-system.lua", zpm.install.getInstallDir() ) )
     end
 end
 
