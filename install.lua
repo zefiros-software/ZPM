@@ -176,7 +176,7 @@ local function updateRepo( destination, url, name )
     else
         
             print( "Creating " .. name .. "..." )
-            os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"./%s\"", url, destination ) )
+            os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"%s\"", url, destination ) )
             --os.execute( "git config core.sharedRepository 0777" )        
     end
 
