@@ -17,5 +17,5 @@ install:
 script:
     - premake gmake
     - python ./script/test-install.py
-    - ./script/install-docs.sh
-    - ./script/deploy-docs.sh
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/install-docs.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi
