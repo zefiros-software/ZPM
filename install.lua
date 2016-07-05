@@ -156,6 +156,8 @@ function zpm.install.setupSystem()
     local cmd = path.join( folder, "premake-system.lua" )
     local file = io.open( cmd, "w")
     file:write( [[
+
+print("systemscript loaded....")
         
 local cmd = "]] .. folder:gsub("\\","\\\\") .. [["
 
