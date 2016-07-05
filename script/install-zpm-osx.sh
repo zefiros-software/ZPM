@@ -21,7 +21,10 @@ sudo mkdir /var/tmp/zpm-cache/ || true
 sudo chmod -R 777 /usr/local/zpm/
 sudo chmod -R 777 /var/tmp/zpm-cache/
 
-./premake5 --file=zpm/zpm.lua install-zpm
+if [ -z "$GH_TOKEN" ]; then
+    ./premake5 --file=zpm/zpm.lua install-zpm
+else
+    ./premake5 --github-token="$GH_TOKEN" --file=zpm/zpm.lua install-zpm
 
 sudo chmod -R 777 /usr/local/zpm/
 sudo chmod -R 777 /var/tmp/zpm-cache/
