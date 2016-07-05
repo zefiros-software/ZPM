@@ -25,9 +25,9 @@ sudo chmod -R 777 /var/tmp/zpm-cache/
 sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
 
 if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install-zpm
+    ./premake5 --file=zpm/zpm.lua install-zpm;
 else
-    ./premake5 --github-token="$GH_TOKEN" --file=zpm/zpm.lua install-zpm
+    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm;
 fi
 
 sudo chmod -R 777 /usr/local/zpm/
