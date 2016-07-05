@@ -255,7 +255,7 @@ end
 
 function zpm.install.createSymLinks()
 
-    if os.get() == "linux" then
+    if os.get() == "linux" or os.get() == "macosx" then
         for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
             os.execute( string.format( "sudo ln -sf %s /usr/bin/%s", prem, path.getname( prem ) ) )
         end 
