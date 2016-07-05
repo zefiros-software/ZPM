@@ -46,7 +46,7 @@ function zpm.wget.downloadWget( destination )
                 
     os.rename(  path.join( zipTemp, "bin/wget.exe" ), destination )
 
-    zpm.assert( os.isfile( path.join( zipTemp, "bin/wget.exe" ) ), "Wget is not installed!" )
+    zpm.assert( os.isfile( destination ), "Wget is not installed!" )
     
     print( "wget succesfully installed" )
     
