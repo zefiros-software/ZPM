@@ -291,7 +291,7 @@ function zpm.install.installInPath()
     
     elseif os.get() == "macosx" then
     
-        zpm.assert( false, "Current platform '%s' not supported!", os.get() )
+        zpm.install.createSymLinks()
     
     else
         zpm.assert( false, "Current platform '%s' not supported!", os.get() )
