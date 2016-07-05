@@ -100,7 +100,7 @@ function zpm.modules.requestModules( modules )
 
             if not os.isdir( modPath ) then
                 
-                printf("Install package '%s/%s' (Y [enter]/n)?", vendor, name )
+                printf("Install module '%s/%s' (Y [enter]/n)?", vendor, name )
                 local answer = io.read()
                 if answer == "Y" or answer == "y" or answer == "" then
                 
@@ -111,6 +111,31 @@ function zpm.modules.requestModules( modules )
             
             end
         end
+    end 
+
+end
+
+function zpm.modules.installOrUpdateModules( modules ) 
+
+    for _, module in ipairs( modules ) do
+    
+        local pak = bootstrap.getModule( module )
+        local name = pak[2]
+        local vendor = pak[1] 
+        
+        zpm.assert( zpm.modules.modules[ vendor ] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor )
+        zpm.assert( zpm.modules.modules[ vendor ][ name ] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name )
+                
+        zpm.util.askModuleConfirmation( string.format( "Do you want to install or update module '%s/%s'?", vendor, name ),
+        function ()
+        local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
+            
+        local head = path.join( modPath, "head" )
+        
+        zpm.modules.update( head, modPath, {vendor, name} )
+        end,
+        function()
+        end)
     end 
 
 end

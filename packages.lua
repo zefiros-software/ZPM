@@ -156,7 +156,7 @@ function zpm.packages.installPackage( package, folder, name )
         end )
     end
 
-    if #package.dependencies > 0 then
+    if package.dependencies ~= nil and #package.dependencies > 0 then
 
         for _, dep in ipairs( package.dependencies ) do
 
@@ -164,6 +164,12 @@ function zpm.packages.installPackage( package, folder, name )
             zpm.packages.installPackage( depPackage, dep.exportPath, dep.fullName )
 
         end
+
+    end
+
+    if package.modules ~= nil and #package.modules > 0 then
+
+        zpm.modules.installOrUpdateModules( package.modules )
 
     end
 end
@@ -536,8 +542,8 @@ function zpm.packages.checkDependencyValidity( package )
             zpm.assert( rvendor:len() <= 50, "'vendor' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
             zpm.assert( rname:len() <= 50, "'name' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
                 
-            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '_package.json' 'require' field must at least be 2 characters!" )
-            zpm.assert( mname:len() >= 2, "'name' supplied in '_package.json' 'require' field must at least be 2 characters!" )
+            zpm.assert( rvendor:len() >= 2, "'vendor' supplied in '_package.json' 'require' field must at least be 2 characters!" )
+            zpm.assert( rvendor:len() >= 2, "'name' supplied in '_package.json' 'require' field must at least be 2 characters!" )
 
             zpm.assert( zpm.util.isAlphaNumeric( rvendor ), "The 'vendor' supplied in '_package.json' 'require' field must be alpha numeric!" )
             zpm.assert( zpm.util.isAlphaNumeric( rname ), "The 'name' supplied in '_package.json' 'require' field must be alpha numeric!" )

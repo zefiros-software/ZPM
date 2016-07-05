@@ -40,6 +40,21 @@ function zpm.util.rmdir( folder )
 
 end
 
+function zpm.util.askModuleConfirmation( question, yesFunc, noFunc )
+
+    printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-module' to always accept (Y [enter]/n)?", question )
+    local answer = io.read()
+    if answer == "Y" or 
+       answer == "y" or 
+       answer == "" or 
+       _OPTIONS["allow-module"] ~= nil then
+        return yesFunc()
+    else
+        return noFunc()
+    end
+    
+end
+
 function zpm.util.askShellConfirmation( question, yesFunc, noFunc )
 
     printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-shell' to always accept (Y [enter]/n)?", question )
