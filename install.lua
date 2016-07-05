@@ -159,6 +159,11 @@ function zpm.install.setupSystem()
         
 local cmd = "]] .. folder:gsub("\\","\\\\") .. [["
 
+-- workaround
+if os.get() == "macosx" then
+    premake.path = premake.path .. ";" .. cmd  .. ";"
+end
+
 local function updateRepo( destination, url, name )
 
     local current = os.getcwd()
