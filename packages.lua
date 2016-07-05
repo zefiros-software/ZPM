@@ -132,7 +132,6 @@ end
 
 function zpm.packages.install()
 
-    print(table.tostring(zpm.packages, 10))
     zpm.packages.installPackage( zpm.packages.root, ".", zpm.packages.root.name )
 
 end
@@ -159,10 +158,9 @@ function zpm.packages.installPackage( package, folder, name )
 
     if package.dependencies ~= nil and #package.dependencies > 0 then
 
-        for _, dep in ipairs( package.dependencies ) do
+        for i, dep in ipairs( package.dependencies ) do
 
-            local depPackage = zpm.packages.package[ dep.module[1] ][ dep.module[2] ][ dep.version ]
-            --zpm.packages.installPackage( depPackage, dep.exportPath, dep.fullName )
+            zpm.packages.installPackage( dep, dep.exportPath, dep.fullName )
 
         end
 
