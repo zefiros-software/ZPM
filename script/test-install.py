@@ -5,6 +5,7 @@ import os
 currentDir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(os.path.dirname(sys.argv[0]))
 
+print(str(subprocess.check_output( ["which", "premake5"], universal_newlines=True )))
 output = str(subprocess.check_output( ["premake5", "gmake"], universal_newlines=True ))
 
 os.chdir(currentDir)
