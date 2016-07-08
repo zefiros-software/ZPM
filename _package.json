@@ -3,7 +3,7 @@
     "assets": [
         {
             "name": "Zefiros-Software/Zefiros-Mkdocs-Style",
-            "version": "@head"
+            "version": "^1.0.0"
         }
     ]
 }
