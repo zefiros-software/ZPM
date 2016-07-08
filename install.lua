@@ -262,7 +262,7 @@ function zpm.install.createSymLinks()
 
     usrPath = "/usr/bin/"
     if os.get() == "macosx" then
-        usrPath = "usr/local/bin/"
+        usrPath = "/usr/local/bin/"
     end
 
     if os.get() == "linux" or os.get() == "macosx" then
@@ -273,7 +273,7 @@ function zpm.install.createSymLinks()
 
     if  os.get() == "macosx" then
         -- workaround for premake search path in osx
-        os.execute( string.format( "sudo ln -sf %s/premake-system.lua %s/premake-system.lua", zpm.install.getInstallDir(), usrPath ) )
+        os.execute( string.format( "sudo ln -sf %s/premake-system.lua %spremake-system.lua", zpm.install.getInstallDir(), usrPath ) )
     end
 end
 
