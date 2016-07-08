@@ -4,7 +4,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
     sudo apt-get update
     sudo apt-get install git -y
-    sudo apt-get install git-lfs -y
+    sudo apt-get install git-lfs=1.2.1 -y
     git-lfs install
     git-lfs version
     git lfs version
