@@ -5,7 +5,7 @@ site_description: The C++ package manager based on premake5.
 theme: united
 copyright: Copyright © 2016 Mick van Duijn, Koen Visscher and Paul Visscher
 google_analytics: ['UA-29999374-3', 'pm.zefiros.eu']
-theme_dir: docs
+theme_dir: docs/style
 pages: 
     - 'index.md'
 
@@ -62,10 +62,10 @@ pages:
 
 
 extra_css:
-    - 'docs.css'
+    - 'style/docs.css'
 
 extra_javascript:
-    - 'mathjax-loader.js'
+    - 'style/mathjax-loader.js'
     - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 
 markdown_extensions:

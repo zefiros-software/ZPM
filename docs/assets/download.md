@@ -28,11 +28,19 @@ We also support files from our **Git LFS** repository to be downloaded.
     <patterns>
 ]}
 ```
+** or **
+```json
+{"files": [
+    <patterns>
+ ],
+ "to": "<directory>}
+```
 
 Where 
 
 * `<patterns>` is an array of strings that are passed to [os.matchfiles](https://github.com/premake/premake-core/wiki/os.matchfiles).  
   Matched files are copied and we leave the relative path intact.
+* `<directory>` to copy the files to, from the root of the repository.
 
 ** Example **
 ```json

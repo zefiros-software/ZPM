@@ -75,6 +75,27 @@ function zpm.assets.loadCommands()
                     end
                     
                     os.copyfile( file, target )
+
+                    zpm.assert( os.isfile(target), "Could not make file '%s'!", target )
+                end 
+            end 
+            
+        end)
+
+    zpm.assets.addCommand(
+        { "files", "to" },
+        function( v, repo, folder )
+        
+            for _, pattern in ipairs( v.files ) do
+                for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
+                    local target = path.join( _MAIN_SCRIPT_DIR, v.to, path.getrelative( repo, file ) )
+                    local targetDir = path.getdirectory( target )
+                    if not os.isdir( targetDir ) then
+                        zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
+                    end
+                    
+                    os.copyfile( file, target )
+                    zpm.assert( os.isfile(target), "Could not make file '%s'!", target )
                 end 
             end 
             
@@ -287,7 +308,7 @@ function zpm.assets.resolveAssets( assets, vendor, name )
             zpm.assets.storeAssets( lassets, avendor, aname, version )
     
             local alreadyInstalled = os.isdir( assetPackDir )
-            if version == "@head" or not alreadyInstalled then                          
+            if asset.version == "@head" or not alreadyInstalled then     
                 
                 if alreadyInstalled then
                     os.rmdir( assetPackDir )

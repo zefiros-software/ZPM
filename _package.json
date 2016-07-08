@@ -1,0 +1,9 @@
+{
+    "name": "Zefiros-Software/ZPM",
+    "assets": [
+        {
+            "name": "Zefiros-Software/Zefiros-Mkdocs-Style",
+            "version": "@head"
+        }
+    ]
+}
