@@ -1012,7 +1012,7 @@
         },
         {
             "location": "/assets/download/",
-            "text": "Download\n\u00b6\n\n\nBy default ZPM does nothing with cloned assets, and thus we need to move the files.\n\n\n\n\nurl\n downloads assets from an \nurl\n.\n\n\nfiles\n downloads files from \nGit LFS\n to the assets folder.\n\n\n\n\nurl\n Command\n\u00b6\n\n\nDownloads assets form a given archive or file url.\n\n\n{\"url\": \"https://<url-to-archive>.zip\",\n \"to\": \"<folder-name>\"}\n\n\n\n\nWhere \n\n\n\n\nurl\n is an url to an \narchive\n (.zip or .tar.gz) or \nfile\n.\n\n\nto\n is an alpha-numeric (with '-' and '_') name wherein we \nplace\n the (extracted) files.\n  This folder lies within the \nproject\n \nassets\n folder.\n\n\n\n\n\n\nfiles\n Command\n\u00b6\n\n\nWe also support files from our \nGit LFS\n repository to be downloaded.\n\n\n{\"files\": [\n    <patterns>\n]}\n\n\n\n\nWhere \n\n\n\n\n<patterns>\n is an array of strings that are passed to \nos.matchfiles\n.\n\n  Matched files are copied and we leave the relative path intact.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
+            "text": "Download\n\u00b6\n\n\nBy default ZPM does nothing with cloned assets, and thus we need to move the files.\n\n\n\n\nurl\n downloads assets from an \nurl\n.\n\n\nfiles\n downloads files from \nGit LFS\n to the assets folder.\n\n\n\n\nurl\n Command\n\u00b6\n\n\nDownloads assets form a given archive or file url.\n\n\n{\"url\": \"https://<url-to-archive>.zip\",\n \"to\": \"<folder-name>\"}\n\n\n\n\nWhere \n\n\n\n\nurl\n is an url to an \narchive\n (.zip or .tar.gz) or \nfile\n.\n\n\nto\n is an alpha-numeric (with '-' and '_') name wherein we \nplace\n the (extracted) files.\n  This folder lies within the \nproject\n \nassets\n folder.\n\n\n\n\n\n\nfiles\n Command\n\u00b6\n\n\nWe also support files from our \nGit LFS\n repository to be downloaded.\n\n\n{\"files\": [\n    <patterns>\n]}\n\n\n\n\n or \n\n\n{\"files\": [\n    <patterns>\n ],\n \"to\": \"<directory>}\n\n\n\n\nWhere \n\n\n\n\n<patterns>\n is an array of strings that are passed to \nos.matchfiles\n.\n\n  Matched files are copied and we leave the relative path intact.\n\n\n<directory>\n to copy the files to, from the root of the repository.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
             "title": "Download"
         },
         {
@@ -1027,7 +1027,7 @@
         },
         {
             "location": "/assets/download/#files_command",
-            "text": "We also support files from our  Git LFS  repository to be downloaded.  {\"files\": [\n    <patterns>\n]}  Where    <patterns>  is an array of strings that are passed to  os.matchfiles . \n  Matched files are copied and we leave the relative path intact.    Example   //_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
+            "text": "We also support files from our  Git LFS  repository to be downloaded.  {\"files\": [\n    <patterns>\n]}   or   {\"files\": [\n    <patterns>\n ],\n \"to\": \"<directory>}  Where    <patterns>  is an array of strings that are passed to  os.matchfiles . \n  Matched files are copied and we leave the relative path intact.  <directory>  to copy the files to, from the root of the repository.    Example   //_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
             "title": "files Command"
         },
         {
