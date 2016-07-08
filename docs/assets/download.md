@@ -33,7 +33,7 @@ We also support files from our **Git LFS** repository to be downloaded.
 {"files": [
     <patterns>
  ],
- "to": "<directory>}
+ "to": "<directory>"}
 ```
 
 Where 
