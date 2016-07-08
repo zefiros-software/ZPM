@@ -4,6 +4,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
     sudo apt-get update
     sudo rm /usr/local/bin/git-lfs
+    sudo rm /usr/bin/git-lfs
     sudo apt-get install git-lfs -y
     /usr/local/bin/git-lfs install
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
