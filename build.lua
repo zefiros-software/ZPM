@@ -88,7 +88,12 @@ end
 
 function zpm.build.getProjectName( project, name, version )
 
-    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s/%s", zpm.build._currentWorkspace, name, version ) ) )
+    wrkspc = zpm.build._currentWorkspace
+    if wrkspc == nil then
+        wrkspc = workspace().name
+    end
+
+    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s/%s", wrkspc, name, version ) ) )
     
 end
 
@@ -116,10 +121,12 @@ end
 
 function zpm.build.exportProjectBuild( build )
 
-    for name, func in pairs( build.export ) do
+    if build.export ~= nil then
+        for name, func in pairs( build.export ) do
 
-        _G[name]( func() )
+            _G[name]( func() )
 
+        end
     end
 
     return build
