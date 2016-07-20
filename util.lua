@@ -43,11 +43,11 @@ end
 function zpm.util.askModuleConfirmation( question, yesFunc, noFunc )
 
     printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-module' to always accept (Y [enter]/n)?", question )
-    local answer = io.read()
+    local answer = _OPTIONS["allow-module"] or io.read()
     if answer == "Y" or 
        answer == "y" or 
        answer == "" or 
-       _OPTIONS["allow-module"] ~= nil then
+       _OPTIONS["allow-module"] then
         return yesFunc()
     else
         return noFunc()
@@ -58,11 +58,11 @@ end
 function zpm.util.askShellConfirmation( question, yesFunc, noFunc )
 
     printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-shell' to always accept (Y [enter]/n)?", question )
-    local answer = io.read()
+    local answer = _OPTIONS["allow-shell"] or io.read()
     if answer == "Y" or 
        answer == "y" or 
        answer == "" or 
-       _OPTIONS["allow-shell"] ~= nil then
+       _OPTIONS["allow-shell"] then
         return yesFunc()
     else
         return noFunc()
@@ -73,7 +73,7 @@ end
 function zpm.util.askInstallConfirmation( question, yesFunc, noFunc )
 
     printf( zpm.colors.cyan .. zpm.colors.bright .. "%s, use '--allow-install' to always accept (Y [enter]/n)?", question )
-    local answer = io.read()
+    local answer = _OPTIONS["allow-install"] or io.read()
     if answer == "Y" or 
        answer == "y" or 
        answer == "" or 
