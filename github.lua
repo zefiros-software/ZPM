@@ -28,6 +28,10 @@ zpm.GitHub.host = zpm.config.GitHub.host
 zpm.GitHub.apiHost = zpm.config.GitHub.apiHost
 zpm.GitHub.token = zpm.config.GitHub.token
 
+if os.getenv( "GH_TOKEN" ) ~= nil then
+    zpm.GitHub.token = os.getenv( "GH_TOKEN" )
+end
+
 if _OPTIONS["github-token"] ~= nil then
     zpm.GitHub.token = _OPTIONS["github-token"]
 end
