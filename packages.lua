@@ -287,6 +287,24 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
                 lpackage.assets = zpm.util.concat( lpackage.assets, lpackage.dev.assets )
             end
             
+            if lpackage.dev.settings ~= nil then
+
+                if lpackage.settings == nil then
+                    lpackage.settings = {}
+                end
+
+                lpackage.settings = zpm.util.concat( lpackage.settings, lpackage.dev.settings )
+            end
+            
+            if lpackage.dev.options ~= nil then
+
+                if lpackage.options == nil then
+                    lpackage.options = {}
+                end
+
+                lpackage.options = zpm.util.concat( lpackage.options, lpackage.dev.options )
+            end
+            
             if lpackage.dev.requires ~= nil then
         
                 if lpackage.requires == nil then
@@ -468,12 +486,26 @@ end
 
 function zpm.packages.checkDependencyValidity( package )
 
-
     if package.install ~= nil then
         
         zpm.assert( type(package.install) == "string", "The 'install' supplied in '_package.json' is not a string!" )
     end
 
+    if package.options ~= nil then
+    
+        for name, value in pairs( package.options ) do
+        
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'options' field must be alpha numeric!" )
+            zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
+        end
+    end
+
+    if package.settings ~= nil then
+    
+        for name, value in pairs( package.settings ) do        
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'settings' field must be alpha numeric!" )
+        end
+    end
 
     if package.modules ~= nil then
     

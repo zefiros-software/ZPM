@@ -2,12 +2,19 @@
 zpm.build.commands = {}
 zpm.build.rcommands = {}
 
+function zpm.build.commands.option( opt )
+
+    zpm.assert(zpm.build._currentDependency.options[opt] ~= nil, "Option '%s' does not exist!", opt)
+    return zpm.build._currentDependency.options[opt] == true
+end
+
 function zpm.build.commands.export( commands )
 
     local name = project().name
         
     local parent = zpm.build._currentDependency.projects[name].export
     local currExp = zpm.build._currentExportPath 
+    local currDep = zpm.build._currentDependency
     zpm.build._currentDependency.projects[name].export = function()
 
         if parent ~= nil then
@@ -15,11 +22,14 @@ function zpm.build.commands.export( commands )
         end
 
         local old = zpm.build._currentExportPath
+        local oldDep = zpm.build._currentDependency
         zpm.build._currentExportPath = currExp
-
+        zpm.build._currentDependency = currDep
+        
         zpm.sandbox.run( commands, {env = zpm.build.getEnv()})    
 
         zpm.build._currentExportPath = old
+        zpm.build._currentDependency = oldDep
     end
 
     zpm.sandbox.run( commands, {env = zpm.build.getEnv()})     

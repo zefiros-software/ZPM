@@ -42,13 +42,13 @@ function zpm.build.getEnv()
 
     for name, func in pairs( zpm.build.commands ) do
         env.zpm[ name ] = function( ... )
-            func( ... )
+            return func( ... )
         end
     end
 
     for name, func in pairs( zpm.build.rcommands ) do
         env[ name ] = function( ... )
-            func( ... )
+            return func( ... )
         end
     end
 

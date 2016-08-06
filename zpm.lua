@@ -69,23 +69,31 @@ function zpm.useProject( proj )
 
     if proj ~= nil and proj.projects ~= nil then
 
+        print(table.tostring(proj,10))
         for p, conf in pairs( proj.projects ) do
 
+            local exporter = {}
+            exporter[p] = conf.export
+
             if conf.uses ~= nil then
-                for _, uses in ipairs( conf.uses ) do
-                    if conf.export ~= nil then                         
+                for _, uses in ipairs( conf.uses ) do      
+                   exporter[uses] = proj.projects[uses].export  
+                end
+            end    
 
-                        local curFlter = premake.configset.getFilter(premake.api.scope.current)
-                        filter {}
+            for uses, exp in pairs( exporter ) do     
+                if exp ~= nil then                         
 
-                        if proj.projects[uses].kind == "StaticLib" then
-                            links( uses )
-                        end
+                    local curFlter = premake.configset.getFilter(premake.api.scope.current)
+                    filter {}
 
-                        proj.projects[uses].export()
-                        
-                        premake.configset.setFilter(premake.api.scope.current, curFlter)
+                    if proj.projects[uses].kind == "StaticLib" then
+                        links( uses )
                     end
+
+                    exp()
+
+                    premake.configset.setFilter(premake.api.scope.current, curFlter)
                 end
             end
         end                

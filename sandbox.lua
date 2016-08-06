@@ -50,7 +50,6 @@ local BASE_ENV = {}
 
 -- Safe packages/functions below
 ([[
-
 _VERSION assert error    ipairs   next pairs
 pcall    select tonumber tostring type unpack xpcall
 
