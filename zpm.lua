@@ -69,7 +69,6 @@ function zpm.useProject( proj )
 
     if proj ~= nil and proj.projects ~= nil then
 
-        print(table.tostring(proj,10))
         for p, conf in pairs( proj.projects ) do
 
             local exporter = {}
