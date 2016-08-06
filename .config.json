@@ -17,24 +17,28 @@
             "repository": "https://github.com/Zefiros-Software/Manifest.git",
             "directory": "registry",
             "directories": "registries",
-            "fileName": "_registries.json"
+            "fileName": ".registries.json",
+            "assets": ".assets.json",
+            "modules": ".modules.json",
+            "manifest": ".manifest.json",
+            "registries": ".registries.json"
         },        
         "manifests": {
-            "fileName": "_manifest.json"
+            "fileName": ".manifest.json"
         },
         "modules": {
-            "fileName": "_modules.json",
+            "fileName": ".modules.json",
             "directory": "modules"
         },
         "packages": {
-            "fileName": "_package.json"
+            "fileName": ".package.json"
         },
         "assets": {
-            "fileName": "_assets.json",
+            "fileName": ".assets.lua",
             "directory": "assets"
         },
         "build": {
-            "fileName": "_build.json"
+            "fileName": ".build.json"
         },
         "extern": {
             "directory": "extern"  
@@ -43,5 +47,7 @@
     "wget": {
         "downloadUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-bin.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459792671&use_mirror=iweb",
         "dependenciesUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-dep.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459794522&use_mirror=nchc"
+    },
+    "options": {        
     }
 }

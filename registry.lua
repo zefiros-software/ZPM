@@ -29,7 +29,7 @@ zpm.registry.registries = {}
 
 function zpm.registry.loadPath( manifestPath )
 
-    local registries = path.join( manifestPath, "_registries.json" )
+    local registries = path.join( manifestPath, zpm.install.registry.fileName )
     
     local list = zpm.JSON:decode( zpm.util.readAll( registries ) )
     

@@ -30,11 +30,9 @@ zpm._VERSION = "1.0.0-beta"
 zpm.JSON = (loadfile "json.lua")()
 zpm.semver = require "semver"
 zpm.bktree = require "bk-tree"
+zpm.sandbox = require 'sandbox'
 
 zpm.cachevar = "ZPM_CACHE"
-
--- Libs
-zpm.libs = {}
 
 dofile( "config.lua" )
 dofile( "printf.lua" )
@@ -54,6 +52,9 @@ dofile( "packages.lua" )
 dofile( "build.lua" )
 dofile( "github.lua" )
 dofile( "install.lua" )
+
+dofile( "commands/assets.lua" )
+dofile( "commands/build.lua" )
     
 premake.override(path, "normalize", function(base, p )
 
@@ -64,24 +65,35 @@ premake.override(path, "normalize", function(base, p )
     return p
 end)
 
-function zpm.useProject( project )
-    if project ~= nil and project.build ~= nil then
-            
-        for _, build in ipairs( project.build ) do
-        
-            local name = zpm.build.getProjectName( build.project, project.fullName, project.version )
-        
-            if build.getMayLink == nil or build.getMayLink() then
-                links( name )             
-            end    
-        
-            zpm.build.exportProjectBuild( build )
+function zpm.useProject( proj )
+
+    if proj ~= nil and proj.projects ~= nil then
+
+        for p, conf in pairs( proj.projects ) do
+
+            if conf.uses ~= nil then
+                for _, uses in ipairs( conf.uses ) do
+                    if conf.export ~= nil then                         
+
+                        local curFlter = premake.configset.getFilter(premake.api.scope.current)
+                        filter {}
+
+                        if proj.projects[uses].kind == "StaticLib" then
+                            links( uses )
+                        end
+
+                        proj.projects[uses].export()
+                        
+                        premake.configset.setFilter(premake.api.scope.current, curFlter)
+                    end
+                end
+            end
         end                
     
     end
 end
 
-function zpm.uses( projects, options )
+function zpm.uses( projects )
 
     if type( projects ) ~= "table" then
         projects = { projects }

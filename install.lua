@@ -43,6 +43,10 @@ zpm.install.registry.fileName = zpm.config.install.registry.fileName
 zpm.install.registry.repository = zpm.config.install.registry.repository
 zpm.install.registry.directory = zpm.config.install.registry.directory
 zpm.install.registry.directories = zpm.config.install.registry.directories
+zpm.install.registry.assets = zpm.config.install.registry.assets
+zpm.install.registry.modules = zpm.config.install.registry.modules
+zpm.install.registry.manifest = zpm.config.install.registry.manifest
+zpm.install.registry.registries = zpm.config.install.registry.registries
 
 zpm.install.manifests = {}
 zpm.install.manifests.fileName = zpm.config.install.manifests.fileName
@@ -69,14 +73,29 @@ function zpm.install.getMainRegistry()
 end
 
 function zpm.install.getMainRegistryDir()
+
+    if path.getabsolute( zpm.install.registry.directory ) == zpm.install.registry.directory then
+        return zpm.install.registry.directory
+    end
+
     return path.join( zpm.install.getSharedInstallDir(), zpm.install.registry.directory )
 end
 
 function zpm.install.getExternDirectory()
+
+    if path.getabsolute( zpm.install.extern.directory ) == zpm.install.extern.directory then
+        return zpm.install.extern.directory
+    end
+
     return path.join( _MAIN_SCRIPT_DIR, zpm.install.extern.directory )   
 end
 
 function zpm.install.getAssetsDir()
+
+    if path.getabsolute( zpm.install.assets.directory ) == zpm.install.assets.directory then
+        return zpm.install.assets.directory
+    end
+
     return path.join( _MAIN_SCRIPT_DIR, zpm.install.assets.directory )   
 end
 
@@ -100,6 +119,10 @@ end
 
 function zpm.install.getSharedDataDir()
 
+    if os.getenv( "ZPM_SHARED_DIR" ) ~= "" and nil then
+        return os.getenv( "ZPM_SHARED_DIR" )
+    end
+    
     local osStr = os.get()
     
     if osStr == "windows" then

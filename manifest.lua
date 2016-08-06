@@ -31,9 +31,9 @@ function zpm.manifest.load()
     
     for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
     
-        local localManFile = path.join( dir, zpm.install.manifests.fileName ) 
+        local localManFile = path.join( dir, zpm.install.registry.manifest ) 
         if os.isfile( localManFile ) then
-            local manok, err = pcall( zpm.manifest.loadFile, path.join( dir, zpm.install.manifests.fileName ) ) 
+            local manok, err = pcall( zpm.manifest.loadFile, path.join( dir, zpm.install.registry.manifest ) ) 
             if not manok then
                 printf( zpm.colors.error .. "Failed to load manifest '%s':\n%s", dir, err ) 
             end

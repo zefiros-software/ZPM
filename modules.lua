@@ -213,7 +213,7 @@ function zpm.modules.load()
     --print( "\nLoading modules ..." )
         
     for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
-        local localModFile = path.join( dir, zpm.install.modules.fileName ) 
+        local localModFile = path.join( dir, zpm.install.registry.modules ) 
     
         if os.isfile( localModFile ) then    
             local manok, err = pcall( zpm.modules.loadFile, localModFile ) 

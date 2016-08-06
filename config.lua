@@ -25,7 +25,7 @@
 
 -- Git
 zpm.config = {}
-zpm.config.fileName = "_config.json"
+zpm.config.fileName = ".config.json"
 
 function zpm.config.scriptPath()
    local str = debug.getinfo(2, "S").source:sub(2)

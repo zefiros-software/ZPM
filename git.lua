@@ -44,6 +44,10 @@ function zpm.git.pull( destination )
     local current = os.getcwd()
     
     os.chdir( destination )
+
+    if url ~= nil then        
+        os.execute( "git remote set-url origin " .. url  )
+    end
     
     os.execute( "git checkout -q master" )
     os.execute( "git pull" )
@@ -107,7 +111,7 @@ end
 function zpm.git.cloneOrPull( destination, url )
 
     if os.isdir( destination ) then
-        zpm.git.pull( destination )
+        zpm.git.pull( destination, url )
     
     else
         zpm.git.clone( destination, url )
@@ -133,6 +137,10 @@ function zpm.git.lfs.pull( destination )
     local current = os.getcwd()
     
     os.chdir( destination )
+
+    if url ~= nil then        
+        os.execute( "git remote set-url origin " .. url  )
+    end
     
     os.execute( "git checkout -q master" )
     os.execute( "git pull" )
@@ -153,7 +161,7 @@ end
 function zpm.git.lfs.cloneOrPull( destination, url )
 
     if os.isdir( destination ) then
-        zpm.git.lfs.pull( destination )
+        zpm.git.lfs.pull( destination, url )
     
     else
         zpm.git.lfs.clone( destination, url )

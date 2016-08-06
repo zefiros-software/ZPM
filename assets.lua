@@ -30,148 +30,20 @@ zpm.assets.commands = {}
 zpm.assets.search = zpm.bktree:new()
 zpm.assets.searchMaxDist = 0.6
 
+function zpm.assets.executeCommands( file, repo, folder )
 
-function zpm.assets.addCommand( keywords, func )
+    local env = { 
+        zpm = { assets = {} }
+    }
 
-    table.insert( zpm.assets.commands, {
-        keywords = keywords,
-        execute = func   
-    })
-
-end
-
-function zpm.assets.overrideCommand( keywords, func )
-
-    for i, command in ipairs( zpm.assets.commands ) do
-    
-        if zpm.util.compare( command.keywords, keywords ) then
-    
-            local oldFunc = zpm.assets.commands[i].execute
-        
-            zpm.assets.commands[i] = {
-                keywords = keywords,
-                execute = function( value, repo, folder )
-                    return func( oldFunc, value, repo, folder )
-                end
-            }
-            
-        end
-    end
-
-end
-
-function zpm.assets.loadCommands()
-
-    zpm.assets.addCommand(
-        { "files" },
-        function( v, repo, folder )
-        
-            for _, pattern in ipairs( v.files ) do
-                for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
-                    local target = path.join( folder, path.getrelative( repo, file ) )
-                    local targetDir = path.getdirectory( target )
-                    if not os.isdir( targetDir ) then
-                        zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-                    end
-                    
-                    os.copyfile( file, target )
-
-                    zpm.assert( os.isfile(target), "Could not make file '%s'!", target )
-                end 
-            end 
-            
-        end)
-
-    zpm.assets.addCommand(
-        { "files", "to" },
-        function( v, repo, folder )
-        
-            for _, pattern in ipairs( v.files ) do
-                for _, file in ipairs( os.matchfiles( path.join( repo, pattern ) ) ) do
-                    local target = path.join( _MAIN_SCRIPT_DIR, v.to, path.getrelative( repo, file ) )
-                    local targetDir = path.getdirectory( target )
-                    if not os.isdir( targetDir ) then
-                        zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-                    end
-                    
-                    os.copyfile( file, target )
-                    zpm.assert( os.isfile(target), "Could not make file '%s'!", target )
-                end 
-            end 
-            
-        end)
-
-    zpm.assets.addCommand(
-        { "url", "to" },
-        function( v, repo, folder )
-            local targetDir = path.join( folder, url.to )
-
-            if not os.isdir( targetDir ) then
-                zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
-            end
-                            
-            zpm.util.download( url.url, targetDir, "*" )
-        end)
-
-    zpm.assets.addCommand(
-        { "system", "do" },
-        function( v, repo, folder )   
-            
-            if os.is( v.system ) then
-                zpm.assets.executeCommands( v["do"], repo, folder )
-            end
-        end)
-
-    zpm.assets.addCommand(
-        { "is64bit", "do" },
-        function( v, repo, folder )   
-
-            if os.is64bit() == v.is64bit then
-                zpm.assets.executeCommands( v["do"], repo, folder )
-            end
-        end)
-
-    zpm.assets.addCommand(
-        { "is64bit", "do", "otherwise" },
-        function( v, repo, folder )   
-
-            if os.is64bit() == v.is64bit then
-                zpm.assets.executeCommands( v["do"], repo, folder )
-            else
-                zpm.assets.executeCommands( v["otherwise"], repo, folder )
-            end
-        end)
-
-end
-
-
-
-function zpm.assets.executeCommand( value, repo, folder )
-
-    local keywords = {}
-    
-    for kw, _ in pairs( value ) do
-        table.insert( keywords, kw )
-    end
-    
-    for i, command in ipairs( zpm.assets.commands ) do
-    
-        if zpm.util.compare( command.keywords, keywords ) then
-        
-            return zpm.assets.commands[i].execute( value, repo, folder )
-            
+    for name, func in pairs( zpm.assets.commands ) do
+        env.zpm.assets[ name ] = function( ... )
+            func( repo, folder, ... )
         end
     end
     
-    printf( zpm.colors.error .. "Unknown assets command '%s':\n", table.tostring( value, 20 ) )
-end
+    zpm.sandbox.run( zpm.util.readAll( file ), {env = env})
 
-function zpm.assets.executeCommands( values, repo, folder )
-
-    for _, com in ipairs( values ) do
-        zpm.assets.executeCommand( com, repo, folder )  
-    end
-    
 end
 
 function zpm.assets.load()
@@ -191,7 +63,7 @@ function zpm.assets.load()
     end
     
     for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
-        local localAssetsFile = path.join( dir, zpm.install.assets.fileName ) 
+        local localAssetsFile = path.join( dir, zpm.install.registry.assets ) 
     
         if os.isfile( localAssetsFile ) then    
             local manok, err = pcall( zpm.assets.loadFile, localAssetsFile ) 
@@ -200,8 +72,6 @@ function zpm.assets.load()
             end
         end
     end
-    
-    zpm.assets.loadCommands()
     
 end
 
@@ -333,8 +203,11 @@ end
 function zpm.assets.loadAssetsFile( defPath, vendor, name, version, isShadow ) 
 
     local assetsFile = path.join( defPath, zpm.install.assets.fileName )
+    if isShadow then
+        assetsFile = path.join( defPath, zpm.install.assets.fileName )
+    end
     
-    zpm.assert( os.isfile( assetsFile ), "No '_assets.json' found" )  
+    zpm.assert( os.isfile( assetsFile ), "No '.assets.json' found" )  
     
     if not isShadow then
         zpm.git.lfs.checkout( defPath, version )
@@ -342,12 +215,7 @@ function zpm.assets.loadAssetsFile( defPath, vendor, name, version, isShadow )
         zpm.git.lfs.checkout( defPath, "master" )
     end
     
-    local file = zpm.util.readAll( assetsFile )
-    local lasset = zpm.JSON:decode( file )
-
-    zpm.assets.checkValidity( lasset )
-    
-    return lasset
+    return assetsFile
 end
 
 function zpm.assets.storeAssets( lassets, vendor, name, version )
@@ -356,7 +224,7 @@ function zpm.assets.storeAssets( lassets, vendor, name, version )
     
     if zpm.assets.assets[vendor][name].isShadow then
     
-        zpm.assets.assets[vendor][name].assets = zpm.assets.getShadowBuildVersion( lassets, version )    
+        zpm.assets.assets[vendor][name].assets = zpm.assets.getShadowBuildVersion( zpm.assets.assets[vendor][name].assets, lassets, version )    
         
     else
     
@@ -368,19 +236,17 @@ function zpm.assets.storeAssets( lassets, vendor, name, version )
 end
 
 
-function zpm.assets.getShadowBuildVersion( build, version )
+function zpm.assets.getShadowBuildVersion( dirs, build, version )
     
     for _, bversion in pairs( build ) do
         if premake.checkVersion( version, bversion.version ) then
-            return bversion["do"]
+            zpm.assert( path.getabsolute( bversion.file ):contains( dirs ), "Executing lua outside assets folder is not allowed!" )
+        
+            return bversion.file
         end    
     end    
     
     error( string.format( "The version '%s' could not be satisfied with the build file!", version ) )
-end
-
-function zpm.assets.checkValidity( assetsFile )
-
 end
 
 function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
