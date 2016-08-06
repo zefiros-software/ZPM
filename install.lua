@@ -47,6 +47,7 @@ zpm.install.registry.assets = zpm.config.install.registry.assets
 zpm.install.registry.modules = zpm.config.install.registry.modules
 zpm.install.registry.manifest = zpm.config.install.registry.manifest
 zpm.install.registry.registries = zpm.config.install.registry.registries
+zpm.install.registry.build = zpm.config.install.registry.build
 
 zpm.install.manifests = {}
 zpm.install.manifests.fileName = zpm.config.install.manifests.fileName

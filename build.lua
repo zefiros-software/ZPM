@@ -203,6 +203,10 @@ function zpm.build.loadPackages( packages )
     for i, dep in ipairs( packages.dependencies ) do
     
         local buildFile = path.join( dep.buildPath, zpm.install.build.fileName )
+
+        if dep.isShadow then
+            buildFile = path.join( dep.buildPath, zpm.install.registry.build )
+        end
     
         local ok, buildFile = pcall( zpm.build.loadBuildFile,  dep.buildPath, buildFile, dep )
         if ok then

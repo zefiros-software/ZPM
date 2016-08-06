@@ -21,7 +21,8 @@
             "assets": ".assets.json",
             "modules": ".modules.json",
             "manifest": ".manifest.json",
-            "registries": ".registries.json"
+            "registries": ".registries.json",
+            "build": ".build.json"
         },        
         "manifests": {
             "fileName": ".manifest.json"
@@ -38,7 +39,7 @@
             "directory": "assets"
         },
         "build": {
-            "fileName": ".build.json"
+            "fileName": ".build.lua"
         },
         "extern": {
             "directory": "extern"  
