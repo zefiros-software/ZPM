@@ -119,7 +119,7 @@ end
 
 function zpm.install.getSharedDataDir()
 
-    if os.getenv( "ZPM_SHARED_DIR" ) ~= "" and nil then
+    if os.getenv( "ZPM_SHARED_DIR" ) ~= "" and os.getenv( "ZPM_SHARED_DIR" ) ~= nil then
         return os.getenv( "ZPM_SHARED_DIR" )
     end
     
