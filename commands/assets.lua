@@ -36,7 +36,7 @@ function zpm.assets.commands.extract( repo, folder, files )
             local target = path.join( folder, path.getrelative( repo, file ) )
             local targetDir = path.getdirectory( target )            
             
-            zpm.assert( path.getabsolute( targetDir ):contains( folder ), "Executing lua outside folder is not allowed!" )
+            zpm.assert( path.getabsolute( targetDir ):contains( _MAIN_SCRIPT_DIR ), "Executing lua outside folder is not allowed!" )
             if not os.isdir( targetDir ) then
                 zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
             end
@@ -61,7 +61,7 @@ function zpm.assets.commands.extractto( repo, folder, files, to )
             local target = path.join( _MAIN_SCRIPT_DIR, to, path.getrelative( repo, file ) )
             local targetDir = path.getdirectory( target )
             
-            zpm.assert( path.getabsolute( targetDir ):contains( folder ), "Executing lua outside folder is not allowed!" )
+            zpm.assert( path.getabsolute( targetDir ):contains( _MAIN_SCRIPT_DIR ), "Executing lua outside folder is not allowed!" )
             if not os.isdir( targetDir ) then
                 zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
             end
@@ -76,7 +76,7 @@ end
 function zpm.assets.commands.download( repo, folder, url, to )
     local targetDir = path.join( folder, to )
             
-    zpm.assert( path.getabsolute( targetDir ):contains( folder ), "Executing lua outside assets folder is not allowed!" )
+    zpm.assert( path.getabsolute( targetDir ):contains( _MAIN_SCRIPT_DIR ), "Executing lua outside assets folder is not allowed!" )
 
     if not os.isdir( targetDir ) then
         zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )

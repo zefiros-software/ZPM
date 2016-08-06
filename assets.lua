@@ -177,16 +177,14 @@ function zpm.assets.resolveAssets( assets, vendor, name )
         
             zpm.assets.storeAssets( lassets, avendor, aname, version )
     
-            local alreadyInstalled = os.isdir( assetPackDir )
-            if asset.version == "@head" or not alreadyInstalled then     
+            local alreadyInstalled = os.isdir( assetPackDir )   
                 
-                if alreadyInstalled then
-                    os.rmdir( assetPackDir )
-                    os.mkdir( assetPackDir )
-                end
-
-                zpm.assets.extract( assPath, assetPackDir, version, avendor, aname )
+            if alreadyInstalled then
+                os.rmdir( assetPackDir )
+                os.mkdir( assetPackDir )
             end
+
+            zpm.assets.extract( assPath, assetPackDir, version, avendor, aname )
         end
     end    
 
