@@ -9,7 +9,7 @@ if ("Zefiros Package Manager - (c) Zefiros Software" not in output or
     "Loading The Zefiros Package Manager version" not in output or
     "Resolved package dependencies 'Zefiros-Software/ZPM'" not in output):
 
-    print( "ZPM failed to load correctly!\n Output:\n" .. output )
+    print( "ZPM failed to load correctly!\n Output:\n", output )
     exit(-1)
 else:
     print( "ZPM successfully installed" )
