@@ -65,6 +65,28 @@ premake.override(path, "normalize", function(base, p )
     return p
 end)
 
+local builtWorkspaces = {}
+    
+premake.override(_G, "workspace", function(base, ... )
+
+    local wkspc = base( ... )
+    if select("#",...) > 0 then
+
+        local name = select(1,...)
+        if table.contains( builtWorkspaces, name ) then
+            return wkspc
+        end
+
+        table.insert( builtWorkspaces, name )
+        zpm.buildLibraries()
+
+        -- return to workspace
+        base()
+    end
+
+    return wkspc
+end)
+
 function zpm.useProject( proj )
 
     if proj ~= nil and proj.projects ~= nil then
