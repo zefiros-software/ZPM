@@ -102,8 +102,7 @@ function zpm.useProject( proj )
                    exporter[uses] = proj.projects[uses].export  
                 end
             end    
-
-            print(exporter)
+            
             for uses, exp in pairs( exporter ) do     
                 if exp ~= nil then                         
 
@@ -131,15 +130,9 @@ function zpm.uses( projects )
     end
     
     for _, project in ipairs( projects ) do
+        proj = zpm.build.findRootProject( project )
     
-        local proj
-        if project:contains( "/" ) then
-            --proj = zpm.build.findProject( project )
-        else
-            proj = zpm.build.findRootProject( project )
-        
-            zpm.useProject( proj )
-        end
+        zpm.useProject( proj )
     end
 end
 

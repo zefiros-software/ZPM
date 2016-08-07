@@ -51,14 +51,25 @@ function zpm.build.commands.uses( proj )
         zpm.build._currentDependency.projects[cname].uses  = {}
     end
 
+    if zpm.build._currentDependency.projects[cname].packages == nil then
+        zpm.build._currentDependency.projects[cname].packages  = {}
+    end
+
     for _, p in ipairs(proj) do
-        local name = zpm.build.getProjectName( p, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
 
-        if table.contains( zpm.build._currentDependency.projects[cname].uses, name ) == false then
-            table.insert( zpm.build._currentDependency.projects[cname].uses, name )
+        if p:contains( "/" ) then
 
-            local dep = zpm.build._currentDependency
+            local package = zpm.build.findProject( p )
 
+            if table.contains( zpm.build._currentDependency.projects[cname].packages, package ) == false then
+                table.insert( zpm.build._currentDependency.projects[cname].packages, package )
+            end
+        else
+            local name = zpm.build.getProjectName( p, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
+
+            if table.contains( zpm.build._currentDependency.projects[cname].uses, name ) == false then
+                table.insert( zpm.build._currentDependency.projects[cname].uses, name )
+            end
         end
     end
 end

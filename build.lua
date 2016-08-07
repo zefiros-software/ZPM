@@ -135,6 +135,12 @@ function zpm.build.buildPackage( package )
                         end
                     end
                 end
+
+                if conf.packages ~= nil then
+                    for _, package in ipairs( conf.packages ) do
+                        zpm.useProject( package )
+                    end
+                end
             end
         end                
     end
@@ -142,12 +148,7 @@ end
 
 function zpm.build.getProjectName( project, name, version )
 
-    wrkspc = zpm.build._currentWorkspace
-    if wrkspc == nil then
-        wrkspc = workspace().name
-    end
-
-    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s/%s", wrkspc, name, version ) ) )
+    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s", name, version ) ) )
     
 end
 
@@ -164,6 +165,24 @@ function zpm.build.findRootProject( name )
     end
     
     printf( zpm.colors.error .. "Could not find root project '%s', did you load it correctly as a dependency?", name )
+    
+    return nil
+
+end
+
+function zpm.build.findProject( name )
+
+    for _, project in pairs( zpm.build._currentDependency.dependencies ) do
+    
+        if project.fullName == name then
+        
+            return project
+        
+        end
+    
+    end
+    
+    printf( zpm.colors.error .. "Could not find project '%s', did you load it correctly as a dependency?", name )
     
     return nil
 
