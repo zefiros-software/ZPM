@@ -30,7 +30,7 @@ zpm._VERSION = "1.0.0-beta"
 zpm.JSON = (loadfile "json.lua")()
 zpm.semver = require "semver"
 zpm.bktree = require "bk-tree"
-zpm.sandbox = require 'sandbox'
+zpm.sandbox = require "sandbox"
 
 zpm.cachevar = "ZPM_CACHE"
 
@@ -73,16 +73,17 @@ premake.override(_G, "workspace", function(base, ... )
     if select("#",...) > 0 then
 
         local name = select(1,...)
+        
         if table.contains( builtWorkspaces, name ) then
             return wkspc
         end
 
         table.insert( builtWorkspaces, name )
         zpm.buildLibraries()
-
-        -- return to workspace
-        base()
     end
+
+    -- return to workspace
+    base()
 
     return wkspc
 end)
@@ -102,6 +103,7 @@ function zpm.useProject( proj )
                 end
             end    
 
+            print(exporter)
             for uses, exp in pairs( exporter ) do     
                 if exp ~= nil then                         
 
@@ -130,9 +132,14 @@ function zpm.uses( projects )
     
     for _, project in ipairs( projects ) do
     
-        local project = zpm.build.findRootProject( project )
+        local proj
+        if project:contains( "/" ) then
+            --proj = zpm.build.findProject( project )
+        else
+            proj = zpm.build.findRootProject( project )
         
-        zpm.useProject( project )
+            zpm.useProject( proj )
+        end
     end
 end
 
@@ -150,6 +157,7 @@ function zpm.buildLibraries()
     
     premake.configset.setFilter(premake.api.scope.current, curFlter)
 
+    workspace()
 end
 
 

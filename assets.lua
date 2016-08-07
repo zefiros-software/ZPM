@@ -300,7 +300,6 @@ function zpm.assets.getVersion( repo, versions, vendor, name )
     
     -- normal resolve
     else
-    
         continue, version = zpm.assets.getBestVersion( repo, versions, dest )
         
     end
@@ -319,6 +318,12 @@ end
 function zpm.assets.getBestVersion( repo, versions )
 
     local tags = zpm.git.getTags( repo )
+
+    if #tags == 0 then
+        printf( zpm.colors.warning .. "Repository '%s' contains no tags, switching to master branch!", repo )
+
+        return true, "master"
+    end
     
     for _, gTag in ipairs( tags ) do
     
