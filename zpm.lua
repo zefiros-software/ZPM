@@ -102,7 +102,7 @@ function zpm.useProject( proj )
                    exporter[uses] = proj.projects[uses].export  
                 end
             end    
-            
+
             for uses, exp in pairs( exporter ) do     
                 if exp ~= nil then                         
 
@@ -116,6 +116,12 @@ function zpm.useProject( proj )
                     exp()
 
                     premake.configset.setFilter(premake.api.scope.current, curFlter)
+                end
+            end
+
+            if conf.packages ~= nil then
+                for _, package in ipairs( conf.packages ) do
+                    zpm.useProject( package )
                 end
             end
         end                
