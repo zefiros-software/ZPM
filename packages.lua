@@ -257,7 +257,7 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
         
     zpm.packages.checkValidity( lpackage, isRoot, pname )
     
-    zpm.modules.requestModules( lpackage.modules )
+    --zpm.modules.requestModules( lpackage.modules )
     
     local pak = bootstrap.getModule( pname )
     local name = pak[2]
