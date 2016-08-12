@@ -7,6 +7,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo rm /usr/bin/git-lfs || true
     sudo apt-get install git-lfs -y
     /usr/bin/git-lfs install
+    sudo apt-get install g++-multilib -y
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash; 
     brew update;
