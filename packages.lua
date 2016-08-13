@@ -142,20 +142,6 @@ function zpm.packages.installPackage( package, folder, name )
         package.install = { package.install }
     end
 
-    if #package.install > 0 then
-        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
-        function()
-            
-            for _, inst in ipairs( package.install ) do
-                    printf( "Installing '%s'...", name )
-                    dofile( string.format( "%s/%s", folder, inst ) )
-            end
-        end, 
-        function()
-            printf( "Installation declined, we can not guatantee this package works!" )
-        end )
-    end
-
     if package.dependencies ~= nil and #package.dependencies > 0 then
 
         for i, dep in ipairs( package.dependencies ) do
@@ -170,6 +156,21 @@ function zpm.packages.installPackage( package, folder, name )
 
         zpm.modules.installOrUpdateModules( package.modules )
 
+    end
+
+    -- make sure modules exist
+    if #package.install > 0 then
+        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
+        function()
+            
+            for _, inst in ipairs( package.install ) do
+                    printf( "Installing '%s'...", name )
+                    dofile( string.format( "%s/%s", folder, inst ) )
+            end
+        end, 
+        function()
+            printf( "Installation declined, we can not guatantee this package works!" )
+        end )
     end
 end
 
