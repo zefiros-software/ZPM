@@ -4,6 +4,7 @@ zpm.build.rcommands = {}
 
 function zpm.build.commands.option( opt )
 
+    zpm.assert(zpm.build._currentDependency.options ~= nil, "Option '%s' does not exist!", opt)
     zpm.assert(zpm.build._currentDependency.options[opt] ~= nil, "Option '%s' does not exist!", opt)
     return zpm.build._currentDependency.options[opt] == true
 end
