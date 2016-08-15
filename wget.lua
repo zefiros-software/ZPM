@@ -96,6 +96,8 @@ function zpm.wget.initialise()
 
             zpm.wget.downloadWget( dest )
             zpm.wget.downloadDependencies()
+
+            zpm.util.sleep( 1 )
            
         end
         

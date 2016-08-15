@@ -25,6 +25,12 @@
 -- Util
 zpm.util = {}
 
+function zpm.util.sleep( n )
+  if n > 0 then 
+    os.execute("ping -n " .. tonumber(n+1) .. " localhost > NUL") 
+  end
+end
+
 function zpm.util.djb2( str )
     -- works better
     return string.sha1( str ):sub( -5 )
