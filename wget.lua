@@ -25,8 +25,6 @@
 -- WGet 
 zpm.wget = {}
 zpm.wget.downloadUrl = zpm.config.wget.downloadUrl
-zpm.wget.dependenciesUrl = zpm.config.wget.dependenciesUrl
- 
 
 function zpm.wget.downloadWget( destination )
 
@@ -39,7 +37,19 @@ function zpm.wget.downloadWget( destination )
         print( "wget archive detected - start exctracting" )
     end
 
-    os.execute( "%s /VERYSILENT /NORESTART /DIR=\"%s\"", setupFile, path.getdirectory( destination ) )
+    local installDir = path.join( path.getdirectory( destination ), "/temp/wget/" )
+    os.executef( "%s /VERYSILENT /NORESTART /DIR=\"%s\"", setupFile, installDir)
+
+    local eay32 = path.join( zpm.cache, "libeay32.dll" )
+    local iconv2 = path.join( zpm.cache, "libiconv2.dll" )
+    local intl3 = path.join( zpm.cache, "libintl3.dll" )
+    local ssl32 = path.join( zpm.cache, "libssl32.dll" )
+
+    os.rename( path.join( installDir, "bin/wget.exe" ), destination )
+    os.rename( path.join( installDir, "bin/libeay32.dll" ), eay32 )
+    os.rename( path.join( installDir, "bin/libiconv2.dll" ), iconv2 )
+    os.rename( path.join( installDir, "bin/libintl3.dll" ), intl3 )
+    os.rename( path.join( installDir, "bin/libssl32.dll" ), ssl32 )
 
     zpm.assert( os.isfile( destination ), "Wget is not installed!" )
     
