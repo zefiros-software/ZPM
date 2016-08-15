@@ -45,11 +45,11 @@ function zpm.wget.downloadWget( destination )
     local intl3 = path.join( zpm.cache, "libintl3.dll" )
     local ssl32 = path.join( zpm.cache, "libssl32.dll" )
 
-    os.rename( path.join( installDir, "bin/wget.exe" ), destination )
-    os.rename( path.join( installDir, "bin/libeay32.dll" ), eay32 )
-    os.rename( path.join( installDir, "bin/libiconv2.dll" ), iconv2 )
-    os.rename( path.join( installDir, "bin/libintl3.dll" ), intl3 )
-    os.rename( path.join( installDir, "bin/libssl32.dll" ), ssl32 )
+    zpm.assert( os.rename( path.join( installDir, "bin/wget.exe" ), destination ) )
+    zpm.assert( os.rename( path.join( installDir, "bin/libeay32.dll" ), eay32 ) )
+    zpm.assert( os.rename( path.join( installDir, "bin/libiconv2.dll" ), iconv2 ) )
+    zpm.assert( os.rename( path.join( installDir, "bin/libintl3.dll" ), intl3 ) )
+    zpm.assert( os.rename( path.join( installDir, "bin/libssl32.dll" ), ssl32 ) )
 
     zpm.assert( os.isfile( destination ), "Wget is not installed!" )
     
