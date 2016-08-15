@@ -246,7 +246,7 @@ end
 
 function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
     
-    zpm.assert( os.isfile( packageFile ), "No '_package.json' found" )    
+    zpm.assert( os.isfile( packageFile ), "No '_package.json' found op path '%s'", packageFile )    
     
     local file = zpm.util.readAll( packageFile )
     local lpackage = zpm.JSON:decode( file )
