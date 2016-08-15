@@ -30,21 +30,16 @@ zpm.wget.dependenciesUrl = zpm.config.wget.dependenciesUrl
 
 function zpm.wget.downloadWget( destination )
 
-    local zipFile = path.join( zpm.temp, "wget.zip" )
+    local setupFile = path.join( zpm.temp, "wget.exe" )
     
-    if not os.isfile( zipFile ) then
+    if not os.isfile( setupFile ) then
         print( "wget not detected - start downloading" )   
-        http.download( zpm.wget.downloadUrl, zipFile )
+        http.download( zpm.wget.downloadUrl, setupFile )
     else
         print( "wget archive detected - start exctracting" )
     end
-    
-    local zipTemp = path.join( zpm.temp, "wget-zip" )
-    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
-    
-    zip.extract( zipFile, zipTemp )
-                
-    os.rename(  path.join( zipTemp, "bin/wget.exe" ), destination )
+
+    os.execute( "%s /VERYSILENT /NORESTART /DIR=\"%s\"", setupFile, path.getdirectory( destination ) )
 
     zpm.assert( os.isfile( destination ), "Wget is not installed!" )
     
@@ -52,38 +47,6 @@ function zpm.wget.downloadWget( destination )
     
 end
 
-
-function zpm.wget.downloadDependencies()
-
-    local eay32 = path.join( zpm.cache, "libeay32.dll" )
-    local iconv2 = path.join( zpm.cache, "libiconv2.dll" )
-    local intl3 = path.join( zpm.cache, "libintl3.dll" )
-    local ssl32 = path.join( zpm.cache, "libssl32.dll" )
-    
-    local zipFile = path.join( zpm.temp, "dependencies.zip" )
-    
-    if not ( os.isfile( eay32 )  and 
-             os.isfile( iconv2 ) and 
-             os.isfile( intl3 )  and 
-             os.isfile( ssl32 ) ) then
-        print( "wget dependencies not detected - start downloading" )
-        http.download( zpm.wget.dependenciesUrl, zipFile )
-    else
-        print( "wget dependencies archive detected - start exctracting" )
-    end
-    
-    local zipTemp = path.join( zpm.temp, "dependencies-zip" )
-    zpm.assert( os.mkdir( zipTemp ), "The archive directory could not be made!" )
-    
-    zip.extract( zipFile, zipTemp )
-    os.rename( path.join( zipTemp, "bin/libeay32.dll" ), eay32 )
-    os.rename( path.join( zipTemp, "bin/libiconv2.dll" ), iconv2 )
-    os.rename( path.join( zipTemp, "bin/libintl3.dll" ), intl3 )
-    os.rename( path.join( zipTemp, "bin/libssl32.dll" ), ssl32 )
-    
-    print( "wget dependencies succesfully installed" )
-
-end
 
 function zpm.wget.initialise()
 
@@ -95,9 +58,6 @@ function zpm.wget.initialise()
             print( "\nLoading wget..." )
 
             zpm.wget.downloadWget( dest )
-            zpm.wget.downloadDependencies()
-
-            zpm.util.sleep( 100 )
            
         end
         

@@ -46,8 +46,7 @@
         }
     },
     "wget": {
-        "downloadUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-bin.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459792671&use_mirror=iweb",
-        "dependenciesUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-dep.zip?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1459794522&use_mirror=nchc"
+        "downloadUrl": "downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-setup.exe?r=http%3A%2F%2Fgnuwin32.sourceforge.net%2Fpackages%2Fwget.htm&ts=1471250872&use_mirror=netassist"
     },
     "settings": {        
     }
