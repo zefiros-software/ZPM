@@ -19,3 +19,8 @@ premake5.exe --file=zpm/zpm.lua install-zpm
 rmdir /s /q "%TEMP%/zpm-install"
 
 echo ZPM is installed, however a restart is required!
+
+if defined APPVEYOR (
+    @powershell -NoProfile -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+    choco install git.install
+) 
