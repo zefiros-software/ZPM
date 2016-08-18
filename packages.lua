@@ -123,6 +123,7 @@ function zpm.packages.load()
     
     if ok then
         zpm.packages.root = root
+        zpm.packages.postExtract( zpm.packages.root )
     else
         printf( zpm.colors.error .. "Failed to load package '%s' possibly due to and invalid '_package.json':\n%s", package, root )
     
@@ -147,7 +148,6 @@ function zpm.packages.installPackage( package, folder, name )
         for i, dep in ipairs( package.dependencies ) do
 
             zpm.packages.installPackage( dep, dep.exportPath, dep.fullName )
-
         end
 
     end
@@ -166,6 +166,40 @@ function zpm.packages.installPackage( package, folder, name )
             for _, inst in ipairs( package.install ) do
                     printf( "Installing '%s'...", name )
                     dofile( string.format( "%s/%s", folder, inst ) )
+            end
+        end, 
+        function()
+            printf( "Installation declined, we can not guatantee this package works!" )
+        end )
+    end
+end
+
+function zpm.packages.postExtract( package )
+
+    if type( package.postextract ) ~= "table" then
+        package.postextract = { package.postextract }
+    end
+
+    if package.dependencies ~= nil and #package.dependencies > 0 then
+
+        for i, dep in ipairs( package.dependencies ) do
+
+            zpm.packages.postExtract( dep )
+        end
+
+    end
+
+    if #package.postextract > 0 then          
+        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
+        function()    
+            printf( "Installing '%s'...", package.name )
+
+            for _, inst in ipairs( package.postextract ) do
+                zpm.build.setCursor( package )
+                
+                dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
+
+                zpm.build.resetCursor()
             end
         end, 
         function()
@@ -371,18 +405,21 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
             zpm.assert( os.isdir( folder ) == false, "Failed to remove existing head!" )
         end
         
-        zpm.git.archive( repo, zipFile, "master", dest )
+        zpm.git.checkout( repo, "master" )
+        zpm.git.archive( repo, zipFile, "master" )
     
     -- git commit hash
     elseif versions:gsub("#", "") ~= versions then
-    
+            
+        zpm.git.checkout( repo, versions:gsub("#", "") )
         if not alreadyInstalled then
-            zpm.git.archive( repo, zipFile, versions:gsub("#", ""), dest )
+            zpm.git.archive( repo, zipFile, versions:gsub("#", "") )
         end
     
     -- normal resolve
     else
     
+        zpm.git.checkout( repo, "tags/" .. versions )
         continue, version, folder, alreadyInstalled = zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
         
     end

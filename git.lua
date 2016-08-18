@@ -39,6 +39,23 @@ function zpm.git.share( destination )
     os.chdir( current )
 end
 
+function zpm.git.checkout( destination, version )
+    
+    local current = os.getcwd()
+    
+    os.chdir( destination )
+
+    local status, errorCode = os.outputof( "git status" )
+    
+    if status:contains(version) == false then
+        printf( "Checkingout version %s", version )
+        os.execute( "git checkout -q -f -B " .. version ) 
+    end
+
+    os.chdir( current )
+
+end
+
 function zpm.git.pull( destination )
     
     local current = os.getcwd()
@@ -51,7 +68,8 @@ function zpm.git.pull( destination )
     
     os.execute( "git checkout -q master" )
     os.execute( "git pull" )
-    os.execute( "git fetch --tags -q" )
+    os.execute( "git fetch --tags -q --recurse-submodules -j 8" )
+    os.execute( "git submodule update --init --recursive -j 8" )
     
     os.chdir( current )
     
@@ -59,7 +77,7 @@ end
 
 function zpm.git.clone( destination, url )
     
-    os.execute( string.format( "git clone -v --recurse --progress \"%s\" \"%s\"", url, destination ) )
+    os.execute( string.format( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
     zpm.git.share( destination )
     
 end
@@ -125,8 +143,9 @@ function zpm.git.lfs.checkout( destination, checkout )
     
     os.chdir( destination )
     
-    os.execute( "git checkout -q " .. checkout )
+    os.execute( "git checkout -q -f -B " .. checkout )
     os.execute( "git lfs checkout" )
+    os.execute( "git submodule update --init --recursive -j 8" )
     
     os.chdir( current )
 
@@ -145,7 +164,8 @@ function zpm.git.lfs.pull( destination )
     os.execute( "git checkout -q master" )
     os.execute( "git pull" )
     os.execute( "git lfs pull" )
-    os.execute( "git fetch --tags -q" )
+    os.execute( "git fetch --tags -q --recurse-submodules -j 8" )
+    os.execute( "git submodule update --init --recursive -j 8" )
     
     os.chdir( current )
     

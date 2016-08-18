@@ -37,7 +37,13 @@ zpm.build._currentBuild = nil
 function zpm.build.getEnv()
 
     local env = { 
-        zpm = {}
+        zpm = {},
+        os = { 
+            matchfiles = os.matchfiles,
+            isdir = os.isdir,
+            isfile = os.isfile
+        },
+        table = table
     }
 
     for name, func in pairs( zpm.build.commands ) do
@@ -115,7 +121,7 @@ function zpm.build.buildPackage( package )
         
             zpm.build.setCursor( dep )
             
-            zpm.sandbox.run( dep.build, {env = zpm.build.getEnv()})            
+            zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})            
             
             zpm.build._currentDependency = dep
             zpm.build.resetCursor()
@@ -189,22 +195,29 @@ function zpm.build.findProject( name )
 end
 
 function zpm.build.resetCursor()
-            
+
+    if zpm.build._oldPath ~= nil then
+        os.chdir( zpm.build._oldPath )
+    end
+
+    zpm.build._oldPath = nil
     zpm.build._currentExportPath = nil
     zpm.build._currentTargetPath = nil
     zpm.build._currentObjPath = nil
     zpm.build._currentDependency = nil
     zpm.build._currentProjects = nil
-
 end
 
 function zpm.build.setCursor( dep )
-            
+       
+    zpm.build._oldPath = os.getcwd() 
     zpm.build._currentExportPath = dep.exportPath
     zpm.build._currentTargetPath = path.join( zpm.build._currentExportPath, "extern/bin" )
     zpm.build._currentObjPath = path.join( zpm.build._currentExportPath, "extern/obj" )
     zpm.build._currentDependency = dep
     zpm.build._currentProjects = dep.build
+
+    os.chdir( dep.exportPath )
 end
 
 function zpm.build.load()

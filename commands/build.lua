@@ -2,6 +2,43 @@
 zpm.build.commands = {}
 zpm.build.rcommands = {}
 
+function zpm.build.commands.extractdir( targets, prefix )
+
+    prefix = prefix or "./"
+
+    if type(targets) ~= "table" then
+        targets = {targets}
+    end
+    
+    for i, target in ipairs(targets) do
+        local zipFile = path.join( zpm.temp, "submodule.zip" )
+        local targetPath = path.join( zpm.build._currentExportPath, prefix, target )
+        local depPath = path.join( zpm.build._currentDependency.dependencyPath, target )
+
+        if path.getabsolute(depPath):contains( path.getabsolute(zpm.build._currentDependency.dependencyPath) ) then
+        
+            for _, file in ipairs( os.matchfiles( path.join( depPath, "**" ) ) ) do
+
+                local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
+
+                if ftarget:contains( ".git" ) == false then
+                    local ftargetDir = path.getdirectory( ftarget )            
+                    
+                    if not os.isdir( ftargetDir ) then
+                        zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
+                    end
+                    
+                    os.copyfile( file, ftarget )
+
+                    zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
+                end
+            end 
+
+        end
+    end
+
+end
+
 function zpm.build.commands.option( opt )
 
     zpm.assert(zpm.build._currentDependency.options ~= nil, "Option '%s' does not exist!", opt)
