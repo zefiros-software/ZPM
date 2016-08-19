@@ -94,9 +94,30 @@ function zpm.build.getEnv()
                         _G[name](args)
                     end
 
+                    if _G[ "remove" .. name ] ~= nil then
+                        env[ "remove" .. name ] = function( ... )             
+                    
+                            local args = ...
+                            if type( args ) ~= "table" then
+                                args = { args }
+                            end  
+
+                            for i, dir in ipairs( args ) do
+                                args[i] = path.join( zpm.build._currentExportPath, dir )
+                            end
+                            
+                            _G[ "remove" .. name](args)
+                        end
+                    end
+
                 else
                     env[ name ] = function( ... )
-                        _G[name](...)
+                        _G[ name](...)
+                    end
+                    if _G[ "remove" .. name ] ~= nil then
+                        env[ "remove" .. name ] = function( ... )
+                            _G[ "remove" .. name](...)
+                        end
                     end
                 end
             end
