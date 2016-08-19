@@ -44,6 +44,9 @@ function zpm.build.getEnv()
             isfile = os.isfile,
             is = os.is
         },
+        path = {
+            join = path.join
+        },
         table = table
     }
 
