@@ -41,7 +41,7 @@ function zpm.build.getEnv()
         os = { 
             matchfiles = os.matchfiles,
             isdir = os.isdir,
-            isfile = os.isfile
+            isfile = os.isfile,
             is = os.is
         },
         table = table
