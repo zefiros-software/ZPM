@@ -419,7 +419,6 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- normal resolve
     else
     
-        zpm.git.checkout( repo, "tags/" .. versions )
         continue, version, folder, alreadyInstalled = zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
         
     end
@@ -452,6 +451,8 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
             
             local alreadyInstalled = os.isdir( folder )
             if not alreadyInstalled then
+                
+                zpm.git.checkout( repo, "tags/" .. gTag.version )
                 zpm.git.archive( repo, zipFile, gTag.tag )
             end        
             
