@@ -222,7 +222,7 @@
         
             
 <li >
-    <a href="../../packages/general/_package/">_package.json</a>
+    <a href="../../packages/general/.package/">.package.json</a>
 </li>
 
         
@@ -238,89 +238,8 @@
                         
                             
 <li >
-    <a href="../../packages/publishing/">Publishing</a>
+    <a href="../../packages/.build/">.build.json</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Build</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/_build/">_build.json</a>
-</li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/commands/premake5/">Premake5</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/special/">Special</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/build/">Build</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/path/">Path</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Regions</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/regions/export/">Export</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/reexport/">Reexport</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/filters/">Filters</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/options/">Options</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -350,27 +269,6 @@
 <li >
     <a href="../../assets/publishing/">Publishing</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../assets/download/">Download</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../assets/filters/">Filters</a>
-</li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -423,10 +321,10 @@
         <li class="main "><a href="#zpmuses">zpm.uses</a></li>
         
     
-        <li class="main "><a href="#zpmbuildlibraries">zpm.buildLibraries</a></li>
+        <li class="main "><a href="#require">require</a></li>
         
     
-        <li class="main "><a href="#example">Example</a></li>
+        <li class="main "><a href="#large_example">Large Example</a></li>
         
     
     </ul>
@@ -438,11 +336,10 @@
 yourself are responsible for <strong>using</strong> them. However this is made as 
 <strong>simple</strong> as possible!</p>
 <h1 id="premake5lua_file"><code>premake5.lua</code> File<a class="headerlink" href="#premake5lua_file" title="Permanent link">&para;</a></h1>
-<p>By default ZPM is loaded in the <code>zpm</code> global variable.<br />
-There are only <strong>two</strong> command you should remember:</p>
+<p>By default ZPM is loaded in the <code>zpm</code> global variable. There is only <em>two</em> commands you should remember:</p>
 <ul>
 <li><a href="#zpmuses"><code>zpm.uses</code></a></li>
-<li><a href="#zpmbuildlibraries"><code>zpm.buildLibraries</code></a></li>
+<li><a href="#require"><code>require</code></a></li>
 </ul>
 <hr />
 <h1 id="zpmuses"><code>zpm.uses</code><a class="headerlink" href="#zpmuses" title="Permanent link">&para;</a></h1>
@@ -453,7 +350,7 @@ There are only <strong>two</strong> command you should remember:</p>
 <p>Where  </p>
 <ul>
 <li><code>libraries</code> is a string or a list of strings with "<code>&lt;vendor-name&gt;/&lt;package-name&gt;</code>"
-  as described in your <code>_package.json</code>.</li>
+  as described in your <code>.package.json</code>.</li>
 </ul>
 <p><strong> Example </strong></p>
 <pre><code class="lua">project &quot;Example&quot;
@@ -465,23 +362,23 @@ There are only <strong>two</strong> command you should remember:</p>
 <p>This command is used on a per project level.</p>
 </div>
 <hr />
-<h1 id="zpmbuildlibraries"><code>zpm.buildLibraries</code><a class="headerlink" href="#zpmbuildlibraries" title="Permanent link">&para;</a></h1>
-<p>This command is used to define all project the dependencies <strong>require</strong>.</p>
+<h1 id="require"><code>require</code><a class="headerlink" href="#require" title="Permanent link">&para;</a></h1>
+<p>ZPM can be used to load and install premake5 <a href="https://github.com/premake/premake-core/wiki/Modules">modules</a>. It can also
+be used to download general lua modules.</p>
 <p><strong> Example </strong></p>
-<pre><code class="lua">workspace &quot;Example&quot;
-    zpm.buildLibraries()
+<pre><code>//.package.json
+&quot;modules&quot;: [
+    &quot;Zefiros-Software/Zefiros-Defaults&quot;
+]
 </code></pre>
 
-<div class="admonition alert-warning">
-<p class="admonition-title">Warning</p>
-<p>This command should be called in the workspace configuration <strong>before</strong> any project is defined.</p>
-</div>
-<div class="admonition alert-success">
-<p class="admonition-title">Note</p>
-<p>All projects made with this command will <strong>share</strong> the workspace settings <strong>you </strong>defined!</p>
-</div>
+<p><strong>with</strong></p>
+<pre><code class="lua">//premake5.lua
+local zefiros = require( &quot;Zefiros-Software/Zefiros-Defaults&quot;, &quot;@head&quot; )
+</code></pre>
+
 <hr />
-<h1 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h1>
+<h1 id="large_example">Large Example<a class="headerlink" href="#large_example" title="Permanent link">&para;</a></h1>
 <pre><code class="lua">workspace &quot;Example&quot;
 
     configurations { &quot;Debug&quot;, &quot;Release&quot; }
@@ -497,8 +394,6 @@ There are only <strong>two</strong> command you should remember:</p>
 
     filter &quot;*Release&quot;
         optimize &quot;Speed&quot;
-
-    zpm.buildLibraries()
 
     project &quot;test&quot;
 

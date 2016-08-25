@@ -222,7 +222,7 @@
         
             
 <li >
-    <a href="../../packages/general/_package/">_package.json</a>
+    <a href="../../packages/general/.package/">.package.json</a>
 </li>
 
         
@@ -238,89 +238,8 @@
                         
                             
 <li >
-    <a href="../../packages/publishing/">Publishing</a>
+    <a href="../../packages/.build/">.build.json</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Build</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/_build/">_build.json</a>
-</li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/commands/premake5/">Premake5</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/special/">Special</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/build/">Build</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/path/">Path</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Regions</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/regions/export/">Export</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/reexport/">Reexport</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/filters/">Filters</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/options/">Options</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -350,27 +269,6 @@
 <li >
     <a href="../../assets/publishing/">Publishing</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../assets/download/">Download</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../assets/filters/">Filters</a>
-</li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -445,8 +343,8 @@
 <p>Since duplicate names are ignored, the local registries can be used to override other registries.</p>
 </div>
 <h2 id="definition">Definition<a class="headerlink" href="#definition" title="Permanent link">&para;</a></h2>
-<p>The registry definition consists of a listing of a name and a repository, and are listed in a <code>_registries.json</code>:</p>
-<pre><code class="json">//_registries.json
+<p>The registry definition consists of a listing of a name and a repository, and are listed in a <code>.registries.json</code>:</p>
+<pre><code class="json">//registries.json
 [
     {
         &quot;name&quot;: &quot;&lt;name&gt;&quot;,
@@ -463,22 +361,22 @@
 <hr />
 <h2 id="local_registries">Local Registries<a class="headerlink" href="#local_registries" title="Permanent link">&para;</a></h2>
 <p>Local registries are registries that are added on a per <strong>project</strong> base override.
-By defining a <code>._registries.json</code> file in the root of a project, we can add
+By defining a <code>.registries.json</code> file in the root of a project, we can add
 new registries that contain registries <strong>specific</strong> for that project.
 These registries may define <a href="../../../assets/assets">assets</a>, <a href="">packages</a> and <a href="">modules</a>.</p>
 <div class="admonition alert-warning">
 <p class="admonition-title">Warning</p>
-<p><code>_registries.json</code> from these registries will not be loaded.</p>
+<p><code>registries.json</code> from these registries will not be loaded.</p>
 </div>
 <h2 id="root_registries">Root Registries<a class="headerlink" href="#root_registries" title="Permanent link">&para;</a></h2>
-<p>Root registries are registries that may define new registries to load. Since their <code>_registries.json</code> files
+<p>Root registries are registries that may define new registries to load. Since their <code>.registries.json</code> files
 will be parsed and added. 
 These registries may define <a href="../../../assets/assets">assets</a>, <a href="">packages</a> and <a href="">modules</a>.</p>
 <h2 id="normal_registries">Normal Registries<a class="headerlink" href="#normal_registries" title="Permanent link">&para;</a></h2>
 <p>These registries may define <a href="../../../assets/assets">assets</a>, <a href="">packages</a> and <a href="">modules</a>.</p>
 <div class="admonition alert-warning">
 <p class="admonition-title">Warning</p>
-<p><code>_registries.json</code> from these registries will not be loaded.</p>
+<p><code>.registries.json</code> from these registries will not be loaded.</p>
 </div>
 <hr />
 <h2 id="related_pages">Related Pages<a class="headerlink" href="#related_pages" title="Permanent link">&para;</a></h2>

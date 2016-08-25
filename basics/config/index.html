@@ -222,7 +222,7 @@
         
             
 <li >
-    <a href="../../packages/general/_package/">_package.json</a>
+    <a href="../../packages/general/.package/">.package.json</a>
 </li>
 
         
@@ -238,89 +238,8 @@
                         
                             
 <li >
-    <a href="../../packages/publishing/">Publishing</a>
+    <a href="../../packages/.build/">.build.json</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Build</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/_build/">_build.json</a>
-</li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/commands/premake5/">Premake5</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/special/">Special</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/build/">Build</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/commands/path/">Path</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Regions</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../packages/regions/export/">Export</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/reexport/">Reexport</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/filters/">Filters</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../packages/regions/options/">Options</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -350,27 +269,6 @@
 <li >
     <a href="../../assets/publishing/">Publishing</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../assets/download/">Download</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../assets/filters/">Filters</a>
-</li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -438,14 +336,52 @@ the default configuration can be found in the ZPM repository.</p>
 <p>You may notice that sometimes you are <strong>restricted</strong> by the GitHub api access rate.
 To prevent this from happening you may add a <strong>GitHub token</strong> in a configuration file 
 in the paths described above to <strong>authenticate</strong> yourself.</p>
-<p><strong> Example </strong></p>
+<p><strong> Example </strong>
+The following settings may be overriden:</p>
 <pre><code class="json">//.config.json
 {
     &quot;GitHub&quot;: {
         &quot;token&quot;: &quot;&lt;token&gt;&quot;
+    },
+    &quot;install&quot;: {
+        &quot;registry&quot;: {
+            &quot;directory&quot;: &quot;registry&quot;,
+            &quot;directories&quot;: &quot;registries&quot;,
+            &quot;fileName&quot;: &quot;.registries.json&quot;,
+            &quot;assets&quot;: &quot;.assets.json&quot;,
+            &quot;modules&quot;: &quot;.modules.json&quot;,
+            &quot;manifest&quot;: &quot;.manifest.json&quot;,
+            &quot;registries&quot;: &quot;.registries.json&quot;,
+            &quot;build&quot;: &quot;.build.json&quot;
+        },        
+        &quot;manifests&quot;: {
+            &quot;fileName&quot;: &quot;.manifest.json&quot;
+        },
+        &quot;modules&quot;: {
+            &quot;fileName&quot;: &quot;.modules.json&quot;,
+            &quot;directory&quot;: &quot;modules&quot;
+        },
+        &quot;packages&quot;: {
+            &quot;fileName&quot;: &quot;.package.json&quot;
+        },
+        &quot;assets&quot;: {
+            &quot;fileName&quot;: &quot;.assets.lua&quot;,
+            &quot;directory&quot;: &quot;assets&quot;
+        },
+        &quot;build&quot;: {
+            &quot;fileName&quot;: &quot;.build.lua&quot;
+        },
+        &quot;extern&quot;: {
+            &quot;directory&quot;: &quot;extern&quot;  
+        }
     }
 }
-</code></pre></div>
+</code></pre>
+
+<div class="admonition alert-success">
+<p class="admonition-title">Note</p>
+<p>Absolute filepaths are supported!</p>
+</div></div>
         </div>
 
         <footer class="col-md-12">

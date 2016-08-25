@@ -6,10 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="http://pm.zefiros.eu/packages/commands/path/">
+        <link rel="canonical" href="http://pm.zefiros.eu/packages/general/.package/">
         <link rel="shortcut icon" href="../../../img/favicon.ico">
 
-	<title>Path - ZPM</title>
+	<title>.package.json - ZPM</title>
 
         <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
         <link href="../../../css/font-awesome-4.0.3.css" rel="stylesheet">
@@ -204,25 +204,25 @@
         
             
 <li >
-    <a href="../../general/versions/">Versions</a>
+    <a href="../versions/">Versions</a>
 </li>
 
         
             
 <li >
-    <a href="../../general/dev/">Dev</a>
+    <a href="../dev/">Dev</a>
 </li>
 
         
             
 <li >
-    <a href="../../general/overrides/">Overrides</a>
+    <a href="../overrides/">Overrides</a>
 </li>
 
         
             
-<li >
-    <a href="../../general/_package/">_package.json</a>
+<li class="active">
+    <a href="./">.package.json</a>
 </li>
 
         
@@ -238,89 +238,8 @@
                         
                             
 <li >
-    <a href="../../publishing/">Publishing</a>
+    <a href="../../.build/">.build.json</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Build</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../_build/">_build.json</a>
-</li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../premake5/">Premake5</a>
-</li>
-
-        
-            
-<li >
-    <a href="../special/">Special</a>
-</li>
-
-        
-            
-<li >
-    <a href="../build/">Build</a>
-</li>
-
-        
-            
-<li class="active">
-    <a href="./">Path</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Regions</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../regions/export/">Export</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../regions/reexport/">Reexport</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../regions/filters/">Filters</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../regions/options/">Options</a>
-</li>
-
-        
-    </ul>
-  </li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -350,27 +269,6 @@
 <li >
     <a href="../../../assets/publishing/">Publishing</a>
 </li>
-
-                        
-                            
-  <li class="dropdown-submenu">
-    <a tabindex="-1" href="">Commands</a>
-    <ul class="dropdown-menu">
-        
-            
-<li >
-    <a href="../../../assets/download/">Download</a>
-</li>
-
-        
-            
-<li >
-    <a href="../../../assets/filters/">Filters</a>
-</li>
-
-        
-    </ul>
-  </li>
 
                         
                         </ul>
@@ -414,11 +312,19 @@
             <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#path_commands">Path Commands</a></li>
+        <li class="main active"><a href="#packagejson_file">.package.json File</a></li>
         
-            <li><a href="#example">Example</a></li>
+            <li><a href="#root_package_required_only">Root Package Required Only</a></li>
         
-            <li><a href="#available_commands">Available Commands</a></li>
+            <li><a href="#optional">Optional</a></li>
+        
+            <li><a href="#requires">requires</a></li>
+        
+            <li><a href="#assets">assets</a></li>
+        
+            <li><a href="#install">install</a></li>
+        
+            <li><a href="#dev">dev</a></li>
         
             <li><a href="#related_pages">Related Pages</a></li>
         
@@ -427,46 +333,121 @@
 </div></div>
             <div class="col-md-9" role="main">
 
-<h1 id="path_commands">Path Commands<a class="headerlink" href="#path_commands" title="Permanent link">&para;</a></h1>
-<p>All path commands are executed as if they were executed from the (shadow) repository <strong>root</strong>.</p>
-<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<pre><code class="json">//_build.json
-[
-    {
-        &quot;project&quot;: &quot;Example&quot;,
-        &quot;do&quot;: [
-            {&quot;files&quot;: [
-                &quot;src/*.cpp&quot;,
-                &quot;include/*.h&quot;
-            ]}
-        ]
+<h1 id="packagejson_file">.package.json File<a class="headerlink" href="#packagejson_file" title="Permanent link">&para;</a></h1>
+<p>The <code>.package.json</code> is used for both <strong>packages</strong> and the <strong>root package</strong>.
+A <code>.package.json</code> is located in the <strong>root</strong> of the project and has the form:</p>
+<pre><code class="json">{
+    &quot;name&quot;: &quot;&lt;vendor&gt;/&lt;name&gt;&quot;,
+    &quot;description&quot;: &quot;&lt;description&gt;&quot;,
+    &quot;keywords&quot;: [ 
+        &lt;keywords&gt; 
+    ],
+    &quot;website&quot;: &quot;&lt;website&gt;&quot;,
+    &quot;license&quot;: &quot;&lt;license&gt;&quot;,
+    &quot;authors&quot;: [
+        {
+            &quot;name&quot;: &quot;&lt;author-name&gt;&quot;,
+            &quot;email&quot;: &quot;&lt;author-email&gt;&quot;,
+            &quot;website&quot;: &quot;&lt;author-website&gt;&quot;
+        }
+    ],
+    &quot;options&quot;: {
+        &lt;options&gt;
+    },
+    &quot;modules&quot;: [
+        &lt;modules&gt;
+    ],
+    &quot;requires&quot;: [
+        {
+            &quot;name&quot;: &quot;&lt;require-vendor&gt;/&lt;require-name&gt;&quot;,
+            &quot;version&quot;: &quot;&lt;require-version&gt;&quot;,
+            &quot;options&quot;: {
+                &lt;require-options&gt;
+            }
+        }
+    ],
+    &quot;assets&quot;: [
+        {
+            &quot;name&quot;: &quot;&lt;asset-vendor&gt;/&lt;asset-name&gt;&quot;,
+            &quot;version&quot;: &quot;&lt;asset-version&gt;&quot;
+        }
+    ],
+    &quot;install&quot;: [
+        &lt;install&gt;
+    ],
+    &quot;dev&quot;: {
+        &lt;dev-settings&gt;
     }
-]
+}
 </code></pre>
 
-<h2 id="available_commands">Available Commands<a class="headerlink" href="#available_commands" title="Permanent link">&para;</a></h2>
+<h3 id="root_package_required_only">Root Package Required Only<a class="headerlink" href="#root_package_required_only" title="Permanent link">&para;</a></h3>
+<p>The <code>name</code> descriptor is only used in the root package.</p>
 <ul>
-<li><a href="https://github.com/premake/premake-core/wiki/includedirs"><code>includedirs</code></a></li>
-<li><a href="https://github.com/premake/premake-core/wiki/libdirs"><code>libdirs</code></a></li>
-<li><a href="https://github.com/premake/premake-core/wiki/sysincludedirs"><code>sysincludedirs</code></a></li>
-<li><a href="https://github.com/premake/premake-core/wiki/syslibdirs"><code>syslibdirs</code></a></li>
-<li><a href="https://github.com/premake/premake-core/wiki/files"><code>files</code></a></li>
-<li><a href="https://github.com/premake/premake-core/wiki/forceincludes"><code>forceincludes</code></a></li>
+<li><code>vendor</code> What vendor is this package from.</li>
+<li><code>name</code> How is the package called.</li>
+</ul>
+<h3 id="optional">Optional<a class="headerlink" href="#optional" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>description</code> A description of the project.</li>
+<li><code>keywords</code> An array of strings containing keywords of the project.</li>
+<li><code>websites</code> The website where the project is hosted.</li>
+<li><code>license</code> Under what license this project falls.</li>
+</ul>
+<hr />
+<ul>
+<li><code>modules</code> A list of modules in the form <code>&lt;vendor&gt;/&lt;name&gt;</code> that get installed or updated when running <code>install-package</code>.</li>
+</ul>
+<hr />
+<ul>
+<li><code>options</code> What options the project has, and their default values.</li>
+</ul>
+<hr />
+<ul>
+<li><code>author-name</code> The name of the author.</li>
+<li><code>author-email</code> The authors email address.</li>
+<li><code>author-website</code> The authors website.</li>
+</ul>
+<hr />
+<h3 id="requires">requires<a class="headerlink" href="#requires" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>require-vendor</code> What vendor are we requiring a package from.</li>
+<li><code>require-name</code> How is the package called.</li>
+<li><code>require-version</code> What <a href="../versions">version</a> do you want.  </li>
+</ul>
+<hr />
+<ul>
+<li><code>require-options</code> A <strong>key-value</strong> pairs that defines the default options.</li>
+</ul>
+<hr />
+<ul>
+<li><code>require-override-project</code> What projects are we adding build settings to in this package.</li>
+<li><code>require-overrides</code> Specify a new block of commands that will be <a href="../overrides">appended</a>.</li>
+</ul>
+<hr />
+<h3 id="assets">assets<a class="headerlink" href="#assets" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>asset-vendor</code> What vendor are we requiring a asset from.</li>
+<li><code>asset-name</code> How is the asset called.</li>
+<li><code>asset-version</code> What <a href="../versions">version</a> do you want.</li>
+</ul>
+<hr />
+<h3 id="install">install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>install</code> a list of files that contain <a href="../../../installer/installer/">installer</a> commands.</li>
+</ul>
+<hr />
+<h3 id="dev">dev<a class="headerlink" href="#dev" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>dev</code> This section allows you to define <code>requires</code>, <code>assets</code> and <code>install</code> sections that are 
+executed only when this is the <strong>root</strong> package. See <a href="../dev">this</a> for more information.</li>
 </ul>
 <hr />
 <h2 id="related_pages">Related Pages<a class="headerlink" href="#related_pages" title="Permanent link">&para;</a></h2>
-<p>These <strong>build</strong> commands are available:  </p>
 <ul>
-<li><a href="../premake5">Premake5</a> commands</li>
-<li><a href="../special">Special</a> commands</li>
-<li><a href="../build">Build</a> commands</li>
-</ul>
-<p>These <strong>region</strong> commands are available:  </p>
-<ul>
-<li><a href="../../regions/export">Export</a> regions</li>
-<li><a href="../../regions/reexport">Reexport</a> regions</li>
-<li><a href="../../regions/filters">Filters</a> regions</li>
-<li><a href="../../regions/options">Options</a> regions</li>
+<li><a href="../dev">Dev</a></li>
+<li><a href="../overrides">Overrides</a></li>
+<li><a href="../versions">Versions</a></li>
 </ul></div>
         </div>
 

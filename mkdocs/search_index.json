@@ -2,7 +2,7 @@
     "docs": [
         {
             "location": "/",
-            "text": "Welcome to ZPM\n\u00b6\n\n\nZPM is the C++ package manager built for everyone who uses \npremake\n!\n\nWe designed it to make it easy to use \nlibraries\n, \nmodules\n and \nassets\n.\n\n\nStatus\n\u00b6\n\n\n\n\n\n\n\n\nOS\n\n\nStatus\n\n\n\n\n\n\n\n\n\n\nLinux & OSX\n\n\n\n\n\n\n\n\nWindows\n\n\n\n\n\n\n\n\n\n\nWhy ZPM?\n\u00b6\n\n\n\n\nEasy, cross-platform\n package manager\n\n\nIntegrates with \npremake5\n\n\nBoth for using and publishing packages.\n\n\nAll Git repositories supported, even \nprivate\n repositories.\n\n\nFor packages, premake5 modules, and assets.\n\n\nAssets may be hosted using \nGit LFS\n, and from urls.\n\n\nOptionally separating the ZPM package and build files.\n\n\nGit tags for versioning.\n\n\n\n\n\n\nInstallation\n\u00b6\n\n\nZPM installs in your path and makes it easy to use and update premake.\n\nTo install, pick your os and execute the command!\n\n\nPrerequisites\n\u00b6\n\n\nZPM has a few dependencies:\n\n\n\n\nGit: Download \nhere\n.\n\n\nGit LFS: Check install instructions \nhere\n.\n\n\n\n\n\n\nWarning\n\n\nNote that both Git and Git LFS need to be available from the command line, and thus need to be installed in your path variable. You can check by typing \ngit --version\n in your shell.\n\n\n\n\nWindows\n\u00b6\n\n\nExecute:\n\n\npowershell -command \"Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat\" && %TEMP%/install-zpm.bat && set PATH=%PATH%;%ALLUSERSPROFILE%/zpm\n\n\n\n\n\n\nNote\n\n\nA restart may be required since the \npath\n variable has changed.\n\n\n\n\nLinux\n\u00b6\n\n\nExecute:\n\n\nwget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash\n\n\n\n\nOSX\n\u00b6\n\n\nExecute:\n\n\nwget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash\n\n\n\n\nTravis\n\u00b6\n\n\nExecute:\n\n\ninstall:\n    - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash\n\n\n\n\nAppVeyor\n\u00b6\n\n\nExecute:\n\n\ninstall:\n    - powershell -command \"Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat\" && %TEMP%/install-zpm.bat \n    - \"SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm\"\n\n\n\n\nTesting\n\u00b6\n\n\nTest whether you get output similar to underneath when you run \npremake5 --version\n.\n\n\n\n\u00b6\n\n\n\n\nBugs\n\u00b6\n\n\nWhen a bug is found, please insert it in the issue tracker, so we can resolve it as quickly as we can.\n\n\nContributing\n\u00b6\n\n\n\n\nFork it!\n\n\nCreate your feature branch: \ngit checkout -b my-new-feature\n\n\nCommit your changes: \ngit commit -am 'Add some feature'\n\n\nPush to the branch: \ngit push origin my-new-feature\n\n\nSubmit a pull request\n\n\n\n\nAuthors\n\u00b6\n\n\n\n\nMick van Duijn \nm.vanduijn@zefiros.eu\n\n\nPaul Visscher \np.e.visscher@zefiros.eu\n\n\nKoen Visscher \nk.m.visscher@zefiros.eu\n\n\n\n\n\n\nCiting ZPM\n\u00b6\n\n\nWhen you use ZPM as part of a scientific publication, we would love you to cite this project so the word gets spread. This BibTex snippet can be used:\n\n\n@misc{zpm2016,\n  author    = {Mick van Duijn and Koen Visscher and Paul Visscher},\n  title     = {{ZPM}: the {C++} package manager built for everyone who uses \\url{(http://premake.github.io/}.},\n  abstract  = {{ZPM} is the {C++} package manager built for everyone who uses \\url{http://premake.github.io/}! {ZPM} is designed to make it easy to use libraries, modules and assets.},\n  howpublished = {\\url{http://zpm.zefiros.eu/}}\n}\n\n\n\n\nLicense\n\u00b6\n\n\nThis project is licensed under the MIT license.\n\n\nCopyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+            "text": "Welcome to ZPM\n\u00b6\n\n\nZPM is the C++ package manager built for everyone who uses \npremake\n!\n\nWe designed it to make it easy to use \nlibraries\n, \nmodules\n and \nassets\n.\n\n\nStatus\n\u00b6\n\n\n\n\n\n\n\n\nOS\n\n\nStatus\n\n\n\n\n\n\n\n\n\n\nLinux & OSX\n\n\n\n\n\n\n\n\nWindows\n\n\n\n\n\n\n\n\n\n\nWhy ZPM?\n\u00b6\n\n\n\n\nEasy, cross-platform\n package manager\n\n\nIntegrates with \npremake5\n\n\nBoth for using and publishing packages.\n\n\nAll Git repositories supported, even \nprivate\n repositories.\n\n\nFor packages, premake5 modules, and assets.\n\n\nAssets may be hosted using \nGit LFS\n, and from urls.\n\n\nOptionally separating the ZPM package and build files.\n\n\nGit tags for versioning.\n\n\n\n\n\n\nInstallation\n\u00b6\n\n\nZPM installs in your path and makes it easy to use and update premake.\n\nTo install, pick your os and execute the command!\n\n\nPrerequisites\n\u00b6\n\n\nZPM has a few dependencies:\n\n\n\n\nGit: Download \nhere\n.\n\n\nGit LFS: Check install instructions \nhere\n.\n\n\n\n\n\n\nWarning\n\n\nNote that both Git and Git LFS need to be available from the command line, and thus need to be installed in your path variable. You can check by typing \ngit --version\n in your shell.\n\n\n\n\nWindows\n\u00b6\n\n\nExecute:\n\n\npowershell -command \"Invoke-WebRequest -Uri https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.bat -OutFile %TEMP%/install-zpm.bat\" && %TEMP%/install-zpm.bat && set PATH=%PATH%;%ALLUSERSPROFILE%/zpm\n\n\n\n\n\n\nNote\n\n\nA restart may be required since the \npath\n variable has changed.\n\n\n\n\nLinux\n\u00b6\n\n\nExecute:\n\n\nwget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm.sh | bash\n\n\n\n\nOSX\n\u00b6\n\n\nExecute:\n\n\nwget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash\n\n\n\n\nTravis\n\u00b6\n\n\nExecute:\n\n\ninstall:\n    - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash\n\n\n\n\nAppVeyor\n\u00b6\n\n\nExecute:\n\n\ninstall:\n    - powershell -command \"Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat\" && %TEMP%/install-zpm.bat \n    - \"SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm\"\n\n\n\n\nTesting\n\u00b6\n\n\nTest whether you get output similar to underneath when you run \npremake5 --version\n.\n\n\n\n\u00b6\n\n\n\n\nBugs\n\u00b6\n\n\nWhen a bug is found, please insert it in the issue tracker, so we can resolve it as quickly as we can.\n\n\nContributing\n\u00b6\n\n\n\n\nFork it!\n\n\nCreate your feature branch: \ngit checkout -b my-new-feature\n\n\nCommit your changes: \ngit commit -am 'Add some feature'\n\n\nPush to the branch: \ngit push origin my-new-feature\n\n\nSubmit a pull request\n\n\n\n\nAuthors\n\u00b6\n\n\n\n\nMick van Duijn \nm.vanduijn@zefiros.eu\n\n\nPaul Visscher \np.e.visscher@zefiros.eu\n\n\nKoen Visscher \nk.m.visscher@zefiros.eu\n\n\n\n\n\n\nCiting ZPM\n\u00b6\n\n\nWhen you use ZPM as part of a scientific publication, we would love you to cite this project so the word gets spread. This BibTex snippet can be used:\n\n\n@misc{zpm2016,\n  author    = {Mick van Duijn and Koen Visscher and Paul Visscher},\n  title     = {{ZPM}: the {C++} package manager built for everyone who uses \\url{(http://premake.github.io/}.},\n  abstract  = {{ZPM} is the {C++} package manager built for everyone who uses \\url{http://premake.github.io/}! {ZPM} is designed to make it easy to use libraries, modules and assets.},\n  howpublished = {\\url{http://zpm.zefiros.eu/}}\n}\n\n\n\n\nLicense\n\u00b6\n\n\nThis project is licensed under the MIT license by \nZefiros Software\n.\n\n\nCopyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
             "title": "Home"
         },
         {
@@ -82,7 +82,7 @@
         },
         {
             "location": "/#license",
-            "text": "This project is licensed under the MIT license.  Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
+            "text": "This project is licensed under the MIT license by  Zefiros Software .  Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.",
             "title": "License"
         },
         {
@@ -152,7 +152,7 @@
         },
         {
             "location": "/basics/registries/",
-            "text": "Registries\n\u00b6\n\n\nA registry is a collection of \nmodules\n, \npackages\n, \nassets\n, and sometimes \nother\n registries.\n\n\nWe have \nthree\n different types of registries:\n\n\n\n\nLocal\n Registries\n\n\nRoot\n Registries\n\n\nNormal\n Registries\n\n\n\n\nRegistries are loaded in the \norder\n described above, and duplicate names will be ignored. \n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local registries can be used to override other registries.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe registry definition consists of a listing of a name and a repository, and are listed in a \n_registries.json\n:\n\n\n//_registries.json\n[\n    {\n        \"name\": \"<name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nname\n is alpha-numeric and may contain '-' and '_'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Registries\n\u00b6\n\n\nLocal registries are registries that are added on a per \nproject\n base override.\nBy defining a \n._registries.json\n file in the root of a project, we can add\nnew registries that contain registries \nspecific\n for that project.\nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\n\n\nWarning\n\n\n_registries.json\n from these registries will not be loaded.\n\n\n\n\nRoot Registries\n\u00b6\n\n\nRoot registries are registries that may define new registries to load. Since their \n_registries.json\n files\nwill be parsed and added. \nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\nNormal Registries\n\u00b6\n\n\nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\n\n\nWarning\n\n\n_registries.json\n from these registries will not be loaded.\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\n\n\nBasics\n\n\nCommands",
+            "text": "Registries\n\u00b6\n\n\nA registry is a collection of \nmodules\n, \npackages\n, \nassets\n, and sometimes \nother\n registries.\n\n\nWe have \nthree\n different types of registries:\n\n\n\n\nLocal\n Registries\n\n\nRoot\n Registries\n\n\nNormal\n Registries\n\n\n\n\nRegistries are loaded in the \norder\n described above, and duplicate names will be ignored. \n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local registries can be used to override other registries.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe registry definition consists of a listing of a name and a repository, and are listed in a \n.registries.json\n:\n\n\n//registries.json\n[\n    {\n        \"name\": \"<name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nname\n is alpha-numeric and may contain '-' and '_'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Registries\n\u00b6\n\n\nLocal registries are registries that are added on a per \nproject\n base override.\nBy defining a \n.registries.json\n file in the root of a project, we can add\nnew registries that contain registries \nspecific\n for that project.\nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\n\n\nWarning\n\n\nregistries.json\n from these registries will not be loaded.\n\n\n\n\nRoot Registries\n\u00b6\n\n\nRoot registries are registries that may define new registries to load. Since their \n.registries.json\n files\nwill be parsed and added. \nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\nNormal Registries\n\u00b6\n\n\nThese registries may define \nassets\n, \npackages\n and \nmodules\n.\n\n\n\n\nWarning\n\n\n.registries.json\n from these registries will not be loaded.\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\n\n\nBasics\n\n\nCommands",
             "title": "Registries"
         },
         {
@@ -162,22 +162,22 @@
         },
         {
             "location": "/basics/registries/#definition",
-            "text": "The registry definition consists of a listing of a name and a repository, and are listed in a  _registries.json :  //_registries.json\n[\n    {\n        \"name\": \"<name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      name  is alpha-numeric and may contain '-' and '_'.  repository  is a git url (may be  private ).",
+            "text": "The registry definition consists of a listing of a name and a repository, and are listed in a  .registries.json :  //registries.json\n[\n    {\n        \"name\": \"<name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      name  is alpha-numeric and may contain '-' and '_'.  repository  is a git url (may be  private ).",
             "title": "Definition"
         },
         {
             "location": "/basics/registries/#local_registries",
-            "text": "Local registries are registries that are added on a per  project  base override.\nBy defining a  ._registries.json  file in the root of a project, we can add\nnew registries that contain registries  specific  for that project.\nThese registries may define  assets ,  packages  and  modules .   Warning  _registries.json  from these registries will not be loaded.",
+            "text": "Local registries are registries that are added on a per  project  base override.\nBy defining a  .registries.json  file in the root of a project, we can add\nnew registries that contain registries  specific  for that project.\nThese registries may define  assets ,  packages  and  modules .   Warning  registries.json  from these registries will not be loaded.",
             "title": "Local Registries"
         },
         {
             "location": "/basics/registries/#root_registries",
-            "text": "Root registries are registries that may define new registries to load. Since their  _registries.json  files\nwill be parsed and added. \nThese registries may define  assets ,  packages  and  modules .",
+            "text": "Root registries are registries that may define new registries to load. Since their  .registries.json  files\nwill be parsed and added. \nThese registries may define  assets ,  packages  and  modules .",
             "title": "Root Registries"
         },
         {
             "location": "/basics/registries/#normal_registries",
-            "text": "These registries may define  assets ,  packages  and  modules .   Warning  _registries.json  from these registries will not be loaded.",
+            "text": "These registries may define  assets ,  packages  and  modules .   Warning  .registries.json  from these registries will not be loaded.",
             "title": "Normal Registries"
         },
         {
@@ -187,7 +187,7 @@
         },
         {
             "location": "/basics/config/",
-            "text": "Configuration\n\u00b6\n\n\nFor \ncustomisation\n of ZPM we load in a configuration file.\n\n\nIn \norder\n we look for the following configuration files:  \n\n\n\n\n<zpm-install-directory>/config.json\n\n\n<premake5.lua-directory>/config.json\n\n\n<premake5.lua-directory>/.config.json\n - should be \nprivate\n and in .gitignore\n\n\n<premake5.lua-directory>/../.config.json\n\n\n\n\nWherein each configuration node \noverrides\n the previous values. An example of \nthe default configuration can be found in the ZPM repository.\n\n\nGitHub token\n\u00b6\n\n\nYou may notice that sometimes you are \nrestricted\n by the GitHub api access rate.\nTo prevent this from happening you may add a \nGitHub token\n in a configuration file \nin the paths described above to \nauthenticate\n yourself.\n\n\n Example \n\n\n//.config.json\n{\n    \"GitHub\": {\n        \"token\": \"<token>\"\n    }\n}",
+            "text": "Configuration\n\u00b6\n\n\nFor \ncustomisation\n of ZPM we load in a configuration file.\n\n\nIn \norder\n we look for the following configuration files:  \n\n\n\n\n<zpm-install-directory>/config.json\n\n\n<premake5.lua-directory>/config.json\n\n\n<premake5.lua-directory>/.config.json\n - should be \nprivate\n and in .gitignore\n\n\n<premake5.lua-directory>/../.config.json\n\n\n\n\nWherein each configuration node \noverrides\n the previous values. An example of \nthe default configuration can be found in the ZPM repository.\n\n\nGitHub token\n\u00b6\n\n\nYou may notice that sometimes you are \nrestricted\n by the GitHub api access rate.\nTo prevent this from happening you may add a \nGitHub token\n in a configuration file \nin the paths described above to \nauthenticate\n yourself.\n\n\n Example \n\nThe following settings may be overriden:\n\n\n//.config.json\n{\n    \"GitHub\": {\n        \"token\": \"<token>\"\n    },\n    \"install\": {\n        \"registry\": {\n            \"directory\": \"registry\",\n            \"directories\": \"registries\",\n            \"fileName\": \".registries.json\",\n            \"assets\": \".assets.json\",\n            \"modules\": \".modules.json\",\n            \"manifest\": \".manifest.json\",\n            \"registries\": \".registries.json\",\n            \"build\": \".build.json\"\n        },        \n        \"manifests\": {\n            \"fileName\": \".manifest.json\"\n        },\n        \"modules\": {\n            \"fileName\": \".modules.json\",\n            \"directory\": \"modules\"\n        },\n        \"packages\": {\n            \"fileName\": \".package.json\"\n        },\n        \"assets\": {\n            \"fileName\": \".assets.lua\",\n            \"directory\": \"assets\"\n        },\n        \"build\": {\n            \"fileName\": \".build.lua\"\n        },\n        \"extern\": {\n            \"directory\": \"extern\"  \n        }\n    }\n}\n\n\n\n\n\n\nNote\n\n\nAbsolute filepaths are supported!",
             "title": "Configuration"
         },
         {
@@ -197,12 +197,12 @@
         },
         {
             "location": "/basics/config/#github_token",
-            "text": "You may notice that sometimes you are  restricted  by the GitHub api access rate.\nTo prevent this from happening you may add a  GitHub token  in a configuration file \nin the paths described above to  authenticate  yourself.   Example   //.config.json\n{\n    \"GitHub\": {\n        \"token\": \"<token>\"\n    }\n}",
+            "text": "You may notice that sometimes you are  restricted  by the GitHub api access rate.\nTo prevent this from happening you may add a  GitHub token  in a configuration file \nin the paths described above to  authenticate  yourself.   Example  \nThe following settings may be overriden:  //.config.json\n{\n    \"GitHub\": {\n        \"token\": \"<token>\"\n    },\n    \"install\": {\n        \"registry\": {\n            \"directory\": \"registry\",\n            \"directories\": \"registries\",\n            \"fileName\": \".registries.json\",\n            \"assets\": \".assets.json\",\n            \"modules\": \".modules.json\",\n            \"manifest\": \".manifest.json\",\n            \"registries\": \".registries.json\",\n            \"build\": \".build.json\"\n        },        \n        \"manifests\": {\n            \"fileName\": \".manifest.json\"\n        },\n        \"modules\": {\n            \"fileName\": \".modules.json\",\n            \"directory\": \"modules\"\n        },\n        \"packages\": {\n            \"fileName\": \".package.json\"\n        },\n        \"assets\": {\n            \"fileName\": \".assets.lua\",\n            \"directory\": \"assets\"\n        },\n        \"build\": {\n            \"fileName\": \".build.lua\"\n        },\n        \"extern\": {\n            \"directory\": \"extern\"  \n        }\n    }\n}   Note  Absolute filepaths are supported!",
             "title": "GitHub token"
         },
         {
             "location": "/basics/manifest/",
-            "text": "Adding Packages\n\u00b6\n\n\nA package manifest is a collection of repository names and repository locations.\n\n\nWe have \nthree\n types of manifests:\n\n\n\n\nLocal\n Manifest\n\n\nRoot\n Manifest\n\n\nNormal\n Manifest\n\n\n\n\nManifests are loaded in that \norder\n, wherein duplicate names will be ignored.\n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local manifests can be used to override other manifests.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe manifest definition consists of a listing of a name and a repository, and are listed in a \n_manifest.json\n:\n\n\n//_manifest.json\n[\n    {\n        \"name\": \"<vendor-name>/<package-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\npackage-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n._manifest.json\n file in the root of your project we can add\nnew packages available to \nthat\n project only.\n\n\nRoot Manifest\n\u00b6\n\n\nThe root manifest contains packages that are defined by the root registry.\n\n\nNormal Manifest\n\u00b6\n\n\nThe normal manifests are packages defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n packages included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
+            "text": "Adding Packages\n\u00b6\n\n\nA package manifest is a collection of repository names and repository locations.\n\n\nWe have \nthree\n types of manifests:\n\n\n\n\nLocal\n Manifest\n\n\nRoot\n Manifest\n\n\nNormal\n Manifest\n\n\n\n\nManifests are loaded in that \norder\n, wherein duplicate names will be ignored.\n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local manifests can be used to override other manifests.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe manifest definition consists of a listing of a name and a repository, and are listed in a \n.manifest.json\n:\n\n\n//.manifest.json\n[\n    {\n        \"name\": \"<vendor-name>/<package-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\npackage-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n.manifest.json\n file in the root of your project we can add\nnew packages available to \nthat\n project only.\n\n\nRoot Manifest\n\u00b6\n\n\nThe root manifest contains packages that are defined by the root registry.\n\n\nNormal Manifest\n\u00b6\n\n\nThe normal manifests are packages defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n packages included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
             "title": "Packages"
         },
         {
@@ -212,12 +212,12 @@
         },
         {
             "location": "/basics/manifest/#definition",
-            "text": "The manifest definition consists of a listing of a name and a repository, and are listed in a  _manifest.json :  //_manifest.json\n[\n    {\n        \"name\": \"<vendor-name>/<package-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  package-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
+            "text": "The manifest definition consists of a listing of a name and a repository, and are listed in a  .manifest.json :  //.manifest.json\n[\n    {\n        \"name\": \"<vendor-name>/<package-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  package-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
             "title": "Definition"
         },
         {
             "location": "/basics/manifest/#local_manifest",
-            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  ._manifest.json  file in the root of your project we can add\nnew packages available to  that  project only.",
+            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  .manifest.json  file in the root of your project we can add\nnew packages available to  that  project only.",
             "title": "Local Manifest"
         },
         {
@@ -232,17 +232,17 @@
         },
         {
             "location": "/basics/assets/",
-            "text": "Assets Manifest\n\u00b6\n\n\nWe have \nthree\n different types of asset manifests:\n\n\n\n\nLocal\n asset manifest\n\n\nRoot\n asset manifests\n\n\nNormal\n asset manifests\n\n\n\n\nAsset manifests are loaded in the \norder\n described above, and duplicate names will be ignored. \n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local asset manifest can be used to override other asset manifests.\n\n\n\n\nThe asset manifests definition consists of a listing of a name and a repository, and are listed in a \n_assets.json\n:\n\n\n//_assets.json\n[\n    {\n        \"name\": \"<vendor-name>/<asset-name>\",\n        \"repository\": \"https://<url-to-repo>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nasset-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Asset Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n._assets.json\n file in the root of your project we can add\nnew packages available to \nthat\n project only.\n\n\nRoot Asset Manifest\n\u00b6\n\n\nThe root manifest contains assets that are defined by the root registry.\n\n\nNormal Asset Manifest\n\u00b6\n\n\nThe normal manifests are assets defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n assets included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
+            "text": "Assets Manifest\n\u00b6\n\n\nWe have \nthree\n different types of asset manifests:\n\n\n\n\nLocal\n asset manifest\n\n\nRoot\n asset manifests\n\n\nNormal\n asset manifests\n\n\n\n\nAsset manifests are loaded in the \norder\n described above, and duplicate names will be ignored. \n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local asset manifest can be used to override other asset manifests.\n\n\n\n\nThe asset manifests definition consists of a listing of a name and a repository, and are listed in a \n.assets.json\n:\n\n\n//_assets.json\n[\n    {\n        \"name\": \"<vendor-name>/<asset-name>\",\n        \"repository\": \"https://<url-to-repo>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nasset-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Asset Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n.assets.json\n file in the root of your project we can add\nnew packages available to \nthat\n project only.\n\n\nRoot Asset Manifest\n\u00b6\n\n\nThe root manifest contains assets that are defined by the root registry.\n\n\nNormal Asset Manifest\n\u00b6\n\n\nThe normal manifests are assets defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n assets included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
             "title": "Assets"
         },
         {
             "location": "/basics/assets/#assets_manifest",
-            "text": "We have  three  different types of asset manifests:   Local  asset manifest  Root  asset manifests  Normal  asset manifests   Asset manifests are loaded in the  order  described above, and duplicate names will be ignored.    Note  Since duplicate names are ignored, the local asset manifest can be used to override other asset manifests.   The asset manifests definition consists of a listing of a name and a repository, and are listed in a  _assets.json :  //_assets.json\n[\n    {\n        \"name\": \"<vendor-name>/<asset-name>\",\n        \"repository\": \"https://<url-to-repo>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  asset-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
+            "text": "We have  three  different types of asset manifests:   Local  asset manifest  Root  asset manifests  Normal  asset manifests   Asset manifests are loaded in the  order  described above, and duplicate names will be ignored.    Note  Since duplicate names are ignored, the local asset manifest can be used to override other asset manifests.   The asset manifests definition consists of a listing of a name and a repository, and are listed in a  .assets.json :  //_assets.json\n[\n    {\n        \"name\": \"<vendor-name>/<asset-name>\",\n        \"repository\": \"https://<url-to-repo>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  asset-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
             "title": "Assets Manifest"
         },
         {
             "location": "/basics/assets/#local_asset_manifest",
-            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  ._assets.json  file in the root of your project we can add\nnew packages available to  that  project only.",
+            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  .assets.json  file in the root of your project we can add\nnew packages available to  that  project only.",
             "title": "Local Asset Manifest"
         },
         {
@@ -257,7 +257,7 @@
         },
         {
             "location": "/basics/modules/",
-            "text": "Adding Modules\n\u00b6\n\n\nA module manifest is a collection of repository names and repository locations.\n\n\nWe have \nthree\n types of manifests:\n\n\n\n\nLocal\n Module Manifest\n\n\nRoot\n Module Manifest\n\n\nNormal\n Module Manifest\n\n\n\n\nModule Manifests are loaded in that \norder\n, wherein duplicate names will be ignored.\n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local module manifests can be used to override other manifests.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe manifest definition consists of a listing of a name and a repository, and are listed in a \n_manifest.json\n:\n\n\n//_modules.json\n[\n    {\n        \"name\": \"<vendor-name>/<module-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nmodule-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Module Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n._module.json\n file in the root of your project we can add\nnew modules available to \nthat\n project only.\n\n\nRoot Module Manifest\n\u00b6\n\n\nThe root manifest contains modules that are defined by the root registry.\n\n\nNormal Module Manifest\n\u00b6\n\n\nThe normal manifests are modules defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n modules included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
+            "text": "Adding Modules\n\u00b6\n\n\nA module manifest is a collection of repository names and repository locations.\n\n\nWe have \nthree\n types of manifests:\n\n\n\n\nLocal\n Module Manifest\n\n\nRoot\n Module Manifest\n\n\nNormal\n Module Manifest\n\n\n\n\nModule Manifests are loaded in that \norder\n, wherein duplicate names will be ignored.\n\n\n\n\nNote\n\n\nSince duplicate names are ignored, the local module manifests can be used to override other manifests.\n\n\n\n\nDefinition\n\u00b6\n\n\nThe manifest definition consists of a listing of a name and a repository, and are listed in a \n.manifest.json\n:\n\n\n//_modules.json\n[\n    {\n        \"name\": \"<vendor-name>/<module-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]\n\n\n\n\nWhere   \n\n\n\n\nvendor-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nmodule-name\n is \nalpha-numeric\n and may contain '\n-\n' and '\n_\n'.\n\n\nrepository\n is a git url (may be \nprivate\n).\n\n\n\n\n\n\nLocal Module Manifest\n\u00b6\n\n\nLocal Manifests are added on a per \nproject\n basis.\nBy defining a \n.module.json\n file in the root of your project we can add\nnew modules available to \nthat\n project only.\n\n\nRoot Module Manifest\n\u00b6\n\n\nThe root manifest contains modules that are defined by the root registry.\n\n\nNormal Module Manifest\n\u00b6\n\n\nThe normal manifests are modules defined by normal registries.\n\n\n\n\nNote\n\n\nTo get your \nown\n modules included in the root or normal manifest, you can setup a \npull request\n to get it validated!",
             "title": "Modules"
         },
         {
@@ -267,12 +267,12 @@
         },
         {
             "location": "/basics/modules/#definition",
-            "text": "The manifest definition consists of a listing of a name and a repository, and are listed in a  _manifest.json :  //_modules.json\n[\n    {\n        \"name\": \"<vendor-name>/<module-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  module-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
+            "text": "The manifest definition consists of a listing of a name and a repository, and are listed in a  .manifest.json :  //_modules.json\n[\n    {\n        \"name\": \"<vendor-name>/<module-name>\",\n        \"repository\": \"https://<repository>.git\"\n    }\n]  Where      vendor-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  module-name  is  alpha-numeric  and may contain ' - ' and ' _ '.  repository  is a git url (may be  private ).",
             "title": "Definition"
         },
         {
             "location": "/basics/modules/#local_module_manifest",
-            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  ._module.json  file in the root of your project we can add\nnew modules available to  that  project only.",
+            "text": "Local Manifests are added on a per  project  basis.\nBy defining a  .module.json  file in the root of your project we can add\nnew modules available to  that  project only.",
             "title": "Local Module Manifest"
         },
         {
@@ -427,27 +427,17 @@
         },
         {
             "location": "/premake5/premake5/",
-            "text": "Premake5\n\u00b6\n\n\nZPM is built as a \npremake5\n module and is loaded \nautomatically\n. \n\nWe even make using premake5 \neasier\n:  \n\n\n\n\nUpdate\n premake5 with \npremake5 self-update\n.\n\n\nUse \nolder\n versions with \npremake-<version>\n, i.e. \npremake-5.0.0-alpha9\n.\n\n\nEasy \nsystem wide\n installation.\n\n\n\n\n\n\nNote\n\n\npremake5\n always refers to the \nnewest\n version of premake5!\n\n\n\n\nZPM integrates in two ways with premake5:  \n\n\n\n\nUsing ZPM Dependencies\n\n\nModules\n\n\n\n\nUsing ZPM Dependencies\n\u00b6\n\n\nModules\n\u00b6\n\n\nZPM can be used to load and install premake5 \nmodules\n. It can also\nbe used to download general lua modules.",
+            "text": "Premake5\n\u00b6\n\n\nZPM is built as a \npremake5\n module and is loaded \nautomatically\n. \n\nWe even make using premake5 \neasier\n:  \n\n\n\n\nUpdate\n premake5 with \npremake5 self-update\n.\n\n\nUse \nolder\n versions with \npremake-<version>\n, i.e. \npremake-5.0.0-alpha9\n.\n\n\nEasy \nsystem wide\n installation.\n\n\n\n\n\n\nNote\n\n\npremake5\n always refers to the \nnewest\n version of premake5!",
             "title": "Premake5"
         },
         {
             "location": "/premake5/premake5/#premake5",
-            "text": "ZPM is built as a  premake5  module and is loaded  automatically .  \nWe even make using premake5  easier :     Update  premake5 with  premake5 self-update .  Use  older  versions with  premake-<version> , i.e.  premake-5.0.0-alpha9 .  Easy  system wide  installation.    Note  premake5  always refers to the  newest  version of premake5!   ZPM integrates in two ways with premake5:     Using ZPM Dependencies  Modules",
+            "text": "ZPM is built as a  premake5  module and is loaded  automatically .  \nWe even make using premake5  easier :     Update  premake5 with  premake5 self-update .  Use  older  versions with  premake-<version> , i.e.  premake-5.0.0-alpha9 .  Easy  system wide  installation.    Note  premake5  always refers to the  newest  version of premake5!",
             "title": "Premake5"
         },
         {
-            "location": "/premake5/premake5/#using_zpm_dependencies",
-            "text": "",
-            "title": "Using ZPM Dependencies"
-        },
-        {
-            "location": "/premake5/premake5/#modules",
-            "text": "ZPM can be used to load and install premake5  modules . It can also\nbe used to download general lua modules.",
-            "title": "Modules"
-        },
-        {
             "location": "/premake5/using/",
-            "text": "Using ZPM Premake5\n\u00b6\n\n\nWhilst ZPM by default makes sure all dependencies are \ndownloaded\n, you \nyourself are responsible for \nusing\n them. However this is made as \n\nsimple\n as possible!\n\n\npremake5.lua\n File\n\u00b6\n\n\nBy default ZPM is loaded in the \nzpm\n global variable.\n\nThere are only \ntwo\n command you should remember:\n\n\n\n\nzpm.uses\n\n\nzpm.buildLibraries\n\n\n\n\n\n\nzpm.uses\n\u00b6\n\n\nThis command is used to \nlink\n, and \nuse\n all \nexported\n settings from the given packages.\n\n\nzpm.uses( <libraries> )\n\n\n\n\nWhere  \n\n\n\n\nlibraries\n is a string or a list of strings with \"\n<vendor-name>/<package-name>\n\"\n  as described in your \n_package.json\n.\n\n\n\n\n Example \n\n\nproject \"Example\"\n    zpm.uses \"Zefiros-Software/GoogleTest\"\n\n\n\n\n\n\nWarning\n\n\nThis command is used on a per project level.\n\n\n\n\n\n\nzpm.buildLibraries\n\u00b6\n\n\nThis command is used to define all project the dependencies \nrequire\n.\n\n\n Example \n\n\nworkspace \"Example\"\n    zpm.buildLibraries()\n\n\n\n\n\n\nWarning\n\n\nThis command should be called in the workspace configuration \nbefore\n any project is defined.\n\n\n\n\n\n\nNote\n\n\nAll projects made with this command will \nshare\n the workspace settings \nyou \ndefined!\n\n\n\n\n\n\nExample\n\u00b6\n\n\nworkspace \"Example\"\n\n    configurations { \"Debug\", \"Release\" }\n\n    platforms { \"x86_64\", \"x86\" }\n\n    filter \"*Debug\"\n        targetsuffix \"d\"\n        defines \"DEBUG\"\n\n        flags \"Symbols\"\n        optimize \"Off\"\n\n    filter \"*Release\"\n        optimize \"Speed\"\n\n    zpm.buildLibraries()\n\n    project \"test\"\n\n        kind \"ConsoleApp\"\n        flags \"WinMain\"\n\n        location \"test/\"\n\n        zpm.uses {\n            \"Zefiros-Software/GoogleTest\"\n        }\n\n        files { \n            \"test/**.h\",\n            \"test/**.cpp\"\n            }\n\n    project \"lib\"    \n        kind \"StaticLib\"\n\n        files { \n            \"include/**.h\",\n            \"src/**.cpp\",\n            }",
+            "text": "Using ZPM Premake5\n\u00b6\n\n\nWhilst ZPM by default makes sure all dependencies are \ndownloaded\n, you \nyourself are responsible for \nusing\n them. However this is made as \n\nsimple\n as possible!\n\n\npremake5.lua\n File\n\u00b6\n\n\nBy default ZPM is loaded in the \nzpm\n global variable. There is only \ntwo\n commands you should remember:\n\n\n\n\nzpm.uses\n\n\nrequire\n\n\n\n\n\n\nzpm.uses\n\u00b6\n\n\nThis command is used to \nlink\n, and \nuse\n all \nexported\n settings from the given packages.\n\n\nzpm.uses( <libraries> )\n\n\n\n\nWhere  \n\n\n\n\nlibraries\n is a string or a list of strings with \"\n<vendor-name>/<package-name>\n\"\n  as described in your \n.package.json\n.\n\n\n\n\n Example \n\n\nproject \"Example\"\n    zpm.uses \"Zefiros-Software/GoogleTest\"\n\n\n\n\n\n\nWarning\n\n\nThis command is used on a per project level.\n\n\n\n\n\n\nrequire\n\u00b6\n\n\nZPM can be used to load and install premake5 \nmodules\n. It can also\nbe used to download general lua modules.\n\n\n Example \n\n\n//.package.json\n\"modules\": [\n    \"Zefiros-Software/Zefiros-Defaults\"\n]\n\n\n\n\nwith\n\n\n//premake5.lua\nlocal zefiros = require( \"Zefiros-Software/Zefiros-Defaults\", \"@head\" )\n\n\n\n\n\n\nLarge Example\n\u00b6\n\n\nworkspace \"Example\"\n\n    configurations { \"Debug\", \"Release\" }\n\n    platforms { \"x86_64\", \"x86\" }\n\n    filter \"*Debug\"\n        targetsuffix \"d\"\n        defines \"DEBUG\"\n\n        flags \"Symbols\"\n        optimize \"Off\"\n\n    filter \"*Release\"\n        optimize \"Speed\"\n\n    project \"test\"\n\n        kind \"ConsoleApp\"\n        flags \"WinMain\"\n\n        location \"test/\"\n\n        zpm.uses {\n            \"Zefiros-Software/GoogleTest\"\n        }\n\n        files { \n            \"test/**.h\",\n            \"test/**.cpp\"\n            }\n\n    project \"lib\"    \n        kind \"StaticLib\"\n\n        files { \n            \"include/**.h\",\n            \"src/**.cpp\",\n            }",
             "title": "Using"
         },
         {
@@ -457,32 +447,32 @@
         },
         {
             "location": "/premake5/using/#premake5lua_file",
-            "text": "By default ZPM is loaded in the  zpm  global variable. \nThere are only  two  command you should remember:   zpm.uses  zpm.buildLibraries",
+            "text": "By default ZPM is loaded in the  zpm  global variable. There is only  two  commands you should remember:   zpm.uses  require",
             "title": "premake5.lua File"
         },
         {
             "location": "/premake5/using/#zpmuses",
-            "text": "This command is used to  link , and  use  all  exported  settings from the given packages.  zpm.uses( <libraries> )  Where     libraries  is a string or a list of strings with \" <vendor-name>/<package-name> \"\n  as described in your  _package.json .    Example   project \"Example\"\n    zpm.uses \"Zefiros-Software/GoogleTest\"   Warning  This command is used on a per project level.",
+            "text": "This command is used to  link , and  use  all  exported  settings from the given packages.  zpm.uses( <libraries> )  Where     libraries  is a string or a list of strings with \" <vendor-name>/<package-name> \"\n  as described in your  .package.json .    Example   project \"Example\"\n    zpm.uses \"Zefiros-Software/GoogleTest\"   Warning  This command is used on a per project level.",
             "title": "zpm.uses"
         },
         {
-            "location": "/premake5/using/#zpmbuildlibraries",
-            "text": "This command is used to define all project the dependencies  require .   Example   workspace \"Example\"\n    zpm.buildLibraries()   Warning  This command should be called in the workspace configuration  before  any project is defined.    Note  All projects made with this command will  share  the workspace settings  you  defined!",
-            "title": "zpm.buildLibraries"
+            "location": "/premake5/using/#require",
+            "text": "ZPM can be used to load and install premake5  modules . It can also\nbe used to download general lua modules.   Example   //.package.json\n\"modules\": [\n    \"Zefiros-Software/Zefiros-Defaults\"\n]  with  //premake5.lua\nlocal zefiros = require( \"Zefiros-Software/Zefiros-Defaults\", \"@head\" )",
+            "title": "require"
         },
         {
-            "location": "/premake5/using/#example",
-            "text": "workspace \"Example\"\n\n    configurations { \"Debug\", \"Release\" }\n\n    platforms { \"x86_64\", \"x86\" }\n\n    filter \"*Debug\"\n        targetsuffix \"d\"\n        defines \"DEBUG\"\n\n        flags \"Symbols\"\n        optimize \"Off\"\n\n    filter \"*Release\"\n        optimize \"Speed\"\n\n    zpm.buildLibraries()\n\n    project \"test\"\n\n        kind \"ConsoleApp\"\n        flags \"WinMain\"\n\n        location \"test/\"\n\n        zpm.uses {\n            \"Zefiros-Software/GoogleTest\"\n        }\n\n        files { \n            \"test/**.h\",\n            \"test/**.cpp\"\n            }\n\n    project \"lib\"    \n        kind \"StaticLib\"\n\n        files { \n            \"include/**.h\",\n            \"src/**.cpp\",\n            }",
-            "title": "Example"
+            "location": "/premake5/using/#large_example",
+            "text": "workspace \"Example\"\n\n    configurations { \"Debug\", \"Release\" }\n\n    platforms { \"x86_64\", \"x86\" }\n\n    filter \"*Debug\"\n        targetsuffix \"d\"\n        defines \"DEBUG\"\n\n        flags \"Symbols\"\n        optimize \"Off\"\n\n    filter \"*Release\"\n        optimize \"Speed\"\n\n    project \"test\"\n\n        kind \"ConsoleApp\"\n        flags \"WinMain\"\n\n        location \"test/\"\n\n        zpm.uses {\n            \"Zefiros-Software/GoogleTest\"\n        }\n\n        files { \n            \"test/**.h\",\n            \"test/**.cpp\"\n            }\n\n    project \"lib\"    \n        kind \"StaticLib\"\n\n        files { \n            \"include/**.h\",\n            \"src/**.cpp\",\n            }",
+            "title": "Large Example"
         },
         {
             "location": "/premake5/publishing/",
-            "text": "Publishing Modules\n\u00b6\n\n\nTo publish your own module, you should make sure your module is supported by the\nbootstrap loader.\n\n\nEntry Scripts\n\u00b6\n\n\nThe loader script should either be:\n\n\n\n\n<manifest-name>.lua\n (no vendor)\n\n\ninit.lua\n\n\n\n\nExtending ZPM\n\u00b6\n\n\nZPM can be \nextended\n to add new commands to \n_build.json\n and \n_asset.json\n files.",
+            "text": "Publishing Modules\n\u00b6\n\n\nTo publish your own module, you should make sure your module is \nsupported\n by the\n\nbootstrap loader\n.\n\n\nEntry Scripts\n\u00b6\n\n\nThe loader script should either be:\n\n\n\n\n<manifest-name>.lua\n (no vendor)\n\n\ninit.lua\n\n\n\n\nExtending ZPM\n\u00b6\n\n\nZPM can be \nextended\n to add new commands to \n.build.lua\n and \n.assets.json\n files.",
             "title": "Publishing Modules"
         },
         {
             "location": "/premake5/publishing/#publishing_modules",
-            "text": "To publish your own module, you should make sure your module is supported by the\nbootstrap loader.",
+            "text": "To publish your own module, you should make sure your module is  supported  by the bootstrap loader .",
             "title": "Publishing Modules"
         },
         {
@@ -492,12 +482,12 @@
         },
         {
             "location": "/premake5/publishing/#extending_zpm",
-            "text": "ZPM can be  extended  to add new commands to  _build.json  and  _asset.json  files.",
+            "text": "ZPM can be  extended  to add new commands to  .build.lua  and  .assets.json  files.",
             "title": "Extending ZPM"
         },
         {
             "location": "/packages/packages/",
-            "text": "Packages\n\u00b6\n\n\nSections\n\u00b6\n\n\nWe split the Packages section:\n\n\n\n\nUsing\n everything about \nusing\n packages in your project.\n\n\nPublishing\n \npublishing\n your own packages.\n\n\n\n\nAnd there are sections that are used by both \nusing\n and \npublishing\n:\n\n\n\n\n_package.json\n How packages are \ndefined\n.\n\n\nVersions\n How \nversioning\n works in ZPM.\n\n\nDev\n How you can \ndevelop\n libraries using ZPM.\n\n\nOverrides\n How you can \noverride\n given build files.",
+            "text": "Packages\n\u00b6\n\n\nSections\n\u00b6\n\n\nWe split the Packages section:\n\n\n\n\nUsing\n everything about \nusing\n packages in your project.\n\n\nPublishing\n \npublishing\n your own packages.\n\n\n\n\nAnd there are sections that are used by both \nusing\n and \npublishing\n:\n\n\n\n\n.package.json\n How packages are \ndefined\n.\n\n\nVersions\n How \nversioning\n works in ZPM.\n\n\nDev\n How you can \ndevelop\n libraries using ZPM.\n\n\nOverrides\n How you can \noverride\n given build files.",
             "title": "Packages"
         },
         {
@@ -507,7 +497,7 @@
         },
         {
             "location": "/packages/packages/#sections",
-            "text": "We split the Packages section:   Using  everything about  using  packages in your project.  Publishing   publishing  your own packages.   And there are sections that are used by both  using  and  publishing :   _package.json  How packages are  defined .  Versions  How  versioning  works in ZPM.  Dev  How you can  develop  libraries using ZPM.  Overrides  How you can  override  given build files.",
+            "text": "We split the Packages section:   Using  everything about  using  packages in your project.  Publishing   publishing  your own packages.   And there are sections that are used by both  using  and  publishing :   .package.json  How packages are  defined .  Versions  How  versioning  works in ZPM.  Dev  How you can  develop  libraries using ZPM.  Overrides  How you can  override  given build files.",
             "title": "Sections"
         },
         {
@@ -596,64 +586,64 @@
             "title": "Related Pages"
         },
         {
-            "location": "/packages/general/_package/",
-            "text": "_package.json File\n\u00b6\n\n\nThe \n_package.json\n is used for both \npackages\n and the \nroot package\n.\nA \n_package.json\n is located in the \nroot\n of the project and has the form:\n\n\n{\n    \"name\": \"<vendor>/<name>\",\n    \"description\": \"<description>\",\n    \"keywords\": [ \n        <keywords> \n    ],\n    \"website\": \"<website>\",\n    \"license\": \"<license>\",\n    \"authors\": [\n        {\n            \"name\": \"<author-name>\",\n            \"email\": \"<author-email>\",\n            \"website\": \"<author-website>\"\n        }\n    ],\n    \"modules\": [\n        <modules>\n    ],\n    \"requires\": [\n        {\n            \"name\": \"<require-vendor>/<require-name>\",\n            \"version\": \"<require-version>\",\n            \"options\": [\n                {\"project\": \"<require-option-project>\",\n                 \"options\": {\n                     <require-options>\n                 }}\n            ],\n            \"overrides\": [\n                {\"project\": \"<require-override-project>\",\n                 \"do\": [\n                    <require-overrides>\n                ]}\n            ]\n        }\n    ],\n    \"assets\": [\n        {\n            \"name\": \"<asset-vendor>/<asset-name>\",\n            \"version\": \"<asset-version>\"\n        }\n    ],\n    \"install\": [\n        <install>\n    ],\n    \"dev\": {\n        <dev-settings>\n    }\n}\n\n\n\n\nRoot Package Required Only\n\u00b6\n\n\nThe \nname\n descriptor is only used in the root package.\n\n\n\n\nvendor\n What vendor is this package from.\n\n\nname\n How is the package called.\n\n\n\n\nOptional\n\u00b6\n\n\n\n\ndescription\n A description of the project.\n\n\nkeywords\n An array of strings containing keywords of the project.\n\n\nwebsites\n The website where the project is hosted.\n\n\nlicense\n Under what license this project falls.\n\n\n\n\n\n\n\n\nmodules\n A list of modules in the form \n<vendor>/<name>\n that get installed or updated when running \ninstall-package\n.\n\n\n\n\n\n\n\n\nauthor-name\n The name of the author.\n\n\nauthor-email\n The authors email address.\n\n\nauthor-website\n The authors website.\n\n\n\n\n\n\nrequires\n\u00b6\n\n\n\n\nrequire-vendor\n What vendor are we requiring a package from.\n\n\nrequire-name\n How is the package called.\n\n\nrequire-version\n What \nversion\n do you want.  \n\n\n\n\n\n\n\n\nrequire-option-project\n What projects are we setting options on in this package.\n\n\nrequire-options\n What options do we set. See \nthis\n for more information.  \n\n\n\n\n\n\n\n\nrequire-override-project\n What projects are we adding build settings to in this package.\n\n\nrequire-overrides\n Specify a new block of commands that will be \nappended\n.\n\n\n\n\n\n\nassets\n\u00b6\n\n\n\n\nasset-vendor\n What vendor are we requiring a asset from.\n\n\nasset-name\n How is the asset called.\n\n\nasset-version\n What \nversion\n do you want.\n\n\n\n\n\n\ninstall\n\u00b6\n\n\n\n\ninstall\n a list of files that contain \ninstaller\n commands.\n\n\n\n\n\n\ndev\n\u00b6\n\n\n\n\ndev\n This section allows you to define \nrequires\n, \nassets\n and \ninstall\n sections that are \nexecuted only when this is the \nroot\n package. See \nthis\n for more information.\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\n\n\nDev\n\n\nOverrides\n\n\nVersions",
-            "title": "_package.json"
+            "location": "/packages/general/.package/",
+            "text": ".package.json File\n\u00b6\n\n\nThe \n.package.json\n is used for both \npackages\n and the \nroot package\n.\nA \n.package.json\n is located in the \nroot\n of the project and has the form:\n\n\n{\n    \"name\": \"<vendor>/<name>\",\n    \"description\": \"<description>\",\n    \"keywords\": [ \n        <keywords> \n    ],\n    \"website\": \"<website>\",\n    \"license\": \"<license>\",\n    \"authors\": [\n        {\n            \"name\": \"<author-name>\",\n            \"email\": \"<author-email>\",\n            \"website\": \"<author-website>\"\n        }\n    ],\n    \"options\": {\n        <options>\n    },\n    \"modules\": [\n        <modules>\n    ],\n    \"requires\": [\n        {\n            \"name\": \"<require-vendor>/<require-name>\",\n            \"version\": \"<require-version>\",\n            \"options\": {\n                <require-options>\n            }\n        }\n    ],\n    \"assets\": [\n        {\n            \"name\": \"<asset-vendor>/<asset-name>\",\n            \"version\": \"<asset-version>\"\n        }\n    ],\n    \"install\": [\n        <install>\n    ],\n    \"dev\": {\n        <dev-settings>\n    }\n}\n\n\n\n\nRoot Package Required Only\n\u00b6\n\n\nThe \nname\n descriptor is only used in the root package.\n\n\n\n\nvendor\n What vendor is this package from.\n\n\nname\n How is the package called.\n\n\n\n\nOptional\n\u00b6\n\n\n\n\ndescription\n A description of the project.\n\n\nkeywords\n An array of strings containing keywords of the project.\n\n\nwebsites\n The website where the project is hosted.\n\n\nlicense\n Under what license this project falls.\n\n\n\n\n\n\n\n\nmodules\n A list of modules in the form \n<vendor>/<name>\n that get installed or updated when running \ninstall-package\n.\n\n\n\n\n\n\n\n\noptions\n What options the project has, and their default values.\n\n\n\n\n\n\n\n\nauthor-name\n The name of the author.\n\n\nauthor-email\n The authors email address.\n\n\nauthor-website\n The authors website.\n\n\n\n\n\n\nrequires\n\u00b6\n\n\n\n\nrequire-vendor\n What vendor are we requiring a package from.\n\n\nrequire-name\n How is the package called.\n\n\nrequire-version\n What \nversion\n do you want.  \n\n\n\n\n\n\n\n\nrequire-options\n A \nkey-value\n pairs that defines the default options.\n\n\n\n\n\n\n\n\nrequire-override-project\n What projects are we adding build settings to in this package.\n\n\nrequire-overrides\n Specify a new block of commands that will be \nappended\n.\n\n\n\n\n\n\nassets\n\u00b6\n\n\n\n\nasset-vendor\n What vendor are we requiring a asset from.\n\n\nasset-name\n How is the asset called.\n\n\nasset-version\n What \nversion\n do you want.\n\n\n\n\n\n\ninstall\n\u00b6\n\n\n\n\ninstall\n a list of files that contain \ninstaller\n commands.\n\n\n\n\n\n\ndev\n\u00b6\n\n\n\n\ndev\n This section allows you to define \nrequires\n, \nassets\n and \ninstall\n sections that are \nexecuted only when this is the \nroot\n package. See \nthis\n for more information.\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\n\n\nDev\n\n\nOverrides\n\n\nVersions",
+            "title": ".package.json"
         },
         {
-            "location": "/packages/general/_package/#_packagejson_file",
-            "text": "The  _package.json  is used for both  packages  and the  root package .\nA  _package.json  is located in the  root  of the project and has the form:  {\n    \"name\": \"<vendor>/<name>\",\n    \"description\": \"<description>\",\n    \"keywords\": [ \n        <keywords> \n    ],\n    \"website\": \"<website>\",\n    \"license\": \"<license>\",\n    \"authors\": [\n        {\n            \"name\": \"<author-name>\",\n            \"email\": \"<author-email>\",\n            \"website\": \"<author-website>\"\n        }\n    ],\n    \"modules\": [\n        <modules>\n    ],\n    \"requires\": [\n        {\n            \"name\": \"<require-vendor>/<require-name>\",\n            \"version\": \"<require-version>\",\n            \"options\": [\n                {\"project\": \"<require-option-project>\",\n                 \"options\": {\n                     <require-options>\n                 }}\n            ],\n            \"overrides\": [\n                {\"project\": \"<require-override-project>\",\n                 \"do\": [\n                    <require-overrides>\n                ]}\n            ]\n        }\n    ],\n    \"assets\": [\n        {\n            \"name\": \"<asset-vendor>/<asset-name>\",\n            \"version\": \"<asset-version>\"\n        }\n    ],\n    \"install\": [\n        <install>\n    ],\n    \"dev\": {\n        <dev-settings>\n    }\n}",
-            "title": "_package.json File"
+            "location": "/packages/general/.package/#packagejson_file",
+            "text": "The  .package.json  is used for both  packages  and the  root package .\nA  .package.json  is located in the  root  of the project and has the form:  {\n    \"name\": \"<vendor>/<name>\",\n    \"description\": \"<description>\",\n    \"keywords\": [ \n        <keywords> \n    ],\n    \"website\": \"<website>\",\n    \"license\": \"<license>\",\n    \"authors\": [\n        {\n            \"name\": \"<author-name>\",\n            \"email\": \"<author-email>\",\n            \"website\": \"<author-website>\"\n        }\n    ],\n    \"options\": {\n        <options>\n    },\n    \"modules\": [\n        <modules>\n    ],\n    \"requires\": [\n        {\n            \"name\": \"<require-vendor>/<require-name>\",\n            \"version\": \"<require-version>\",\n            \"options\": {\n                <require-options>\n            }\n        }\n    ],\n    \"assets\": [\n        {\n            \"name\": \"<asset-vendor>/<asset-name>\",\n            \"version\": \"<asset-version>\"\n        }\n    ],\n    \"install\": [\n        <install>\n    ],\n    \"dev\": {\n        <dev-settings>\n    }\n}",
+            "title": ".package.json File"
         },
         {
-            "location": "/packages/general/_package/#root_package_required_only",
+            "location": "/packages/general/.package/#root_package_required_only",
             "text": "The  name  descriptor is only used in the root package.   vendor  What vendor is this package from.  name  How is the package called.",
             "title": "Root Package Required Only"
         },
         {
-            "location": "/packages/general/_package/#optional",
-            "text": "description  A description of the project.  keywords  An array of strings containing keywords of the project.  websites  The website where the project is hosted.  license  Under what license this project falls.     modules  A list of modules in the form  <vendor>/<name>  that get installed or updated when running  install-package .     author-name  The name of the author.  author-email  The authors email address.  author-website  The authors website.",
+            "location": "/packages/general/.package/#optional",
+            "text": "description  A description of the project.  keywords  An array of strings containing keywords of the project.  websites  The website where the project is hosted.  license  Under what license this project falls.     modules  A list of modules in the form  <vendor>/<name>  that get installed or updated when running  install-package .     options  What options the project has, and their default values.     author-name  The name of the author.  author-email  The authors email address.  author-website  The authors website.",
             "title": "Optional"
         },
         {
-            "location": "/packages/general/_package/#requires",
-            "text": "require-vendor  What vendor are we requiring a package from.  require-name  How is the package called.  require-version  What  version  do you want.       require-option-project  What projects are we setting options on in this package.  require-options  What options do we set. See  this  for more information.       require-override-project  What projects are we adding build settings to in this package.  require-overrides  Specify a new block of commands that will be  appended .",
+            "location": "/packages/general/.package/#requires",
+            "text": "require-vendor  What vendor are we requiring a package from.  require-name  How is the package called.  require-version  What  version  do you want.       require-options  A  key-value  pairs that defines the default options.     require-override-project  What projects are we adding build settings to in this package.  require-overrides  Specify a new block of commands that will be  appended .",
             "title": "requires"
         },
         {
-            "location": "/packages/general/_package/#assets",
+            "location": "/packages/general/.package/#assets",
             "text": "asset-vendor  What vendor are we requiring a asset from.  asset-name  How is the asset called.  asset-version  What  version  do you want.",
             "title": "assets"
         },
         {
-            "location": "/packages/general/_package/#install",
+            "location": "/packages/general/.package/#install",
             "text": "install  a list of files that contain  installer  commands.",
             "title": "install"
         },
         {
-            "location": "/packages/general/_package/#dev",
+            "location": "/packages/general/.package/#dev",
             "text": "dev  This section allows you to define  requires ,  assets  and  install  sections that are \nexecuted only when this is the  root  package. See  this  for more information.",
             "title": "dev"
         },
         {
-            "location": "/packages/general/_package/#related_pages",
+            "location": "/packages/general/.package/#related_pages",
             "text": "Dev  Overrides  Versions",
             "title": "Related Pages"
         },
         {
             "location": "/packages/using/",
-            "text": "Using Packages\n\u00b6\n\n\nTo use ZPM packages you should have the following directory structure:\n\n\n\n\n/_package.json\n: Package \nconfiguration\n.\n\n\n/extern/\n: Reserved for external \npackages\n.\n\n\n/assets/\n: Reserved for external \nassets\n.\n\n\n/premake5.lua\n: Describing how your project should be \nbuilt\n.\n\n\n/*\n: Other \nfiles\n and \ndirectories\n.\n\n\n\n\n Optionally \n\n\n\n\n._registries.json\n: Adding your own \nregistries\n.\n\n\n._manifest.json\n: Adding your own \npackages\n.\n\n\n._assets.json\n: Adding your own \nassets\n.\n\n\n._modules.json\n: Adding your own \nmodules\n.\n\n\n\n\n_package.json\n\u00b6\n\n\nIn the \n_package.json\n you describe what \ndependencies\n (packages, modules, and\n\nassets) your own project uses.\n\n\nextern\n\u00b6\n\n\nIn this folder the external \npackages\n downloaded by ZPM are stored.\n\n\nassets\n\u00b6\n\n\nIn this folder the external \nassets\n downloaded by ZPM are stored.\n\n\nPremake5 Usage\n\u00b6\n\n\nSince ZPM only download dependencies for you, you should define how to \nuse\n them.",
+            "text": "Using Packages\n\u00b6\n\n\nTo use ZPM packages you should have the following directory structure:\n\n\n\n\n/.package.json\n: Package \nconfiguration\n.\n\n\n/extern/\n: Reserved for external \npackages\n.\n\n\n/assets/\n: Reserved for external \nassets\n.\n\n\n/premake5.lua\n: Describing how your project should be \nbuilt\n.\n\n\n/*\n: Other \nfiles\n and \ndirectories\n.\n\n\n\n\n Optionally \n\n\n\n\n.registries.json\n: Adding your own \nregistries\n.\n\n\n.manifest.json\n: Adding your own \npackages\n.\n\n\n.assets.json\n: Adding your own \nassets\n.\n\n\n.modules.json\n: Adding your own \nmodules\n.\n\n\n\n\n.package.json\n\u00b6\n\n\nIn the \n.package.json\n you describe what \ndependencies\n (packages, modules, and\n\nassets) your own project uses.\n\n\nextern\n\u00b6\n\n\nIn this folder the external \npackages\n downloaded by ZPM are stored.\n\n\nassets\n\u00b6\n\n\nIn this folder the external \nassets\n downloaded by ZPM are stored.\n\n\nPremake5 Usage\n\u00b6\n\n\nSince ZPM only download dependencies for you, you should define how to \nuse\n them.",
             "title": "Using"
         },
         {
             "location": "/packages/using/#using_packages",
-            "text": "To use ZPM packages you should have the following directory structure:   /_package.json : Package  configuration .  /extern/ : Reserved for external  packages .  /assets/ : Reserved for external  assets .  /premake5.lua : Describing how your project should be  built .  /* : Other  files  and  directories .    Optionally    ._registries.json : Adding your own  registries .  ._manifest.json : Adding your own  packages .  ._assets.json : Adding your own  assets .  ._modules.json : Adding your own  modules .",
+            "text": "To use ZPM packages you should have the following directory structure:   /.package.json : Package  configuration .  /extern/ : Reserved for external  packages .  /assets/ : Reserved for external  assets .  /premake5.lua : Describing how your project should be  built .  /* : Other  files  and  directories .    Optionally    .registries.json : Adding your own  registries .  .manifest.json : Adding your own  packages .  .assets.json : Adding your own  assets .  .modules.json : Adding your own  modules .",
             "title": "Using Packages"
         },
         {
-            "location": "/packages/using/#_packagejson",
-            "text": "In the  _package.json  you describe what  dependencies  (packages, modules, and \nassets) your own project uses.",
-            "title": "_package.json"
+            "location": "/packages/using/#packagejson",
+            "text": "In the  .package.json  you describe what  dependencies  (packages, modules, and \nassets) your own project uses.",
+            "title": ".package.json"
         },
         {
             "location": "/packages/using/#extern",
@@ -671,283 +661,33 @@
             "title": "Premake5 Usage"
         },
         {
-            "location": "/packages/publishing/",
-            "text": "Publishing Packages\n\u00b6\n\n\nTo publish a ZPM package you should have the following directory structure:\n\n\n\n\n/_package.json\n: Package configuration.\n\n\n/_build.json\n: The build configuration.\n\n\n/*\n: Other files and directories.\n\n\n\n\n_package.json\n\u00b6\n\n\nIn the \n_package.json\n you describe what \ndependencies\n (packages, modules, and\n\nassets) your own package uses, and should be available from the root project.\n\n\n_build.json\n\u00b6\n\n\nIn the \n_build.json\n we define how the projects should be \nbuilt\n and \nlinked\n against.",
-            "title": "Publishing"
+            "location": "/packages/.build/",
+            "text": ".build.lua File\n\u00b6\n\n\nThe \n.build.lua\n file describes how packages are \nbuilt\n.\n\nThe file is in the form:\n\n\nproject \"Test\"\n\n    files {\n        \"*.cpp\",\n        \"*.h\"\n    }\n\n    zpm.export [[\n        includedirs \"include\"\n    ]]\n\n\n\n\nCommands\n\u00b6\n\n\nThe build commands can be found \nhttps://github.com/premake/premake-core/wiki/Project-API\n.\n\n\nExport\n\u00b6\n\n\nTo use our projects externally, we should export settings to the zpm projects using them.\n\n\nzpm.export [[<commands>]]\n\n\n\n\nWhere\n\n\n\n\n<commands>\n Are the premake commands that projects using this project should also use.\n\n\n\n\nOptions\n\u00b6\n\n\nA project may define options in its \n.package.json\n file, and a project using it may override the options in \nthe \n.package.json\n file. To retrieve to option value you should use:\n\n\nzpm.option(<name>)\n\n\n\n\nWhere\n\n\n\n\n<name>\n The option name.",
+            "title": ".build.json"
         },
         {
-            "location": "/packages/publishing/#publishing_packages",
-            "text": "To publish a ZPM package you should have the following directory structure:   /_package.json : Package configuration.  /_build.json : The build configuration.  /* : Other files and directories.",
-            "title": "Publishing Packages"
+            "location": "/packages/.build/#buildlua_file",
+            "text": "The  .build.lua  file describes how packages are  built . \nThe file is in the form:  project \"Test\"\n\n    files {\n        \"*.cpp\",\n        \"*.h\"\n    }\n\n    zpm.export [[\n        includedirs \"include\"\n    ]]",
+            "title": ".build.lua File"
         },
         {
-            "location": "/packages/publishing/#_packagejson",
-            "text": "In the  _package.json  you describe what  dependencies  (packages, modules, and \nassets) your own package uses, and should be available from the root project.",
-            "title": "_package.json"
-        },
-        {
-            "location": "/packages/publishing/#_buildjson",
-            "text": "In the  _build.json  we define how the projects should be  built  and  linked  against.",
-            "title": "_build.json"
-        },
-        {
-            "location": "/packages/_build/",
-            "text": "_build.json File\n\u00b6\n\n\nThe \n_build.json\n file describes how packages are \nbuilt\n.\n\nThe file is in the form:\n\n\n[\n    {\n        \"project\": \"<name>\",\n        \"options\": {\n            <options>\n        },\n        \"do\":\n        [\n            <commands>\n        ]\n    }\n]\n\n\n\n\nWhere  \n\n\n\n\nname\n The name of the project.\n\n\noptions\n What \noptions\n the project has, and their default values.\n\n\ncommands\n The commands we want to execute.\n\n\n\n\nCommands\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nBuild\n commands\n\n\nExport\n commands\n\n\nReexport\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nFilters\n commands\n\n\nPath\n commands\n\n\nSpecial\n commands",
-            "title": "_build.json"
-        },
-        {
-            "location": "/packages/_build/#_buildjson_file",
-            "text": "The  _build.json  file describes how packages are  built . \nThe file is in the form:  [\n    {\n        \"project\": \"<name>\",\n        \"options\": {\n            <options>\n        },\n        \"do\":\n        [\n            <commands>\n        ]\n    }\n]  Where     name  The name of the project.  options  What  options  the project has, and their default values.  commands  The commands we want to execute.",
-            "title": "_build.json File"
-        },
-        {
-            "location": "/packages/_build/#commands",
-            "text": "These  build  commands are available:     Premake5  commands  Build  commands  Export  commands  Reexport  commands   These  region  commands are available:     Filters  commands  Path  commands  Special  commands",
+            "location": "/packages/.build/#commands",
+            "text": "The build commands can be found  https://github.com/premake/premake-core/wiki/Project-API .",
             "title": "Commands"
         },
         {
-            "location": "/packages/commands/premake5/",
-            "text": "Premake5 Commands\n\u00b6\n\n\nThese type of build command translate \ndirectly\n to premake5.\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"architecture\": \"x86_64\"},\n            {\"endian\": \"Little\" },\n            {\"links\": [\n                \"mpi\",\n                \"pthreads\"\n            ]}\n        ]\n    }\n]\n\n\n\n\nAvailable Commands\n\u00b6\n\n\n\n\narchitecture\n\n\natl\n\n\ndefines\n\n\nbuilddependencies\n\n\nbuildoptions\n\n\nbuildoutputs\n\n\ncallingconvention\n\n\ncharacterset\n\n\nclr\n\n\ndebugargs\n\n\ndebugenvs\n\n\ndebugextendedprotocol\n\n\ndebugformat\n\n\ndebugport\n\n\ndebugremotehost\n  \n\n\nkind\n\n\nconfigurations\n\n\nflags\n\n\noptimize\n\n\ndisablewarnings\n\n\neditandcontinue\n\n\neditorintegration\n\n\nenablewarnings\n\n\nendian\n\n\nentrypoint\n\n\nexceptionhandling\n\n\nexternalrule\n\n\nfatalwarnings\n\n\nfileextension\n\n\nfloatingpoint\n\n\nfpu\n\n\ngccprefix\n\n\nignoredefaultlibraries\n\n\nimplibdir\n\n\nimplibextension\n\n\nimplibname\n\n\nimplibprefix\n\n\nimplibsuffix\n\n\ninlining\n\n\nlanguage\n\n\nlinkoptions\n\n\nlinks\n\n\nlocale\n\n\nmakesettings\n\n\nnativewchar\n\n\npic\n\n\nrtti\n\n\nrule\n\n\nrules\n\n\nruntime\n\n\nstrictaliasing\n\n\ntargetprefix\n\n\ntargetsuffix\n\n\ntargetextension\n\n\ntoolset\n\n\nundefines\n\n\nvectorextensions\n\n\nwarnings\n\n\nbuildmessage\n\n\npostbuildmessage\n\n\nprebuildmessage\n\n\nprelinkmessage\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
-            "title": "Premake5"
-        },
-        {
-            "location": "/packages/commands/premake5/#premake5_commands",
-            "text": "These type of build command translate  directly  to premake5.",
-            "title": "Premake5 Commands"
-        },
-        {
-            "location": "/packages/commands/premake5/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"architecture\": \"x86_64\"},\n            {\"endian\": \"Little\" },\n            {\"links\": [\n                \"mpi\",\n                \"pthreads\"\n            ]}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/commands/premake5/#available_commands",
-            "text": "architecture  atl  defines  builddependencies  buildoptions  buildoutputs  callingconvention  characterset  clr  debugargs  debugenvs  debugextendedprotocol  debugformat  debugport  debugremotehost     kind  configurations  flags  optimize  disablewarnings  editandcontinue  editorintegration  enablewarnings  endian  entrypoint  exceptionhandling  externalrule  fatalwarnings  fileextension  floatingpoint  fpu  gccprefix  ignoredefaultlibraries  implibdir  implibextension  implibname  implibprefix  implibsuffix  inlining  language  linkoptions  links  locale  makesettings  nativewchar  pic  rtti  rule  rules  runtime  strictaliasing  targetprefix  targetsuffix  targetextension  toolset  undefines  vectorextensions  warnings  buildmessage  postbuildmessage  prebuildmessage  prelinkmessage",
-            "title": "Available Commands"
-        },
-        {
-            "location": "/packages/commands/premake5/#related_pages",
-            "text": "These  build  commands are available:     Special  commands  Build  commands  Path  commands   These  region  commands are available:     Export  regions  Reexport  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/commands/special/",
-            "text": "Special Commands\n\u00b6\n\n\nZPM introduces new commands, or slightly modified commands.\n\n\nAvailable Commands\n\u00b6\n\n\n\n\nheaderonly\n\n\nuses\n\n\nreuses\n\n\ndependson\n\n\nconfigmap\n\n\nvpaths\n\n\n\n\nheaderonly\n Command\n\u00b6\n\n\nWhen your project should \nnot\n be linked against, you should set \nheaderonly\n on true. This way ZPM knows\nthere are no lib files to \nlink\n against.\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"includedirs\": \"include/\"},\n            {\"headeronly\": true}\n        ]\n    }\n]\n\n\n\n\n\n\nNote\n\n\nBy default ZPM \nlinks\n projects when used.\n\n\n\n\n\n\nuses\n Command\n\u00b6\n\n\nSpecifies you either want to use a project from the \ncurrent\n \n_build.json\n \nor a \ndependency\n from your \n_package.json\n in this project.\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"files\": \"src/*.cpp\"}\n        ]\n    },\n    {\n        \"project\": \"Test\",\n        \"do\": [\n            {\"uses\": \"Zefiros-Software/GoogleTest\"}\n            {\"uses\": \"Lib\"}\n            {\"files\": \"test/*.cpp\"}\n        ]\n    }\n]\n\n\n\n\n\n\nreuses\n Command\n\u00b6\n\n\nSpecifies you want to \nuse\n and \nre-export\n a project from your \n_package.json\n.\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"MathLibrary\",\n        \"do\": [\n            {\"reuses\": \"Zefiros-Software/PlotLib\"}\n        ]\n    }\n]\n\n\n\n\n\n\ndependson\n Command\n\u00b6\n\n\nSpecify one or more \nnon-linking\n project build order dependencies. These projects are\nfrom the same \n_build.json\n and are converted to the correct project name.\nCheck \nthis\n for more information.\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"HeaderLib\",\n        \"do\": [\n            {\"includedirs\": \"include/\"}\n        ]\n    },\n    {\n        \"project\": \"Test\",\n        \"do\": [\n            {\"uses\": \"Zefiros-Software/GoogleTest\"}\n            {\"includedirs\": \"include/\"}\n            {\"dependson\": \"HeaderLib\"}\n            {\"files\": \"test/*.cpp\"}\n        ]\n    }\n]\n\n\n\n\n\n\nconfigmap\n Command\n\u00b6\n\n\nMap workspace level configuration and platforms to a different project configuration or platform.\nCheck \nthis\n for more information.\n\n\nUsage\n\n\n{\"configmap\": [\n    {\n        \"workspace\": <workspace>,\n        \"project\": <project>\n    }\n]}\n\n\n\n\nWhere  \n\n\n\n\n a \nlist\n of \nstrings\n or \nstring\n with workspace configurations that are \nmapped\n.\n\n\n a \nlist\n of \nstrings\n or \nstring\n with project configurations we map \nto\n workspace.\n\n\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"configurations\": [\"WeirdDebug\"]},\n            {\"includedirs\": \"include/\"}\n            {\"files\": [\n                \"src/\",\n                \"src2/\",\n                \"include/\"\n            ]}\n            {\"configmap\": [                \n                {\n                    \"workspace\": \"Debug\",\n                    \"project\": [\"WeirdDebug\", \"WeirdDebug2\"],\n                }\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nvpaths\n Command\n\u00b6\n\n\nPlaces files into \ngroups\n or \"virtual paths\", rather than the default behavior of mirroring the filesystem in IDE-based projects.\nCheck \nthis\n for more information.\n\n\nUsage\n\n\n{\"vpaths\": [\n    {\n        \"name\": <name>,\n        \"vpaths\": <vpaths>\n    }\n]}\n\n\n\n\nWhere  \n\n\n\n\n either \narray\n of \nstrings\n or \nstring\n to group \nunder\n.\n\n\n either \narray\n of \npaths\n or \npath\n patterns we \ngroup\n.\n\n\n\n\n Example \n\n\n//_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"includedirs\": \"include/\"}\n            {\"files\": [\n                \"src/\",\n                \"src2/\",\n                \"include/\"\n            ]}\n            {\"vpaths\": [                \n                {\n                    \"name\": \"Headers\",\n                    \"vpaths\": [ \"**.h\", \"**.hxx\", \"**.hpp\" ],\n                },           \n                {\n                    \"name\": \"Sources/*\",\n                    \"vpaths\": [ \"**.c\", \"**.cpp\" ],\n                }\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
-            "title": "Special"
-        },
-        {
-            "location": "/packages/commands/special/#special_commands",
-            "text": "ZPM introduces new commands, or slightly modified commands.",
-            "title": "Special Commands"
-        },
-        {
-            "location": "/packages/commands/special/#available_commands",
-            "text": "headeronly  uses  reuses  dependson  configmap  vpaths",
-            "title": "Available Commands"
-        },
-        {
-            "location": "/packages/commands/special/#headeronly_command",
-            "text": "When your project should  not  be linked against, you should set  headeronly  on true. This way ZPM knows\nthere are no lib files to  link  against.   Example   //_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"includedirs\": \"include/\"},\n            {\"headeronly\": true}\n        ]\n    }\n]   Note  By default ZPM  links  projects when used.",
-            "title": "headeronly Command"
-        },
-        {
-            "location": "/packages/commands/special/#uses_command",
-            "text": "Specifies you either want to use a project from the  current   _build.json  \nor a  dependency  from your  _package.json  in this project.   Example   //_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"files\": \"src/*.cpp\"}\n        ]\n    },\n    {\n        \"project\": \"Test\",\n        \"do\": [\n            {\"uses\": \"Zefiros-Software/GoogleTest\"}\n            {\"uses\": \"Lib\"}\n            {\"files\": \"test/*.cpp\"}\n        ]\n    }\n]",
-            "title": "uses Command"
-        },
-        {
-            "location": "/packages/commands/special/#reuses_command",
-            "text": "Specifies you want to  use  and  re-export  a project from your  _package.json .   Example   //_build.json\n[\n    {\n        \"project\": \"MathLibrary\",\n        \"do\": [\n            {\"reuses\": \"Zefiros-Software/PlotLib\"}\n        ]\n    }\n]",
-            "title": "reuses Command"
-        },
-        {
-            "location": "/packages/commands/special/#dependson_command",
-            "text": "Specify one or more  non-linking  project build order dependencies. These projects are\nfrom the same  _build.json  and are converted to the correct project name.\nCheck  this  for more information.   Example   //_build.json\n[\n    {\n        \"project\": \"HeaderLib\",\n        \"do\": [\n            {\"includedirs\": \"include/\"}\n        ]\n    },\n    {\n        \"project\": \"Test\",\n        \"do\": [\n            {\"uses\": \"Zefiros-Software/GoogleTest\"}\n            {\"includedirs\": \"include/\"}\n            {\"dependson\": \"HeaderLib\"}\n            {\"files\": \"test/*.cpp\"}\n        ]\n    }\n]",
-            "title": "dependson Command"
-        },
-        {
-            "location": "/packages/commands/special/#configmap_command",
-            "text": "Map workspace level configuration and platforms to a different project configuration or platform.\nCheck  this  for more information.  Usage  {\"configmap\": [\n    {\n        \"workspace\": <workspace>,\n        \"project\": <project>\n    }\n]}  Where      a  list  of  strings  or  string  with workspace configurations that are  mapped .   a  list  of  strings  or  string  with project configurations we map  to  workspace.    Example   //_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"configurations\": [\"WeirdDebug\"]},\n            {\"includedirs\": \"include/\"}\n            {\"files\": [\n                \"src/\",\n                \"src2/\",\n                \"include/\"\n            ]}\n            {\"configmap\": [                \n                {\n                    \"workspace\": \"Debug\",\n                    \"project\": [\"WeirdDebug\", \"WeirdDebug2\"],\n                }\n            ]}\n        ]\n    }\n]",
-            "title": "configmap Command"
-        },
-        {
-            "location": "/packages/commands/special/#vpaths_command",
-            "text": "Places files into  groups  or \"virtual paths\", rather than the default behavior of mirroring the filesystem in IDE-based projects.\nCheck  this  for more information.  Usage  {\"vpaths\": [\n    {\n        \"name\": <name>,\n        \"vpaths\": <vpaths>\n    }\n]}  Where      either  array  of  strings  or  string  to group  under .   either  array  of  paths  or  path  patterns we  group .    Example   //_build.json\n[\n    {\n        \"project\": \"Lib\",\n        \"do\": [\n            {\"includedirs\": \"include/\"}\n            {\"files\": [\n                \"src/\",\n                \"src2/\",\n                \"include/\"\n            ]}\n            {\"vpaths\": [                \n                {\n                    \"name\": \"Headers\",\n                    \"vpaths\": [ \"**.h\", \"**.hxx\", \"**.hpp\" ],\n                },           \n                {\n                    \"name\": \"Sources/*\",\n                    \"vpaths\": [ \"**.c\", \"**.cpp\" ],\n                }\n            ]}\n        ]\n    }\n]",
-            "title": "vpaths Command"
-        },
-        {
-            "location": "/packages/commands/special/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Build  commands  Path  commands   These  region  commands are available:     Export  regions  Reexport  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/commands/build/",
-            "text": "Build Commands\n\u00b6\n\n\nSome premake5 commands require access to \nshell\n scripts.\nDue to security concerns ZPM asks \npermission\n to use these.\n\n\n\n\nNote\n\n\nYou can by default accept this access by enabling the \n--allow-shell\n.\n\n\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"buildcommands\": \"'luac -o '%{cfg.objdir}/%{file.basename}.out' '%{file.relpath}'\"}\n        ]\n    }\n]\n\n\n\n\nAvailable Commands\n\u00b6\n\n\n\n\nbuildcommands\n\n\ndebugcommand\n\n\ndebugconnectcommands\n\n\ndebugstartupcommands\n\n\npostbuildcommands\n\n\nprebuildcommands\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
-            "title": "Build"
-        },
-        {
-            "location": "/packages/commands/build/#build_commands",
-            "text": "Some premake5 commands require access to  shell  scripts.\nDue to security concerns ZPM asks  permission  to use these.   Note  You can by default accept this access by enabling the  --allow-shell .",
-            "title": "Build Commands"
-        },
-        {
-            "location": "/packages/commands/build/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"buildcommands\": \"'luac -o '%{cfg.objdir}/%{file.basename}.out' '%{file.relpath}'\"}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/commands/build/#available_commands",
-            "text": "buildcommands  debugcommand  debugconnectcommands  debugstartupcommands  postbuildcommands  prebuildcommands",
-            "title": "Available Commands"
-        },
-        {
-            "location": "/packages/commands/build/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Path  commands   These  region  commands are available:     Export  regions  Reexport  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/commands/path/",
-            "text": "Path Commands\n\u00b6\n\n\nAll path commands are executed as if they were executed from the (shadow) repository \nroot\n.\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"files\": [\n                \"src/*.cpp\",\n                \"include/*.h\"\n            ]}\n        ]\n    }\n]\n\n\n\n\nAvailable Commands\n\u00b6\n\n\n\n\nincludedirs\n\n\nlibdirs\n\n\nsysincludedirs\n\n\nsyslibdirs\n\n\nfiles\n\n\nforceincludes\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
-            "title": "Path"
-        },
-        {
-            "location": "/packages/commands/path/#path_commands",
-            "text": "All path commands are executed as if they were executed from the (shadow) repository  root .",
-            "title": "Path Commands"
-        },
-        {
-            "location": "/packages/commands/path/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"files\": [\n                \"src/*.cpp\",\n                \"include/*.h\"\n            ]}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/commands/path/#available_commands",
-            "text": "includedirs  libdirs  sysincludedirs  syslibdirs  files  forceincludes",
-            "title": "Available Commands"
-        },
-        {
-            "location": "/packages/commands/path/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Build  commands   These  region  commands are available:     Export  regions  Reexport  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/regions/export/",
-            "text": "Export Region\n\u00b6\n\n\nSometimes you define commands in your project that you also want\nto \nexport\n to other projects using it. The \nexport\n region allows you\nto do exactly this.\n\n\nUsage\n\u00b6\n\n\nIn the export region\n\n\n{\"export\": [\n    <commands>\n]}\n\n\n\n\nyou define commands as usual. However these commands are \nboth\n \nexecuted in the current project, and the projects that use it.\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"export\": [\n                {\"includedirs\": [\n                    \"include/\"\n                ]}\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nReexport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
+            "location": "/packages/.build/#export",
+            "text": "To use our projects externally, we should export settings to the zpm projects using them.  zpm.export [[<commands>]]  Where   <commands>  Are the premake commands that projects using this project should also use.",
             "title": "Export"
         },
         {
-            "location": "/packages/regions/export/#export_region",
-            "text": "Sometimes you define commands in your project that you also want\nto  export  to other projects using it. The  export  region allows you\nto do exactly this.",
-            "title": "Export Region"
-        },
-        {
-            "location": "/packages/regions/export/#usage",
-            "text": "In the export region  {\"export\": [\n    <commands>\n]}  you define commands as usual. However these commands are  both  \nexecuted in the current project, and the projects that use it.",
-            "title": "Usage"
-        },
-        {
-            "location": "/packages/regions/export/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"export\": [\n                {\"includedirs\": [\n                    \"include/\"\n                ]}\n            ]}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/regions/export/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Build  commands  Path  commands   These  region  commands are available:     Reexport  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/regions/reexport/",
-            "text": "Reexport Region\n\u00b6\n\n\nWhen you want to \nexport\n commands, and use exported commands from another project,\nyou can use the \nreexport\n region.\n\n\nUsage\n\u00b6\n\n\nIn the re-export region\n\n\n{\"reexport\": [\n    {\"<command>\": \"<project>\"}\n]}\n\n\n\n\nyou define which command from which project you want to re-export. However these commands are \nboth\n \nexecuted in the current project, and the projects that use it.\n\n\nWhere:\n\n\n\n\ncommand\n: The command to re-export.\n\n\nproject\n: The project to re-export from.\n\n\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"ExportProject\",\n        \"do\": [\n            {\"export\": [\n                {\"includedirs\": [\n                    \"include/\"\n                ]}\n            ]}\n        ]\n    },\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"reexport\": [\n                {\"includedirs\": \"ExportProject\"}\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nFilters\n regions\n\n\nOptions\n regions",
-            "title": "Reexport"
-        },
-        {
-            "location": "/packages/regions/reexport/#reexport_region",
-            "text": "When you want to  export  commands, and use exported commands from another project,\nyou can use the  reexport  region.",
-            "title": "Reexport Region"
-        },
-        {
-            "location": "/packages/regions/reexport/#usage",
-            "text": "In the re-export region  {\"reexport\": [\n    {\"<command>\": \"<project>\"}\n]}  you define which command from which project you want to re-export. However these commands are  both  \nexecuted in the current project, and the projects that use it.  Where:   command : The command to re-export.  project : The project to re-export from.",
-            "title": "Usage"
-        },
-        {
-            "location": "/packages/regions/reexport/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"ExportProject\",\n        \"do\": [\n            {\"export\": [\n                {\"includedirs\": [\n                    \"include/\"\n                ]}\n            ]}\n        ]\n    },\n    {\n        \"project\": \"Example\",\n        \"do\": [\n            {\"reexport\": [\n                {\"includedirs\": \"ExportProject\"}\n            ]}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/regions/reexport/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Build  commands  Path  commands   These  region  commands are available:     Export  regions  Filters  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/regions/filters/",
-            "text": "Filter Regions\n\u00b6\n\n\nJust like premake5 allows you to use \nfilters\n for system \nconfigurations\n,\nZPM also allows you to do this. For a more in-depth explanation of\nfilters, please look \nhere\n.\n\n\nUsage\n\u00b6\n\n\nIn the filter region\n\n\n{\"filter\": \"<filter>\",\n \"do\": [\n     <commands>\n ]}\n\n\n\n\nWhere  \n\n\n\n\ncommands\n are the commands executed when the filter is active.\n\n\n\n\n\n\nNote\n\n\nFilters are \nobeyed\n in \nexport\n regions and are also re-exported.\n\n\n\n\n\n\nNote\n\n\nFilters can \nonly\n be used for commands used by premake5. Otherwise\nyou should look at \noptions\n.\n\n\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"ThreadingExample\",\n        \"do\": [\n            {\"filter\": \"system:not windows\",\n                \"do\": [\n                {\"links\": [\n                    \"pthread\"\n                ]}\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nOptions\n regions",
-            "title": "Filters"
-        },
-        {
-            "location": "/packages/regions/filters/#filter_regions",
-            "text": "Just like premake5 allows you to use  filters  for system  configurations ,\nZPM also allows you to do this. For a more in-depth explanation of\nfilters, please look  here .",
-            "title": "Filter Regions"
-        },
-        {
-            "location": "/packages/regions/filters/#usage",
-            "text": "In the filter region  {\"filter\": \"<filter>\",\n \"do\": [\n     <commands>\n ]}  Where     commands  are the commands executed when the filter is active.    Note  Filters are  obeyed  in  export  regions and are also re-exported.    Note  Filters can  only  be used for commands used by premake5. Otherwise\nyou should look at  options .",
-            "title": "Usage"
-        },
-        {
-            "location": "/packages/regions/filters/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"ThreadingExample\",\n        \"do\": [\n            {\"filter\": \"system:not windows\",\n                \"do\": [\n                {\"links\": [\n                    \"pthread\"\n                ]}\n            ]}\n        ]\n    }\n]",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/regions/filters/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Build  commands  Path  commands   These  region  commands are available:     Export  regions  Reexport  regions  Options  regions",
-            "title": "Related Pages"
-        },
-        {
-            "location": "/packages/regions/options/",
-            "text": "Option Regions\n\u00b6\n\n\nWhen you want to deliver your package with several options that are decided compile time, you can \nuse the \nfilter-options\n region.\n\n\nUsage\n\u00b6\n\n\nThe \nfilter-option\n region is used in three parts.\n\n\n_build.json Options\n\u00b6\n\n\nThe \n_build.json\n file has a region to specify which options are \ndefined\n in the project.\nThis is in the form\n\n\n\"options\": {\n    <options>\n}\n\n\n\n\nWhere \noptions\n is an object of key-value pairs that define the options \navailable\n, and their \ndefault\n value.\n\n\n_build.json Command\n\u00b6\n\n\nIn the \nfilter-option\n region in \n_build.json\n files we\ncan \nfilter\n on the option values.\n\n\n{\"filter-options\": {<options>},\n \"do\": [\n     <do-commands>\n ]}\n\n\n\n\n or \n \n\n\n{\"filter-options\": {<options>},\n \"do\": [\n     <do-commands>\n ],\n \"otherwise\": [\n     <otherwise-commands>\n]}\n\n\n\n\nWhere  \n\n\n\n\noptions\n is an object with \nkey-value\n pairs which we all test.\n\n\ndo-commands\n when \nevery\n value in the condition is \ntrue\n, this is executed.\n\n\notherwise-commands\n when \none\n value in the condition is \nfalse\n, this is executed.\n\n\n\n\n\n\nNote\n\n\nZPM stops executing when the conditions are not met, thus these regions are \nsafe\n to \n\nexport\n and \nre-export\n.\n\n\n\n\n_package.json\n\u00b6\n\n\nWhen we want to change the value of the options, we have to do this project wide in the\n\n_package.json\n. In the package that uses it you \noverride\n the options from the \n_build.json\n in\nthe \nrequire\n field. This is in the form:\n\n\n\"options\":[\n    {\"project\": \"<name>\",\n     \"options\": {\n        <options>\n    }}    \n]\n\n\n\n\nWhere \n\n\n\n\nname\n is the project name we want to set the option on.\n\n\noptions\n are \nkey-value\n pairs that override the default options.\n\n\n\n\nExample\n\u00b6\n\n\n//_build.json\n[\n    {\n        \"project\": \"UseOtherLibProject\",\n        \"options\": {\n            \"UseOtherLib\": true\n        },\n        \"do\":\n        [\n            {\n                \"filter-options\": {\n                    \"UseOtherLib\": true\n                },\n                \"do\":\n                [\n                    {\"reuses\": \"Zefiros-Software/OtherLib\"},\n                ],\n                \"otherwise\":\n                [                    \n                    {\"defines\": \"NO_OTHER_LIB\"}\n                ]\n            }\n        ]\n    }\n]\n\n\n\n\nIn the project that uses it\n\n\n//_package.json\n{\n    ...\n    \"requires\": [\n        {\n            \"name\": \"Zefiros-Software/UseOtherLibProject\",\n            \"version\": \"@head\",\n            \"options\": [\n                {\"project\": \"UseOtherLibProject\",\n                 \"options\": {\n                    \"UseOtherLib\": false\n                }}\n            ],\n        }\n    ]\n}\n\n\n\n\n\n\nRelated Pages\n\u00b6\n\n\nThese \nbuild\n commands are available:  \n\n\n\n\nPremake5\n commands\n\n\nSpecial\n commands\n\n\nBuild\n commands\n\n\nPath\n commands\n\n\n\n\nThese \nregion\n commands are available:  \n\n\n\n\nExport\n regions\n\n\nReexport\n regions\n\n\nFilters\n regions",
+            "location": "/packages/.build/#options",
+            "text": "A project may define options in its  .package.json  file, and a project using it may override the options in \nthe  .package.json  file. To retrieve to option value you should use:  zpm.option(<name>)  Where   <name>  The option name.",
             "title": "Options"
         },
         {
-            "location": "/packages/regions/options/#option_regions",
-            "text": "When you want to deliver your package with several options that are decided compile time, you can \nuse the  filter-options  region.",
-            "title": "Option Regions"
-        },
-        {
-            "location": "/packages/regions/options/#usage",
-            "text": "The  filter-option  region is used in three parts.",
-            "title": "Usage"
-        },
-        {
-            "location": "/packages/regions/options/#_buildjson_options",
-            "text": "The  _build.json  file has a region to specify which options are  defined  in the project.\nThis is in the form  \"options\": {\n    <options>\n}  Where  options  is an object of key-value pairs that define the options  available , and their  default  value.",
-            "title": "_build.json Options"
-        },
-        {
-            "location": "/packages/regions/options/#_buildjson_command",
-            "text": "In the  filter-option  region in  _build.json  files we\ncan  filter  on the option values.  {\"filter-options\": {<options>},\n \"do\": [\n     <do-commands>\n ]}   or     {\"filter-options\": {<options>},\n \"do\": [\n     <do-commands>\n ],\n \"otherwise\": [\n     <otherwise-commands>\n]}  Where     options  is an object with  key-value  pairs which we all test.  do-commands  when  every  value in the condition is  true , this is executed.  otherwise-commands  when  one  value in the condition is  false , this is executed.    Note  ZPM stops executing when the conditions are not met, thus these regions are  safe  to  export  and  re-export .",
-            "title": "_build.json Command"
-        },
-        {
-            "location": "/packages/regions/options/#_packagejson",
-            "text": "When we want to change the value of the options, we have to do this project wide in the _package.json . In the package that uses it you  override  the options from the  _build.json  in\nthe  require  field. This is in the form:  \"options\":[\n    {\"project\": \"<name>\",\n     \"options\": {\n        <options>\n    }}    \n]  Where    name  is the project name we want to set the option on.  options  are  key-value  pairs that override the default options.",
-            "title": "_package.json"
-        },
-        {
-            "location": "/packages/regions/options/#example",
-            "text": "//_build.json\n[\n    {\n        \"project\": \"UseOtherLibProject\",\n        \"options\": {\n            \"UseOtherLib\": true\n        },\n        \"do\":\n        [\n            {\n                \"filter-options\": {\n                    \"UseOtherLib\": true\n                },\n                \"do\":\n                [\n                    {\"reuses\": \"Zefiros-Software/OtherLib\"},\n                ],\n                \"otherwise\":\n                [                    \n                    {\"defines\": \"NO_OTHER_LIB\"}\n                ]\n            }\n        ]\n    }\n]  In the project that uses it  //_package.json\n{\n    ...\n    \"requires\": [\n        {\n            \"name\": \"Zefiros-Software/UseOtherLibProject\",\n            \"version\": \"@head\",\n            \"options\": [\n                {\"project\": \"UseOtherLibProject\",\n                 \"options\": {\n                    \"UseOtherLib\": false\n                }}\n            ],\n        }\n    ]\n}",
-            "title": "Example"
-        },
-        {
-            "location": "/packages/regions/options/#related_pages",
-            "text": "These  build  commands are available:     Premake5  commands  Special  commands  Build  commands  Path  commands   These  region  commands are available:     Export  regions  Reexport  regions  Filters  regions",
-            "title": "Related Pages"
-        },
-        {
             "location": "/assets/assets/",
-            "text": "Assets\n\u00b6\n\n\nZPM allows you to download binary files from \nGit LFS\n repositories and \nurls\n.\n\n\nSections\n\u00b6\n\n\nWe split the Assets section:\n\n\n\n\nUsing\n everything about using assets in your project.\n\n\nPublishing\n publishing your own assets.\n\n\n\n\nCommands\n\u00b6\n\n\nIf you want to know what commands you may use:\n\n\n\n\nFilters\n: To filter for a specified target.\n\n\nDownload\n: How files should be downloaded.",
+            "text": "Assets\n\u00b6\n\n\nZPM allows you to download binary files from \nGit LFS\n repositories and \nurls\n.\n\n\nSections\n\u00b6\n\n\nWe split the Assets section:\n\n\n\n\nUsing\n everything about using assets in your project.\n\n\nPublishing\n publishing your own assets.",
             "title": "Assets"
         },
         {
@@ -961,98 +701,73 @@
             "title": "Sections"
         },
         {
-            "location": "/assets/assets/#commands",
-            "text": "If you want to know what commands you may use:   Filters : To filter for a specified target.  Download : How files should be downloaded.",
-            "title": "Commands"
-        },
-        {
             "location": "/assets/using/",
-            "text": "Using Assets\n\u00b6\n\n\nTo use an asset, just place an \nassets\n section in your \n_package.json\n in the form:\n\n\n\"assets\": [\n    {\n        \"name\": \"<vendor>/<name>\",\n        \"version\": \"<version>\n    }\n]\n\n\n\n\nWhere  \n\n\n\n\nname\n is the \nasset\n we want to download.\n\n\n<version>\n specifies the \nversion\n we want to use.\n\n\n\n\nWhen you or another project uses an asset, it will be \navailable\n under\nyour \nassets/\n folder.\n\n\nExample\n\u00b6\n\n\nThe following snippet:\n\n\n// _package.json\n{\n    \"name\": \"I/MyProject\",\n    \"assets\": [\n        {\n            \"name\": \"Zefiros-Software/Anaconda\",\n            \"version\": \">=4.0.0\"\n        }\n    ]\n}\n\n\n\n\nWill download the Anaconda installer \ninto\n the \nassets/I/MyProject/Zefiros-Software/Anaconda/\n folder.\n\n\n\n\nNote\n\n\nFor more information on how to use the \nversion\n string, you should check \nthis\n.\n\n\n\n\n\n\nNote\n\n\nAssets may also be added to the \ndev\n section of the \n_package.json\n.",
+            "text": "Using Assets\n\u00b6\n\n\nTo use an asset, just place an \nassets\n section in your \n.package.json\n in the form:\n\n\n\"assets\": [\n    {\n        \"name\": \"<vendor>/<name>\",\n        \"version\": \"<version>\n    }\n]\n\n\n\n\nWhere  \n\n\n\n\n<name>\n is the \nasset\n we want to download.\n\n\n<version>\n specifies the \nversion\n we want to use.\n\n\n\n\nWhen you or another project uses an asset, it will be \navailable\n under\nyour \nassets/\n folder.\n\n\nExample\n\u00b6\n\n\nThe following snippet:\n\n\n// .package.json\n{\n    \"name\": \"Test/MyProject\",\n    \"assets\": [\n        {\n            \"name\": \"Zefiros-Software/Doxygen\",\n            \"version\": \"@head\"\n        }\n    ]\n}\n\n\n\n\nWill download Doxygen \ninto\n the \nassets/Test/MyProject/Zefiros-Software/Doxygen/\n folder.\n\n\n\n\nNote\n\n\nMore specialised assets can download assets outside your \nassets\n folder.\n\n\n\n\n\n\nNote\n\n\nFor more information on how to use the \nversion\n string, you should check \nthis\n.\n\n\n\n\n\n\nNote\n\n\nAssets may also be added to the \ndev\n section of the \n.package.json\n.",
             "title": "Using"
         },
         {
             "location": "/assets/using/#using_assets",
-            "text": "To use an asset, just place an  assets  section in your  _package.json  in the form:  \"assets\": [\n    {\n        \"name\": \"<vendor>/<name>\",\n        \"version\": \"<version>\n    }\n]  Where     name  is the  asset  we want to download.  <version>  specifies the  version  we want to use.   When you or another project uses an asset, it will be  available  under\nyour  assets/  folder.",
+            "text": "To use an asset, just place an  assets  section in your  .package.json  in the form:  \"assets\": [\n    {\n        \"name\": \"<vendor>/<name>\",\n        \"version\": \"<version>\n    }\n]  Where     <name>  is the  asset  we want to download.  <version>  specifies the  version  we want to use.   When you or another project uses an asset, it will be  available  under\nyour  assets/  folder.",
             "title": "Using Assets"
         },
         {
             "location": "/assets/using/#example",
-            "text": "The following snippet:  // _package.json\n{\n    \"name\": \"I/MyProject\",\n    \"assets\": [\n        {\n            \"name\": \"Zefiros-Software/Anaconda\",\n            \"version\": \">=4.0.0\"\n        }\n    ]\n}  Will download the Anaconda installer  into  the  assets/I/MyProject/Zefiros-Software/Anaconda/  folder.   Note  For more information on how to use the  version  string, you should check  this .    Note  Assets may also be added to the  dev  section of the  _package.json .",
+            "text": "The following snippet:  // .package.json\n{\n    \"name\": \"Test/MyProject\",\n    \"assets\": [\n        {\n            \"name\": \"Zefiros-Software/Doxygen\",\n            \"version\": \"@head\"\n        }\n    ]\n}  Will download Doxygen  into  the  assets/Test/MyProject/Zefiros-Software/Doxygen/  folder.   Note  More specialised assets can download assets outside your  assets  folder.    Note  For more information on how to use the  version  string, you should check  this .    Note  Assets may also be added to the  dev  section of the  .package.json .",
             "title": "Example"
         },
         {
             "location": "/assets/publishing/",
-            "text": "Publishing Assets\n\u00b6\n\n\nWhen publishing an asset you should consider a few things. Inside a (shadow) assets directory we find a \n_assets.json\n in the root. This file\ndescribes how the asset should download files from its repository\n\n\nNormal Repository\n\u00b6\n\n\nUsually the Git LFS repository and \n_assets.json\n are combined in the same repository.\n\n\nDirectory Layout\n\u00b6\n\n\nAssets have the following \ndirectory layout\n:\n\n\n\n\n/_assets.json\n describes how the asset is \nused\n.\n\n\n/*\n \nfiles\n and \ndirectories\n of the asset.\n\n\n\n\nWhere  \n\n\n\n\n_assets.json\n is of the format \n[<commands>]\n.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"system\": \"windows\",\n     \"do\": [\n        {\"files\": [\n            \"*.exe\"\n        ]}\n    ]}\n]\n\n\n\n\n\n\nShadow Repository\n\u00b6\n\n\nIn this type the Git LFS repository and \n_assets.json\n are separated in \ndifferent\n repositories.\nThis means our \n_assets.json\n has to be adjusted likewise, and thus we have to specify how\neach \nversion\n of the asset should be used. All commands are executed as if they\nwere done from the shadow repository.\n\n\nDirectory Layout\n\u00b6\n\n\nAssets have the following \ndirectory layout\n:\n\n\n\n\n/_assets.json\n describes how the asset is \nused\n.\n\n\n\n\nThis \n_assets.json\n is of the format:\n\n\n[\n    {\"version\": <version>,\n     \"do\" [\n        <commands>\n    ]}\n]\n\n\n\n\nWhere  \n\n\n\n\n<version>\n is \nchecked\n against the required version.\n\n\ndo\n is the asset build section we execute, we hit \nfirst\n when our \n<version>\n \nmatches\n.\n\n\n\n\nAnd in the shadow repository:\n\n\n\n\n/*\n \nfiles\n and \ndirectories\n of the asset.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\n        \"version\": \">1.0.0 || @head\",\n        \"do\" [\n            {\"system\": \"windows\",\n             \"do\": [\n                {\"files\": [\n                    \"*.exe\"\n                ]}\n            ]}\n        ]\n    }\n]\n\n\n\n\n\n\nNote\n\n\nThe build file will always use the \nhead\n of the repository in a shadow repository setting.",
+            "text": "Publishing Assets\n\u00b6\n\n\nWhen publishing an asset you should consider a few things. We have \ntwo\n type of repositories:\n\n\n\n\nNormal\n: The assets and \n.assets.lua\n are in the \nsame\n repository.\n\n\nShadow\n: The assets and asset definition are in \ndifferent\n repositories.\n\n\n\n\nNormal Repository\n\u00b6\n\n\nIn this case the Git LFS repository and \n.assets.lua\n are combined in the same repository.\n\n\nDirectory Layout\n\u00b6\n\n\nAssets have the following \ndirectory layout\n:\n\n\n\n\n/.assets.lua\n describes how the asset is \nused\n.\n\n\n/*\n \nfiles\n and \ndirectories\n of the asset.\n\n\n\n\nWhere  \n\n\n\n\n.assets.lua\n is a sandboxed lua file.\n\n\n\n\n\n\nShadow Repository\n\u00b6\n\n\nIn this type the Git LFS repository and asset definition are separated in \ndifferent\n repositories.\nWe have to specify how each \nversion\n of the asset should be used. All commands are executed as if they\nwere done from the shadow repository.\n\n\nDirectory Layout\n\u00b6\n\n\nAssets have the following \ndirectory layout\n:\n\n\n\n\n/.assets.json\n describes what buildfile.\n\n\n/<build-name>.lua\n describes how the asset is \nused\n.\n\n\n\n\nThis \n.assets.json\n is of the format:\n\n\n[\n    {\n        \"version\": <version>,\n        \"file\": <file>.lua\n     }\n]\n\n\n\n\nWhere  \n\n\n\n\n<version>\n is \nchecked\n against the required version.\n\n\n<file>.lua\n is the asset build file we execute, we hit \nfirst\n when our \n<version>\n \nmatches\n.\n\n\n\n\nAnd in the shadow repository:\n\n\n\n\n/*\n \nfiles\n and \ndirectories\n of the asset.\n\n\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\n        \"version\": \">1.0.0 || @head\",\n        \"file\": \".assets.2.lua\"\n    },\n    {\n        \"version\": \"^0.0.0\",\n        \"file\": \".assets.1.lua\"\n    }\n]\n\n\n\n\nwith\n\n\n// .assets.1.lua\nzpm.assets.extract( \"*.exe\" )\n\n\n\n\nand\n\n\n// .assets.2.lua\nzpm.assets.extract( {\n    \"*.dll\",\n    \"*.exe\"\n} )\n\n\n\n\n\n\nNote\n\n\nThe build file will always use the \nhead\n of the repository in a shadow repository setting.\n\n\n\n\n\n\nAvailable commands\n\u00b6\n\n\nBy default ZPM does nothing with cloned assets, and thus we need to \nmove\n\nthe files or \ndownload\n new ones.\n\n\n\n\nWarning\n\n\nThis lua file is sandboxed, and thus the function one can use are limited.\n\n\n\n\nAvailable special functions\n\n\n\n\ndownload\n downloads assets from an \nurl\n.\n\n\nextract\n extracts files from a repository to the assets folder.\n\n\nextractto\n extracts files from a repository to the given folder.\n\n\n\n\nzpm.assets.download\n\u00b6\n\n\nDownloads assets form a given archive or file url.\n\n\nzpm.assets.download( <url>, <to> )\n\n\n\n\nWhere \n\n\n\n\nurl\n is an url to an \narchive\n (.zip or .tar.gz) or \nfile\n.\n\n\nto\n is an alpha-numeric (with '-' and '_') name wherein we \nplace\n the (extracted) files.\n  This folder lies within the \nproject\n \nassets\n folder.\n\n\n\n\n\n\nzpm.assets.extract\n\u00b6\n\n\nWe also support files from our \nGit\n or \nGit LFS\n repository to be downloaded.\n\n\nzpm.assets.extract( <patterns> )\n\n\n\n\n\n\n<patterns>\n is an array of strings that are passed to \nos.matchfiles\n.\n\n  Matched files are copied and we leave the relative path intact. \n\n\n\n\n\n\nWarning\n\n\nFiles extracted with this method get placed in the \nassets\n folder.\n\n\n\n\n\n\nzpm.assets.extractto\n\u00b6\n\n\nzpm.assets.extractto( <patterns>, <to> )\n\n\n\n\nWhere \n\n\n\n\n<patterns>\n is an array of strings that are passed to \nos.matchfiles\n.\n\n  Matched files are copied and we leave the relative path intact.\n\n\n<to>\n the directory to copy the files to, from the root of the repository. Relative paths are left intact.\n\n\n\n\n Examples \n\n\n//.assets.lua\nzpm.assets.extract({\n    \"*.exe\",\n    \"*.dll\"\n})\n\nzpm.assets.extractto( \"style/*\", \"docs\"/)\n\nif os.is( \"windows\" ) then\n    zpm.assets.download(\"www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.38.zip\", \"graphviz\" )\nend",
             "title": "Publishing"
         },
         {
             "location": "/assets/publishing/#publishing_assets",
-            "text": "When publishing an asset you should consider a few things. Inside a (shadow) assets directory we find a  _assets.json  in the root. This file\ndescribes how the asset should download files from its repository",
+            "text": "When publishing an asset you should consider a few things. We have  two  type of repositories:   Normal : The assets and  .assets.lua  are in the  same  repository.  Shadow : The assets and asset definition are in  different  repositories.",
             "title": "Publishing Assets"
         },
         {
             "location": "/assets/publishing/#normal_repository",
-            "text": "Usually the Git LFS repository and  _assets.json  are combined in the same repository.",
+            "text": "In this case the Git LFS repository and  .assets.lua  are combined in the same repository.",
             "title": "Normal Repository"
         },
         {
             "location": "/assets/publishing/#directory_layout",
-            "text": "Assets have the following  directory layout :   /_assets.json  describes how the asset is  used .  /*   files  and  directories  of the asset.   Where     _assets.json  is of the format  [<commands>] .    Example   //_assets.json\n[\n    {\"system\": \"windows\",\n     \"do\": [\n        {\"files\": [\n            \"*.exe\"\n        ]}\n    ]}\n]",
+            "text": "Assets have the following  directory layout :   /.assets.lua  describes how the asset is  used .  /*   files  and  directories  of the asset.   Where     .assets.lua  is a sandboxed lua file.",
             "title": "Directory Layout"
         },
         {
             "location": "/assets/publishing/#shadow_repository",
-            "text": "In this type the Git LFS repository and  _assets.json  are separated in  different  repositories.\nThis means our  _assets.json  has to be adjusted likewise, and thus we have to specify how\neach  version  of the asset should be used. All commands are executed as if they\nwere done from the shadow repository.",
+            "text": "In this type the Git LFS repository and asset definition are separated in  different  repositories.\nWe have to specify how each  version  of the asset should be used. All commands are executed as if they\nwere done from the shadow repository.",
             "title": "Shadow Repository"
         },
         {
             "location": "/assets/publishing/#directory_layout_1",
-            "text": "Assets have the following  directory layout :   /_assets.json  describes how the asset is  used .   This  _assets.json  is of the format:  [\n    {\"version\": <version>,\n     \"do\" [\n        <commands>\n    ]}\n]  Where     <version>  is  checked  against the required version.  do  is the asset build section we execute, we hit  first  when our  <version>   matches .   And in the shadow repository:   /*   files  and  directories  of the asset.    Example   //_assets.json\n[\n    {\n        \"version\": \">1.0.0 || @head\",\n        \"do\" [\n            {\"system\": \"windows\",\n             \"do\": [\n                {\"files\": [\n                    \"*.exe\"\n                ]}\n            ]}\n        ]\n    }\n]   Note  The build file will always use the  head  of the repository in a shadow repository setting.",
+            "text": "Assets have the following  directory layout :   /.assets.json  describes what buildfile.  /<build-name>.lua  describes how the asset is  used .   This  .assets.json  is of the format:  [\n    {\n        \"version\": <version>,\n        \"file\": <file>.lua\n     }\n]  Where     <version>  is  checked  against the required version.  <file>.lua  is the asset build file we execute, we hit  first  when our  <version>   matches .   And in the shadow repository:   /*   files  and  directories  of the asset.     Example   //_assets.json\n[\n    {\n        \"version\": \">1.0.0 || @head\",\n        \"file\": \".assets.2.lua\"\n    },\n    {\n        \"version\": \"^0.0.0\",\n        \"file\": \".assets.1.lua\"\n    }\n]  with  // .assets.1.lua\nzpm.assets.extract( \"*.exe\" )  and  // .assets.2.lua\nzpm.assets.extract( {\n    \"*.dll\",\n    \"*.exe\"\n} )   Note  The build file will always use the  head  of the repository in a shadow repository setting.",
             "title": "Directory Layout"
         },
         {
-            "location": "/assets/download/",
-            "text": "Download\n\u00b6\n\n\nBy default ZPM does nothing with cloned assets, and thus we need to move the files.\n\n\n\n\nurl\n downloads assets from an \nurl\n.\n\n\nfiles\n downloads files from \nGit LFS\n to the assets folder.\n\n\n\n\nurl\n Command\n\u00b6\n\n\nDownloads assets form a given archive or file url.\n\n\n{\"url\": \"https://<url-to-archive>.zip\",\n \"to\": \"<folder-name>\"}\n\n\n\n\nWhere \n\n\n\n\nurl\n is an url to an \narchive\n (.zip or .tar.gz) or \nfile\n.\n\n\nto\n is an alpha-numeric (with '-' and '_') name wherein we \nplace\n the (extracted) files.\n  This folder lies within the \nproject\n \nassets\n folder.\n\n\n\n\n\n\nfiles\n Command\n\u00b6\n\n\nWe also support files from our \nGit LFS\n repository to be downloaded.\n\n\n{\"files\": [\n    <patterns>\n]}\n\n\n\n\n or \n\n\n{\"files\": [\n    <patterns>\n ],\n \"to\": \"<directory>\"}\n\n\n\n\nWhere \n\n\n\n\n<patterns>\n is an array of strings that are passed to \nos.matchfiles\n.\n\n  Matched files are copied and we leave the relative path intact.\n\n\n<directory>\n to copy the files to, from the root of the repository.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
-            "title": "Download"
+            "location": "/assets/publishing/#available_commands",
+            "text": "By default ZPM does nothing with cloned assets, and thus we need to  move \nthe files or  download  new ones.   Warning  This lua file is sandboxed, and thus the function one can use are limited.   Available special functions   download  downloads assets from an  url .  extract  extracts files from a repository to the assets folder.  extractto  extracts files from a repository to the given folder.",
+            "title": "Available commands"
         },
         {
-            "location": "/assets/download/#download",
-            "text": "By default ZPM does nothing with cloned assets, and thus we need to move the files.   url  downloads assets from an  url .  files  downloads files from  Git LFS  to the assets folder.",
-            "title": "Download"
+            "location": "/assets/publishing/#zpmassetsdownload",
+            "text": "Downloads assets form a given archive or file url.  zpm.assets.download( <url>, <to> )  Where    url  is an url to an  archive  (.zip or .tar.gz) or  file .  to  is an alpha-numeric (with '-' and '_') name wherein we  place  the (extracted) files.\n  This folder lies within the  project   assets  folder.",
+            "title": "zpm.assets.download"
         },
         {
-            "location": "/assets/download/#url_command",
-            "text": "Downloads assets form a given archive or file url.  {\"url\": \"https://<url-to-archive>.zip\",\n \"to\": \"<folder-name>\"}  Where    url  is an url to an  archive  (.zip or .tar.gz) or  file .  to  is an alpha-numeric (with '-' and '_') name wherein we  place  the (extracted) files.\n  This folder lies within the  project   assets  folder.",
-            "title": "url Command"
+            "location": "/assets/publishing/#zpmassetsextract",
+            "text": "We also support files from our  Git  or  Git LFS  repository to be downloaded.  zpm.assets.extract( <patterns> )   <patterns>  is an array of strings that are passed to  os.matchfiles . \n  Matched files are copied and we leave the relative path intact.     Warning  Files extracted with this method get placed in the  assets  folder.",
+            "title": "zpm.assets.extract"
         },
         {
-            "location": "/assets/download/#files_command",
-            "text": "We also support files from our  Git LFS  repository to be downloaded.  {\"files\": [\n    <patterns>\n]}   or   {\"files\": [\n    <patterns>\n ],\n \"to\": \"<directory>\"}  Where    <patterns>  is an array of strings that are passed to  os.matchfiles . \n  Matched files are copied and we leave the relative path intact.  <directory>  to copy the files to, from the root of the repository.    Example   //_assets.json\n[\n    {\"files\": [\n        \"*.exe\",\n        \"*.dll\"\n    ]}\n]",
-            "title": "files Command"
-        },
-        {
-            "location": "/assets/filters/",
-            "text": "Filters\n\u00b6\n\n\nZPM allows assets to filter different settings for target systems:\n\n\n\n\nsystem\n filters the target operating system.\n\n\nis64bit\n filters the architecture.\n\n\n\n\nsystem\n Command\n\u00b6\n\n\nFilters the target \noperating system\n.\n\n\n{\"system\": \"<system>\",\n \"do\": [\n    <commands>\n]}\n\n\n\n\nWhere  \n\n\n\n\nsystems\n is passed to \nos.is\n.\n\n\ndo\n is \nexecuted\n when \nos.is( <systems> )\n passes.\n\n\n<commands>\n is a list of \ncommand\n objects.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"system\": \"windows\",\n     \"do\": [\n        {\"files\": [\n            \"*.exe\"\n        ]}\n    ]}\n]\n\n\n\n\n\n\nis64bit\n Command\n\u00b6\n\n\nWe can also filter on \narchitecture\n in two ways:\n\n\n{\"is64bit\": <is64bit>,\n \"do\": [\n    <commands>\n]}\n\n\n\n\nAnd also:\n\n\n{\"is64bit\":<is64bit>,\n \"do\": [\n    <commands>\n],\n \"otherwise\": [\n    <commands>\n]}\n\n\n\n\nWhere\n\n\n\n\nis64bit\n is a boolean that functions as \nconditional\n.\n\n\ndo\n is executed when \nis64bit\n \nmatches\n the current system.\n\n\notherwise\n is executed when \nis64bit\n does \nnot\n match the current system.\n\n\n\n\n Example \n\n\n//_assets.json\n[\n    {\"is64bit\": true,\n     \"do\": [\n        {\"files\": [\n            \"foo/x64*.exe\"\n        ]}\n    ]},\n    {\"is64bit\": false,\n     \"do\": [\n        {\"files\": [\n            \"bar/x86*.exe\"\n        ]}\n    ],\n     \"otherwise\": [\n        {\"files\": [\n            \"bar/x64*.exe\"\n        ]}\n    ]},\n]",
-            "title": "Filters"
-        },
-        {
-            "location": "/assets/filters/#filters",
-            "text": "ZPM allows assets to filter different settings for target systems:   system  filters the target operating system.  is64bit  filters the architecture.",
-            "title": "Filters"
-        },
-        {
-            "location": "/assets/filters/#system_command",
-            "text": "Filters the target  operating system .  {\"system\": \"<system>\",\n \"do\": [\n    <commands>\n]}  Where     systems  is passed to  os.is .  do  is  executed  when  os.is( <systems> )  passes.  <commands>  is a list of  command  objects.    Example   //_assets.json\n[\n    {\"system\": \"windows\",\n     \"do\": [\n        {\"files\": [\n            \"*.exe\"\n        ]}\n    ]}\n]",
-            "title": "system Command"
-        },
-        {
-            "location": "/assets/filters/#is64bit_command",
-            "text": "We can also filter on  architecture  in two ways:  {\"is64bit\": <is64bit>,\n \"do\": [\n    <commands>\n]}  And also:  {\"is64bit\":<is64bit>,\n \"do\": [\n    <commands>\n],\n \"otherwise\": [\n    <commands>\n]}  Where   is64bit  is a boolean that functions as  conditional .  do  is executed when  is64bit   matches  the current system.  otherwise  is executed when  is64bit  does  not  match the current system.    Example   //_assets.json\n[\n    {\"is64bit\": true,\n     \"do\": [\n        {\"files\": [\n            \"foo/x64*.exe\"\n        ]}\n    ]},\n    {\"is64bit\": false,\n     \"do\": [\n        {\"files\": [\n            \"bar/x86*.exe\"\n        ]}\n    ],\n     \"otherwise\": [\n        {\"files\": [\n            \"bar/x64*.exe\"\n        ]}\n    ]},\n]",
-            "title": "is64bit Command"
+            "location": "/assets/publishing/#zpmassetsextractto",
+            "text": "zpm.assets.extractto( <patterns>, <to> )  Where    <patterns>  is an array of strings that are passed to  os.matchfiles . \n  Matched files are copied and we leave the relative path intact.  <to>  the directory to copy the files to, from the root of the repository. Relative paths are left intact.    Examples   //.assets.lua\nzpm.assets.extract({\n    \"*.exe\",\n    \"*.dll\"\n})\n\nzpm.assets.extractto( \"style/*\", \"docs\"/)\n\nif os.is( \"windows\" ) then\n    zpm.assets.download(\"www.graphviz.org/pub/graphviz/stable/windows/graphviz-2.38.zip\", \"graphviz\" )\nend",
+            "title": "zpm.assets.extractto"
         },
         {
             "location": "/installer/installer/",
-            "text": "Installer\n\u00b6\n\n\nZPM can be used to \ninstall\n external dependencies (modules, assets, packages, installer scripts) that are used\nby packages, such as scipy, from command line.\n\n\nCalling\n\u00b6\n\n\nTo call the installer you should open the current directory from shell and use\nas described \nhere\n:\n\n\npremake5 install-package\n\n\n\n\nCreating\n\u00b6\n\n\nTo create an installer for your package, you should add an \ninstall\n environment in your\n\n_package.json\n.\n\n\n Example \n\n\n// _package.json\n\"install\": \"install/dev.lua\",\n\n\n\n\nThis lua file wil be executed, when the install command is run. And so will the \ninstaller of the dependencies of dependencies.\n\n\nFor example to install \nmkdocs\n using an installer script:\n\n\n-- install/dev.lua\nos.execute( \"pip install mkdocs -U\" )\nos.execute( \"pip install mkdocs-bootswatch -U\" )",
+            "text": "Installer\n\u00b6\n\n\nZPM can be used to \ninstall\n external dependencies (modules, assets, packages, installer scripts) that are used\nby packages, such as scipy, from command line.\n\n\nCalling\n\u00b6\n\n\nTo call the installer you should open the current directory from shell and use\nas described \nhere\n:\n\n\npremake5 install-package\n\n\n\n\nCreating\n\u00b6\n\n\nTo create an installer for your package, you should add an \ninstall\n environment in your\n\n.package.json\n.\n\n\n Example \n\n\n// .package.json\n\"install\": \"install/dev.lua\",\n\n\n\n\nThis lua file wil be executed, when the install command is run. And so will the \ninstaller of the dependencies of dependencies.\n\n\nFor example to install \nmkdocs\n using an installer script:\n\n\n-- install/dev.lua\nos.execute( \"pip install mkdocs -U\" )\nos.execute( \"pip install mkdocs-bootswatch -U\" )",
             "title": "Installer"
         },
         {
@@ -1067,7 +782,7 @@
         },
         {
             "location": "/installer/installer/#creating",
-            "text": "To create an installer for your package, you should add an  install  environment in your _package.json .   Example   // _package.json\n\"install\": \"install/dev.lua\",  This lua file wil be executed, when the install command is run. And so will the \ninstaller of the dependencies of dependencies.  For example to install  mkdocs  using an installer script:  -- install/dev.lua\nos.execute( \"pip install mkdocs -U\" )\nos.execute( \"pip install mkdocs-bootswatch -U\" )",
+            "text": "To create an installer for your package, you should add an  install  environment in your .package.json .   Example   // .package.json\n\"install\": \"install/dev.lua\",  This lua file wil be executed, when the install command is run. And so will the \ninstaller of the dependencies of dependencies.  For example to install  mkdocs  using an installer script:  -- install/dev.lua\nos.execute( \"pip install mkdocs -U\" )\nos.execute( \"pip install mkdocs-bootswatch -U\" )",
             "title": "Creating"
         }
     ]
