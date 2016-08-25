@@ -10,7 +10,7 @@ Asset manifests are loaded in the **order** described above, and duplicate names
 !!! alert-success "Note"
     Since duplicate names are ignored, the local asset manifest can be used to override other asset manifests.
 
-The asset manifests definition consists of a listing of a name and a repository, and are listed in a `_assets.json`:
+The asset manifests definition consists of a listing of a name and a repository, and are listed in a `.assets.json`:
 
 ```json
 //_assets.json
@@ -31,7 +31,7 @@ Where
 
 ## Local Asset Manifest
 Local Manifests are added on a per **project** basis.
-By defining a `._assets.json` file in the root of your project we can add
+By defining a `.assets.json` file in the root of your project we can add
 new packages available to **that** project only.
 
 ## Root Asset Manifest

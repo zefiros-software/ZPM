@@ -109,7 +109,7 @@ When you use ZPM as part of a scientific publication, we would love you to cite 
 ```
 
 ## License
-This project is licensed under the MIT license.
+This project is licensed under the MIT license by [Zefiros Software](https://zefiros.eu).
 
 ```
 Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher

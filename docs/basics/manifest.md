@@ -13,10 +13,10 @@ Manifests are loaded in that **order**, wherein duplicate names will be ignored.
     Since duplicate names are ignored, the local manifests can be used to override other manifests.
 
 ## Definition
-The manifest definition consists of a listing of a name and a repository, and are listed in a `_manifest.json`:
+The manifest definition consists of a listing of a name and a repository, and are listed in a `.manifest.json`:
 
 ```json
-//_manifest.json
+//.manifest.json
 [
     {
         "name": "<vendor-name>/<package-name>",
@@ -34,7 +34,7 @@ Where
 
 ## Local Manifest
 Local Manifests are added on a per **project** basis.
-By defining a `._manifest.json` file in the root of your project we can add
+By defining a `.manifest.json` file in the root of your project we can add
 new packages available to **that** project only.
 
 ## Root Manifest

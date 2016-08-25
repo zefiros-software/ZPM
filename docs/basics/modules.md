@@ -13,7 +13,7 @@ Module Manifests are loaded in that **order**, wherein duplicate names will be i
     Since duplicate names are ignored, the local module manifests can be used to override other manifests.
 
 ## Definition
-The manifest definition consists of a listing of a name and a repository, and are listed in a `_manifest.json`:
+The manifest definition consists of a listing of a name and a repository, and are listed in a `.manifest.json`:
 
 ```json
 //_modules.json
@@ -34,7 +34,7 @@ Where
 
 ## Local Module Manifest
 Local Manifests are added on a per **project** basis.
-By defining a `._module.json` file in the root of your project we can add
+By defining a `.module.json` file in the root of your project we can add
 new modules available to **that** project only.
 
 ## Root Module Manifest

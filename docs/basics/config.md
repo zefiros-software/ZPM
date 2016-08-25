@@ -17,12 +17,48 @@ To prevent this from happening you may add a **GitHub token** in a configuration
 in the paths described above to **authenticate** yourself.
 
 ** Example **
+The following settings may be overriden:
 
 ````json
 //.config.json
 {
     "GitHub": {
         "token": "<token>"
+    },
+    "install": {
+        "registry": {
+            "directory": "registry",
+            "directories": "registries",
+            "fileName": ".registries.json",
+            "assets": ".assets.json",
+            "modules": ".modules.json",
+            "manifest": ".manifest.json",
+            "registries": ".registries.json",
+            "build": ".build.json"
+        },        
+        "manifests": {
+            "fileName": ".manifest.json"
+        },
+        "modules": {
+            "fileName": ".modules.json",
+            "directory": "modules"
+        },
+        "packages": {
+            "fileName": ".package.json"
+        },
+        "assets": {
+            "fileName": ".assets.lua",
+            "directory": "assets"
+        },
+        "build": {
+            "fileName": ".build.lua"
+        },
+        "extern": {
+            "directory": "extern"  
+        }
     }
 }
 ````
+
+!!! alert-success "Note"
+    Absolute filepaths are supported!

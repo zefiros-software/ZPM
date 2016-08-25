@@ -8,15 +8,3 @@ We even make using premake5 **easier**:
 
 !!! alert-success "Note"
     `premake5` always refers to the **newest** version of premake5!
-
-ZPM integrates in two ways with premake5:  
-
-* Using ZPM Dependencies
-* Modules
-
-# Using ZPM Dependencies
-
-
-# Modules
-ZPM can be used to load and install premake5 [modules](https://github.com/premake/premake-core/wiki/Modules). It can also
-be used to download general lua modules.

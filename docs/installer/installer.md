@@ -12,11 +12,11 @@ premake5 install-package
 
 ## Creating
 To create an installer for your package, you should add an `install` environment in your
-[`_package.json`](../packages/general/_package#install).
+[`.package.json`](../packages/general/.package#install).
 
 ** Example **
 ```json
-// _package.json
+// .package.json
 "install": "install/dev.lua",
 ```
 

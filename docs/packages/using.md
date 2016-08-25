@@ -1,7 +1,7 @@
 # Using Packages
 To use ZPM packages you should have the following directory structure:
 
-* [`/_package.json`](general/_package): Package **configuration**.
+* [`/.package.json`](general/.package): Package **configuration**.
 * [`/extern/`](../basics/basics#extern_folder): Reserved for external **packages**.
 * [`/assets/`](../basics/basics#assets_folder): Reserved for external **assets**.
 * [`/premake5.lua`](../premake5/using): Describing how your project should be **built**.
@@ -9,13 +9,13 @@ To use ZPM packages you should have the following directory structure:
 
 ** Optionally **
 
-* [`._registries.json`](../basics/registries.md): Adding your own **registries**.
-* [`._manifest.json`](../basics/manifest.md): Adding your own **packages**.
-* [`._assets.json`](../basics/assets.md): Adding your own **assets**.
-* [`._modules.json`](../basics/modules.md): Adding your own **modules**.
+* [`.registries.json`](../basics/registries.md): Adding your own **registries**.
+* [`.manifest.json`](../basics/manifest.md): Adding your own **packages**.
+* [`.assets.json`](../basics/assets.md): Adding your own **assets**.
+* [`.modules.json`](../basics/modules.md): Adding your own **modules**.
 
-## _package.json
-In the `_package.json` you describe what **dependencies** (packages, modules, and  
+## .package.json
+In the `.package.json` you describe what **dependencies** (packages, modules, and  
 assets) your own project uses.
 
 ## extern

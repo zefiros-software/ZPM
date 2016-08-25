@@ -4,11 +4,10 @@ yourself are responsible for **using** them. However this is made as
 **simple** as possible!
 
 # `premake5.lua` File
-By default ZPM is loaded in the `zpm` global variable.  
-There are only **two** command you should remember:
+By default ZPM is loaded in the `zpm` global variable. There is only *two* commands you should remember:
 
 * [`zpm.uses`](#zpmuses)
-* [`zpm.buildLibraries`](#zpmbuildlibraries)
+* [`require`](#require)
 
 ----
 
@@ -22,7 +21,7 @@ zpm.uses( <libraries> )
 Where  
 
 * `libraries` is a string or a list of strings with "`<vendor-name>/<package-name>`"
-  as described in your `_package.json`.
+  as described in your `.package.json`.
 
 
 ** Example **
@@ -36,24 +35,26 @@ project "Example"
 
 ----
 
-# `zpm.buildLibraries`
-This command is used to define all project the dependencies **require**.
+# `require`
+ZPM can be used to load and install premake5 [modules](https://github.com/premake/premake-core/wiki/Modules). It can also
+be used to download general lua modules.
 
 ** Example **
+```
+//.package.json
+"modules": [
+    "Zefiros-Software/Zefiros-Defaults"
+]
+```
+**with**
 ```lua
-workspace "Example"
-    zpm.buildLibraries()
+//premake5.lua
+local zefiros = require( "Zefiros-Software/Zefiros-Defaults", "@head" )
 ```
 
-!!! alert-warning "Warning"
-    This command should be called in the workspace configuration **before** any project is defined.
-
-!!! alert-success "Note"
-    All projects made with this command will **share** the workspace settings **you **defined!
 ----
 
-# Example
-
+# Large Example
 
 ```lua
 workspace "Example"
@@ -71,8 +72,6 @@ workspace "Example"
 
     filter "*Release"
         optimize "Speed"
-        
-    zpm.buildLibraries()
 			
 	project "test"
 				
