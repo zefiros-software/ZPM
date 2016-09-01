@@ -119,6 +119,7 @@ function zpm.build.rcommands.project( proj )
     location( zpm.install.getExternDirectory() )
     targetdir( zpm.build._currentTargetPath )
     objdir( zpm.build._currentObjPath )
+    warnings "Off"
 
     if zpm.build._currentDependency.projects == nil then
         zpm.build._currentDependency.projects = {}
