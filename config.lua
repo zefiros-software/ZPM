@@ -34,16 +34,15 @@ function zpm.config.scriptPath()
 end
 
 function zpm.config.initialise()
+    
+    -- inverse priority
+    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "../." .. zpm.config.fileName ) ) -- private
 
-    -- root is next to this file
-    local root = path.join( zpm.config.scriptPath(), zpm.config.fileName )
-    zpm.config = table.merge( zpm.config, zpm.JSON:decode( zpm.util.readAll( root ) ) )
-    
+    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "." .. zpm.config.fileName ) ) -- private
+
     zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, zpm.config.fileName ) )
-    
-    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "." .. zpm.config.fileName ) )
-    
-    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "../." .. zpm.config.fileName ) )
+
+    zpm.config.loadFile( path.join( zpm.config.scriptPath(), zpm.config.fileName ) )
 end
 
 function zpm.config.loadFile( file )
