@@ -57,7 +57,7 @@ end
 
 function zpm.config.addSettings( settings )
 
-    if settings ~= nil then
+    if settings == nil then
         return nil
     end
     
