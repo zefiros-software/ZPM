@@ -26,6 +26,7 @@
 -- Git
 zpm.config = {}
 zpm.config.fileName = ".config.json"
+zpm.config.settings = {}
 
 function zpm.config.scriptPath()
    local str = debug.getinfo(2, "S").source:sub(2)
@@ -52,5 +53,14 @@ function zpm.config.loadFile( file )
     end
     
     local config = zpm.JSON:decode( zpm.util.readAll( file ) )
-    zpm.config = table.merge( zpm.config, config )
+    zpm.config = table.merge( config, zpm.config )
+end
+
+function zpm.config.addSettings( settings )
+
+    if settings ~= nil then
+        return nil
+    end
+    
+    zpm.config.settings = table.merge( settings, zpm.config.settings )
 end

@@ -46,6 +46,13 @@ function zpm.build.commands.option( opt )
     return zpm.build._currentDependency.options[opt] == true
 end
 
+function zpm.build.commands.setting( opt )
+
+    zpm.assert(zpm.config.settings ~= nil, "Setting '%s' does not exist!", opt)
+    zpm.assert(zpm.config.settings[opt] ~= nil, "Setting '%s' does not exist!", opt)
+    return zpm.config.settings[opt] == true
+end
+
 function zpm.build.commands.export( commands )
 
     local name = project().name

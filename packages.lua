@@ -377,6 +377,9 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
     end   
 
     lpackage.dependencies = {}
+
+    zpm.config.addSettings( lpackage.settings )
+
     return lpackage
 end
 
@@ -535,7 +538,16 @@ function zpm.packages.checkDependencyValidity( package )
         for name, value in pairs( package.options ) do
         
             zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'options' field must be alpha numeric!" )
-            zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
+            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
+        end
+    end
+
+    if package.settings ~= nil then
+    
+        for name, value in pairs( package.settings ) do
+        
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'settings' field must be alpha numeric!" )
+            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
         end
     end
 
