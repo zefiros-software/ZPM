@@ -47,7 +47,8 @@ function zpm.build.getEnv()
         path = {
             join = path.join
         },
-        table = table
+        table = table,
+        print = print
     }
 
     for name, func in pairs( zpm.build.commands ) do

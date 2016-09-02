@@ -64,7 +64,7 @@ function zpm.build.commands.export( commands )
         zpm.build._currentExportPath = currExp
         zpm.build._currentDependency = currDep
         
-        zpm.sandbox.run( commands, {env = zpm.build.getEnv()})    
+        zpm.sandbox.run( commands, {env = zpm.build.getEnv()})  
 
         zpm.build._currentExportPath = old
         zpm.build._currentDependency = oldDep
