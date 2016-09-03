@@ -43,14 +43,14 @@ function zpm.build.commands.option( opt )
 
     zpm.assert(zpm.build._currentDependency.options ~= nil, "Option '%s' does not exist!", opt)
     zpm.assert(zpm.build._currentDependency.options[opt] ~= nil, "Option '%s' does not exist!", opt)
-    return zpm.build._currentDependency.options[opt] == true
+    return zpm.build._currentDependency.options[opt]
 end
 
 function zpm.build.commands.setting( opt )
 
     zpm.assert(zpm.config.settings ~= nil, "Setting '%s' does not exist!", opt)
     zpm.assert(zpm.config.settings[opt] ~= nil, "Setting '%s' does not exist!", opt)
-    return zpm.config.settings[opt] == true
+    return zpm.config.settings[opt]
 end
 
 function zpm.build.commands.export( commands )
