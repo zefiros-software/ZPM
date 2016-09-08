@@ -463,7 +463,7 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
         end
     end
 
-    zpm.assert( false, "Versions '%s' could not by satisfied!" )
+    zpm.assert( false, "Versions '%s' could not by satisfied on repo '%s'!", versions, repo )
     
     return false
 end
