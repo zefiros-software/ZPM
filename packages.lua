@@ -445,7 +445,6 @@ end
 function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
 
     local tags = zpm.git.getTags( repo )
-    
     for _, gTag in ipairs( tags ) do
     
         if premake.checkVersion( gTag.version, versions ) then

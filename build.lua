@@ -37,7 +37,16 @@ zpm.build._currentBuild = nil
 function zpm.build.getEnv()
 
     local env = { 
-        zpm = {},
+        zpm = {
+            build = {
+            _currentExportPath = zpm.build._currentExportPath,
+            _currentTargetPath = zpm.build._currentTargetPath,
+            _currentObjPath = zpm.build._currentObjPath,
+            _currentDependency = zpm.build._currentDependency,
+            _currentProjects = zpm.build._currentProjects,
+            _currentBuild = zpm.build._currentBuild 
+            }
+        },
         os = { 
             matchfiles = os.matchfiles,
             isdir = os.isdir,
@@ -70,7 +79,7 @@ function zpm.build.getEnv()
             if name:contains( "command" ) then            
             
                 env[ name ] = function( command )
-                zpm.util.askShellConfirmation( string.format( "Allow usage of command '%s'", command ), 
+                zpm.util.askShellConfirmation( string.format( "Allow usage of command '%s'", zpm.util.tostring( command ) ), 
                     function()
                         _G[name]( command )
                     end, 

@@ -56,7 +56,7 @@ function zpm.git.checkout( destination, version )
 
 end
 
-function zpm.git.pull( destination )
+function zpm.git.pull( destination, url )
     
     local current = os.getcwd()
     
@@ -64,6 +64,7 @@ function zpm.git.pull( destination )
 
     if url ~= nil then        
         os.execute( "git remote set-url origin " .. url  )
+        os.execute( "git branch --set-upstream-to=origin/master master" )
     end
     
     os.execute( "git checkout -q master" )
@@ -101,6 +102,16 @@ function zpm.git.getTags( destination )
                     version = version,
                     tag = s
                 } )
+            else
+                
+                version = s:gsub("_", "%."):match( "[.-]*([%d+%.]+.*)" )
+
+                if pcall( zpm.semver, version ) then
+                    table.insert( tags, {
+                        version = version,
+                        tag = s
+                    } )
+                end
             end
         end
 	end   
@@ -151,7 +162,7 @@ function zpm.git.lfs.checkout( destination, checkout )
 
 end
 
-function zpm.git.lfs.pull( destination )
+function zpm.git.lfs.pull( destination, url )
     
     local current = os.getcwd()
     
@@ -159,6 +170,7 @@ function zpm.git.lfs.pull( destination )
 
     if url ~= nil then        
         os.execute( "git remote set-url origin " .. url  )
+        os.execute( "git branch --set-upstream-to=origin/master master" )
     end
     
     os.execute( "git checkout -q master" )
