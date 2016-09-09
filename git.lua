@@ -64,7 +64,6 @@ function zpm.git.pull( destination, url )
 
     if url ~= nil then        
         os.execute( "git remote set-url origin " .. url  )
-        os.execute( "git branch --force --set-upstream-to=origin/master master" )
     end
     
     os.execute( "git checkout -q master" )
@@ -170,7 +169,6 @@ function zpm.git.lfs.pull( destination, url )
 
     if url ~= nil then        
         os.execute( "git remote set-url origin " .. url  )
-        os.execute( "git branch --force --set-upstream-to=origin/master master" )
     end
     
     os.execute( "git checkout -q master" )
