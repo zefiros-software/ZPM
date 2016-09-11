@@ -66,7 +66,7 @@ function zpm.assets.commands.extractto( repo, folder, files, to )
                 zpm.assert( os.mkdir( targetDir ), "Could not create asset directory '%s'!", targetDir )
             end
             
-            if ftarget:len() <= 255 then
+            if target:len() <= 255 then
                 os.copyfile( file, target )
                 zpm.assert( os.isfile(target), "Could not make file '%s'!", target )
             else
