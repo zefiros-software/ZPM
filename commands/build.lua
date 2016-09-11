@@ -21,16 +21,20 @@ function zpm.build.commands.extractdir( targets, prefix )
 
                 local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
 
-                if ftarget:contains( ".git" ) == false then
+                if ftarget:contains( ".git" ) == false  then
                     local ftargetDir = path.getdirectory( ftarget )            
                     
                     if not os.isdir( ftargetDir ) then
                         zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
                     end
                     
-                    os.copyfile( file, ftarget )
+                    if ftarget:len() <= 255 then
+                        os.copyfile( file, ftarget )
 
-                    zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
+                        zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
+                    else
+                        warningf( "Failed to copy '%s' due to long path length!", ftarget )
+                    end
                 end
             end 
 
