@@ -403,9 +403,11 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- head of the master branch
     if versions == "@head" then
     
-        if alreadyInstalled then
+        if not _OPTIONS["ignore-updates"] then
+    
+            if alreadyInstalled then
             
-            if not _OPTIONS["ignore-updates"] then
+            
                 print( "Removing existing head..." )
                 zpm.util.rmdir( folder )
 
@@ -413,11 +415,13 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
                 alreadyInstalled = false
 
                 zpm.assert( os.isdir( folder ) == false, "Failed to remove existing head!" )
+            
             end
-        end
         
-        zpm.git.checkout( repo, "master" )
-        zpm.git.archive( repo, zipFile, "master" )
+            zpm.git.checkout( repo, "master" )
+            zpm.git.archive( repo, zipFile, "master" )
+    
+        end
     
     -- git commit hash
     elseif versions:gsub("#", "") ~= versions then
