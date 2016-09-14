@@ -190,21 +190,25 @@ function zpm.packages.postExtract( package )
     end
 
     if #package.postextract > 0 then          
-        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
-        function()    
-            printf( "Installing '%s'...", package.name )
+        
+        if not _OPTIONS["ignore-updates"] then
+        
+            zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
+            function()    
+                printf( "Installing '%s'...", package.name )
 
-            for _, inst in ipairs( package.postextract ) do
-                zpm.build.setCursor( package )
+                for _, inst in ipairs( package.postextract ) do
+                    zpm.build.setCursor( package )
                 
-                dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
+                    dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
 
-                zpm.build.resetCursor()
-            end
-        end, 
-        function()
-            printf( "Installation declined, we can not guatantee this package works!" )
-        end )
+                    zpm.build.resetCursor()
+                end
+            end, 
+            function()
+                printf( "Installation declined, we can not guatantee this package works!" )
+            end )
+        end
     end
 end
 
