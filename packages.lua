@@ -125,7 +125,7 @@ function zpm.packages.load()
         zpm.packages.root = root
         zpm.packages.postExtract( zpm.packages.root )
     else
-        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to and invalid '_package.json':\n%s", package, root )
+        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '_package.json':\n%s", package, root )
     
     end
     
