@@ -191,24 +191,21 @@ function zpm.packages.postExtract( package )
 
     if #package.postextract > 0 then          
         
-        if not _OPTIONS["ignore-updates"] then
-        
-            zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
-            function()    
-                printf( "Installing '%s'...", package.name )
+        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
+        function()    
+            printf( "Installing '%s'...", package.name )
 
-                for _, inst in ipairs( package.postextract ) do
-                    zpm.build.setCursor( package )
+            for _, inst in ipairs( package.postextract ) do
+                zpm.build.setCursor( package )
                 
-                    dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
+                dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
 
-                    zpm.build.resetCursor()
-                end
-            end, 
-            function()
-                printf( "Installation declined, we can not guatantee this package works!" )
-            end )
-        end
+                zpm.build.resetCursor()
+            end
+        end, 
+        function()
+            printf( "Installation declined, we can not guatantee this package works!" )
+        end )
     end
 end
 
@@ -403,13 +400,16 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     if versions == "@head" then
     
         if alreadyInstalled then
-            print( "Removing existing head..." )
-            zpm.util.rmdir( folder )
+            
+            if not _OPTIONS["ignore-updates"] then
+                print( "Removing existing head..." )
+                zpm.util.rmdir( folder )
 
-            -- continue installation
-            alreadyInstalled = false
+                -- continue installation
+                alreadyInstalled = false
 
-            zpm.assert( os.isdir( folder ) == false, "Failed to remove existing head!" )
+                zpm.assert( os.isdir( folder ) == false, "Failed to remove existing head!" )
+            end
         end
         
         zpm.git.checkout( repo, "master" )
