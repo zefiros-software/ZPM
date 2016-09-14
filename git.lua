@@ -139,8 +139,11 @@ end
 function zpm.git.cloneOrPull( destination, url )
 
     if os.isdir( destination ) then
-        zpm.git.pull( destination, url )
-    
+        
+        if not _OPTIONS["ignore-updates"] then
+            
+            zpm.git.pull( destination, url )
+        end
     else
         zpm.git.clone( destination, url )
     end

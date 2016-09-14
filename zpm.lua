@@ -243,6 +243,13 @@ newoption {
     shortname   = "ai",
     description = "Allows the usage of install scripts without confirmation"
 }
+
+newoption {
+    trigger     = "ignore-updates",
+    shortname   = "iu",
+    description = "Allows the usage of zpm without dependency update checks"
+}
+
 newoption {
     trigger     = "allow-module",
     shortname   = "am",
