@@ -17,27 +17,30 @@ function zpm.build.commands.extractdir( targets, prefix )
 
         if path.getabsolute(depPath):contains( path.getabsolute(zpm.build._currentDependency.dependencyPath) ) then
         
-            for _, file in ipairs( os.matchfiles( path.join( depPath, "**" ) ) ) do
+            if not _OPTIONS["ignore-updates"] or not os.isdir( targetPath ) then
+            
+                for _, file in ipairs( os.matchfiles( path.join( depPath, "**" ) ) ) do
 
-                local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
+                    local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
 
-                if ftarget:contains( ".git" ) == false  then
-                    local ftargetDir = path.getdirectory( ftarget )            
+                    if ftarget:contains( ".git" ) == false  then
+                        local ftargetDir = path.getdirectory( ftarget )            
                     
-                    if not os.isdir( ftargetDir ) then
-                        zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
-                    end
+                        if not os.isdir( ftargetDir ) then
+                            zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
+                        end
                     
-                    if ftarget:len() <= 255 then
-                        os.copyfile( file, ftarget )
+                        if ftarget:len() <= 255 then
+                            os.copyfile( file, ftarget )
 
-                        zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
-                    else
-                        warningf( "Failed to copy '%s' due to long path length!", ftarget )
+                            zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
+                        else
+                            warningf( "Failed to copy '%s' due to long path length!", ftarget )
+                        end
                     end
-                end
-            end 
-
+                end 
+            
+            end
         end
     end
 
