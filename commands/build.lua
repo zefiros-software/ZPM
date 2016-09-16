@@ -130,6 +130,13 @@ function zpm.build.rcommands.project( proj )
 
     local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
     project( name )
+
+    if _ACTION:contains( "vs" ) then
+        dummyFile = path.join(  zpm.install.getExternDirectory(), "dummy.cpp" )
+        os.executef( "{TOUCH} %s", dummyFile )
+        files(dummyFile)
+    end
+
     location( zpm.install.getExternDirectory() )
     targetdir( zpm.build._currentTargetPath )
     objdir( zpm.build._currentObjPath )
