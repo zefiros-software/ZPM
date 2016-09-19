@@ -131,7 +131,8 @@ function zpm.build.rcommands.project( proj )
     local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
     project( name )
 
-    if _ACTION:contains( "vs" ) then
+    -- always touch just in case
+    if _ACTION:contains( "vs" ) or true then
         dummyFile = path.join(  zpm.install.getExternDirectory(), "dummy.cpp" )
         os.executef( "{TOUCH} %s", dummyFile )
         files(dummyFile)
