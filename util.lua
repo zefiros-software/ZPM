@@ -249,6 +249,13 @@ function zpm.util.hideProtectedFile( file )
     
 end
 
+function zpm.util.isNewer( file1, file2 )
+
+    info1 = os.stat(file1)
+    info2 = os.stat(file2)
+
+    return info1.mtime > info2.mtime
+end
 
 function zpm.util.tostring(tab, recurse, indent)
     local res = ''

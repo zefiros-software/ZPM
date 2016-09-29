@@ -31,7 +31,9 @@ function zpm.build.commands.extractdir( targets, prefix )
                         end
                     
                         if ftarget:len() <= 255 then
-                            os.copyfile( file, ftarget )
+                            if os.isfile( ftarget ) == false or zpm.util.isNewer( file, ftarget ) then
+                                os.copyfile( file, ftarget )
+                            end
 
                             zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
                         else
