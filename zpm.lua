@@ -188,14 +188,12 @@ local function initialiseCacheFolder()
     end
     
     if not os.isdir( zpm.cache ) then
-        print( "Creating cache folder" )   
         zpm.assert( os.mkdir( zpm.cache ), "The cache directory could not be made!" )
     end
     
     --print( "Cache location:", zpm.cache )   
     
     if not os.isdir( zpm.temp ) then
-        print( "Creating temp folder" )   
         zpm.assert( os.mkdir( zpm.temp ), "The temp directory could not be made!" )
     end
     

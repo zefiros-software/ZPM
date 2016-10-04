@@ -77,7 +77,7 @@ function zpm.packages.loadDependency( dependency, module )
     
     printf( "Switching to directory '%s'...", depPath )
         
-    zpm.git.cloneOrPull( depPath, repository )
+    local updated = zpm.git.cloneOrPull( depPath, repository )
     
     local buildPath = depPath
     
@@ -88,10 +88,10 @@ function zpm.packages.loadDependency( dependency, module )
         
         printf( "Switching to directory '%s'...", buildPath )
             
-        zpm.git.cloneOrPull( buildPath, buildRep )
+        updated = zpm.git.cloneOrPull( buildPath, buildRep ) or updated
     end
     
-    return depPath, buildPath
+    return depPath, buildPath, updated
         
 end
 
@@ -228,7 +228,7 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name )
         for i, dependency in ipairs( lpackage.requires  ) do
         
             local depMod = bootstrap.getModule( dependency.name )
-            local ok, depPath, buildPath = pcall( zpm.packages.loadDependency, dependency, depMod )
+            local ok, depPath, buildPath, updated = pcall( zpm.packages.loadDependency, dependency, depMod )
         
             if ok then
 
@@ -248,7 +248,8 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name )
                         module = depMod,
                         isShadow = isShadow,
                         overrides = dependency.overrides,
-                        options = dependency.options
+                        options = dependency.options,
+                        updated = updated
                     })
                     lpackage.dependencies[i] = dependencies
                     

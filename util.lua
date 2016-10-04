@@ -39,7 +39,8 @@ end
 function zpm.util.rmdir( folder )
 
     if os.get() == "windows" then
-        os.execute( string.format( "rmdir /Q /S \"%s\"", folder ) )
+        os.execute( string.format( "move /Y \"%s\" \"%s-delete\" > nul", folder, folder ) )
+        os.execute( string.format( "start \"Deleting...\" cmd /c rmdir /Q /S \"%s-delete\" > nul && exit", folder ) )
     else
         os.execute( string.format( "rm -rf \"%s\"", folder ) )
     end

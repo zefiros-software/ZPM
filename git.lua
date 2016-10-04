@@ -66,13 +66,20 @@ function zpm.git.pull( destination, url )
         os.execute( "git remote set-url origin " .. url  )
     end
     
-    os.execute( "git checkout -q master" )
-    os.execute( "git pull" )
-    os.execute( "git fetch --tags -q --recurse-submodules -j 8" )
-    os.execute( "git submodule update --init --recursive -j 8" )
+    os.execute( "git fetch origin --tags -q -j 8" )
+
+    if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
+
+        os.execute( "git checkout -q ." )
+        os.execute( "git pull origin master" )
+        os.execute( "git submodule update --init --recursive -j 8" )
+
+        return true
+    end
     
     os.chdir( current )
     
+    return false
 end
 
 function zpm.git.clone( destination, url )
@@ -142,11 +149,15 @@ function zpm.git.cloneOrPull( destination, url )
         
         if not _OPTIONS["ignore-updates"] then
             
-            zpm.git.pull( destination, url )
+            return zpm.git.pull( destination, url )
+        else
+            return false
         end
     else
         zpm.git.clone( destination, url )
     end
+
+    return true
 end
 
 
@@ -174,11 +185,14 @@ function zpm.git.lfs.pull( destination, url )
         os.execute( "git remote set-url origin " .. url  )
     end
     
-    os.execute( "git checkout -q master" )
-    os.execute( "git pull" )
-    os.execute( "git lfs pull" )
-    os.execute( "git fetch --tags -q --recurse-submodules -j 8" )
-    os.execute( "git submodule update --init --recursive -j 8" )
+    os.execute( "git fetch origin --tags -q -j 8" )
+
+    if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
+        os.execute( "git checkout -q ." )
+        os.execute( "git pull origin master" )
+        os.execute( "git lfs pull origin master -q" )
+        os.execute( "git submodule update --init --recursive -j 8" )
+    end
     
     os.chdir( current )
     
