@@ -139,7 +139,7 @@ function zpm.build.rcommands.project( proj )
         if os.is( "windows" ) then
             os.executef( "type nul >> {%s} && copy /b {%s}+,, {%s} > nul", dummyFile, dummyFile, dummyFile )
         else
-            os.execute( "{TOUCH} %s", dummyFile )
+            os.executef( "{TOUCH} %s", dummyFile )
         end
         files(dummyFile)
     end
