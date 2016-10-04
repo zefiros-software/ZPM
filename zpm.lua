@@ -219,7 +219,8 @@ function zpm.onLoad()
         zpm.manifest.load()        
         zpm.modules.load()
         
-        if _ACTION ~= "install-module" and
+        if _ACTION ~= "self-update" and
+           _ACTION ~= "install-module" and
            _ACTION ~= "update-module" and
            _ACTION ~= "update-modules" then
             
