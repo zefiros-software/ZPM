@@ -56,6 +56,11 @@ end
 
 function zpm.packages.loadDependency( dependency, module )
 
+    local p = path.getabsolute(path.join(_MAIN_SCRIPT_DIR, dependency.path))
+    if dependency.path ~= nil and os.isdir(p) then
+        return path.getabsolute(p), path.getabsolute(p), true
+    end
+
     local name = module[2]
     local vendor = module[1]
             
@@ -123,12 +128,13 @@ function zpm.packages.load()
     
     if ok then
         zpm.packages.root = root
-        zpm.packages.postExtract( zpm.packages.root )
+        if not _OPTIONS["ignore-updates"] then
+            zpm.packages.postExtract( zpm.packages.root )
+        end
     else
-        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '_package.json':\n%s", package, root )
+        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root )
     
     end
-    
 end
 
 function zpm.packages.install()
@@ -169,7 +175,7 @@ function zpm.packages.installPackage( package, folder, name )
             end
         end, 
         function()
-            printf( "Installation declined, we can not guatantee this package works!" )
+            printf( "Installation declined, we can not guarantee this package works!" )
         end )
     end
 end
@@ -191,25 +197,21 @@ function zpm.packages.postExtract( package )
 
     if #package.postextract > 0 then          
         
-        if not _OPTIONS["ignore-updates"] then
-        
-            zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
-            function()    
-                printf( "Installing '%s'...", package.name )
+        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
+        function()    
+            printf( "Installing '%s'...", package.name )
 
-                for _, inst in ipairs( package.postextract ) do
-                    zpm.build.setCursor( package )
-                
-                    dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
+            for _, inst in ipairs( package.postextract ) do
+                zpm.build.setCursor( package )
+            
+                dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
 
-                    zpm.build.resetCursor()
-                end
-            end, 
-            function()
-                printf( "Installation declined, we can not guatantee this package works!" )
-            end )
-        
-        end
+                zpm.build.resetCursor()
+            end
+        end, 
+        function()
+            printf( "Installation declined, we can not guarantee this package works!" )
+        end )
     end
 end
 
@@ -229,7 +231,7 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name )
         
             local depMod = bootstrap.getModule( dependency.name )
             local ok, depPath, buildPath, updated = pcall( zpm.packages.loadDependency, dependency, depMod )
-        
+
             if ok then
 
                 local loaded, version, expDir, dependencies = zpm.packages.loadPackage( depPath, buildPath, dependency, depMod[1], depMod[2], lpackage.dependencies )
@@ -238,7 +240,6 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name )
                 if loaded then                               
     
                     local isShadow = zpm.packages.package[depMod[1]][depMod[2]].isShadow
-                
                     dependencies = table.merge( dependencies, {
                         fullName = dependency.name,
                         version = version,
@@ -268,13 +269,18 @@ end
 
 function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name, root )
 
-    local externDir = zpm.install.getExternDirectory()
-    local depDir = path.join( externDir, dependency.name )
-    
-    local ok, version, expDir = zpm.packages.extract( externDir, depPath, dependency.version, depDir )
+    local ok, expDir, version
+    if dependency.path == nil then
+        local externDir = zpm.install.getExternDirectory()
+        local depDir = path.join( externDir, dependency.name )
+        ok, version, expDir = zpm.packages.extract( externDir, depPath, dependency.version, depDir )
 
-    zpm.assert( ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!", 
-                    vendor, name, dependency.version, dependency.name )
+        zpm.assert( ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!", 
+                        vendor, name, dependency.version, dependency.name )
+    else
+        version = "FILE"
+        expDir = buildPath
+    end
 
     local depPak = path.join( buildPath, zpm.install.packages.fileName )
     local loaded, pack = pcall( zpm.packages.loadFile, depPak, false, version, string.format( "%s/%s", vendor, name ), root )
@@ -286,13 +292,13 @@ end
 
 function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
     
-    zpm.assert( os.isfile( packageFile ), "No '_package.json' found op path '%s'", packageFile )    
+    zpm.assert( os.isfile( packageFile ), "No '.package.json' found on path '%s'", packageFile )    
     
     local file = zpm.util.readAll( packageFile )
     local lpackage = zpm.JSON:decode( file )
     
     if pname == nil then
-        zpm.assert( lpackage.name ~= nil, "No 'name' supplied in '_package.json'!" )
+        zpm.assert( lpackage.name ~= nil, "No 'name' supplied in '.package.json'!" )
         pname = lpackage.name
     end
         
@@ -305,7 +311,6 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
     local vendor = pak[1]
     
     printf( "Loading package '%s/%s'...", vendor, name )
-
     root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
     root = zpm.packages.resolveDependencies( root, vendor, name )
     
@@ -487,32 +492,32 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     local name = man[2]
     local vendor = man[1]
         
-    zpm.assert( vendor ~= nil, "No 'vendor' supplied in '_package.json'!" )
-    zpm.assert( name ~= nil, "No 'name' supplied in '_package.json'!" )
+    zpm.assert( vendor ~= nil, "No 'vendor' supplied in '.package.json'!" )
+    zpm.assert( name ~= nil, "No 'name' supplied in '.package.json'!" )
     
-    zpm.assert( zpm.util.isAlphaNumeric( vendor ), "The 'vendor' supplied in '_package.json' must be alpha numeric!" )
-    zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' must be alpha numeric!" )
+    zpm.assert( zpm.util.isAlphaNumeric( vendor ), "The 'vendor' supplied in '.package.json' must be alpha numeric!" )
+    zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '.package.json' must be alpha numeric!" )
     
     if package.authors ~= nil then
-        zpm.assert(  package.description:len() <= 500, "The 'description' supplied in '_package.json'field exceeds maximum size of 500 characters!" )
+        zpm.assert(  package.description:len() <= 500, "The 'description' supplied in '.package.json'field exceeds maximum size of 500 characters!" )
     end
 
     if package.license ~= nil then    
-        zpm.assert(  package.license:len() <= 60, "The 'license' supplied in '_package.json'field exceeds maximum size of 60 characters!" )        
+        zpm.assert(  package.license:len() <= 60, "The 'license' supplied in '.package.json'field exceeds maximum size of 60 characters!" )        
     end
 
     if package.website ~= nil then    
-        zpm.assert(  package.website:len() <= 120, "The 'website' supplied in '_package.json'field exceeds maximum size of 120 characters!" )        
+        zpm.assert(  package.website:len() <= 120, "The 'website' supplied in '.package.json'field exceeds maximum size of 120 characters!" )        
     end
 
     if package.authors ~= nil then
     
         for _, author in ipairs( package.authors ) do
-            zpm.assert( author.name ~= nil, "No 'name' supplied in '_package.json' author field!" )
-            zpm.assert( author.email ~= nil, "No 'email' supplied in '_package.json' author field!" )
-            zpm.assert( author.website ~= nil, "No 'website' supplied in '_package.json' author field!" )
+            zpm.assert( author.name ~= nil, "No 'name' supplied in '.package.json' author field!" )
+            zpm.assert( author.email ~= nil, "No 'email' supplied in '.package.json' author field!" )
+            zpm.assert( author.website ~= nil, "No 'website' supplied in '.package.json' author field!" )
         
-            zpm.assert( author.email ~= nil and zpm.util.isEmail( author.email ), "The 'email' supplied in '_package.json' author field is not valid!" )
+            zpm.assert( author.email ~= nil and zpm.util.isEmail( author.email ), "The 'email' supplied in '.package.json' author field is not valid!" )
         end
         
     end
@@ -520,37 +525,37 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     if package.keywords ~= nil then
     
         for _, keyword in ipairs( package.keywords ) do
-            zpm.assert( type(keyword) == "string", "The 'keyword' supplied in '_package.json' 'keywords' field is not a string!" )
-            zpm.assert( keyword:len() <= 50, "The 'keyword' supplied in '_package.json' 'keywords' field exceeds maximum size of 50 characters" )
+            zpm.assert( type(keyword) == "string", "The 'keyword' supplied in '.package.json' 'keywords' field is not a string!" )
+            zpm.assert( keyword:len() <= 50, "The 'keyword' supplied in '.package.json' 'keywords' field exceeds maximum size of 50 characters" )
         end
         
-        zpm.assert( #package.keywords <= 20, "The 'keywords' supplied in '_package.json' 'keywords' field exceeds the maximum amount of 20!" )
+        zpm.assert( #package.keywords <= 20, "The 'keywords' supplied in '.package.json' 'keywords' field exceeds the maximum amount of 20!" )
         
     end
     
-    zpm.packages.checkDependencyValidity( package )
+    zpm.packages.checkDependencyValidity( package, isRoot )
     
     if package.dev ~= nil then
     
-        zpm.packages.checkDependencyValidity( package.dev )
+        zpm.packages.checkDependencyValidity( package.dev, isRoot )
         
     end
     
 end
 
-function zpm.packages.checkDependencyValidity( package )
+function zpm.packages.checkDependencyValidity( package, isRoot )
 
     if package.install ~= nil then
         
-        zpm.assert( type(package.install) == "string", "The 'install' supplied in '_package.json' is not a string!" )
+        zpm.assert( type(package.install) == "string", "The 'install' supplied in '.package.json' is not a string!" )
     end
 
     if package.options ~= nil then
     
         for name, value in pairs( package.options ) do
         
-            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'options' field must be alpha numeric!" )
-            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '.package.json' 'options' field must be alpha numeric!" )
+            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '.package.json' is not a boolean!" )
         end
     end
 
@@ -558,15 +563,15 @@ function zpm.packages.checkDependencyValidity( package )
     
         for name, value in pairs( package.settings ) do
         
-            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'settings' field must be alpha numeric!" )
-            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '_package.json' is not a boolean!" )
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '.package.json' 'settings' field must be alpha numeric!" )
+            --zpm.assert( type(value) == "boolean", "The 'options' value supplied in '.package.json' is not a boolean!" )
         end
     end
 
     if package.settings ~= nil then
     
         for name, value in pairs( package.settings ) do        
-            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '_package.json' 'settings' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( name ), "The 'name' supplied in '.package.json' 'settings' field must be alpha numeric!" )
         end
     end
 
@@ -574,23 +579,23 @@ function zpm.packages.checkDependencyValidity( package )
     
         for _, mod in ipairs( package.modules ) do
         
-            zpm.assert( type(mod) == "string", "The 'module' supplied in '_package.json' 'modules' field is not a string!" )
+            zpm.assert( type(mod) == "string", "The 'module' supplied in '.package.json' 'modules' field is not a string!" )
             
             local mman = bootstrap.getModule( mod )
             local mname = mman[2]
             local mvendor = mman[1]
             
-            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'modules' field!" )
-            zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'modules' field!" )
+            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '.package.json' 'modules' field!" )
+            zpm.assert( mname ~= nil, "No 'name' supplied in '.package.json' 'modules' field!" )
 
-            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
-            zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'modules' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mname:len() <= 50, "'name' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
                 
-            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '_package.json' 'modules' field must at least be 2 characters!" )
-            zpm.assert( mname:len() >= 2, "'name' supplied in '_package.json' 'modules' field must at least be 2 characters!" )
+            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
+            zpm.assert( mname:len() >= 2, "'name' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
                                       
-            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'modules' field must be alpha numeric!" )
-            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'modules' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '.package.json' 'modules' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '.package.json' 'modules' field must be alpha numeric!" )
 
         end
         
@@ -600,23 +605,23 @@ function zpm.packages.checkDependencyValidity( package )
     
         for _, ass in ipairs( package.assets ) do
         
-            zpm.assert( type(ass.name) == "string", "The 'assets' supplied in '_package.json' 'assets' field is not a string!" )
+            zpm.assert( type(ass.name) == "string", "The 'assets' supplied in '.package.json' 'assets' field is not a string!" )
             
             local mman = bootstrap.getModule( ass.name )
             local mname = mman[2]
             local mvendor = mman[1]
             
-            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '_package.json' 'assets' field!" )
-            zpm.assert( mname ~= nil, "No 'name' supplied in '_package.json' 'assets' field!" )
+            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '.package.json' 'assets' field!" )
+            zpm.assert( mname ~= nil, "No 'name' supplied in '.package.json' 'assets' field!" )
 
-            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
-            zpm.assert( mname:len() <= 50, "'name' supplied in '_package.json' 'assets' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '.package.json' 'assets' field exceeds maximum size of 50 characters!" )
+            zpm.assert( mname:len() <= 50, "'name' supplied in '.package.json' 'assets' field exceeds maximum size of 50 characters!" )
                 
-            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '_package.json' 'assets' field must at least be 2 characters!" )
-            zpm.assert( mname:len() >= 2, "'name' supplied in '_package.json' 'assets' field must at least be 2 characters!" )
+            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '.package.json' 'assets' field must at least be 2 characters!" )
+            zpm.assert( mname:len() >= 2, "'name' supplied in '.package.json' 'assets' field must at least be 2 characters!" )
                                       
-            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '_package.json' 'assets' field must be alpha numeric!" )
-            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '_package.json' 'assets' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '.package.json' 'assets' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '.package.json' 'assets' field must be alpha numeric!" )
 
         end
         
@@ -630,19 +635,19 @@ function zpm.packages.checkDependencyValidity( package )
             local rname = rman[2]
             local rvendor = rman[1]
             
-            zpm.assert( rvendor ~= nil, "No 'vendor' supplied in '_package.json' 'require' field!" )
-            zpm.assert( rname ~= nil, "No 'name' supplied in '_package.json' 'require' field!" )
+            zpm.assert( rvendor ~= nil, "No 'vendor' supplied in '.package.json' 'require' field!" )
+            zpm.assert( rname ~= nil, "No 'name' supplied in '.package.json' 'require' field!" )
             
-            zpm.assert( rvendor:len() <= 50, "'vendor' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
-            zpm.assert( rname:len() <= 50, "'name' supplied in '_package.json' 'require' field exceeds maximum size of 50 characters!" )
+            zpm.assert( rvendor:len() <= 50, "'vendor' supplied in '.package.json' 'require' field exceeds maximum size of 50 characters!" )
+            zpm.assert( rname:len() <= 50, "'name' supplied in '.package.json' 'require' field exceeds maximum size of 50 characters!" )
                 
-            zpm.assert( rvendor:len() >= 2, "'vendor' supplied in '_package.json' 'require' field must at least be 2 characters!" )
-            zpm.assert( rvendor:len() >= 2, "'name' supplied in '_package.json' 'require' field must at least be 2 characters!" )
+            zpm.assert( rvendor:len() >= 2, "'vendor' supplied in '.package.json' 'require' field must at least be 2 characters!" )
+            zpm.assert( rvendor:len() >= 2, "'name' supplied in '.package.json' 'require' field must at least be 2 characters!" )
 
-            zpm.assert( zpm.util.isAlphaNumeric( rvendor ), "The 'vendor' supplied in '_package.json' 'require' field must be alpha numeric!" )
-            zpm.assert( zpm.util.isAlphaNumeric( rname ), "The 'name' supplied in '_package.json' 'require' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( rvendor ), "The 'vendor' supplied in '.package.json' 'require' field must be alpha numeric!" )
+            zpm.assert( zpm.util.isAlphaNumeric( rname ), "The 'name' supplied in '.package.json' 'require' field must be alpha numeric!" )
 
-            --assert( require.version ~= nil and isEmail( author.email ), "TheNo 'email' supplied in '_package.json' author field is not valid!" )
+            assert( require.version ~= nil or (require.path ~= nil and isRoot), "No 'version' or 'path' supplied in '.package.json'!" )
         end
         
     end

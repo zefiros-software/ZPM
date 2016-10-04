@@ -145,7 +145,7 @@ function zpm.build.buildPackage( package )
         for _, dep in ipairs( package.dependencies ) do
 
             if dep.dependencies ~= nil then
-                zpm.build.buildPackage( dep )
+                zpm.build.buildPackage( dep )    
             end
         end
 
@@ -157,8 +157,8 @@ function zpm.build.buildPackage( package )
         
             zpm.build.setCursor( dep )
             
-            zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})            
-            
+            zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})        
+
             zpm.build._currentDependency = dep
             zpm.build.resetCursor()
 
@@ -205,7 +205,7 @@ function zpm.build.findRootProject( name )
         end
     
     end
-    
+
     printf( zpm.colors.error .. "Could not find root project '%s', did you load it correctly as a dependency?", name )
     
     return nil
@@ -288,7 +288,6 @@ function zpm.build.loadPackages( packages )
         end                
     end 
 
-                
     for i, dep in ipairs( packages.dependencies ) do
                 
         packages.dependencies[i] = zpm.build.loadPackages( dep )
@@ -318,7 +317,7 @@ function zpm.build.getShadowBuildVersion( dir, build, version )
     for _, bversion in pairs( build ) do
         if premake.checkVersion( version, bversion.version ) then
             local file = path.join( dir, bversion.file )
-            zpm.assert( path.getabsolute( file ):contains( path.getabsolute( dir ) ), "Executing lua outside assets folder is not allowed!" )
+            zpm.assert( path.getabsolute( file ):contains( path.getabsolute( dir ) ), "Executing lua outside build folder is not allowed!" )
         
             return file
         end    

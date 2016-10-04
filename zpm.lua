@@ -226,7 +226,6 @@ function zpm.onLoad()
             zpm.assets.load()
             zpm.packages.load()
             zpm.build.load()
-                    
         end
     end
 end 
