@@ -71,7 +71,7 @@ function zpm.git.pull( destination, url )
     if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
 
         os.execute( "git checkout -q ." )
-        os.execute( "git reset --hard origin/master" )
+        os.execute( "git reset --hard origin/HEAD" )
         os.execute( "git submodule update --init --recursive -j 8" )
 
         return true
@@ -189,7 +189,7 @@ function zpm.git.lfs.pull( destination, url )
 
     if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
         os.execute( "git checkout -q ." )
-        os.execute( "git reset --hard origin/master" )
+        os.execute( "git reset --hard origin/HEAD" )
         os.execute( "git lfs pull origin master -q" )
         os.execute( "git submodule update --init --recursive -j 8" )
     end
