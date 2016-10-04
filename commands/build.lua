@@ -136,11 +136,7 @@ function zpm.build.rcommands.project( proj )
     -- always touch just in case
     if _ACTION:contains( "vs" ) or true then
         dummyFile = path.join(  zpm.install.getExternDirectory(), "dummy.cpp" )
-        if os.is( "windows" ) then
-            os.executef( "{TOUCH} %s > nul", dummyFile )
-        else
-            os.executef( "{TOUCH} %s ", dummyFile )
-        end
+        os.outputof( "{TOUCH} %s", dummyFile )
         files(dummyFile)
     end
 
