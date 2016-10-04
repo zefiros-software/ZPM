@@ -211,8 +211,8 @@ function zpm.onLoad()
     initialiseCacheFolder()
     zpm.wget.initialise()  
         
-    zpm.modules.setSearchDir()
     zpm.modules.load()
+    zpm.modules.setSearchDir()
         
     if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" and not _OPTIONS["version"] then      
         
