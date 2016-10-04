@@ -209,11 +209,11 @@ function zpm.onLoad()
     print( string.format( "Loading The Zefiros Package Manager version '%s'...\nZefiros Package Manager - (c) Zefiros Software 2016", zpm._VERSION ) )
     
     initialiseCacheFolder()
-    zpm.wget.initialise()
+    zpm.wget.initialise()  
         
-    if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" and not _OPTIONS["version"] then        
+    zpm.modules.setSearchDir()
         
-        zpm.modules.setSearchDir()
+    if _ACTION ~= "self-update" and _ACTION ~= "install-zpm" and not _OPTIONS["version"] then      
         
         zpm.install.updatePremake( true )
     
