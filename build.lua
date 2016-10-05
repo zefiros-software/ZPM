@@ -190,7 +190,7 @@ end
 
 function zpm.build.getProjectName( project, name, version )
 
-    return string.format( "%s-%s", project, zpm.util.djb2( string.format( "%s/%s", name, version ) ) )
+    return string.format( "%s-%s", project, version )
     
 end
 
