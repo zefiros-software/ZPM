@@ -90,9 +90,9 @@ function zpm.GitHub.latestAssetMatch( organisation, repository, pattern )
 
     local releases = zpm.GitHub.getAssets( organisation, repository )
         
-    for _, assets in pairs( releases ) do
+    for _, assets in ipairs( releases ) do
     
-        for _, asset in pairs( assets.assets ) do
+        for _, asset in ipairs( assets.assets ) do
             local assetMatch = asset.name:match( pattern )
             
             if assetMatch ~= nil then    
