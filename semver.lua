@@ -105,7 +105,8 @@ local function compareIds(myId, otherId)
   elseif not otherId then return  1
   end
 
-  local selfNumber, otherNumber = tonumber(myId), tonumber(otherId)
+  local selfNumber, otherNumber = tonumber(myId:match("%w(%d+)")), tonumber(otherId:match("%w(%d+)"))
+  print(myId,myId:match("%w(%d+)"))
 
   if selfNumber and otherNumber then -- numerical comparison
     return compare(selfNumber, otherNumber)
