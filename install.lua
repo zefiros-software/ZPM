@@ -412,7 +412,8 @@ function zpm.install.updatePremake( checkOnly, verbose )
                 local latestPremake = zpm.util.downloadFromArchive( latest.url, "premake*" )[1]
             
                 local premakeFile = _PREMAKE_COMMAND
-                if premakeFile == zpm.install.getPremakeCmd( "5" ) then
+                
+                if premakeFile == path.join(_PREMAKE_DIR, zpm.install.getPremakeCmd( "5" ) ) then
                 
                     if os.isfile( premakeFile ) then
                         zpm.util.hideProtectedFile( premakeFile )
