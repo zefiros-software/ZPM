@@ -388,7 +388,13 @@ function zpm.install.setup( checkLatest )
 
 end
 
+zpm.install.updatedPremake = false
 function zpm.install.updatePremake( checkOnly, verbose )
+
+    if zpm.install.updatedPremake then
+        return nil
+    end
+
     verbose = verbose or false
     
     local pattern = string.format( "premake-.*-%s.*", os.get() )
@@ -423,6 +429,7 @@ function zpm.install.updatePremake( checkOnly, verbose )
                 end
         
                 printf( zpm.colors.green .. zpm.colors.bright .. "Succesfully updated premake to version '%s'" , tostring( version ) )
+                zpm.install.updatedPremake = true
             end
         
         else
