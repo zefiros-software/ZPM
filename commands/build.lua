@@ -55,6 +55,10 @@ function zpm.build.commands.option( opt )
     return zpm.build._currentDependency.options[opt]
 end
 
+function zpm.build.commands.hasSetting( opt )
+    return zpm.config.settings ~= nil and zpm.config.settings[opt] ~= nil
+end
+
 function zpm.build.commands.setting( opt )
 
     zpm.assert(zpm.config.settings ~= nil, "Setting '%s' does not exist!", opt)
