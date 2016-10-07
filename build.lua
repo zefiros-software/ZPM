@@ -59,8 +59,16 @@ function zpm.build.getEnv()
         },
         table = table,
         print = print,
+        _OS = _OS,
+        _ARGS = _ARGS,
         _ACTION = _ACTION,
-        _OPTIONS = _OPTIONS
+        _OPTIONS = _OPTIONS,	
+        _PREMAKE_DIR = _PREMAKE_DIR,
+        _MAIN_SCRIPT = _MAIN_SCRIPT,
+        _PREMAKE_VERSION = _PREMAKE_VERSION,
+        _PREMAKE_COMMAND = _PREMAKE_COMMAND,
+        _MAIN_SCRIPT_DIR = _MAIN_SCRIPT_DIR
+        
     }
 
     for name, func in pairs( zpm.build.commands ) do
