@@ -88,54 +88,6 @@ premake.override(_G, "workspace", function(base, ... )
     return wkspc
 end)
 
-premake.override(premake, "checkVersion", function( base, version, checks )
-    if not version then
-        return false
-    end
-
-    local function eq(a, b) return a == b end
-    local function le(a, b) return a <= b end
-    local function lt(a, b) return a < b  end
-    local function ge(a, b) return a >= b end
-    local function gt(a, b) return a > b  end
-    local function compat(a, b) return a ^ b  end
-
-    version = zpm.semver(version)
-    checks = string.explode(checks, " ", true)
-    for i = 1, #checks do
-        local check = checks[i]
-        local func
-        if check:startswith(">=") then
-            func = ge
-            check = check:sub(3)
-        elseif check:startswith(">") then
-            func = gt
-            check = check:sub(2)
-        elseif check:startswith("<=") then
-            func = le
-            check = check:sub(3)
-        elseif check:startswith("<") then
-            func = lt
-            check = check:sub(2)
-        elseif check:startswith("=") then
-            func = eq
-            check = check:sub(2)
-        elseif check:startswith("^") then
-            func = compat
-            check = check:sub(2)
-        else
-            func = ge
-        end
-
-        check = zpm.semver(check)
-        if not func(version, check) then
-            return false
-        end
-    end
-
-    return true
-end)
-
 function zpm.useProject( proj )
 
     if proj ~= nil and proj.projects ~= nil then
