@@ -350,7 +350,7 @@ function zpm.install.setup( checkLatest )
         
     for _, asset in pairs( assets ) do
     
-        if premake.checkVersion( tostring( asset.version ), zpm.install.minReqVersion ) or tostring( asset.version ):match( "beta%d%d") then
+        if premake.checkVersion( tostring( asset.version ), zpm.install.minReqVersion ) or tostring( asset.version ):match( ".*beta%d%d" ) then
     
             local premakeCmd = zpm.install.getPremakeCmd( "-" .. tostring( asset.version ) )
             
