@@ -350,39 +350,35 @@ function zpm.install.setup( checkLatest )
         
     for _, asset in pairs( assets ) do
     
-        if premake.checkVersion( tostring( asset.version ), zpm.install.minReqVersion ) or tostring( asset.version ):match( ".*beta%d%d.*" ) then
+        local premakeCmd = zpm.install.getPremakeCmd( "-" .. tostring( asset.version ) )
+        
+        local premakeFile = path.join( folder, premakeCmd )
+        
+        if not os.isfile( premakeFile ) then
     
-            local premakeCmd = zpm.install.getPremakeCmd( "-" .. tostring( asset.version ) )
+            printf( "Installing premake version '%s'...", tostring( asset.version ) )
+            local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
             
-            local premakeFile = path.join( folder, premakeCmd )
-            
-            if not os.isfile( premakeFile ) then
-        
-                printf( "Installing premake version '%s'...", tostring( asset.version ) )
-                local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
-                
-                zpm.assert( os.rename( file, premakeFile ), "Failed to install premake '%s'!", file )
-            
-            end
-            
-            if checkLatest then
-            
-                local globalPremake = path.join( folder, zpm.install.getPremakeCmd( "5" ) )
-                if ( isLatest and asset.version > zpm.semver( _PREMAKE_VERSION ) ) or not os.isfile( globalPremake ) then
-                    
-                    if os.isfile( globalPremake ) then
-                        zpm.util.hideProtectedFile( globalPremake )
-                    end
-                    
-                    printf( "Installing new default version '%s'...", tostring( asset.version ) )
-                    os.copyfile( premakeFile, globalPremake )
-                
-                end
-            end
-        
-            isLatest = false
+            zpm.assert( os.rename( file, premakeFile ), "Failed to install premake '%s'!", file )
         
         end
+        
+        if checkLatest then
+        
+            local globalPremake = path.join( folder, zpm.install.getPremakeCmd( "5" ) )
+            if ( isLatest and asset.version > zpm.semver( _PREMAKE_VERSION ) ) or not os.isfile( globalPremake ) then
+                
+                if os.isfile( globalPremake ) then
+                    zpm.util.hideProtectedFile( globalPremake )
+                end
+                
+                printf( "Installing new default version '%s'...", tostring( asset.version ) )
+                os.copyfile( premakeFile, globalPremake )
+            
+            end
+        end
+    
+        isLatest = false
     
     end
 
