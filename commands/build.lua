@@ -138,7 +138,7 @@ function zpm.build.rcommands.project( proj )
     project( name )
 
     -- always touch just in case
-    if _ACTION:contains( "vs" ) or true then
+    if _ACTION and _ACTION:contains( "vs" ) or true then
         dummyFile = path.join( zpm.install.getExternDirectory(), "dummy.cpp" )
         if os.is( "windows" ) then
             os.executef( "type nul >> %s && copy /b %s+,, %s > nul", dummyFile, dummyFile, dummyFile )
