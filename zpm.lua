@@ -213,6 +213,8 @@ function zpm.checkGit()
     end
 end
 
+initialiseCacheFolder()
+zpm.modules.setSearchDir()
 
 function zpm.onLoad()
 
@@ -220,12 +222,9 @@ function zpm.onLoad()
 
     print( string.format( "Loading The Zefiros Package Manager version '%s'...\nZefiros Package Manager - (c) Zefiros Software 2016", zpm._VERSION ) )
     
-    initialiseCacheFolder()
     zpm.wget.initialise()  
         
     if _ACTION ~= "install-zpm" and not _OPTIONS["version"] then      
-
-        zpm.modules.setSearchDir()
         
         zpm.install.updatePremake( true )
     
