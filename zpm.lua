@@ -208,7 +208,9 @@ function zpm.checkGit()
     
     mversion = version:match( ".*(%d+%.%d+%.%d).*" )
 
-    zpm.assert( premake.checkVersion( mversion, ">=2.9.0" ), "Git version should be >=2.9.0, current is '%s'", mversion )
+    if premake.checkVersion( mversion, ">=2.9.0" ) == false then
+        warningf( , "Git version should be >=2.9.0, current is '%s'", mversion )
+    end
 end
 
 
