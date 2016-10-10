@@ -201,8 +201,20 @@ local function initialiseCacheFolder()
     
 end
 
+function zpm.checkGit()
+
+    local version, errorCode = os.outputof( "git --version" )
+    zpm.assert(version:contains( "git version"), "Failed to detect git on PATH:\n %s", version )
+    
+    mversion = version:match( ".*(%d+%.%d+%.%d).*" )
+
+    zpm.assert( premake.checkVersion( mversion, ">=2.9.0" ), "Git version should be >=2.9.0, current is '%s'", mversion )
+end
+
 
 function zpm.onLoad()
+
+    zpm.checkGit()
 
     print( string.format( "Loading The Zefiros Package Manager version '%s'...\nZefiros Package Manager - (c) Zefiros Software 2016", zpm._VERSION ) )
     
