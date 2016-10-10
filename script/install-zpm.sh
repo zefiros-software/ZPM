@@ -9,7 +9,7 @@ cd ~/zpm-install
 rm premake5.tar.gz || true
 rm premake5 || true
 
-wget -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha9/premake-5.0.0-alpha9-linux.tar.gz
+wget -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha10/premake-5.0.0-alpha10-linux.tar.gz
 
 tar xvzf premake5.tar.gz
 chmod a+x premake5
