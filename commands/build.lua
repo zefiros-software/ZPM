@@ -138,14 +138,14 @@ function zpm.build.rcommands.project( proj )
     project( name )
 
     -- always touch just in case
-    if _ACTION and _ACTION:contains( "vs" ) or true then
+    --if _ACTION and _ACTION:contains( "vs" ) then
         dummyFile = path.join( zpm.install.getExternDirectory(), "dummy.cpp" )
 
         file = io.open( dummyFile, "w")
         file:write( string.format("typedef int Garbage; typedef int Bullshit; Garbage FuckYouCompilers%s( Bullshit arg1, Bullshit arg2 ){  return 0; }", string.sha1(dummyFile) ) )
 
         files(dummyFile)
-    end
+    --end
 
     location( zpm.install.getExternDirectory() )
     targetdir( zpm.build._currentTargetPath )
