@@ -354,7 +354,7 @@ function zpm.install.setup( checkLatest )
         
         local premakeFile = path.join( folder, premakeCmd )
         
-        if not os.isfile( premakeFile ) and not ( os.is( "linux" ) and tostring( asset.version ) == "5.0.0-alpha10" ) then
+        if not os.isfile( premakeFile ) then
     
             printf( "Installing premake version '%s'...", tostring( asset.version ) )
             local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
@@ -396,7 +396,7 @@ function zpm.install.updatePremake( checkOnly, verbose )
     local pattern = string.format( "premake-.*-%s.*", os.get() )
     local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )
     
-    if ok and not ( os.is( "linux" ) and tostring( version ) == "5.0.0-alpha10" ) then
+    if ok then
     
         if latest ~= nil and version > zpm.semver( _PREMAKE_VERSION ) then
         
