@@ -140,11 +140,10 @@ function zpm.build.rcommands.project( proj )
     -- always touch just in case
     if _ACTION and _ACTION:contains( "vs" ) or true then
         dummyFile = path.join( zpm.install.getExternDirectory(), "dummy.cpp" )
-        if os.is( "windows" ) then
-            os.executef( "type nul >> %s && copy /b %s+,, %s > nul", dummyFile, dummyFile, dummyFile )
-        else
-            os.executef( "{TOUCH} %s", dummyFile )
-        end
+        
+        file = io.open( dummyFile, "w")
+        file:write("typedef int Garbage; typedef int Bullshit; Garbage FuckYouCompilers%s( Bullshit arg1, Bullshit arg2 ){  return 0; }".format( string.sha1(dummyFile) ) )
+
         files(dummyFile)
     end
 
