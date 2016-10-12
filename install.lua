@@ -293,7 +293,7 @@ function zpm.install.createSymLinks()
         for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
             os.execute( string.format( "sudo ln -sf %s %s%s", prem, usrPath, path.getname( prem ) ) )
         end 
-        os.execute( string.format( "sudo ln -sf %s %szpm", path.join( zpm.install.getInstallDir(), "zpm"), usrPath ) )
+        os.execute( string.format( "sudo ln -sf %s %szpm", path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
     end
 
     if  os.get() == "macosx" then
@@ -373,14 +373,16 @@ function zpm.install.setup( checkLatest )
                     zpm.util.hideProtectedFile( globalPremake )
                 end                
 
-                local zpmFile = path.join(folder, "zpm" )
-                if os.isfile( zpmFile ) then
-                    zpm.util.hideProtectedFile( zpmFile )
+                if os.is( "windows" ) then
+                    local zpmFile = path.join(folder, "zpm" )
+                    if os.isfile( zpmFile ) then
+                        zpm.util.hideProtectedFile( zpmFile )
+                    end
+                    os.copyfile( premakeFile, zpmFile )
                 end
                 
                 printf( "Installing new default version '%s'...", tostring( asset.version ) )
                 os.copyfile( premakeFile, globalPremake )
-                os.copyfile( premakeFile, zpmFile )
             
             end
         end
