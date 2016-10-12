@@ -293,7 +293,7 @@ function zpm.install.createSymLinks()
         for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
             os.execute( string.format( "sudo ln -sf %s %s%s", prem, usrPath, path.getname( prem ) ) )
         end 
-        os.execute( string.format( "sudo ln -sf %s %szpm", prem, usrPath ) )
+        os.execute( string.format( "sudo ln -sf %s %szpm", path.join( zpm.install.getInstallDir(), "zpm"), usrPath ) )
     end
 
     if  os.get() == "macosx" then
