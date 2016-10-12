@@ -374,7 +374,7 @@ function zpm.install.setup( checkLatest )
                 end                
 
                 if os.is( "windows" ) then
-                    local zpmFile = path.join(folder, "zpm" )
+                    local zpmFile = path.join(folder, "zpm.exe" )
                     if os.isfile( zpmFile ) then
                         zpm.util.hideProtectedFile( zpmFile )
                     end
