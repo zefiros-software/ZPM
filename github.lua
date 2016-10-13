@@ -36,6 +36,15 @@ if _OPTIONS["github-token"] ~= nil then
     zpm.GitHub.token = _OPTIONS["github-token"]
 end
 
+function zpm.GitHub.latestCommit( vendor, name )
+    local token = zpm.GitHub.token
+    if token ~= nil and token ~= false then
+        token = "Authorization: token " .. token
+    end
+    local resp = zpm.wget.get( string.format( "https://api.github.com/repos/%s/%s/git/refs/heads/master", vendor, name ), token )
+    return zpm.JSON:decode( resp )
+end
+
 function zpm.GitHub.semanticCompare( t1, t2 ) 
     return t1.version > t2.version 
 end

@@ -36,6 +36,8 @@ end
 function zpm.config.initialise()
     
     -- inverse priority
+    zpm.config.loadFile( path.join( _PREMAKE_DIR, zpm.config.fileName ) ) -- private
+
     zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "../." .. zpm.config.fileName ) ) -- private
 
     zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "." .. zpm.config.fileName ) ) -- private

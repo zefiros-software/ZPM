@@ -70,6 +70,18 @@ function zpm.git.checkout( destination, version )
 end
 
 function zpm.git.pull( destination, url )
+
+    --[[if url:contains( "https://github.com" ) then
+        local vendor, name = url:match( "https://github.com/(.*)/(.*).git" )
+        local ok, resp = pcall( zpm.GitHub.latestCommit, "https://api.github.com/repos/%s/%s/git/refs/heads/master", vendor, name )
+        if ok and resp.object ~= nil then
+
+            if zpm.git.getHeadHash(destination) == resp.object.sha then
+                return false
+            end
+
+        end
+    end]]
     
     local current = os.getcwd()
     
