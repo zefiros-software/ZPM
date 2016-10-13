@@ -24,7 +24,7 @@
 
 -- Module initialisation
 zpm = {}
-zpm._VERSION = "1.0.0-beta"
+zpm._VERSION = "1.0.1-beta"
 
 -- Dependencies
 zpm.JSON = (loadfile "json.lua")()
@@ -220,7 +220,7 @@ function zpm.onLoad()
 
     zpm.checkGit()
 
-    print( string.format( "Loading The Zefiros Package Manager version '%s'...\nZefiros Package Manager - (c) Zefiros Software 2016", zpm._VERSION ) )
+    print( string.format( "Zefiros Package Manager '%s' - (c) Zefiros Software 2016", zpm._VERSION ) )
     
     zpm.wget.initialise()  
         
@@ -246,24 +246,24 @@ end
 
 newoption {
     trigger     = "allow-shell",
-    shortname   = "as",
+    shortname   = "s",
     description = "Allows the usage of shell commands without confirmation"
 }
 newoption {
     trigger     = "allow-install",
-    shortname   = "ai",
+    shortname   = "i",
     description = "Allows the usage of install scripts without confirmation"
 }
 
 newoption {
     trigger     = "ignore-updates",
-    shortname   = "iu",
+    shortname   = "u",
     description = "Allows the usage of zpm without dependency update checks"
 }
 
 newoption {
     trigger     = "allow-module",
-    shortname   = "am",
+    shortname   = "m",
     description = "Allows the updating and installing of modules without confirmation"
 }
 

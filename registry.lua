@@ -111,7 +111,7 @@ function zpm.registry.loadFile( registry )
     
     local regPath = path.join( registryPath, zpm.util.getRepoDir( registry.name, registry.repository ) )
     
-    printf( "Switching to directory '%s'...", regPath )
+    printf( "Pulling registry '%s'", registry.name )
         
     zpm.git.cloneOrPull( regPath, registry.repository )
     

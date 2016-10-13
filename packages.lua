@@ -80,7 +80,8 @@ function zpm.packages.loadDependency( dependency, module )
     
     local depPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "/" .. name, repository ) )
     
-    printf( "Switching to directory '%s'...", depPath )
+    printf( "\n- Pulling '%s/%s'", vendor, name )
+    --printf( "Switching to directory '%s'...", depPath )
         
     local updated = zpm.git.cloneOrPull( depPath, repository )
     
@@ -91,7 +92,7 @@ function zpm.packages.loadDependency( dependency, module )
         
         buildPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "/" .. name, buildRep ) )
         
-        printf( "Switching to directory '%s'...", buildPath )
+        --printf( "Switching to directory '%s'...", buildPath )
             
         updated = zpm.git.cloneOrPull( buildPath, buildRep ) or updated
     end
@@ -124,7 +125,7 @@ function zpm.packages.load()
         
     end
         
-    local ok, root = pcall( zpm.packages.loadFile, package, true, zpm.packages.root ) 
+    local ok, root = pcall( zpm.packages.loadFile, package, true, "FILE", nil, zpm.packages.root, false ) 
     
     if ok then
         zpm.packages.root = root
@@ -140,7 +141,6 @@ end
 function zpm.packages.install()
 
     zpm.packages.installPackage( zpm.packages.root, ".", zpm.packages.root.name )
-
 end
 
 function zpm.packages.installPackage( package, folder, name )
@@ -156,27 +156,31 @@ function zpm.packages.installPackage( package, folder, name )
             zpm.packages.installPackage( dep, dep.exportPath, dep.fullName )
         end
 
-    end
+    end    
 
-    if package.modules ~= nil and #package.modules > 0 then
+    if package.alreadyInstalled == false then
 
-        zpm.modules.installOrUpdateModules( package.modules )
+        if package.modules ~= nil and #package.modules > 0 then
 
-    end
+            zpm.modules.installOrUpdateModules( package.modules )
 
-    -- make sure modules exist
-    if #package.install > 0 then
-        zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
-        function()
-            
-            for _, inst in ipairs( package.install ) do
-                    printf( "Installing '%s'...", name )
-                    dofile( string.format( "%s/%s", folder, inst ) )
-            end
-        end, 
-        function()
-            printf( "Installation declined, we can not guarantee this package works!" )
-        end )
+        end
+
+        -- make sure modules exist
+        if #package.install > 0 then
+            zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an install script, do you want to accept this?\n(Please note that this may be a security risk!)", name ),
+            function()
+                
+                for _, inst in ipairs( package.install ) do
+                        printf( "\n- Installing '%s'", name )
+                        dofile( string.format( "%s/%s", folder, inst ) )
+                end
+            end, 
+            function()
+                printf( "Installation declined, we can not guarantee this package works!" )
+            end )
+        end
+    
     end
 end
 
@@ -195,11 +199,11 @@ function zpm.packages.postExtract( package )
 
     end
 
-    if #package.postextract > 0 then          
+    if package.alreadyInstalled == false and #package.postextract > 0 then          
         
         zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
         function()    
-            printf( "Installing '%s'...", package.name )
+            printf( "\n- Extracting '%s'", package.name )
 
             for _, inst in ipairs( package.postextract ) do
                 zpm.build.setCursor( package )
@@ -269,28 +273,29 @@ end
 
 function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name, root )
 
-    local ok, expDir, version
+    local ok, expDir, version, alreadyInstalled
     if dependency.path == nil then
         local externDir = zpm.install.getExternDirectory()
         local depDir = path.join( externDir, dependency.name )
-        ok, version, expDir = zpm.packages.extract( externDir, depPath, dependency.version, depDir )
+        ok, version, expDir, alreadyInstalled = zpm.packages.extract( externDir, depPath, dependency.version, depDir )
 
         zpm.assert( ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!", 
                         vendor, name, dependency.version, dependency.name )
     else
         version = "FILE"
         expDir = buildPath
+        alreadyInstalled = false
     end
 
     local depPak = path.join( buildPath, zpm.install.packages.fileName )
-    local loaded, pack = pcall( zpm.packages.loadFile, depPak, false, version, string.format( "%s/%s", vendor, name ), root )
+    local loaded, pack = pcall( zpm.packages.loadFile, depPak, false, version, string.format( "%s/%s", vendor, name ), root, alreadyInstalled )
 
     root = pack
     
     return loaded, version, expDir, root
 end
 
-function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
+function zpm.packages.loadFile( packageFile, isRoot, version, pname, root, alreadyInstalled )
     
     zpm.assert( os.isfile( packageFile ), "No '.package.json' found on path '%s'", packageFile )    
     
@@ -310,16 +315,16 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root )
     local name = pak[2]
     local vendor = pak[1]
     
-    printf( "Loading package '%s/%s'...", vendor, name )
-    root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
+    --printf( "Loading package '%s/%s'...", vendor, name )
+    root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alreadyInstalled )
     root = zpm.packages.resolveDependencies( root, vendor, name )
     
-    printf( "Resolved package dependencies '%s/%s'...", vendor, name )
+    --printf( "Resolved package dependencies '%s/%s'...", vendor, name )
 
     return root
 end
 
-function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
+function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alreadyInstalled )
 
     if isRoot then            
         if lpackage.dev ~= nil then
@@ -388,7 +393,8 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage )
     end   
 
     lpackage.dependencies = {}
-
+    lpackage.alreadyInstalled = alreadyInstalled
+    
     zpm.config.addSettings( lpackage.settings )
 
     return lpackage
@@ -408,13 +414,14 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     
     -- head of the master branch
     if versions == "@head" then
+
+        local hashFile = path.join( folder, ".HASH-HEAD" )
     
-        if not _OPTIONS["ignore-updates"] then
+        if not _OPTIONS["ignore-updates"] and not (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) then
     
             if alreadyInstalled then
             
-            
-                print( "Removing existing head..." )
+                --print( "Removing existing head..." )
                 zpm.util.rmdir( folder )
 
                 -- continue installation
@@ -427,13 +434,15 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
             zpm.git.checkout( repo, "master" )
             zpm.git.archive( repo, zipFile, "master" )
     
+            file = io.open(hashFile, "w")
+            file:write( zpm.git.getHeadHash(repo) )
         end
     
     -- git commit hash
     elseif versions:gsub("#", "") ~= versions then
             
-        zpm.git.checkout( repo, versions:gsub("#", "") )
         if not alreadyInstalled then
+            zpm.git.checkout( repo, versions:gsub("#", "") )
             zpm.git.archive( repo, zipFile, versions:gsub("#", "") )
         end
     
@@ -457,7 +466,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
         zpm.assert( os.isdir( folder ), "Folder '%s' failed to install!", folder )
     end
     
-    return continue, version, folder
+    return continue, version, folder, alreadyInstalled
 end
 
 function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )

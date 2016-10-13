@@ -39,6 +39,19 @@ function zpm.git.share( destination )
     os.chdir( current )
 end
 
+function zpm.git.getHeadHash( destination )
+    
+    local current = os.getcwd()
+    
+    os.chdir( destination )
+
+    local out = os.outputof( "git rev-parse HEAD" )
+    
+    os.chdir( current )
+
+    return out
+end
+
 function zpm.git.checkout( destination, version )
     
     local current = os.getcwd()

@@ -310,7 +310,7 @@ function zpm.install.installInPath()
         local dir = zpm.install.getInstallDir()
         
         if not string.contains( cPath, dir ) then
-            printf( "Installing premake in path..." )
+            printf( "- Installing premake in path" )
             
             local cmd = path.join( zpm.temp, "path.ps1" )
             local file = io.open( cmd, "w")
@@ -357,7 +357,7 @@ function zpm.install.setup( checkLatest )
         
         if not os.isfile( premakeFile ) then
     
-            printf( "Installing premake version '%s'...", tostring( asset.version ) )
+            printf( "- Installing premake version '%s'", tostring( asset.version ) )
             local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
             
             zpm.assert( os.rename( file, premakeFile ), "Failed to install premake '%s'!", file )
@@ -381,7 +381,7 @@ function zpm.install.setup( checkLatest )
                     os.copyfile( premakeFile, zpmFile )
                 end
                 
-                printf( "Installing new default version '%s'...", tostring( asset.version ) )
+                printf( "- Installing new default version '%s'", tostring( asset.version ) )
                 os.copyfile( premakeFile, globalPremake )
             
             end

@@ -162,7 +162,7 @@ function zpm.modules.installOrUpdateModule()
         
         local head = path.join( modPath, "head" )
     
-        printf( "Installing or updating module '%s/%s'...", module[1], module[2] ) 
+        printf( "- Installing or updating module '%s/%s'", module[1], module[2] ) 
         
         zpm.modules.update( head, modPath, module )
     
@@ -182,7 +182,7 @@ function zpm.modules.update( head, modPath, module )
         
         if not os.isdir( verPath ) then
         
-            printf( "Installing version '%s'...", tag.version ) 
+            printf( "- Installing version '%s'", tag.version ) 
 
             local zipFile = path.join( modPath, "archive.zip" )
             zpm.git.archive( head, zipFile, tag.tag )

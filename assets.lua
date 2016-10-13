@@ -265,7 +265,8 @@ function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
     
     local assPath = zpm.assets.assetCacheDir( avendor, aname, repository )
     
-    printf( "Switching to directory '%s'...", assPath )
+    printf( "\n- Pulling '%s/%s'", vendor, name )
+    --printf( "Switching to directory '%s'...", assPath )
         
     zpm.git.lfs.cloneOrPull( assPath, repository )
     
@@ -275,7 +276,7 @@ function zpm.assets.loadAssets( asset, lasset, vendor, name, avendor, aname )
         
         defPath = path.join( dependencyPath, zpm.util.getRepoDir( avendor .. "/" .. aname, defRep ) )
         
-        printf( "Switching to directory '%s'...", defPath )
+        --printf( "Switching to directory '%s'...", defPath )
             
         zpm.git.cloneOrPull( defPath, defRep )
     end
