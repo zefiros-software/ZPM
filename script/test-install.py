@@ -5,7 +5,7 @@ import os
 output = str(subprocess.check_output( ["premake5", "install-package"], universal_newlines=True ))
 
 if ("(c) Zefiros Software" not in output or
-    "Zefiros Package Manager"):
+    "Zefiros Package Manager" not in output):
 
     print( "ZPM failed to load correctly!\n Output:\n", output )
     exit(-1)
