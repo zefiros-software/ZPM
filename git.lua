@@ -98,6 +98,9 @@ function zpm.git.pull( destination, url )
         os.execute( "git checkout -q ." )
         os.execute( "git reset --hard origin/HEAD" )
         os.execute( "git submodule update --init --recursive -j 8" )
+        os.execute( "git gc --auto" )
+    
+        os.chdir( current )
 
         return true
     end

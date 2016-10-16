@@ -242,6 +242,7 @@ function zpm.onLoad()
             zpm.build.load()
         end
     end
+    
 end 
 
 newoption {

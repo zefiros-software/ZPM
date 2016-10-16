@@ -83,7 +83,7 @@ function zpm.packages.loadDependency( dependency, module )
     printf( "\n- Pulling '%s/%s'", vendor, name )
     --printf( "Switching to directory '%s'...", depPath )
         
-    local updated = zpm.git.cloneOrPull( depPath, repository )
+    --local updated = zpm.git.cloneOrPull( depPath, repository )
     
     local buildPath = depPath
     

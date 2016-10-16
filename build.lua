@@ -150,7 +150,11 @@ end
 
 function zpm.build.buildPackage( package )
 
-    if #package.dependencies > 0 then
+    if package.dependencies == nil then
+        return nil
+    end
+
+    if  #package.dependencies > 0 then
 
         for _, dep in ipairs( package.dependencies ) do
 
@@ -205,6 +209,10 @@ function zpm.build.getProjectName( project, name, version )
 end
 
 function zpm.build.findRootProject( name )
+
+    if zpm.packages.root.dependencies == nil then
+        return nil
+    end
 
     for _, project in ipairs( zpm.packages.root.dependencies ) do
     
