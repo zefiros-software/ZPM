@@ -73,7 +73,7 @@ function zpm.git.checkoutVersion( destination, version )
     
     if version == "@head" then
         zpm.git.checkout( destination, "master" )
-    else if version:gsub("#", "") ~= version then 
+    elseif version:gsub("#", "") ~= version then 
         zpm.git.checkout( destination, version:gsub("#", "") )
     else
         zpm.git.checkout( destination, "tags/" .. version )
@@ -218,7 +218,7 @@ function zpm.git.lfs.checkoutVersion( destination, version )
     
     if version == "@head" then
         zpm.git.lfs.checkout( destination, "master" )
-    else if version:gsub("#", "") ~= version then 
+    elseif version:gsub("#", "") ~= version then 
         zpm.git.lfs.checkout( destination, version:gsub("#", "") )
     else
         zpm.git.lfs.checkout( destination, "tags/" .. version )
