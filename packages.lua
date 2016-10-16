@@ -130,7 +130,7 @@ function zpm.packages.load()
     if ok then
         zpm.packages.root = root
         if not _OPTIONS["ignore-updates"] then
-            zpm.packages.postExtract( zpm.packages.root )
+            zpm.packages.postExtract( zpm.packages.root, true )
         end
     else
         printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root )
@@ -184,7 +184,7 @@ function zpm.packages.installPackage( package, folder, name )
     end
 end
 
-function zpm.packages.postExtract( package )
+function zpm.packages.postExtract( package, isRoot )
 
     if type( package.postextract ) ~= "table" then
         package.postextract = { package.postextract }
@@ -194,12 +194,13 @@ function zpm.packages.postExtract( package )
 
         for i, dep in ipairs( package.dependencies ) do
 
-            zpm.packages.postExtract( dep )
+            zpm.packages.postExtract( dep, false )
         end
 
     end
 
-    if package.alreadyInstalled == false and #package.postextract > 0 then          
+    if isRoot == false and package.alreadyInstalled == false and #package.postextract > 0 then         
+        zpm.git.checkoutVersion( package.buildPath, package.version ) 
         
         zpm.util.askInstallConfirmation( string.format( "Package '%s' asks to run an extract script, do you want to accept this?\n(Please note that this may be a security risk!)", package.name ),
         function()    
@@ -208,7 +209,7 @@ function zpm.packages.postExtract( package )
             for _, inst in ipairs( package.postextract ) do
                 zpm.build.setCursor( package )
             
-                dofile( string.format( "%s/%s", zpm.build._currentDependency.buildPath, inst ) )         
+                dofile( string.format( "%s/%s", package.buildPath ) )       
 
                 zpm.build.resetCursor()
             end
@@ -431,7 +432,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
             
             end
         
-            zpm.git.checkout( repo, "master" )
+            --zpm.git.checkout( repo, "master" )
             zpm.git.archive( repo, zipFile, "master" )
     
             file = io.open(hashFile, "w")
@@ -442,7 +443,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     elseif versions:gsub("#", "") ~= versions then
             
         if not alreadyInstalled then
-            zpm.git.checkout( repo, versions:gsub("#", "") )
+            --zpm.git.checkout( repo, versions:gsub("#", "") )
             zpm.git.archive( repo, zipFile, versions:gsub("#", "") )
         end
     
@@ -481,7 +482,7 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
             local alreadyInstalled = os.isdir( folder )
             if not alreadyInstalled then
                 
-                zpm.git.checkout( repo, "tags/" .. gTag.version )
+                --zpm.git.checkout( repo, "tags/" .. gTag.version )
                 zpm.git.archive( repo, zipFile, gTag.tag )
             end        
             
