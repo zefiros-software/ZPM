@@ -69,6 +69,17 @@ function zpm.git.checkout( destination, version )
 
 end
 
+function zpm.git.checkoutVersion( destination, version )
+    
+    if version == "@head" then
+        zpm.git.checkout( destination, "master" )
+    else if version:gsub("#", "") ~= version then 
+        zpm.git.checkout( destination, version:gsub("#", "") )
+    else
+        zpm.git.checkout( destination, "tags/" .. version )
+    end
+end
+
 function zpm.git.pull( destination, url )
 
     --[[if url:contains( "https://github.com" ) then
@@ -201,6 +212,17 @@ function zpm.git.lfs.checkout( destination, checkout )
     
     os.chdir( current )
 
+end
+
+function zpm.git.lfs.checkoutVersion( destination, version )
+    
+    if version == "@head" then
+        zpm.git.lfs.checkout( destination, "master" )
+    else if version:gsub("#", "") ~= version then 
+        zpm.git.lfs.checkout( destination, version:gsub("#", "") )
+    else
+        zpm.git.lfs.checkout( destination, "tags/" .. version )
+    end
 end
 
 function zpm.git.lfs.pull( destination, url )
