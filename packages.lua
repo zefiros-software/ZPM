@@ -437,7 +437,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
         local hashFile = path.join( folder, ".HASH-HEAD" )
     
         if not _OPTIONS["ignore-updates"] and not 
-            (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) and not 
+            (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) and 
             (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][versions] == nil) then
     
             zpm.packages._extractCache[repo] = {}
@@ -465,7 +465,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- git commit hash
     elseif versions:gsub("#", "") ~= versions then
             
-        if not alreadyInstalled and not 
+        if not alreadyInstalled and 
            (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][versions] == nil) then
 
             zpm.packages._extractCache[repo] = {}
@@ -480,7 +480,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     
         continue, version, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
 
-        if not alreadyInstalled and not 
+        if not alreadyInstalled and 
            (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][version] == nil) then
 
             zpm.packages._extractCache[repo] = {}
