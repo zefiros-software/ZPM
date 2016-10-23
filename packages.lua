@@ -486,8 +486,8 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
             zpm.packages._extractCache[repo] = {}
             zpm.packages._extractCache[repo][version] = {}
             
-            --zpm.git.checkout( repo, "tags/" .. gTag.version )
-            zpm.git.archive( repo, zipFile, gTag.tag )
+            --zpm.git.checkout( repo, "tags/" .. version )
+            zpm.git.archive( repo, zipFile, version )
         end      
         
     end
