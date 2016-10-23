@@ -54,6 +54,25 @@ function zpm.packages.suggestPackage( vendor, name )
    
 end
 
+zpm.packages._pullCache = {}
+function zpm.packages.pullDependency( depPath, repository, vendor, name )
+
+    if zpm.packages._pullCache[repository] ~= nil then
+        return zpm.packages._pullCache[repository]
+    end
+    
+    if vendor ~= nil and name ~= nil then
+        printf( "\n- Pulling '%s/%s'", vendor, name )
+        --printf( "Switching to directory '%s'...", depPath )
+    end
+
+    local updated = zpm.git.cloneOrPull( depPath, repository )
+
+    zpm.packages._pullCache[repository] = updated
+
+    return updated
+end
+
 function zpm.packages.loadDependency( dependency, module )
 
     local p = path.getabsolute(path.join(_MAIN_SCRIPT_DIR, dependency.path))
@@ -79,11 +98,8 @@ function zpm.packages.loadDependency( dependency, module )
     end
     
     local depPath = path.join( dependencyPath, zpm.util.getRepoDir( vendor .. "/" .. name, repository ) )
-    
-    printf( "\n- Pulling '%s/%s'", vendor, name )
-    --printf( "Switching to directory '%s'...", depPath )
         
-    local updated = zpm.git.cloneOrPull( depPath, repository )
+    local updated = zpm.packages.pullDependency( depPath, repository, vendor, name )
     
     local buildPath = depPath
     
@@ -94,7 +110,7 @@ function zpm.packages.loadDependency( dependency, module )
         
         --printf( "Switching to directory '%s'...", buildPath )
             
-        updated = zpm.git.cloneOrPull( buildPath, buildRep ) or updated
+        updated = zpm.packages.pullDependency( buildPath, buildRep ) or updated
     end
     
     return depPath, buildPath, updated
@@ -401,6 +417,8 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alr
     return lpackage
 end
 
+
+zpm.packages._extractCache = {}
 function zpm.packages.extract( vendorPath, repo, versions, dest )
 
     local zipFile = path.join( vendorPath, "archive.zip" )
@@ -418,8 +436,13 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
 
         local hashFile = path.join( folder, ".HASH-HEAD" )
     
-        if not _OPTIONS["ignore-updates"] and not (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) then
+        if not _OPTIONS["ignore-updates"] and not 
+            (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) and not 
+            zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] ~= nil then
     
+            zpm.packages._extractCache[repo] = {}
+            zpm.packages._extractCache[repo][versions] = {}
+            
             if alreadyInstalled then
             
                 --print( "Removing existing head..." )
@@ -442,7 +465,12 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- git commit hash
     elseif versions:gsub("#", "") ~= versions then
             
-        if not alreadyInstalled then
+        if not alreadyInstalled and not 
+           zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] ~= nil then
+
+            zpm.packages._extractCache[repo] = {}
+            zpm.packages._extractCache[repo][versions] = {}
+            
             --zpm.git.checkout( repo, versions:gsub("#", "") )
             zpm.git.archive( repo, zipFile, versions:gsub("#", "") )
         end
@@ -450,7 +478,17 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- normal resolve
     else
     
-        continue, version, folder, alreadyInstalled = zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
+        continue, version, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
+
+        if not alreadyInstalled and not 
+           zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] ~= nil then
+
+            zpm.packages._extractCache[repo] = {}
+            zpm.packages._extractCache[repo][version] = {}
+            
+            --zpm.git.checkout( repo, "tags/" .. gTag.version )
+            zpm.git.archive( repo, zipFile, gTag.tag )
+        end      
         
     end
     
@@ -470,7 +508,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     return continue, version, folder, alreadyInstalled
 end
 
-function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
+function zpm.packages.getBestVersion( repo, versions, zipFile, dest )
 
     local tags = zpm.git.getTags( repo )
     for _, gTag in ipairs( tags ) do
@@ -479,12 +517,7 @@ function zpm.packages.archiveBestVersion( repo, versions, zipFile, dest )
         
             local folder = string.format( "%s-%s", dest, gTag.version )
             
-            local alreadyInstalled = os.isdir( folder )
-            if not alreadyInstalled then
-                
-                --zpm.git.checkout( repo, "tags/" .. gTag.version )
-                zpm.git.archive( repo, zipFile, gTag.tag )
-            end        
+            local alreadyInstalled = os.isdir( folder )  
             
             return true, gTag.version, folder, alreadyInstalled
         end
