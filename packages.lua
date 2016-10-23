@@ -438,7 +438,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     
         if not _OPTIONS["ignore-updates"] and not 
             (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) and not 
-            zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] ~= nil then
+            (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][versions] == nil) then
     
             zpm.packages._extractCache[repo] = {}
             zpm.packages._extractCache[repo][versions] = {}
@@ -466,7 +466,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     elseif versions:gsub("#", "") ~= versions then
             
         if not alreadyInstalled and not 
-           zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] ~= nil then
+           (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][versions] == nil) then
 
             zpm.packages._extractCache[repo] = {}
             zpm.packages._extractCache[repo][versions] = {}
@@ -481,7 +481,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
         continue, version, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
 
         if not alreadyInstalled and not 
-           zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] ~= nil then
+           (zpm.packages._extractCache[repo] == nil and zpm.packages._extractCache[repo][version] == nil) then
 
             zpm.packages._extractCache[repo] = {}
             zpm.packages._extractCache[repo][version] = {}
