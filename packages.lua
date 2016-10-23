@@ -225,7 +225,7 @@ function zpm.packages.postExtract( package, isRoot )
             for _, inst in ipairs( package.postextract ) do
                 zpm.build.setCursor( package )
             
-                dofile( string.format( "%s/%s", package.buildPath ) )       
+                dofile( string.format( "%s/%s", package.buildPath, inst ) )       
 
                 zpm.build.resetCursor()
             end
