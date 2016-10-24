@@ -295,6 +295,7 @@ newaction {
 }
 
 if _ACTION == "self-update" or
+   _ACTION == "show-cache" or
    _ACTION == "install-module" or
    _ACTION == "install-zpm" or
    _ACTION == "install-package" or
