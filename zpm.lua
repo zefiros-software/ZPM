@@ -233,6 +233,7 @@ function zpm.onLoad()
         zpm.modules.load()
         
         if _ACTION ~= "self-update" and
+           _ACTION ~= "show-cache" and
            _ACTION ~= "install-module" and
            _ACTION ~= "update-module" and
            _ACTION ~= "update-modules" then
