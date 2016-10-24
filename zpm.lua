@@ -284,6 +284,16 @@ newaction {
     end
 }
 
+newaction {
+    trigger     = "show-cache",
+    description = "Shows the location of the ZPM cache",
+    execute = function ()
+        
+        printf( "ZPM cache location:" .. getCacheLocation() );
+             
+    end
+}
+
 if _ACTION == "self-update" or
    _ACTION == "install-module" or
    _ACTION == "install-zpm" or
