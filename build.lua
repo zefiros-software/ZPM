@@ -204,7 +204,7 @@ end
 
 function zpm.build.getProjectName( project, name, version )
 
-    return string.format( "%s-%s", project, version )
+    return string.gsub( string.format( "%s-%s", project, version ), "@", "" )
     
 end
 
