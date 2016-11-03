@@ -248,24 +248,20 @@ end
 
 newoption {
     trigger     = "allow-shell",
-    shortname   = "s",
     description = "Allows the usage of shell commands without confirmation"
 }
 newoption {
     trigger     = "allow-install",
-    shortname   = "i",
     description = "Allows the usage of install scripts without confirmation"
 }
 
 newoption {
     trigger     = "ignore-updates",
-    shortname   = "u",
     description = "Allows the usage of zpm without dependency update checks"
 }
 
 newoption {
     trigger     = "allow-module",
-    shortname   = "m",
     description = "Allows the updating and installing of modules without confirmation"
 }
 
