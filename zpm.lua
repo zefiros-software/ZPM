@@ -218,6 +218,11 @@ zpm.modules.setSearchDir()
 
 function zpm.onLoad()
 
+    if _OPTIONS["profile"] then 
+        ProFi = require( "mindreframer/ProFi", "@head" )
+        ProFi:start()
+    end
+
     zpm.checkGit()
 
     print( string.format( "Zefiros Package Manager '%s' - (c) Zefiros Software 2016", zpm._VERSION ) )
@@ -243,7 +248,11 @@ function zpm.onLoad()
             zpm.build.load()
         end
     end
-    
+
+    if _OPTIONS["profile"] then
+        ProFi:stop()
+        ProFi:writeReport( path.join( _MAIN_SCRIPT_DIR, "profile.txt" ) )
+    end
 end 
 
 newoption {
@@ -263,6 +272,11 @@ newoption {
 newoption {
     trigger     = "allow-module",
     description = "Allows the updating and installing of modules without confirmation"
+}
+
+newoption {
+    trigger     = "profile",
+    description = "Profiles the given commands"
 }
 
 newaction {

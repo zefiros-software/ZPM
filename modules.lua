@@ -29,8 +29,8 @@ dofile( "action/update-modules.lua" )
 -- Modules
 zpm.modules = {}
 zpm.modules.modules = {}
-zpm.modules.search = zpm.bktree:new()
-zpm.modules.searchMaxDist = 0.6
+--zpm.modules.search = zpm.bktree:new()
+--zpm.modules.searchMaxDist = 0.6
 
 function zpm.modules.suggestModule( vendor, name ) 
 
@@ -261,7 +261,8 @@ function zpm.modules.loadFile( file )
         
         if zpm.modules.modules[ vendor ][ name ] == nil then
         
-            zpm.modules.search:insert( string.format( "%s/%s", vendor, name ) )
+            --temp disable
+            --zpm.modules.search:insert( string.format( "%s/%s", vendor, name ) )
         
             zpm.modules.modules[ vendor ][ name ] = {}
             zpm.modules.modules[ vendor ][ name ].includedirs = {}

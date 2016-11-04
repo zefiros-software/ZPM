@@ -24,8 +24,8 @@
 
 -- Packages
 zpm.packages = {}
-zpm.packages.search = zpm.bktree:new()
-zpm.packages.searchMaxDist = 0.1
+--zpm.packages.search = zpm.bktree:new()
+--zpm.packages.searchMaxDist = 0.1
 
 zpm.packages.package = {}
 
@@ -33,23 +33,23 @@ zpm.packages.root = {}
 
 function zpm.packages.suggestPackage( vendor, name ) 
 
-    if zpm.packages.package[ vendor ] == nil or zpm.packages.package[ vendor ][ name ] == nil then
+    if zpm.packages.package[ vendor ] == nil or (zpm.packages.package[ vendor ] ~= nil and zpm.packages.package[ vendor ][ name ] == nil) then
     
-        local str = string.format( "%s/%s", vendor, name )
-        local suggest = zpm.packages.search:query( str, #str * ( 1 - zpm.packages.searchMaxDist ) )
+        --local str = string.format( "%s/%s", vendor, name )
+        --local suggest = zpm.packages.search:query( str, #str * ( 1 - zpm.packages.searchMaxDist ) )
     
-        if #suggest > 0 then
+        --if #suggest > 0 then
             
-            printf( zpm.colors.error .. "Requiring package with vendor '%s' and name '%s' does not exist!", vendor, name )
+        --    printf( zpm.colors.error .. "Requiring package with vendor '%s' and name '%s' does not exist!", vendor, name )
             
-            printf( zpm.colors.green .. zpm.colors.bright .. "Did you mean package '%s'?", suggest[1].str )
+        --    printf( zpm.colors.green .. zpm.colors.bright .. "Did you mean package '%s'?", suggest[1].str )
 
-        else
+        --else
         
             zpm.assert( zpm.packages.package[ vendor ] ~= nil, "Requiring package with vendor '%s' does not exist!", vendor )
             zpm.assert( zpm.packages.package[ vendor ][ name ] ~= nil, "Requiring package with vendor '%s' and name '%s' does not exist!", vendor, name )
 
-        end
+        --end
     end
    
 end
@@ -62,8 +62,8 @@ function zpm.packages.pullDependency( depPath, repository, vendor, name )
     end
     
     if vendor ~= nil and name ~= nil then
-        printf( "\n- Pulling '%s/%s'", vendor, name )
-        --printf( "Switching to directory '%s'...", depPath )
+        printf( "\n- Pulling '%s/%s'", vendor, name )        
+        verbosef( "   Switching to directory '%s'...", depPath )
     end
 
     local updated = zpm.git.cloneOrPull( depPath, repository )
@@ -546,11 +546,11 @@ function zpm.packages.checkValidity( package, isRoot, pname )
     end
 
     if package.license ~= nil then    
-        zpm.assert(  package.license:len() <= 60, "The 'license' supplied in '.package.json'field exceeds maximum size of 60 characters!" )        
+        zpm.assert(  package.license:len() <= 60, "The 'license' supplied in '.package.json' field exceeds maximum size of 60 characters!" )        
     end
 
     if package.website ~= nil then    
-        zpm.assert(  package.website:len() <= 120, "The 'website' supplied in '.package.json'field exceeds maximum size of 120 characters!" )        
+        zpm.assert(  package.website:len() <= 120, "The 'website' supplied in '.package.json' field exceeds maximum size of 120 characters!" )        
     end
 
     if package.authors ~= nil then

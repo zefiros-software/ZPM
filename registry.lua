@@ -42,11 +42,27 @@ function zpm.registry.loadPath( manifestPath )
 
 end
 
+function zpm.registry.update()
+    
+    local checkFile = path.join( zpm.cache, "REGISTRY-CHECK" )
+
+    -- check once every 20 minutes
+    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 20) then
+        return nil
+    end
+    
+    zpm.git.cloneOrPull( zpm.install.getMainRegistryDir(), zpm.install.registry.repository )
+    
+    file = io.open(checkFile, "w")
+    file:write( "" )
+    file:close()
+end
+
 function zpm.registry.load()
    
     --print( "\nLoading registries..." )
             
-    zpm.git.cloneOrPull( zpm.install.getMainRegistryDir(), zpm.install.registry.repository )
+    zpm.registry.update()    
     
     zpm.assert( os.isfile( zpm.install.getMainRegistry() ), "The root registry is not found on path '%s'!", zpm.install.getMainRegistry() )
     

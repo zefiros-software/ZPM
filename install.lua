@@ -393,17 +393,36 @@ function zpm.install.setup( checkLatest )
 
 end
 
+function zpm.install.getLatestPremakeVersion()
+    
+    local checkFile = path.join( zpm.cache, "PREMAKE-CHECK" )
+
+    -- check once a day
+    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 60 * 24) then
+        return true, nil
+    end
+    
+    local pattern = string.format( "premake-.*-%s.*", os.get() )
+    local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )   
+    
+    if ok then
+        file = io.open(checkFile, "w")
+        file:write( "" )
+        file:close()
+    end
+
+    return ok, latest, version
+end
+
 zpm.install.updatedPremake = false
 function zpm.install.updatePremake( checkOnly, verbose )
-
     if zpm.install.updatedPremake then
         return nil
     end
 
     verbose = verbose or false
     
-    local pattern = string.format( "premake-.*-%s.*", os.get() )
-    local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )
+    local ok, latest, version = zpm.install.getLatestPremakeVersion()
     
     if ok then
     

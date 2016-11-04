@@ -27,8 +27,8 @@ zpm.assets.assets = {}
 
 zpm.assets.commands = {}
 
-zpm.assets.search = zpm.bktree:new()
-zpm.assets.searchMaxDist = 0.6
+--zpm.assets.search = zpm.bktree:new()
+--zpm.assets.searchMaxDist = 0.6
 
 function zpm.assets.executeCommands( file, repo, folder )
 
@@ -119,7 +119,8 @@ function zpm.assets.loadFile( file )
         
         if zpm.assets.assets[ vendor ][ name ] == nil then
         
-            zpm.assets.search:insert( string.format( "%s/%s", vendor, name ) )
+            -- disable for now
+            --zpm.assets.search:insert( string.format( "%s/%s", vendor, name ) )
         
             zpm.assets.assets[ vendor ][ name ] = {}        
             zpm.assets.assets[ vendor ][ name ].repository = asset.repository    
@@ -137,21 +138,21 @@ function zpm.assets.suggestAssets( vendor, name )
 
     if zpm.assets.assets[ vendor ] == nil or zpm.assets.assets[ vendor ][ name ] == nil then
     
-        local str = string.format( "%s/%s", vendor, name )
-        local suggest = zpm.assets.search:query( str, #str * ( 1 - zpm.assets.searchMaxDist ) )
+        --local str = string.format( "%s/%s", vendor, name )
+        --local suggest = zpm.assets.search:query( str, #str * ( 1 - zpm.assets.searchMaxDist ) )
     
-        if #suggest > 0 then
+        --if #suggest > 0 then
             
-            printf( zpm.colors.error .. "Requiring assets with vendor '%s' and name '%s' does not exist!", vendor, name )
+        --    printf( zpm.colors.error .. "Requiring assets with vendor '%s' and name '%s' does not exist!", vendor, name )
             
-            printf( zpm.colors.green .. zpm.colors.bright .. "Did you mean assets '%s'?", suggest[1].str )
+        --    printf( zpm.colors.green .. zpm.colors.bright .. "Did you mean assets '%s'?", suggest[1].str )
 
-        else
+        --else
         
             zpm.assert( zpm.assets.assets[ vendor ] ~= nil, "Requiring assets with vendor '%s' does not exist!", vendor )
             zpm.assert( zpm.assets.assets[ vendor ][ name ] ~= nil, "Requiring assets with vendor '%s' and name '%s' does not exist!", vendor, name )
 
-        end
+        --end
     end
    
 end
