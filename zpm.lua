@@ -67,12 +67,14 @@ end)
 
 local builtWorkspaces = {}
     
+zpm._workspaceCache = nil
 premake.override(_G, "workspace", function(base, ... )
 
     local wkspc = base( ... )
     if select("#",...) > 0 then
 
         local name = select(1,...)
+        zpm._workspaceCache = name
         
         if table.contains( builtWorkspaces, name ) then
             return wkspc
@@ -86,6 +88,22 @@ premake.override(_G, "workspace", function(base, ... )
     base()
 
     return wkspc
+end)
+    
+-- small hack so the first user defined project is the startup project
+zpm._projectFirstCache = {}
+premake.override(_G, "project", function( base, proj )    
+    
+    local val = base(proj)
+
+    if proj ~= nil and zpm.build._isBuilding == false and zpm._workspaceCache ~= nil and zpm._projectFirstCache[zpm._workspaceCache] == nil then
+        zpm._projectFirstCache[zpm._workspaceCache] = {}
+        workspace()     
+        startproject(proj)
+        base(val.name)
+    end
+
+    return val
 end)
 
 function zpm.useProject( proj )
@@ -144,6 +162,8 @@ end
 
 function zpm.buildLibraries()
 
+    zpm.build._isBuilding = true
+
     local curFlter = premake.configset.getFilter(premake.api.scope.current)
     zpm.build._currentWorkspace = workspace().name
 
@@ -157,6 +177,7 @@ function zpm.buildLibraries()
     premake.configset.setFilter(premake.api.scope.current, curFlter)
 
     workspace()
+    zpm.build._isBuilding = false
 end
 
 

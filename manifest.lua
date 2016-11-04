@@ -78,21 +78,8 @@ function zpm.manifest.loadFile( file )
             zpm.assert( zpm.util.isGitUrl( manifest.shadowRepository ), "'shadow-repository' supplied in manifest definition is not a valid https git url!" )
             isShadow = true
         end
-        
-        if zpm.packages.package[ vendor ] == nil then
-            zpm.packages.package[ vendor ] = {}
-        end
-        
-        if zpm.packages.package[ vendor ][ name ] == nil then
-            
-            zpm.packages.package[ vendor ][ name ] = {}            
-            zpm.packages.package[ vendor ][ name ].repository = manifest.repository    
-            zpm.packages.package[ vendor ][ name ].shadowRepository = manifest.shadowRepository       
-            zpm.packages.package[ vendor ][ name ].isShadow = isShadow            
-            
-            --disable for now
-            --zpm.packages.search:insert( string.format( "%s/%s", vendor, name ) )
-        end
+
+        zpm.packages.prepareDict( vendor, name, manifest.repository, manifest.shadowRepository, isShadow )
     
     end    
     

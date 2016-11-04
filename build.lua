@@ -33,6 +33,7 @@ zpm.build._currentObjPath = nil
 zpm.build._currentDependency = nil
 zpm.build._currentProjects = nil
 zpm.build._currentBuild = nil
+zpm.build._isBuilding = false
 
 function zpm.build.getEnv()
 

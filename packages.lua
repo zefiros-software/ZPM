@@ -31,6 +31,25 @@ zpm.packages.package = {}
 
 zpm.packages.root = {}
 
+function zpm.packages.prepareDict( vendor, name, repository, shadowRepository, isShadow )
+        
+    if zpm.packages.package[ vendor ] == nil then
+        zpm.packages.package[ vendor ] = {}
+    end
+    
+    if zpm.packages.package[ vendor ][ name ] == nil then
+        
+        zpm.packages.package[ vendor ][ name ] = {}            
+        zpm.packages.package[ vendor ][ name ].repository = repository    
+        zpm.packages.package[ vendor ][ name ].shadowRepository = shadowRepository       
+        zpm.packages.package[ vendor ][ name ].isShadow = isShadow            
+        
+        --disable for now
+        --zpm.packages.search:insert( string.format( "%s/%s", vendor, name ) )
+    end
+
+end
+
 function zpm.packages.suggestPackage( vendor, name ) 
 
     if zpm.packages.package[ vendor ] == nil or (zpm.packages.package[ vendor ] ~= nil and zpm.packages.package[ vendor ][ name ] == nil) then
@@ -73,9 +92,10 @@ function zpm.packages.pullDependency( depPath, repository, vendor, name )
     return updated
 end
 
-function zpm.packages.loadDependency( dependency, module )
+function zpm.packages.loadDependency( dependency, module, basedir )
 
-    local p = path.getabsolute(path.join(_MAIN_SCRIPT_DIR, dependency.path))
+    local p = path.getabsolute(path.join(basedir, dependency.path))
+    
     if dependency.path ~= nil and os.isdir(p) then
         return path.getabsolute(p), path.getabsolute(p), true
     end
@@ -130,7 +150,7 @@ function zpm.packages.load()
 
         if not os.isdir( externDir ) then    
                 
-            print( "Creating extern directory..." )         
+            verbosef( "Creating extern directory..." )         
         
             assert( os.mkdir( externDir ) )    
                 
@@ -139,18 +159,18 @@ function zpm.packages.load()
             file:close()    
         end
         
-    end
+        local ok, root = pcall( zpm.packages.loadFile, package, true, "FILE", nil, zpm.packages.root, false ) 
         
-    local ok, root = pcall( zpm.packages.loadFile, package, true, "FILE", nil, zpm.packages.root, false ) 
-    
-    if ok then
-        zpm.packages.root = root
-        if not _OPTIONS["ignore-updates"] then
-            zpm.packages.postExtract( zpm.packages.root, true )
+        if ok then
+            zpm.packages.root = root
+            if not _OPTIONS["ignore-updates"] then
+                zpm.packages.postExtract( zpm.packages.root, true )
+            end
+        else
+            printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root )
+        
         end
-    else
-        printf( zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root )
-    
+        
     end
 end
 
@@ -236,7 +256,7 @@ function zpm.packages.postExtract( package, isRoot )
     end
 end
 
-function zpm.packages.resolveDependencies( lpackage, vendor, name )
+function zpm.packages.resolveDependencies( lpackage, vendor, name, basedir )
 
     if lpackage == nil then
         return lpackage
@@ -251,7 +271,7 @@ function zpm.packages.resolveDependencies( lpackage, vendor, name )
         for i, dependency in ipairs( lpackage.requires  ) do
         
             local depMod = bootstrap.getModule( dependency.name )
-            local ok, depPath, buildPath, updated = pcall( zpm.packages.loadDependency, dependency, depMod )
+            local ok, depPath, buildPath, updated = pcall( zpm.packages.loadDependency, dependency, depMod, basedir )
 
             if ok then
 
@@ -302,6 +322,9 @@ function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name,
         version = "FILE"
         expDir = buildPath
         alreadyInstalled = false
+
+        -- make sure it exists in dictionary
+        zpm.packages.prepareDict( vendor, name, dependency.repository, dependency.shadowRepository, dependency.isShadow )
     end
 
     local depPak = path.join( buildPath, zpm.install.packages.fileName )
@@ -320,6 +343,9 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root, alrea
     local lpackage = zpm.JSON:decode( file )
     
     if pname == nil then
+        if lpackage.name == nil and root then
+            lpackage.name = "root/root"
+        end
         zpm.assert( lpackage.name ~= nil, "No 'name' supplied in '.package.json'!" )
         pname = lpackage.name
     end
@@ -334,7 +360,7 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root, alrea
     
     --printf( "Loading package '%s/%s'...", vendor, name )
     root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alreadyInstalled )
-    root = zpm.packages.resolveDependencies( root, vendor, name )
+    root = zpm.packages.resolveDependencies( root, vendor, name, path.getdirectory( packageFile ) )
     
     --printf( "Resolved package dependencies '%s/%s'...", vendor, name )
 
@@ -405,7 +431,7 @@ function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alr
         
     else    
     
-        zpm.assert( zpm.packages.package[vendor][name] ~= nil, "Package '%s/%s' does not exist!", vendor, name )
+        zpm.assert( (zpm.packages.package[vendor] ~= nil and zpm.packages.package[vendor][name] ~= nil) or isRoot or version == "FILE", "Package '%s/%s' does not exist!", vendor, name )
         
     end   
 
@@ -690,7 +716,7 @@ function zpm.packages.checkDependencyValidity( package, isRoot )
             zpm.assert( zpm.util.isAlphaNumeric( rvendor ), "The 'vendor' supplied in '.package.json' 'require' field must be alpha numeric!" )
             zpm.assert( zpm.util.isAlphaNumeric( rname ), "The 'name' supplied in '.package.json' 'require' field must be alpha numeric!" )
 
-            assert( require.version ~= nil or (require.path ~= nil and isRoot), "No 'version' or 'path' supplied in '.package.json'!" )
+            assert( require.version ~= nil or require.path ~= nil, "No 'version' or 'path' supplied in '.package.json'!" )
         end
         
     end

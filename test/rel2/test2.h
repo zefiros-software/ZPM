@@ -1,0 +1,3 @@
+
+
+int GetNum2();

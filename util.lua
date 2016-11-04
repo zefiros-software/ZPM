@@ -158,6 +158,7 @@ end
 
 
 function zpm.util.getRepoDir( name, repository )
+    repository = repository or ""
     return name .. "-" .. zpm.util.djb2( repository )
 end
 

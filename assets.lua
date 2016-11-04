@@ -53,7 +53,7 @@ function zpm.assets.load()
 
     if not os.isdir( assetsDir ) then    
             
-        print( "Creating assets directory..." )         
+        verbosef( "Creating assets directory..." )         
     
         assert( os.mkdir( assetsDir ) )    
             
