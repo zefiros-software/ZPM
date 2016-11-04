@@ -142,7 +142,7 @@ function zpm.build.rcommands.project( proj )
         dummyFile = path.join( zpm.install.getExternDirectory(), "dummy.cpp" )
 
         file = io.open( dummyFile, "w")
-        file:write( string.format("typedef int Garbage; typedef int Bullshit; Garbage FuckYouCompilers%s( Bullshit arg1, Bullshit arg2 ){  return 0; }", string.sha1(dummyFile) ) )
+        file:write( string.format("typedef int Garbage; typedef int Bullshit; Garbage FuckYouCompilers%s( Bullshit, Bullshit ){  return 0; }", string.sha1(dummyFile) ) )
 
         files(dummyFile)
     --end
