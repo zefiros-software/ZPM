@@ -408,7 +408,7 @@ function zpm.install.getLatestPremakeVersion()
     
     if ok then
         file = io.open(checkFile, "w")
-        file:write( version )
+        file:write( tostring( version ) )
         file:close()
     end
 
