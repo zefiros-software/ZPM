@@ -398,16 +398,17 @@ function zpm.install.getLatestPremakeVersion()
     local checkFile = path.join( zpm.cache, "PREMAKE-CHECK" )
 
     -- check once a day
-    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 60 * 24) then
+    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 60 * 24) and _PREMAKE_VERSION == zpm.util.readall(checkFile)  then
         return true, nil
     end
     
     local pattern = string.format( "premake-.*-%s.*", os.get() )
     local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )   
+    print(table.tostring(latest,2))
     
     if ok then
         file = io.open(checkFile, "w")
-        file:write( "" )
+        file:write( version )
         file:close()
     end
 
