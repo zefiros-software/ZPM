@@ -404,7 +404,6 @@ function zpm.install.getLatestPremakeVersion()
     
     local pattern = string.format( "premake-.*-%s.*", os.get() )
     local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )   
-    print(table.tostring(latest,2))
     
     if ok then
         file = io.open(checkFile, "w")
