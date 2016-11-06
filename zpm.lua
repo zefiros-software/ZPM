@@ -335,7 +335,8 @@ if _ACTION == "self-update" or
    _ACTION == "update-modules" or
    _ACTION == "update-bootstrap" or
    _ACTION == "update-registry" or
-   _ACTION == "update-zpm" then
+   _ACTION == "update-zpm" or
+   _OPTIONS["version"] ~= nil then
     -- disable main script
     _MAIN_SCRIPT = "."
         
