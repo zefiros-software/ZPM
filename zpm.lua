@@ -239,9 +239,9 @@ zpm.modules.setSearchDir()
 
 function zpm.onLoad()
 
-    if _OPTIONS["profile"] then 
+    if _ACTION == "profile" then
         ProFi = require( "mindreframer/ProFi", "@head" )
-        ProFi:start()
+        ProFi:start() 
     end
 
     zpm.checkGit()
@@ -268,11 +268,6 @@ function zpm.onLoad()
             zpm.packages.load()
             zpm.build.load()
         end
-    end
-
-    if _OPTIONS["profile"] then
-        ProFi:stop()
-        ProFi:writeReport( path.join( _MAIN_SCRIPT_DIR, "profile.txt" ) )
     end
 end 
 
@@ -301,9 +296,18 @@ newoption {
 }
 
 newaction {
+    trigger     = "profile",
+    description = "Profiles the given commands",
+    onEnd  = function()
+        ProFi:stop()
+        ProFi:writeReport( path.join( _MAIN_SCRIPT_DIR, "profile.txt" ) )
+    end
+}
+
+newaction {
     trigger     = "self-update",
     description = "Updates the premake executable to the latest version",
-    execute = function ()
+    execute = function()
 
         zpm.install.updatePremake( false, true )
                        
@@ -319,7 +323,7 @@ newaction {
 newaction {
     trigger     = "show-cache",
     description = "Shows the location of the ZPM cache",
-    execute = function ()
+    execute = function()
         
         printf( "ZPM cache location:" .. getCacheLocation() );
              

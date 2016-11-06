@@ -33,7 +33,7 @@ end
 
 function zpm.util.djb2( str )
     -- works better
-    return string.sha1( str ):sub( -5 )
+    return string.sha1( str ):sub( -4 )
 end
 
 function zpm.util.rmdir( folder )
@@ -106,6 +106,45 @@ function zpm.util.concat( t1,t2 )
         t1[#t1+1] = t2[i]
     end
     return t1
+end
+
+function zpm.util.hashTable( tab )
+    return zpm.util.djb2( zpm.util.tostring( zpm.util.sortTable(tab) ) )
+end
+
+function zpm.util.sortTable( tab ) 
+    local sort = function(a,b)
+        local atab = type(a) == "table"
+        local btab = type(b) == "table"
+        if atab and btab then
+            return true
+        elseif atab then
+            return true
+
+        elseif btab then
+            return false
+        else       
+            return a < b
+        end
+    end
+
+    if type(tab) ~= "table" then
+        return tab
+    elseif tab[1] ~= nil then
+        local arr = {}
+        for i, v in ipairs(tab) do 
+            arr[i] = zpm.util.sortTable( v )
+        end
+        table.sort(arr, sort)
+        return arr
+    else
+        local arr = {}
+        for k, v in pairs(tab) do 
+            table.insert(arr, { k, zpm.util.sortTable( v )} )
+        end
+        table.sort(arr, sort)
+        return arr
+    end
 end
 
 function zpm.util.compare( t1, t2 )

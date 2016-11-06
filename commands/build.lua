@@ -123,7 +123,7 @@ function zpm.build.commands.uses( proj )
                 table.insert( zpm.build._currentDependency.projects[cname].packages, package )
             end
         else
-            local name = zpm.build.getProjectName( p, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
+            local name = zpm.build.getProjectName( p, zpm.build._currentDependency.version, zpm.build._currentDependency.options )
 
             if table.contains( zpm.build._currentDependency.projects[cname].uses, name ) == false then
                 table.insert( zpm.build._currentDependency.projects[cname].uses, name )
@@ -134,7 +134,7 @@ end
 
 function zpm.build.rcommands.project( proj )
 
-    local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.fullName, zpm.build._currentDependency.version )
+    local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.version, zpm.build._currentDependency.options )
     project( name )
 
     -- always touch just in case
@@ -171,7 +171,7 @@ function zpm.build.rcommands.dependson( depdson )
     for _, p in ipairs(depdson) do
             
         local dep = zpm.build._currentDependency
-        dependson( zpm.build.getProjectName( p, dep.fullName, dep.version ) )
+        dependson( zpm.build.getProjectName( p, dep.version, dep.options ) )
     end
 end
 

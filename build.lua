@@ -149,13 +149,59 @@ function zpm.build.getEnv()
     return env
 end
 
+
+zpm.build._buildCache = {}
+function zpm.build.buildDependency( dep ) 
+    -- memoisation
+    local nm = zpm.util.djb2( dep.fullName .. zpm.util.hashTable(package.options) )
+    if zpm.build._buildCache[nm] ~= nil then
+        return nil
+    end
+    zpm.build._buildCache[nm] = {}
+
+    if dep.build ~= nil then
+        
+        zpm.build.setCursor( dep )
+        
+        zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})        
+
+        zpm.build._currentDependency = dep
+        zpm.build.resetCursor()
+
+        for p, conf in pairs( dep.projects ) do
+
+            if conf.uses ~= nil then
+                for _, uses in ipairs( conf.uses ) do
+                    if conf.export ~= nil then
+                        print(p)
+                        project( p )                                
+
+                        if dep.projects[uses].kind == "StaticLib" then
+                            links( uses )
+                        end
+
+                        dep.projects[uses].export()
+                    end
+                end
+            end
+
+            if conf.packages ~= nil then
+                for _, package in ipairs( conf.packages ) do
+                    zpm.useProject( package )
+                end
+            end
+        end
+    end   
+end
+
 function zpm.build.buildPackage( package )
 
+    -- no point in executing this if there are no dependencies
     if package.dependencies == nil then
         return nil
     end
 
-    if  #package.dependencies > 0 then
+    if #package.dependencies > 0 then
 
         for _, dep in ipairs( package.dependencies ) do
 
@@ -168,44 +214,14 @@ function zpm.build.buildPackage( package )
                     
     for _, dep in ipairs( package.dependencies ) do
     
-        if dep.build ~= nil then
-        
-            zpm.build.setCursor( dep )
-            
-            zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})        
-
-            zpm.build._currentDependency = dep
-            zpm.build.resetCursor()
-
-            for p, conf in pairs( dep.projects ) do
-
-                if conf.uses ~= nil then
-                    for _, uses in ipairs( conf.uses ) do
-                        if conf.export ~= nil then
-                            project( p )                                
-
-                            if dep.projects[uses].kind == "StaticLib" then
-                                links( uses )
-                            end
-
-                            dep.projects[uses].export()
-                        end
-                    end
-                end
-
-                if conf.packages ~= nil then
-                    for _, package in ipairs( conf.packages ) do
-                        zpm.useProject( package )
-                    end
-                end
-            end
-        end                
+        zpm.build.buildDependency( dep ) 
+                     
     end
 end
 
-function zpm.build.getProjectName( project, name, version )
-
-    return string.gsub( string.format( "%s-%s", project, version ), "@", "" )
+function zpm.build.getProjectName( name, version, options )
+    print(name, version)
+    return string.gsub( string.format( "%s-%s-%s", name, version, zpm.util.hashTable(options) ), "@", "" )
     
 end
 
