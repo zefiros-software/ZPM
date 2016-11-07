@@ -173,7 +173,6 @@ function zpm.build.buildDependency( dep )
             if conf.uses ~= nil then
                 for _, uses in ipairs( conf.uses ) do
                     if conf.export ~= nil then
-                        print(p)
                         project( p )                                
 
                         if dep.projects[uses].kind == "StaticLib" then

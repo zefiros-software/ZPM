@@ -119,7 +119,7 @@ function zpm.util.sortTable( tab )
         if atab and btab then
             return true
         elseif atab then
-            return true
+            return false
 
         elseif btab then
             return false
@@ -140,7 +140,7 @@ function zpm.util.sortTable( tab )
     else
         local arr = {}
         for k, v in pairs(tab) do 
-            table.insert(arr, { k, zpm.util.sortTable( v )} )
+            arr[k] = zpm.util.sortTable( v )
         end
         table.sort(arr, sort)
         return arr
