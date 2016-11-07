@@ -198,7 +198,7 @@ end
 
 function zpm.util.getRepoDir( name, repository )
     repository = repository or ""
-    return name .. "-" .. zpm.util.djb2( repository )
+    return name .. "-" .. string.sha1( repository ):sub( -5 )
 end
 
 function zpm.util.readAll( file )
