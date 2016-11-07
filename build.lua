@@ -220,7 +220,6 @@ function zpm.build.buildPackage( package )
 end
 
 function zpm.build.getProjectName( name, version, options )
-    print(name, version)
     return string.gsub( string.format( "%s-%s-%s", name, version, zpm.util.hashTable(options) ), "@", "" )
     
 end
