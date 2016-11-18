@@ -273,6 +273,7 @@ function zpm.install.setupSystem()
 
     zpm.install.writePremakeSystem()
     
+    local folder = zpm.install.getInstallDir()
     local system = path.join( folder, "premake-system.lua" )
     if os.isfile( system ) then
         dofile( system  )
