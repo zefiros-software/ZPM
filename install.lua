@@ -260,6 +260,13 @@ if _ACTION ~= "update-bootstrap" and
     end
     
     zpm = require( "zpm" )
+
+    if  _ACTION ~= "install-zpm" then
+        if zpm.__isLoaded == nil then
+            zpm.onLoad()
+            zpm.__isLoaded = true
+        end
+    end
 else    
     _MAIN_SCRIPT = "."
 end
