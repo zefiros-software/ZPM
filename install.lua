@@ -173,7 +173,7 @@ function zpm.install.initialise()
     
 end
 
-function zpm.install.setupSystem()
+function zpm.install.writePremakeSystem()
 
     local folder = zpm.install.getInstallDir()
 
@@ -260,13 +260,6 @@ if _ACTION ~= "update-bootstrap" and
     end
     
     zpm = require( "zpm" )
-    
-    if  _ACTION ~= "install-zpm" then
-        if zpm.__isLoaded == nil then
-            zpm.onLoad()
-            zpm.__isLoaded = true
-        end
-    end
 else    
     _MAIN_SCRIPT = "."
 end
@@ -274,6 +267,11 @@ end
 ]] )
 
     file:close()
+end
+
+function zpm.install.setupSystem()
+
+    zpm.install.writePremakeSystem()
     
     dofile( path.join( folder, "premake-system.lua" ) )
     
@@ -418,6 +416,8 @@ function zpm.install.updatePremake( checkOnly, verbose )
     if zpm.install.updatedPremake then
         return nil
     end
+
+    zpm.install.writePremakeSystem()
 
     verbose = verbose or false
     

@@ -101,9 +101,29 @@ premake.override(_G, "project", function( base, proj )
         workspace()     
         startproject(proj)
         base(val.name)
+    end    
+
+    if proj ~= nil and zpm.build._isRoot then
+        if zpm.packages.root.projects == nil then
+            zpm.packages.root.projects = {}
+        end
+
+        if zpm.packages.root.projects[val.name] == nil then
+            zpm.packages.root.projects[val.name] = {}
+        end
     end
 
     return val
+end)
+
+premake.override(_G, "kind", function( base, knd )    
+    
+    base(knd)    
+    if zpm.build._isRoot then
+
+        local name = project().name
+        zpm.packages.root.projects[name].kind = knd
+    end
 end)
 
 function zpm.useProject( proj )
@@ -152,23 +172,62 @@ function zpm.uses( projects )
     if type( projects ) ~= "table" then
         projects = { projects }
     end
-    
-    for _, project in ipairs( projects ) do
-        proj = zpm.build.findRootProject( project )
-    
-        zpm.useProject( proj )
+
+    local cname = project().name
+
+    if zpm.packages.root.projects == nil then
+        zpm.packages.root.projects = {}
     end
+    
+    if zpm.packages.root.projects[cname] == nil then
+        zpm.packages.root.projects[cname]  = {}
+    end
+
+    if zpm.packages.root.projects[cname].uses == nil then
+        zpm.packages.root.projects[cname].uses = {}
+    end
+    
+    for _, projecName in ipairs( projects ) do
+        proj = zpm.build.findRootProject( projecName )
+
+        zpm.useProject( proj )
+
+        if zpm.packages.root.projects[cname].packages == nil then
+            zpm.packages.root.projects[cname].packages = {}
+        end
+
+        if table.contains( zpm.packages.root.projects[cname].packages, proj ) == false then
+            table.insert( zpm.packages.root.projects[cname].packages, proj )
+        end
+    end
+end
+
+function zpm.export( commands )
+
+    local name = project().name
+        
+    local parent = zpm.packages.root.projects[name].export
+    zpm.packages.root.projects[name].export = function()
+
+        if parent ~= nil then
+            parent()
+        end
+        
+        loadstring( commands )()
+    end
+
+    loadstring( commands )()
 end
 
 function zpm.buildLibraries()
 
     zpm.build._isBuilding = true
+    zpm.build._isRoot = false   
 
     local curFlter = premake.configset.getFilter(premake.api.scope.current)
     zpm.build._currentWorkspace = workspace().name
 
     filter {}
-    group( string.format( "Extern/%s", zpm.build._currentWorkspace ) )    
 
     zpm.build.buildPackage( zpm.packages.root )
     
@@ -178,6 +237,7 @@ function zpm.buildLibraries()
 
     workspace()
     zpm.build._isBuilding = false
+    zpm.build._isRoot = true
 end
 
 

@@ -34,6 +34,11 @@ zpm.build._currentDependency = nil
 zpm.build._currentProjects = nil
 zpm.build._currentBuild = nil
 zpm.build._isBuilding = false
+zpm.build._isRoot = true
+
+function zpm.build.extendEnv( env )
+    return env
+end
 
 function zpm.build.getEnv()
 
@@ -71,6 +76,8 @@ function zpm.build.getEnv()
         _MAIN_SCRIPT_DIR = _MAIN_SCRIPT_DIR
         
     }
+
+    env = zpm.build.extendEnv( env )
 
     for name, func in pairs( zpm.build.commands ) do
         env.zpm[ name ] = function( ... )
@@ -151,6 +158,7 @@ end
 
 
 zpm.build._buildCache = {}
+zpm.build._flat = {}
 function zpm.build.buildDependency( dep ) 
     -- memoisation
     local nm = zpm.util.djb2( dep.fullName .. zpm.util.hashTable(package.options) )
@@ -161,8 +169,10 @@ function zpm.build.buildDependency( dep )
 
     if dep.build ~= nil then
         
-        zpm.build.setCursor( dep )
+        zpm.build.setCursor( dep )        
         
+        group( string.format( "Extern/%s", zpm.build._currentDependency.fullName ) )   
+
         zpm.sandbox.run( dep.build, {env = zpm.build.getEnv(), quota = false})        
 
         zpm.build._currentDependency = dep
@@ -170,6 +180,10 @@ function zpm.build.buildDependency( dep )
 
         for p, conf in pairs( dep.projects ) do
 
+            zpm.build._flat[p] = {
+                dependency = dep,
+                project = p
+            }
             if conf.uses ~= nil then
                 for _, uses in ipairs( conf.uses ) do
                     if conf.export ~= nil then
@@ -189,8 +203,13 @@ function zpm.build.buildDependency( dep )
                     zpm.useProject( package )
                 end
             end
+
+            zpm.build.buildConfiguration( p, conf, dep )
         end
     end   
+end
+
+function zpm.build.buildConfiguration( name, conf, dep )
 end
 
 function zpm.build.buildPackage( package )
@@ -219,8 +238,12 @@ function zpm.build.buildPackage( package )
 end
 
 function zpm.build.getProjectName( name, version, options )
+
+    if version == "LOCAL" then
+        return string.format( "%s", name )
+    end
+
     return string.gsub( string.format( "%s-%s-%s", name, version, zpm.util.hashTable(options) ), "@", "" )
-    
 end
 
 function zpm.build.findRootProject( name )
@@ -281,8 +304,8 @@ function zpm.build.setCursor( dep )
        
     zpm.build._oldPath = os.getcwd() 
     zpm.build._currentExportPath = dep.exportPath
-    zpm.build._currentTargetPath = path.join( zpm.build._currentExportPath, "extern/bin" )
-    zpm.build._currentObjPath = path.join( zpm.build._currentExportPath, "extern/obj" )
+    zpm.build._currentTargetPath = path.join(zpm.install.getExternDirectory(), "@bin" ) -- @ prevents from conflicts with zpm folders
+    zpm.build._currentObjPath = path.join( zpm.install.getExternDirectory(), "@obj", dep.fullName )
     zpm.build._currentDependency = dep
     zpm.build._currentProjects = dep.build
 

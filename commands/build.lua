@@ -135,6 +135,7 @@ end
 function zpm.build.rcommands.project( proj )
 
     local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.version, zpm.build._currentDependency.options )
+
     project( name )
 
     -- always touch just in case
@@ -147,7 +148,7 @@ function zpm.build.rcommands.project( proj )
         files(dummyFile)
     --end
 
-    location( zpm.install.getExternDirectory() )
+    location( zpm.build._currentExportPath )
     targetdir( zpm.build._currentTargetPath )
     objdir( zpm.build._currentObjPath )
     warnings "Off"

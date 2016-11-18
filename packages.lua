@@ -159,7 +159,7 @@ function zpm.packages.load()
             file:close()    
         end
         
-        local ok, root = pcall( zpm.packages.loadFile, package, true, "FILE", nil, zpm.packages.root, false ) 
+        local ok, root = pcall( zpm.packages.loadFile, package, true, "LOCAL", nil, zpm.packages.root, false ) 
         
         if ok then
             zpm.packages.root = root
@@ -319,7 +319,7 @@ function zpm.packages.loadPackage( depPath, buildPath, dependency, vendor, name,
         zpm.assert( ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!", 
                         vendor, name, dependency.version, dependency.name )
     else
-        version = "FILE"
+        version = "LOCAL"
         expDir = buildPath
         alreadyInstalled = false
 
@@ -359,79 +359,73 @@ function zpm.packages.loadFile( packageFile, isRoot, version, pname, root, alrea
     local vendor = pak[1]
     
     --printf( "Loading package '%s/%s'...", vendor, name )
+
+    local mods = lpackage.modules ~= nil and lpackage.modules or {}
+
+    if lpackage.dev ~= nil and lpackage.dev.modules ~= nil then
+        mods = zpm.util.concat( mods, lpackage.dev.modules )
+    end
+
+    zpm.packages.loadModules( mods )
+
+    lpackage = zpm.packages.preProcess(lpackage)
     root = zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alreadyInstalled )
+    root = zpm.packages.postProcess(root)
+
     root = zpm.packages.resolveDependencies( root, vendor, name, path.getdirectory( packageFile ) )
-    
     --printf( "Resolved package dependencies '%s/%s'...", vendor, name )
 
     return root
+end
+
+function zpm.packages.preProcess( lpackage )
+    return lpackage
+end
+
+function zpm.packages.postProcess( lpackage )
+    return lpackage
+end
+
+function zpm.packages.extendDev( dev )
+    return dev
+end
+
+function zpm.packages.loadModules( modules )
+    if modules == nil then
+        return nil
+    end
+
+    for _, m in ipairs(modules) do
+        if type(m) == "table" then
+            for n, v in pairs(m) do
+                require( n, v )
+            end
+        end
+    end
 end
 
 function zpm.packages.storePackage( isRoot, vendor, name, version, lpackage, alreadyInstalled )
 
     if isRoot then            
         if lpackage.dev ~= nil then
-            
-            if lpackage.dev.assets ~= nil then
+            local move = zpm.packages.extendDev( {"assets", "settings", "options", "requires", "modules", "install",} )
+            for _, m in ipairs(move) do
 
-                if lpackage.assets == nil then
-                    lpackage.assets = {}
+                if lpackage.dev[m] ~= nil then
+
+                    if lpackage[m] == nil then
+                        lpackage[m] = {}
+                    end
+
+                    lpackage[m] = zpm.util.concat( lpackage[m], lpackage.dev[m] )
                 end
 
-                lpackage.assets = zpm.util.concat( lpackage.assets, lpackage.dev.assets )
-            end
-            
-            if lpackage.dev.settings ~= nil then
-
-                if lpackage.settings == nil then
-                    lpackage.settings = {}
-                end
-
-                lpackage.settings = zpm.util.concat( lpackage.settings, lpackage.dev.settings )
-            end
-            
-            if lpackage.dev.options ~= nil then
-
-                if lpackage.options == nil then
-                    lpackage.options = {}
-                end
-
-                lpackage.options = zpm.util.concat( lpackage.options, lpackage.dev.options )
-            end
-            
-            if lpackage.dev.requires ~= nil then
-        
-                if lpackage.requires == nil then
-                    lpackage.requires = {}
-                end
-
-                lpackage.requires = zpm.util.concat( lpackage.requires, lpackage.dev.requires )
-            end
-            
-            if lpackage.dev.modules ~= nil then
-            
-                if lpackage.modules == nil then
-                    lpackage.modules = {}
-                end
-
-                lpackage.modules = zpm.util.concat( lpackage.modules, lpackage.dev.modules )
-            end
-
-            if lpackage.dev.install ~= nil then                
-            
-                if lpackage.install == nil then
-                    lpackage.install = {}
-                else                
-                    lpackage.install = { lpackage.install }
-                end
-
-                lpackage.install = zpm.util.concat( lpackage.install, { lpackage.dev.install } )
             end
         end
         
     else    
     
-        zpm.assert( (zpm.packages.package[vendor] ~= nil and zpm.packages.package[vendor][name] ~= nil) or isRoot or version == "FILE", "Package '%s/%s' does not exist!", vendor, name )
+        zpm.assert( (zpm.packages.package[vendor] ~= nil and zpm.packages.package[vendor][name] ~= nil) or isRoot or version == "LOCAL", "Package '%s/%s' does not exist!", vendor, name )
         
     end   
 
@@ -648,24 +642,25 @@ function zpm.packages.checkDependencyValidity( package, isRoot )
     
         for _, mod in ipairs( package.modules ) do
         
-            zpm.assert( type(mod) == "string", "The 'module' supplied in '.package.json' 'modules' field is not a string!" )
-            
-            local mman = bootstrap.getModule( mod )
-            local mname = mman[2]
-            local mvendor = mman[1]
-            
-            zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '.package.json' 'modules' field!" )
-            zpm.assert( mname ~= nil, "No 'name' supplied in '.package.json' 'modules' field!" )
-
-            zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
-            zpm.assert( mname:len() <= 50, "'name' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
+            if type(mod) ~= "table" then
+                zpm.assert( type(mod) == "string", "The 'module' supplied in '.package.json' 'modules' field is not a string!" )
                 
-            zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
-            zpm.assert( mname:len() >= 2, "'name' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
-                                      
-            zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '.package.json' 'modules' field must be alpha numeric!" )
-            zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '.package.json' 'modules' field must be alpha numeric!" )
+                local mman = bootstrap.getModule( mod )
+                local mname = mman[2]
+                local mvendor = mman[1]
+                
+                zpm.assert( mvendor ~= nil, "No 'vendor' supplied in '.package.json' 'modules' field!" )
+                zpm.assert( mname ~= nil, "No 'name' supplied in '.package.json' 'modules' field!" )
 
+                zpm.assert( mvendor:len() <= 50, "'vendor' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
+                zpm.assert( mname:len() <= 50, "'name' supplied in '.package.json' 'modules' field exceeds maximum size of 50 characters!" )
+                    
+                zpm.assert( mvendor:len() >= 2, "'vendor' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
+                zpm.assert( mname:len() >= 2, "'name' supplied in '.package.json' 'modules' field must at least be 2 characters!" )
+                                        
+                zpm.assert( zpm.util.isAlphaNumeric( mvendor ), "The 'vendor' supplied in '.package.json' 'modules' field must be alpha numeric!" )
+                zpm.assert( zpm.util.isAlphaNumeric( mname ), "The 'name' supplied in '.package.json' 'modules' field must be alpha numeric!" )
+            end
         end
         
     end
