@@ -260,13 +260,6 @@ if _ACTION ~= "update-bootstrap" and
     end
     
     zpm = require( "zpm" )
-
-    if  _ACTION ~= "install-zpm" then
-        if zpm.__isLoaded == nil then
-            zpm.onLoad()
-            zpm.__isLoaded = true
-        end
-    end
 else    
     _MAIN_SCRIPT = "."
 end
@@ -280,11 +273,14 @@ function zpm.install.setupSystem()
 
     zpm.install.writePremakeSystem()
     
-    dofile( path.join( folder, "premake-system.lua" ) )
+    local system = path.join( folder, "premake-system.lua" )
+    if os.isfile( system ) then
+        dofile( system  )
     
-    premake.action.call( "update-bootstrap" )    
-    premake.action.call( "update-zpm" )
-    premake.action.call( "update-registry" )
+        premake.action.call( "update-bootstrap" )    
+        premake.action.call( "update-zpm" )
+        premake.action.call( "update-registry" )
+    end
 end
 
 function zpm.install.createSymLinks()
