@@ -123,7 +123,7 @@ end
 
 function zpm.git.clone( destination, url )
     
-    os.execute( string.format( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
+    os.execute( string.format( "git clone -b master -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
     zpm.git.share( destination )
     
 end
