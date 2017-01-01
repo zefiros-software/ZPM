@@ -53,7 +53,6 @@ function zpm.git.getHeadHash( destination )
 end
 
 function zpm.git.checkout( destination, version )
-    
     local current = os.getcwd()
     
     os.chdir( destination )
@@ -66,7 +65,6 @@ function zpm.git.checkout( destination, version )
     end
 
     os.chdir( current )
-
 end
 
 function zpm.git.checkoutVersion( destination, version )

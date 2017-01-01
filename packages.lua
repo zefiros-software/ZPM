@@ -498,7 +498,8 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
     -- normal resolve
     else
     
-        continue, version, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
+        continue, tag, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
+        version = tag.version
 
         if not alreadyInstalled and 
             (zpm.packages._extractCache[repo] == nil or (zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] == nil)) then
@@ -506,8 +507,7 @@ function zpm.packages.extract( vendorPath, repo, versions, dest )
             zpm.packages._extractCache[repo] = {}
             zpm.packages._extractCache[repo][version] = {}
             
-            --zpm.git.checkout( repo, "tags/" .. version )
-            zpm.git.archive( repo, zipFile, version )
+            zpm.git.archive( repo, zipFile, tag.tag )
         end      
         
     end
@@ -539,7 +539,7 @@ function zpm.packages.getBestVersion( repo, versions, zipFile, dest )
             
             local alreadyInstalled = os.isdir( folder )  
             
-            return true, gTag.version, folder, alreadyInstalled
+            return true, gTag, folder, alreadyInstalled
         end
     end
 
