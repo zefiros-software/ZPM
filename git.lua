@@ -55,7 +55,6 @@ function zpm.git.checkout(destination, version)
     end
 
     os.chdir(current)
-
 end
 
 function zpm.git.checkoutVersion(destination, version)
@@ -112,7 +111,7 @@ end
 
 function zpm.git.clone(destination, url)
 
-    os.execute(string.format("git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination))
+    os.execute( string.format( "git clone -b master -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
 
 end
 

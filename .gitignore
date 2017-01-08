@@ -3,3 +3,5 @@ docs/style/*
 test/local/obj/*
 *.suo
 *.user
+# ignore merge files
+*.orig
