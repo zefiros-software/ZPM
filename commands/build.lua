@@ -27,6 +27,10 @@ zpm.build.rcommands = {}
 
 function zpm.build.commands.extractdir( targets, prefix )
 
+    if _OPTIONS["ignore-updates"] then
+        return nil
+    end
+
     prefix = prefix or "./"
 
     if type(targets) ~= "table" then
@@ -40,32 +44,28 @@ function zpm.build.commands.extractdir( targets, prefix )
 
         if path.getabsolute(depPath):contains( path.getabsolute(zpm.build._currentDependency.dependencyPath) ) then
         
-            if not _OPTIONS["ignore-updates"] or not os.isdir( targetPath ) then
-            
-                for _, file in ipairs( os.matchfiles( path.join( depPath, "**" ) ) ) do
+            for _, file in ipairs( os.matchfiles( path.join( depPath, "**" ) ) ) do
 
-                    local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
+                local ftarget = path.join( targetPath, path.getrelative( depPath, file ) )
 
-                    if ftarget:contains( ".git" ) == false  then
-                        local ftargetDir = path.getdirectory( ftarget )            
+                if ftarget:contains( ".git" ) == false  then
+                    local ftargetDir = path.getdirectory( ftarget )            
                     
-                        if not os.isdir( ftargetDir ) then
-                            zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
-                        end
-                    
-                        if ftarget:len() <= 255 then
-                            if os.isfile( ftarget ) == false or zpm.util.isNewer( file, ftarget ) then
-                                os.copyfile( file, ftarget )
-                            end
-
-                            zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
-                        else
-                            warningf( "Failed to copy '%s' due to long path length!", ftarget )
-                        end
+                    if not os.isdir( ftargetDir ) then
+                        zpm.assert( os.mkdir( ftargetDir ), "Could not create directory '%s'!", ftargetDir )
                     end
-                end 
-            
-            end
+                    
+                    if ftarget:len() <= 255 then
+                        if os.isfile( ftarget ) == false or zpm.util.isNewer( file, ftarget ) then
+                            os.copyfile( file, ftarget )
+                        end
+
+                        zpm.assert( os.isfile(ftarget), "Could not make file '%s'!", ftarget )
+                    else
+                        warningf( "Failed to copy '%s' due to long path length!", ftarget )
+                    end
+                end
+            end 
         end
     end
 

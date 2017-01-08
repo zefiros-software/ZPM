@@ -507,7 +507,8 @@ function zpm.packages.extract(vendorPath, repo, tpe, versions, dest, dependency)
             version = tag.version
 
             if not alreadyInstalled and
-                (zpm.packages._extractCache[repo] == nil or(zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] == nil)) then
+                (zpm.packages._extractCache[repo] == nil or 
+                    (zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] == nil)) then
 
                 zpm.packages._extractCache[repo] = { }
                 zpm.packages._extractCache[repo][version] = { }
