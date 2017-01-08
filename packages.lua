@@ -323,7 +323,7 @@ function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, n
         alreadyInstalled = false
 
         -- make sure it exists in dictionary
-        zpm.packages.prepareDict(vendor, name, dependency.repository, dependency.shadowRepository, dependency.isShadow)
+        zpm.packages.prepareDict(tpe, vendor, name, dependency.repository, dependency.shadowRepository, dependency.isShadow)
     end
 
     local depPak = path.join(buildPath, zpm.install.packages.fileName)
