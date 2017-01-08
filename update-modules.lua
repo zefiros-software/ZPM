@@ -22,15 +22,14 @@
 -- @endcond
 --]]
 
+newaction {
+    trigger     = "update-modules",
+    shortname   = "Updates all modules",
+    description = "Updates all the currently installed modules",
+    execute = function ()
 
-function zpm.assert(pred, str, ...)
-    if next( { ...} ) ~= nil then
-        assert(pred, zpm.colors.error .. string.format(str, ...) .. "\n" .. debug.traceback() .. zpm.colors.clear)
-    else
-        if str ~= nil then
-            assert(pred, zpm.colors.error .. str .. "\n" .. debug.traceback() .. zpm.colors.clear)
-        else
-            assert(pred)
-        end
+        zpm.install.updatePremake( true )
+        
+        zpm.modules.updateModules()
     end
-end
+}

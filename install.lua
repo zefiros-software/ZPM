@@ -23,154 +23,126 @@
 --]]
 
 
-zpm.install = {}
-
-zpm.install.directory = zpm.config.install.directory
-zpm.install.minReqVersion = zpm.config.install.minReqVersion
-zpm.install.repository = zpm.config.install.repository
-
-zpm.install.modules = {}
-zpm.install.modules.directory = zpm.config.install.modules.directory
-zpm.install.modules.fileName = zpm.config.install.modules.fileName
-
-zpm.install.bootstrap = {}
-zpm.install.bootstrap.fileName = zpm.config.install.bootstrap.fileName
-zpm.install.bootstrap.repository = zpm.config.install.bootstrap.repository
-zpm.install.bootstrap.directory = zpm.config.install.bootstrap.directory
-
-zpm.install.registry = {}
-zpm.install.registry.fileName = zpm.config.install.registry.fileName
-zpm.install.registry.repository = zpm.config.install.registry.repository
-zpm.install.registry.directory = zpm.config.install.registry.directory
-zpm.install.registry.directories = zpm.config.install.registry.directories
-zpm.install.registry.assets = zpm.config.install.registry.assets
-zpm.install.registry.modules = zpm.config.install.registry.modules
-zpm.install.registry.manifest = zpm.config.install.registry.manifest
-zpm.install.registry.registries = zpm.config.install.registry.registries
-zpm.install.registry.build = zpm.config.install.registry.build
-
-zpm.install.manifests = {}
+zpm.install = {
+    directory = zpm.config.install.directory,
+    minReqVersion = zpm.config.install.minReqVersion,
+    repository = zpm.config.install.repository,
+    modules =
+    {
+        directory = zpm.config.install.modules.directory,
+        fileName = zpm.config.install.modules.fileName
+    },
+    bootstrap =
+    {
+        fileName = zpm.config.install.bootstrap.fileName,
+        repository = zpm.config.install.bootstrap.repository,
+        directory = zpm.config.install.bootstrap.directory
+    },
+    registry =
+    {
+        fileName = zpm.config.install.registry.fileName,
+        repository = zpm.config.install.registry.repository,
+        directory = zpm.config.install.registry.directory,
+        directories = zpm.config.install.registry.directories,
+        assets = zpm.config.install.registry.assets,
+        modules = zpm.config.install.registry.modules,
+        manifest = zpm.config.install.registry.manifest,
+        registries = zpm.config.install.registry.registries,
+        build = zpm.config.install.registry.build
+    },
+    manifests = {
+        manifest = zpm.config.install.manifests.manifest,
+        buildFile = zpm.config.install.manifests.buildFile,
+        extensions = zpm.config.install.manifests.extensions
+    },
+    packages =
+    {
+        fileName = zpm.config.install.packages.fileName
+    },
+    extern =
+    {
+        directory = zpm.config.install.extern.directory
+    }
+}
+-- patch settings with the default settings defined for manifest loading
 zpm.install.manifests.fileName = zpm.config.install.manifests.fileName
-
-zpm.install.packages = {}
-zpm.install.packages.fileName = zpm.config.install.packages.fileName
-
-zpm.install.assets = {}
-zpm.install.assets.fileName = zpm.config.install.assets.fileName
-zpm.install.assets.directory = zpm.config.install.assets.directory
-
-zpm.install.build = {}
-zpm.install.build.fileName = zpm.config.install.build.fileName
-
-zpm.install.extern = {}
-zpm.install.extern.directory = zpm.config.install.extern.directory
+zpm.install.manifests.buildFile = zpm.config.install.manifests.buildFile
 
 function zpm.install.getModulesDir()
     return bootstrap.directories[1]
 end
 
 function zpm.install.getMainRegistry()
-    return path.join( zpm.install.getMainRegistryDir(), zpm.install.registry.fileName )
+    return path.join(zpm.install.getMainRegistryDir(), zpm.install.registry.fileName)
 end
 
 function zpm.install.getMainRegistryDir()
-
-    if path.getabsolute( zpm.install.registry.directory ) == zpm.install.registry.directory then
-        return zpm.install.registry.directory
-    end
-
-    return path.join( zpm.install.getSharedInstallDir(), zpm.install.registry.directory )
+    return zpm.util.getRelInstalllOrAbsDir(zpm.install.registry.directory, zpm.install.getSharedInstallDir())
 end
 
-function zpm.install.getExternDirectory()
-
-    if path.getabsolute( zpm.install.extern.directory ) == zpm.install.extern.directory then
-        return zpm.install.extern.directory
-    end
-
-    return path.join( _MAIN_SCRIPT_DIR, zpm.install.extern.directory )   
-end
-
-function zpm.install.getAssetsDir()
-
-    if path.getabsolute( zpm.install.assets.directory ) == zpm.install.assets.directory then
-        return zpm.install.assets.directory
-    end
-
-    return path.join( _MAIN_SCRIPT_DIR, zpm.install.assets.directory )   
+function zpm.install.getExternDirectory()    
+    return zpm.util.getRelInstalllOrAbsDir(zpm.install.extern.directory, _MAIN_SCRIPT_DIR)
 end
 
 function zpm.install.getDataDir()
 
     return zpm.install.getSharedDataDir()
-    --[[
-    local osStr = os.get()
-    
-    if osStr == "windows" then
-        return os.getenv( "APPDATA" )
-    elseif osStr == "linux" then
-        return path.join( os.getenv( "HOME" ), ".local/share/" )  
-    elseif osStr == "macosx" then 
-        return "~/Library/Application Support/"
-    else
-        zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
-    end
-    ]]
+
 end
 
 function zpm.install.getSharedDataDir()
 
-    if os.getenv( "ZPM_SHARED_DIR" ) ~= "" and os.getenv( "ZPM_SHARED_DIR" ) ~= nil then
-        return os.getenv( "ZPM_SHARED_DIR" )
+    if os.getenv("ZPM_SHARED_DIR") ~= "" and os.getenv("ZPM_SHARED_DIR") ~= nil then
+        return os.getenv("ZPM_SHARED_DIR")
     end
-    
+
     local osStr = os.get()
-    
+
     if osStr == "windows" then
-        return os.getenv( "ALLUSERSPROFILE" )
+        return os.getenv("ALLUSERSPROFILE")
     elseif osStr == "linux" then
-        return "/usr/local/"  
-    elseif osStr == "macosx" then 
+        return "/usr/local/"
+    elseif osStr == "macosx" then
         return "/usr/local/"
     else
-        zpm.assert( false, "Current platform '%s' is currently not supported!", osStr )
+        zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
     end
 
 end
 
 function zpm.install.getInstallDir()
-    return path.join( zpm.install.getDataDir(), zpm.install.directory )
+    return path.join(zpm.install.getDataDir(), zpm.install.directory)
 end
 
 function zpm.install.getSharedInstallDir()
-    return path.join( zpm.install.getSharedDataDir(), zpm.install.directory )
+    return path.join(zpm.install.getSharedDataDir(), zpm.install.directory)
 end
 
-function zpm.install.getPremakeCmd( version )
+function zpm.install.getPremakeCmd(version)
 
     local premakeCmd = "premake"
-    if version then 
-        premakeCmd = string.format( "premake%s", version )
+    if version then
+        premakeCmd = string.format("premake%s", version)
     end
-    
+
     if os.get() == "windows" then
         premakeCmd = premakeCmd .. ".exe"
     end
-    
+
     return premakeCmd
 end
 
 function zpm.install.initialise()
 
     local folder = zpm.install.getInstallDir()
-    
-    if not os.isdir( folder ) then
 
-        printf( "Creating installation directories..." )
-        
-        zpm.assert( os.mkdir( folder ), "Cannot create instalation folder '%s'!", folder )
+    if not os.isdir(folder) then
+
+        printf("Creating installation directories...")
+
+        zpm.assert(os.mkdir(folder), "Cannot create instalation folder '%s'!", folder)
     end
-    
+
 end
 
 function zpm.install.writePremakeSystem()

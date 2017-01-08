@@ -18,14 +18,21 @@
             "directory": "registry",
             "directories": "registries",
             "fileName": ".registries.json",
-            "assets": ".assets.json",
             "modules": ".modules.json",
-            "manifest": ".manifest.json",
             "registries": ".registries.json",
             "build": ".build.json"
         },        
         "manifests": {
-            "fileName": ".manifest.json"
+            "manifest": ".manifest.json",
+            "buildFile": ".build.lua",
+            "extensions": {
+                "assets": {
+                    "directory": "assets",
+                    "manifest": ".assets.json",
+                    "fileName": ".assets.lua",
+                    "defaultExtract": false
+                }
+            }
         },
         "modules": {
             "fileName": ".modules.json",
@@ -33,13 +40,6 @@
         },
         "packages": {
             "fileName": ".package.json"
-        },
-        "assets": {
-            "fileName": ".assets.lua",
-            "directory": "assets"
-        },
-        "build": {
-            "fileName": ".build.lua"
         },
         "extern": {
             "directory": "extern"  

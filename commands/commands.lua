@@ -22,15 +22,5 @@
 -- @endcond
 --]]
 
-
-function zpm.assert(pred, str, ...)
-    if next( { ...} ) ~= nil then
-        assert(pred, zpm.colors.error .. string.format(str, ...) .. "\n" .. debug.traceback() .. zpm.colors.clear)
-    else
-        if str ~= nil then
-            assert(pred, zpm.colors.error .. str .. "\n" .. debug.traceback() .. zpm.colors.clear)
-        else
-            assert(pred)
-        end
-    end
-end
+dofile("assets.lua")
+dofile("build.lua")

@@ -22,15 +22,32 @@
 -- @endcond
 --]]
 
+newaction {
+    trigger = "install-zpm",
+    description = "Installs zpm-premake in path",
+    execute = function()
 
-function zpm.assert(pred, str, ...)
-    if next( { ...} ) ~= nil then
-        assert(pred, zpm.colors.error .. string.format(str, ...) .. "\n" .. debug.traceback() .. zpm.colors.clear)
-    else
-        if str ~= nil then
-            assert(pred, zpm.colors.error .. str .. "\n" .. debug.traceback() .. zpm.colors.clear)
-        else
-            assert(pred)
+        printf(zpm.colors.green .. zpm.colors.bright .. "Installing zpm-premake!")
+
+        if zpm.__isLoaded ~= true or zpm.__isLoaded == nil then
+            zpm.onLoad()
+            zpm.__isLoaded = true
         end
+
+        zpm.install.initialise()
+        zpm.install.setup()
+        zpm.install.installInPath()
+        zpm.install.setupSystem()
+
     end
-end
+}
+
+newaction {
+    trigger = "install-package",
+    description = "Installs all package dependencies",
+    execute = function()
+
+        zpm.packages.install()
+
+    end
+}

@@ -1,3 +1,26 @@
+--[[ @cond ___LICENSE___
+-- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+--
+-- @endcond
+--]]
 
 zpm.build.commands = {}
 zpm.build.rcommands = {}
@@ -46,24 +69,6 @@ function zpm.build.commands.extractdir( targets, prefix )
         end
     end
 
-end
-
-function zpm.build.commands.option( opt )
-
-    zpm.assert(zpm.build._currentDependency.options ~= nil, "Option '%s' does not exist!", opt)
-    zpm.assert(zpm.build._currentDependency.options[opt] ~= nil, "Option '%s' does not exist!", opt)
-    return zpm.build._currentDependency.options[opt]
-end
-
-function zpm.build.commands.hasSetting( opt )
-    return zpm.config.settings ~= nil and zpm.config.settings[opt] ~= nil
-end
-
-function zpm.build.commands.setting( opt )
-
-    zpm.assert(zpm.config.settings ~= nil, "Setting '%s' does not exist!", opt)
-    zpm.assert(zpm.config.settings[opt] ~= nil, "Setting '%s' does not exist!", opt)
-    return zpm.config.settings[opt]
 end
 
 function zpm.build.commands.export( commands )
@@ -132,6 +137,10 @@ function zpm.build.commands.uses( proj )
     end
 end
 
+function zpm.build.commands.isDev()
+    return zpm.isDev()
+end
+
 function zpm.build.rcommands.project( proj )
 
     local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.version, zpm.build._currentDependency.options )
@@ -143,7 +152,7 @@ function zpm.build.rcommands.project( proj )
         dummyFile = path.join( zpm.install.getExternDirectory(), "dummy.cpp" )
 
         file = io.open( dummyFile, "w")
-        file:write( string.format("typedef int Garbage; typedef int Bullshit; Garbage FuckYouCompilers%s( Bullshit, Bullshit ){  return 0; }", string.sha1(dummyFile) ) )
+        file:write( string.format("void Dummy%s(){  return; }", string.sha1(dummyFile) ) )
 
         files(dummyFile)
     --end

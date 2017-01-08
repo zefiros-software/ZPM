@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Koen Visscher, Paul Visscher and individual contributors.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -22,15 +22,6 @@
 -- @endcond
 --]]
 
-
-function zpm.assert(pred, str, ...)
-    if next( { ...} ) ~= nil then
-        assert(pred, zpm.colors.error .. string.format(str, ...) .. "\n" .. debug.traceback() .. zpm.colors.clear)
-    else
-        if str ~= nil then
-            assert(pred, zpm.colors.error .. str .. "\n" .. debug.traceback() .. zpm.colors.clear)
-        else
-            assert(pred)
-        end
-    end
+function zpm.packages.process.assets(dependency, vendorPath, repo, versions, dest)
+    zpm.assets.executeCommands(path.join(repo, zpm.install.manifests.extensions.assets.fileName ), repo, folder )
 end

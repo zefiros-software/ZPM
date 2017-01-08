@@ -24,63 +24,52 @@
 
 
 -- Git
-zpm.git = {}
+zpm.git = { }
 
-zpm.git.lfs = {}
+zpm.git.lfs = { }
 
-function zpm.git.share( destination )
-    
+function zpm.git.getHeadHash(destination)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
 
-    --os.execute( "git config core.sharedRepository 0777" ) 
-    
-    os.chdir( current )
-end
+    os.chdir(destination)
 
-function zpm.git.getHeadHash( destination )
-    
-    local current = os.getcwd()
-    
-    os.chdir( destination )
+    local out = os.outputof("git rev-parse HEAD")
 
-    local out = os.outputof( "git rev-parse HEAD" )
-    
-    os.chdir( current )
+    os.chdir(current)
 
     return out
 end
 
-function zpm.git.checkout( destination, version )
-    
+function zpm.git.checkout(destination, version)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
 
-    local status, errorCode = os.outputof( "git status" )
-    
+    os.chdir(destination)
+
+    local status, errorCode = os.outputof("git status")
+
     if status:contains(version) == false then
-        printf( "Checkingout version %s", version )
-        os.execute( "git checkout -q -f -B " .. version ) 
+        printf("Checkingout version %s", version)
+        os.execute("git checkout -q -f -B " .. version)
     end
 
-    os.chdir( current )
+    os.chdir(current)
 
 end
 
-function zpm.git.checkoutVersion( destination, version )
-    
+function zpm.git.checkoutVersion(destination, version)
+
     if version == "@head" then
-        zpm.git.checkout( destination, "master" )
-    elseif version:gsub("#", "") ~= version then 
-        zpm.git.checkout( destination, version:gsub("#", "") )
+        zpm.git.checkout(destination, "master")
+    elseif version:gsub("#", "") ~= version then
+        zpm.git.checkout(destination, version:gsub("#", ""))
     else
-        zpm.git.checkout( destination, "tags/" .. version )
+        zpm.git.checkout(destination, "tags/" .. version)
     end
 end
 
-function zpm.git.pull( destination, url )
+function zpm.git.pull(destination, url)
 
     --[[if url:contains( "https://github.com" ) then
         local vendor, name = url:match( "https://github.com/(.*)/(.*).git" )
@@ -93,174 +82,172 @@ function zpm.git.pull( destination, url )
 
         end
     end]]
-    
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
 
-    if url ~= nil then        
-        os.execute( "git remote set-url origin " .. url  )
+    os.chdir(destination)
+
+    if url ~= nil then
+        os.execute("git remote set-url origin " .. url)
     end
-    
-    os.execute( "git fetch origin --tags -q -j 8" )
 
-    if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
+    os.execute("git fetch origin --tags -q -j 8")
 
-        os.execute( "git checkout -q ." )
-        os.execute( "git reset --hard origin/HEAD" )
-        os.execute( "git submodule update --init --recursive -j 8" )
-        os.execute( "git gc --auto" )
-    
-        os.chdir( current )
+    if os.outputof("git log HEAD..origin/master --oneline"):len() > 0 then
+
+        os.execute("git checkout -q .")
+        os.execute("git reset --hard origin/HEAD")
+        os.execute("git submodule update --init --recursive -j 8")
+        os.execute("git gc --auto")
+
+        os.chdir(current)
 
         return true
     end
-    
-    os.chdir( current )
-    
+
+    os.chdir(current)
+
     return false
 end
 
-function zpm.git.clone( destination, url )
-    
-    os.execute( string.format( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
-    zpm.git.share( destination )
-    
+function zpm.git.clone(destination, url)
+
+    os.execute(string.format("git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination))
+
 end
 
-function zpm.git.getTags( destination )
-    
+function zpm.git.getTags(destination)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
-    
-    local tagStr, errorCode = os.outputof( "git tag" )
-    local tags = {}
-    
-    for _, s in ipairs( tagStr:explode( "\n" ) ) do
-    
+
+    os.chdir(destination)
+
+    local tagStr, errorCode = os.outputof("git tag")
+    local tags = { }
+
+    for _, s in ipairs(tagStr:explode("\n")) do
+
         if s:len() > 0 then
-        
-            local version = s:match( "[.-]*([%d+%.]+.*)" )
-            if pcall( zpm.semver, version ) then
-                table.insert( tags, {
+
+            local version = s:match("[.-]*([%d+%.]+.*)")
+            if pcall(zpm.semver, version) then
+                table.insert(tags, {
                     version = version,
                     tag = s
                 } )
             else
-                
-                version = s:gsub("_", "%."):match( "[.-]*([%d+%.]+.*)" )
 
-                if pcall( zpm.semver, version ) then
-                    table.insert( tags, {
+                version = s:gsub("_", "%."):match("[.-]*([%d+%.]+.*)")
+
+                if pcall(zpm.semver, version) then
+                    table.insert(tags, {
                         version = version,
                         tag = s
                     } )
                 end
             end
         end
-	end   
-    
-    
-    table.sort( tags, function( t1, t2 )         
-        return bootstrap.semver( t1.version ) > bootstrap.semver( t2.version )
+    end
+
+
+    table.sort(tags, function(t1, t2)
+        return bootstrap.semver(t1.version) > bootstrap.semver(t2.version)
     end )
-    
-    os.chdir( current )  
-      
+
+    os.chdir(current)
+
     return tags
 end
 
-function zpm.git.archive( destination, output, tag )
-    
+function zpm.git.archive(destination, output, tag)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
-    
-    os.execute( "git archive --format=zip --output=" .. output .. " " .. tag )
-    
-    os.chdir( current )
+
+    os.chdir(destination)
+
+    os.execute("git archive --format=zip --output=" .. output .. " " .. tag)
+
+    os.chdir(current)
 end
 
-function zpm.git.cloneOrPull( destination, url )
+function zpm.git.cloneOrPull(destination, url)
 
-    if os.isdir( destination ) then
-        
+    if os.isdir(destination) then
+
         if not _OPTIONS["ignore-updates"] then
-            
-            return zpm.git.pull( destination, url )
+
+            return zpm.git.pull(destination, url)
         else
             return false
         end
     else
-        zpm.git.clone( destination, url )
+        zpm.git.clone(destination, url)
     end
 
     return true
 end
 
 
-function zpm.git.lfs.checkout( destination, checkout )
-    
+function zpm.git.lfs.checkout(destination, checkout)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
-    
-    os.execute( "git checkout -q -f -B " .. checkout )
-    os.execute( "git lfs checkout" )
-    os.execute( "git submodule update --init --recursive -j 8" )
-    
-    os.chdir( current )
+
+    os.chdir(destination)
+
+    os.execute("git checkout -q -f -B " .. checkout)
+    os.execute("git lfs checkout")
+    os.execute("git submodule update --init --recursive -j 8")
+
+    os.chdir(current)
 
 end
 
-function zpm.git.lfs.checkoutVersion( destination, version )
-    
+function zpm.git.lfs.checkoutVersion(destination, version)
+
     if version == "@head" then
-        zpm.git.lfs.checkout( destination, "master" )
-    elseif version:gsub("#", "") ~= version then 
-        zpm.git.lfs.checkout( destination, version:gsub("#", "") )
+        zpm.git.lfs.checkout(destination, "master")
+    elseif version:gsub("#", "") ~= version then
+        zpm.git.lfs.checkout(destination, version:gsub("#", ""))
     else
-        zpm.git.lfs.checkout( destination, "tags/" .. version )
+        zpm.git.lfs.checkout(destination, "tags/" .. version)
     end
 end
 
-function zpm.git.lfs.pull( destination, url )
-    
+function zpm.git.lfs.pull(destination, url)
+
     local current = os.getcwd()
-    
-    os.chdir( destination )
 
-    if url ~= nil then        
-        os.execute( "git remote set-url origin " .. url  )
-    end
-    
-    os.execute( "git fetch origin --tags -q -j 8" )
+    os.chdir(destination)
 
-    if os.outputof( "git log HEAD..origin/master --oneline" ):len() > 0 then    
-        os.execute( "git checkout -q ." )
-        os.execute( "git reset --hard origin/HEAD" )
-        os.execute( "git lfs pull origin master -q" )
-        os.execute( "git submodule update --init --recursive -j 8" )
+    if url ~= nil then
+        os.execute("git remote set-url origin " .. url)
     end
-    
-    os.chdir( current )
-    
+
+    os.execute("git fetch origin --tags -q -j 8")
+
+    if os.outputof("git log HEAD..origin/master --oneline"):len() > 0 then
+        os.execute("git checkout -q .")
+        os.execute("git reset --hard origin/HEAD")
+        os.execute("git lfs pull origin master -q")
+        os.execute("git submodule update --init --recursive -j 8")
+    end
+
+    os.chdir(current)
+
 end
 
-function zpm.git.lfs.clone( destination, url )
-    
-    os.execute( string.format( "git lfs clone \"%s\" \"%s\"", url, destination ) )
-    zpm.git.share( destination )
-    
+function zpm.git.lfs.clone(destination, url)
+
+    os.execute(string.format("git lfs clone \"%s\" \"%s\"", url, destination))
+
 end
 
-function zpm.git.lfs.cloneOrPull( destination, url )
+function zpm.git.lfs.cloneOrPull(destination, url)
 
-    if os.isdir( destination ) then
-        zpm.git.lfs.pull( destination, url )
-    
+    if os.isdir(destination) then
+        zpm.git.lfs.pull(destination, url)
+
     else
-        zpm.git.lfs.clone( destination, url )
+        zpm.git.lfs.clone(destination, url)
     end
 end

@@ -24,44 +24,47 @@
 
 
 -- Git
-zpm.config = {}
+zpm.config = { }
 zpm.config.fileName = ".config.json"
-zpm.config.settings = {}
+zpm.config.settings = { }
 
 function zpm.config.scriptPath()
-   local str = debug.getinfo(2, "S").source:sub(2)
-   return str:match("(.*/)")
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
 end
 
 function zpm.config.initialise()
-    
+
     -- inverse priority
-    zpm.config.loadFile( path.join( _PREMAKE_DIR, zpm.config.fileName ) ) -- private
+    zpm.config.loadFile(path.join(_PREMAKE_DIR, zpm.config.fileName))
+    -- private
 
-    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "../." .. zpm.config.fileName ) ) -- private
+    zpm.config.loadFile(path.join(_MAIN_SCRIPT_DIR, "../." .. zpm.config.fileName))
+    -- private
 
-    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, "." .. zpm.config.fileName ) ) -- private
+    zpm.config.loadFile(path.join(_MAIN_SCRIPT_DIR, "." .. zpm.config.fileName))
+    -- private
 
-    zpm.config.loadFile( path.join( _MAIN_SCRIPT_DIR, zpm.config.fileName ) )
+    zpm.config.loadFile(path.join(_MAIN_SCRIPT_DIR, zpm.config.fileName))
 
-    zpm.config.loadFile( path.join( zpm.config.scriptPath(), zpm.config.fileName ) )
+    zpm.config.loadFile(path.join(zpm.config.scriptPath(), zpm.config.fileName))
 end
 
-function zpm.config.loadFile( file )
+function zpm.config.loadFile(file)
 
-    if not os.isfile( file ) then
+    if not os.isfile(file) then
         return nil
     end
-    
-    local config = zpm.JSON:decode( zpm.util.readAll( file ) )
-    zpm.config = table.merge( config, zpm.config )
+
+    local config = zpm.JSON:decode(zpm.util.readAll(file))
+    zpm.config = table.merge(config, zpm.config)
 end
 
-function zpm.config.addSettings( settings )
+function zpm.config.addSettings(settings)
 
     if settings == nil then
         return nil
     end
-    
-    zpm.config.settings = table.merge( settings, zpm.config.settings )
+
+    zpm.config.settings = table.merge(settings, zpm.config.settings)
 end

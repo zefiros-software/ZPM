@@ -22,179 +22,173 @@
 -- @endcond
 --]]
 
-dofile( "action/install-module.lua" )
-dofile( "action/update-module.lua" )
-dofile( "action/update-modules.lua" )
-
 -- Modules
-zpm.modules = {}
-zpm.modules.modules = {}
---zpm.modules.search = zpm.bktree:new()
---zpm.modules.searchMaxDist = 0.6
+zpm.modules = { }
+zpm.modules.modules = { }
 
-function zpm.modules.suggestModule( vendor, name ) 
+function zpm.modules.suggestModule(vendor, name)
 
-    if zpm.modules.modules[ vendor ] == nil or zpm.modules.modules[ vendor ][ name ] == nil then
-    
-        local str = string.format( "%s/%s", vendor, name )
-        local suggest = zpm.modules.search:query( str, #str * ( 1 - zpm.modules.searchMaxDist ) )
-        
+    if zpm.modules.modules[vendor] == nil or zpm.modules.modules[vendor][name] == nil then
+
+        local str = string.format("%s/%s", vendor, name)
+        local suggest = zpm.modules.search:query(str, #str *(1 - zpm.modules.searchMaxDist))
+
         if #suggest > 0 then
-        
-            if not zpm.modules.isModuleInstalled( suggest[1].str ) then
-            
-                printf( zpm.colors.error .. "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name )
-                
-                printf( zpm.colors.green .. zpm.colors.bright .. "Did you mean module '%s' (y/N [enter])?", suggest[1].str )
-            
+
+            if not zpm.modules.isModuleInstalled(suggest[1].str) then
+
+                printf(zpm.colors.error .. "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
+
+                printf(zpm.colors.green .. zpm.colors.bright .. "Did you mean module '%s' (y/N [enter])?", suggest[1].str)
+
                 local answer = io.read()
                 if answer == "Y" or answer == "y" then
-                    return true, bootstrap.getModule( suggest[1].str )
+                    return true, bootstrap.getModule(suggest[1].str)
                 end
-                
+
             end
         else
-        
-            zpm.assert( zpm.modules.modules[ vendor ] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor )
-            zpm.assert( zpm.modules.modules[ vendor ][ name ] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name )
+
+            zpm.assert(zpm.modules.modules[vendor] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor)
+            zpm.assert(zpm.modules.modules[vendor][name] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
 
         end
-        
+
         return false, { vendor, name }
     end
-   
+
     return true, { vendor, name }
 end
 
-function zpm.modules.isModuleInstalled( vendor, name )
+function zpm.modules.isModuleInstalled(vendor, name)
 
     if name ~= nil then
-        
-        return os.isdir( path.join( zpm.install.getModulesDir(), path.join( vendor, name ) ) )
-    
+
+        return os.isdir(path.join(zpm.install.getModulesDir(), path.join(vendor, name)))
+
     end
-        
-    return os.isdir( path.join( zpm.install.getModulesDir(), vendor ) )
-    
+
+    return os.isdir(path.join(zpm.install.getModulesDir(), vendor))
+
 end
 
-function zpm.modules.requestModules( modules ) 
+function zpm.modules.requestModules(modules)
 
     if modules == nil then
         return nil
     end
 
-    for _, module in ipairs( modules ) do
-    
-        local pak = bootstrap.getModule( module )
+    for _, module in ipairs(modules) do
+
+        local pak = bootstrap.getModule(module)
         local name = pak[2]
-        local vendor = pak[1] 
-        
-        local ok, result, suggest = pcall( zpm.modules.suggestModule, vendor, name )
+        local vendor = pak[1]
+
+        local ok, result, suggest = pcall(zpm.modules.suggestModule, vendor, name)
         if ok and result then
-        
+
             vendor = suggest[1]
-            name = suggest[2]                          
-  
-            local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
-            
-            zpm.util.askModuleConfirmation( string.format( "Do you want to install or update module '%s/%s'?", vendor, name ),
-            function ()
-                local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
-                    
-                local head = path.join( modPath, "head" )
-                
-                zpm.modules.update( head, modPath, {vendor, name} )
-            end,
+            name = suggest[2]
+
+            local modPath = path.join(zpm.install.getModulesDir(), path.join(vendor, name))
+
+            zpm.util.askModuleConfirmation(string.format("Do you want to install or update module '%s/%s'?", vendor, name),
             function()
-            end)
+                local modPath = path.join(zpm.install.getModulesDir(), path.join(vendor, name))
+
+                local head = path.join(modPath, "head")
+
+                zpm.modules.update(head, modPath, { vendor, name })
+            end ,
+            function()
+            end )
         end
-    end 
+    end
 
 end
 
-function zpm.modules.installOrUpdateModules( modules ) 
+function zpm.modules.installOrUpdateModules(modules)
 
-    for _, module in ipairs( modules ) do
-    
-        local pak = bootstrap.getModule( module )
+    for _, module in ipairs(modules) do
+
+        local pak = bootstrap.getModule(module)
         local name = pak[2]
-        local vendor = pak[1] 
-        
-        zpm.assert( zpm.modules.modules[ vendor ] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor )
-        zpm.assert( zpm.modules.modules[ vendor ][ name ] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name )
-                
-        zpm.util.askModuleConfirmation( string.format( "Do you want to install or update module '%s/%s'?", vendor, name ),
-        function ()
-            local modPath = path.join( zpm.install.getModulesDir(), path.join( vendor, name ) )
-                
-            local head = path.join( modPath, "head" )
-            
-            zpm.modules.update( head, modPath, {vendor, name} )
-        end,
+        local vendor = pak[1]
+
+        zpm.assert(zpm.modules.modules[vendor] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor)
+        zpm.assert(zpm.modules.modules[vendor][name] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
+
+        zpm.util.askModuleConfirmation(string.format("Do you want to install or update module '%s/%s'?", vendor, name),
         function()
-        end)
-    end 
+            local modPath = path.join(zpm.install.getModulesDir(), path.join(vendor, name))
+
+            local head = path.join(modPath, "head")
+
+            zpm.modules.update(head, modPath, { vendor, name })
+        end ,
+        function()
+        end )
+    end
 
 end
 
 function zpm.modules.installOrUpdateModule()
 
-    zpm.install.updatePremake( true )
-    
-    zpm.assert( #_ARGS > 0, "No module specified to install or update!" )
+    zpm.install.updatePremake(true)
 
-    local module = {}
+    zpm.assert(#_ARGS > 0, "No module specified to install or update!")
+
+    local module = { }
 
     if #_ARGS > 1 then
         module = { _ARGS[1], _ARGS[2] }
     else
-        module = bootstrap.getModule( _ARGS[1] )
+        module = bootstrap.getModule(_ARGS[1])
     end
 
-    local ok, suggest = zpm.modules.suggestModule( module[1], module[2] )
+    local ok, suggest = zpm.modules.suggestModule(module[1], module[2])
 
     if ok then
-    
+
         module = suggest
 
-        local modPath = path.join( zpm.install.getModulesDir(), path.join( module[1], module[2] ) )
-        
-        local head = path.join( modPath, "head" )
-    
-        printf( "- Installing or updating module '%s/%s'", module[1], module[2] ) 
-        
-        zpm.modules.update( head, modPath, module )
-    
+        local modPath = path.join(zpm.install.getModulesDir(), path.join(module[1], module[2]))
+
+        local head = path.join(modPath, "head")
+
+        printf("- Installing or updating module '%s/%s'", module[1], module[2])
+
+        zpm.modules.update(head, modPath, module)
+
     end
 
 end
 
-function zpm.modules.update( head, modPath, module )
+function zpm.modules.update(head, modPath, module)
 
-    zpm.git.cloneOrPull( head, zpm.modules.modules[ module[1] ][ module[2] ].repository )
+    zpm.git.cloneOrPull(head, zpm.modules.modules[module[1]][module[2]].repository)
 
-    local tags = zpm.git.getTags( head )
+    local tags = zpm.git.getTags(head)
 
-    for _, tag in ipairs( tags ) do
-    
-        local verPath = path.join( modPath, tag.version )
-        
-        if not os.isdir( verPath ) then
-        
-            printf( "- Installing version '%s'", tag.version ) 
+    for _, tag in ipairs(tags) do
 
-            local zipFile = path.join( modPath, "archive.zip" )
-            zpm.git.archive( head, zipFile, tag.tag )
-                        
-            assert( os.mkdir( verPath ) )
-            zip.extract( zipFile, verPath )
+        local verPath = path.join(modPath, tag.version)
 
-            os.remove( zipFile )
-            zpm.assert( os.isfile( zipFile ) == false, "Zipfile '%s' failed to remove!", zipFile )
+        if not os.isdir(verPath) then
+
+            printf("- Installing version '%s'", tag.version)
+
+            local zipFile = path.join(modPath, "archive.zip")
+            zpm.git.archive(head, zipFile, tag.tag)
+
+            assert(os.mkdir(verPath))
+            zip.extract(zipFile, verPath)
+
+            os.remove(zipFile)
+            zpm.assert(os.isfile(zipFile) == false, "Zipfile '%s' failed to remove!", zipFile)
         end
-    end 
-    
+    end
+
 end
 
 function zpm.modules.setSearchDir()
@@ -202,95 +196,88 @@ function zpm.modules.setSearchDir()
     if bootstrap ~= nil then
 
         -- override default location
-        bootstrap.directories = zpm.util.concat( { path.join( zpm.cache, "modules" ) }, bootstrap.directories )
-    
+        bootstrap.directories = zpm.util.concat( { path.join(zpm.cache, "modules") }, bootstrap.directories)
+
     end
 
 end
 
 function zpm.modules.load()
 
-    --print( "\nLoading modules ..." )
-        
-    for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
-        local localModFile = path.join( dir, zpm.install.registry.modules ) 
-        
-        if os.isfile( localModFile ) then    
-            local manok, err = pcall( zpm.modules.loadFile, localModFile ) 
+    for _, dir in ipairs(table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs)) do
+        local localModFile = path.join(dir, zpm.install.registry.modules)
+
+        if os.isfile(localModFile) then
+            local manok, err = pcall(zpm.modules.loadFile, localModFile)
             if not manok then
-                printf( zpm.colors.error .. "Failed to load modules '%s':\n%s", dir, err ) 
+                printf(zpm.colors.error .. "Failed to load modules '%s':\n%s", dir, err)
             end
         end
     end
-    
+
 end
 
-function zpm.modules.loadFile( file )
+function zpm.modules.loadFile(file)
 
-    if not os.isfile( file ) then
+    if not os.isfile(file) then
         return nil
     end
-    
-    --print( string.format( "Loading modules '%s'...", file ) )
-        
-    local modules = zpm.JSON:decode( zpm.util.readAll( file ) )
-    
-    for _, module in ipairs( modules ) do
-    
-        local man = bootstrap.getModule( module.name )
+
+    local modules = zpm.JSON:decode(zpm.util.readAll(file))
+
+    for _, module in ipairs(modules) do
+
+        local man = bootstrap.getModule(module.name)
         local name = man[2]
         local vendor = man[1]
 
-        zpm.assert( name ~= nil, "No 'name' supplied in module definition!" )
-        zpm.assert( vendor ~= nil, "No 'vendor' supplied in module definition!" )
-        zpm.assert( module.repository ~= nil, "No 'repository' supplied in module definition!" )
-        
-        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in module definition must be alpha numeric!" )
-        zpm.assert( name:len() <= 50, "'name' supplied in module definition exceeds maximum size of 50 characters!" )
-        zpm.assert( name:len() >= 2, "'name' supplied in module definition must at least be 2 characters!" )
-        
-        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in module definition must be alpha numeric!" )
-        zpm.assert( vendor:len() <= 50, "'vendor' supplied in module definition exceeds maximum size of 50 characters!" )
-        zpm.assert( vendor:len() >= 2, "'vendor' supplied in module definition must at least be 2 characters!" )
-        
-        zpm.assert( zpm.util.isGitUrl( module.repository ), "'repository' supplied in module definition is not a valid https git url!" )
-        
-        if zpm.modules.modules[ vendor ] == nil then
-            zpm.modules.modules[ vendor ] = {}
+        zpm.assert(name ~= nil, "No 'name' supplied in module definition!")
+        zpm.assert(vendor ~= nil, "No 'vendor' supplied in module definition!")
+        zpm.assert(module.repository ~= nil, "No 'repository' supplied in module definition!")
+
+        zpm.assert(zpm.util.isAlphaNumeric(name), "'name' supplied in module definition must be alpha numeric!")
+        zpm.assert(name:len() <= 50, "'name' supplied in module definition exceeds maximum size of 50 characters!")
+        zpm.assert(name:len() >= 2, "'name' supplied in module definition must at least be 2 characters!")
+
+        zpm.assert(zpm.util.isAlphaNumeric(vendor), "'vendor' supplied in module definition must be alpha numeric!")
+        zpm.assert(vendor:len() <= 50, "'vendor' supplied in module definition exceeds maximum size of 50 characters!")
+        zpm.assert(vendor:len() >= 2, "'vendor' supplied in module definition must at least be 2 characters!")
+
+        zpm.assert(zpm.util.isGitUrl(module.repository), "'repository' supplied in module definition is not a valid https git url!")
+
+        if zpm.modules.modules[vendor] == nil then
+            zpm.modules.modules[vendor] = { }
         end
-        
-        if zpm.modules.modules[ vendor ][ name ] == nil then
-        
-            --temp disable
-            --zpm.modules.search:insert( string.format( "%s/%s", vendor, name ) )
-        
-            zpm.modules.modules[ vendor ][ name ] = {}
-            zpm.modules.modules[ vendor ][ name ].includedirs = {}
-            
-            zpm.modules.modules[ vendor ][ name ].repository = module.repository
-            
+
+        if zpm.modules.modules[vendor][name] == nil then
+
+            zpm.modules.modules[vendor][name] = { }
+            zpm.modules.modules[vendor][name].includedirs = { }
+
+            zpm.modules.modules[vendor][name].repository = module.repository
+
         end
-    
-    end    
-    
+
+    end
+
 end
 
 function zpm.modules.listModules()
-    
-    return os.matchdirs( path.join( zpm.install.getModulesDir(), "*/*/" ) )
-        
+
+    return os.matchdirs(path.join(zpm.install.getModulesDir(), "*/*/"))
+
 end
 
 function zpm.modules.updateModules()
-    
+
     local matches = zpm.modules.listModules()
 
-    for _, match in ipairs( matches ) do
-    
-        local vendor, name = match:match( ".*/(.*)/(.*)" )
+    for _, match in ipairs(matches) do
+
+        local vendor, name = match:match(".*/(.*)/(.*)")
         local module = { vendor, name }
-        printf( "Updating module '%s/%s'...", module[1], module[2] ) 
-        zpm.modules.update( path.join( match, "head" ), match, module )
+        printf("Updating module '%s/%s'...", module[1], module[2])
+        zpm.modules.update(path.join(match, "head"), match, module)
     end
-    
+
 end

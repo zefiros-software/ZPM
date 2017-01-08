@@ -22,8 +22,8 @@
 -- @endcond
 --]]
 
-include( 'zpm.lua' )
+include('zpm.lua')
 
 return function(cfg)
-	return true
+    return true
 end

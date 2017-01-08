@@ -23,6 +23,6 @@
 --]]
 
 return {
-	"_preload.lua",
-	"zpm.lua"
+    "_preload.lua",
+    "zpm.lua"
 }

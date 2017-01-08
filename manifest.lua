@@ -23,64 +23,71 @@
 --]]
 
 -- Manifests
-zpm.manifest = {}
+zpm.manifest = { }
+zpm.manifest.defaultType = "library"
 
 function zpm.manifest.load()
 
-    --print( "\nLoading manifests ..." )
-    
-    for _, dir in ipairs( table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs ) ) do
-    
-        local localManFile = path.join( dir, zpm.install.registry.manifest ) 
-        if os.isfile( localManFile ) then
-            local manok, err = pcall( zpm.manifest.loadFile, path.join( dir, zpm.install.registry.manifest ) ) 
-            if not manok then
-                printf( zpm.colors.error .. "Failed to load manifest '%s':\n%s", dir, err ) 
-            end
+    for _, dir in ipairs(table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs)) do
+        
+        zpm.manifest.loadType( path.join(dir, zpm.install.manifests.manifest), zpm.manifest.defaultType )
+
+        for name, ext in pairs(zpm.install.manifests.extensions) do
+            zpm.manifest.loadType(path.join(dir, ext.manifest), name )
+        end
+        
+    end
+
+end
+
+function zpm.manifest.loadType( localManFile, tpe )
+
+    if os.isfile(localManFile) then
+        local manok, err = pcall(zpm.manifest.loadFile, localManFile, tpe)
+        if not manok then
+            printf(zpm.colors.error .. "Failed to load manifest '%s':\n%s", dir, err)
         end
     end
 
 end
 
-function zpm.manifest.loadFile( file )
+function zpm.manifest.loadFile(file, tpe)
 
-    if not os.isfile( file ) then
+    if not os.isfile(file) then
         return nil
     end
-    
-    --print( string.format( "Loading manifest '%s'...", file ) )
-        
-    local manifests = zpm.JSON:decode( zpm.util.readAll( file ) )
-    
-    for _, manifest in ipairs( manifests ) do
-    
-        local man = bootstrap.getModule( manifest.name )
+
+    local manifests = zpm.JSON:decode(zpm.util.readAll(file))
+
+    for _, manifest in ipairs(manifests) do
+
+        local man = bootstrap.getModule(manifest.name)
         local name = man[2]
         local vendor = man[1]
-        
+
         local isShadow = false
 
-        zpm.assert( name ~= nil, "No 'name' supplied in manifest definition!" )
-        zpm.assert( vendor ~= nil, "No 'vendor' supplied in manifest definition!" )
-        zpm.assert( manifest.repository ~= nil, "No 'repository' supplied in manifest definition!" )
-        
-        zpm.assert( zpm.util.isAlphaNumeric( name ), "'name' supplied in manifest definition must be alpha numeric!" )
-        zpm.assert( name:len() <= 50, "'name' supplied in manifest definition exceeds maximum size of 50 characters!" )
-        zpm.assert( name:len() >= 2, "'name' supplied in manifest definition must at least be 2 characters!" )
-        
-        zpm.assert( zpm.util.isAlphaNumeric( vendor ), "'vendor' supplied in manifest definition must be alpha numeric!" )
-        zpm.assert( vendor:len() <= 50, "'vendor' supplied in manifest definition exceeds maximum size of 50 characters!" )
-        zpm.assert( vendor:len() >= 2, "'vendor' supplied in manifest definition must at least be 2 characters!" )
-        
-        zpm.assert( zpm.util.isGitUrl( manifest.repository ), "'repository' supplied in manifest definition is not a valid https git url!" )
-        
+        zpm.assert(name ~= nil, "No 'name' supplied in manifest definition!")
+        zpm.assert(vendor ~= nil, "No 'vendor' supplied in manifest definition!")
+        zpm.assert(manifest.repository ~= nil, "No 'repository' supplied in manifest definition!")
+
+        zpm.assert(zpm.util.isAlphaNumeric(name), "'name' supplied in manifest definition must be alpha numeric!")
+        zpm.assert(name:len() <= 50, "'name' supplied in manifest definition exceeds maximum size of 50 characters!")
+        zpm.assert(name:len() >= 2, "'name' supplied in manifest definition must at least be 2 characters!")
+
+        zpm.assert(zpm.util.isAlphaNumeric(vendor), "'vendor' supplied in manifest definition must be alpha numeric!")
+        zpm.assert(vendor:len() <= 50, "'vendor' supplied in manifest definition exceeds maximum size of 50 characters!")
+        zpm.assert(vendor:len() >= 2, "'vendor' supplied in manifest definition must at least be 2 characters!")
+
+        zpm.assert(zpm.util.isGitUrl(manifest.repository), "'repository' supplied in manifest definition is not a valid https git url!")
+
         if manifest.shadowRepository ~= nil then
-            zpm.assert( zpm.util.isGitUrl( manifest.shadowRepository ), "'shadow-repository' supplied in manifest definition is not a valid https git url!" )
+            zpm.assert(zpm.util.isGitUrl(manifest.shadowRepository), "'shadow-repository' supplied in manifest definition is not a valid https git url!")
             isShadow = true
         end
 
-        zpm.packages.prepareDict( vendor, name, manifest.repository, manifest.shadowRepository, isShadow )
-    
-    end    
-    
+        zpm.packages.prepareDict(tpe, vendor, name, manifest.repository, manifest.shadowRepository, isShadow)
+
+    end
+
 end

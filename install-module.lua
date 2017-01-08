@@ -22,15 +22,11 @@
 -- @endcond
 --]]
 
-
-function zpm.assert(pred, str, ...)
-    if next( { ...} ) ~= nil then
-        assert(pred, zpm.colors.error .. string.format(str, ...) .. "\n" .. debug.traceback() .. zpm.colors.clear)
-    else
-        if str ~= nil then
-            assert(pred, zpm.colors.error .. str .. "\n" .. debug.traceback() .. zpm.colors.clear)
-        else
-            assert(pred)
-        end
+newaction {
+    trigger     = "install-module",
+    shortname   = "Installs the given module",
+    description = "Installs the given module",
+    execute = function() 
+        zpm.modules.installOrUpdateModule()
     end
-end
+}

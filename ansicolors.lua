@@ -25,7 +25,7 @@ local schar = string.char
 
 module 'ansicolors'
 
-local colormt = {}
+local colormt = { }
 
 function colormt:__tostring()
     return self.value
@@ -39,10 +39,10 @@ function colormt:__call(s)
     return self .. s .. _M.reset
 end
 
-colormt.__metatable = {}
+colormt.__metatable = { }
 
 local function makecolor(value)
-    return setmetatable({ value = schar(27) .. '[' .. tostring(value) .. 'm' }, colormt)
+    return setmetatable( { value = schar(27) .. '[' .. tostring(value) .. 'm' }, colormt)
 end
 
 local colors = {

@@ -1,0 +1,1 @@
+zpm.assets.extractto( "*", "docs/style/" )

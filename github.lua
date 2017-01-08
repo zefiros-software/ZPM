@@ -23,133 +23,133 @@
 --]]
 
 -- GitHub 
-zpm.GitHub = {}
+zpm.GitHub = { }
 zpm.GitHub.host = zpm.config.GitHub.host
 zpm.GitHub.apiHost = zpm.config.GitHub.apiHost
 zpm.GitHub.token = zpm.config.GitHub.token
 
-if os.getenv( "GH_TOKEN" ) ~= nil then
-    zpm.GitHub.token = os.getenv( "GH_TOKEN" )
+if os.getenv("GH_TOKEN") ~= nil then
+    zpm.GitHub.token = os.getenv("GH_TOKEN")
 end
 
 if _OPTIONS["github-token"] ~= nil then
     zpm.GitHub.token = _OPTIONS["github-token"]
 end
 
-function zpm.GitHub.latestCommit( vendor, name )
+function zpm.GitHub.latestCommit(vendor, name)
     local token = zpm.GitHub.token
     if token ~= nil and token ~= false then
         token = "Authorization: token " .. token
     end
-    local resp = zpm.wget.get( string.format( "https://api.github.com/repos/%s/%s/git/refs/heads/master", vendor, name ), token )
-    return zpm.JSON:decode( resp )
+    local resp = zpm.wget.get(string.format("https://api.github.com/repos/%s/%s/git/refs/heads/master", vendor, name), token)
+    return zpm.JSON:decode(resp)
 end
 
-function zpm.GitHub.semanticCompare( t1, t2 ) 
-    return t1.version > t2.version 
+function zpm.GitHub.semanticCompare(t1, t2)
+    return t1.version > t2.version
 end
 
-function zpm.GitHub.get( url ) 
+function zpm.GitHub.get(url)
     local token = zpm.GitHub.token
     if token ~= nil and token ~= false then
         token = "Authorization: token " .. token
     end
-    
-    return zpm.wget.get( url, token )
+
+    return zpm.wget.get(url, token)
 end
 
-function zpm.GitHub.getUrl( prefix, organisation, repository, resource )
-    local url = zpm.GitHub.apiHost .. prefix .. "/" ..  organisation .. "/" .. repository
-    
+function zpm.GitHub.getUrl(prefix, organisation, repository, resource)
+    local url = zpm.GitHub.apiHost .. prefix .. "/" .. organisation .. "/" .. repository
+
     if resource then
         url = url .. "/" .. resource
     end
-    
+
     return url
 end
 
-function zpm.GitHub.getAssets( organisation, repository )
-    local response = zpm.JSON:decode( zpm.GitHub.get( zpm.GitHub.getUrl( "repos", organisation, repository, "releases" ) ) )
-    local releases = {}
+function zpm.GitHub.getAssets(organisation, repository)
+    local response = zpm.JSON:decode(zpm.GitHub.get(zpm.GitHub.getUrl("repos", organisation, repository, "releases")))
+    local releases = { }
     for _, value in ipairs(response) do
-    
-        local ok, vers = pcall( zpm.GitHub.GetAssetsVersion, value["tag_name"] ) 
+
+        local ok, vers = pcall(zpm.GitHub.GetAssetsVersion, value["tag_name"])
         if ok then
-            
-            local assetTab = {}
-            for _, asset in ipairs( value["assets"] ) do
-                table.insert( assetTab, {
+
+            local assetTab = { }
+            for _, asset in ipairs(value["assets"]) do
+                table.insert(assetTab, {
                     name = asset["name"],
                     url = asset["browser_download_url"]
-                })
+                } )
             end
-            
-            table.insert( releases, {
+
+            table.insert(releases, {
                 version = vers,
                 assets = assetTab
-            })
+            } )
         end
     end
-    
-    table.sort( releases, zpm.GitHub.semanticCompare )
+
+    table.sort(releases, zpm.GitHub.semanticCompare)
     return releases
 end
 
-function zpm.GitHub.latestAssetMatch( organisation, repository, pattern )
+function zpm.GitHub.latestAssetMatch(organisation, repository, pattern)
 
-    local releases = zpm.GitHub.getAssets( organisation, repository )
-        
-    for _, assets in ipairs( releases ) do
-    
-        for _, asset in ipairs( assets.assets ) do
-            local assetMatch = asset.name:match( pattern )
-            
-            if assetMatch ~= nil then    
+    local releases = zpm.GitHub.getAssets(organisation, repository)
+
+    for _, assets in ipairs(releases) do
+
+        for _, asset in ipairs(assets.assets) do
+            local assetMatch = asset.name:match(pattern)
+
+            if assetMatch ~= nil then
                 return asset, assets.version
             end
-            
+
         end
-        
+
     end
 
     return nil
 end
 
-function zpm.GitHub.latestAssetMatches( organisation, repository, pattern )
+function zpm.GitHub.latestAssetMatches(organisation, repository, pattern)
 
-    local releases = zpm.GitHub.getAssets( organisation, repository )
-    
-    local values = {}
-        
-    for _, assets in pairs( releases ) do
-    
-        for _, asset in pairs( assets.assets ) do
-            local assetMatch = asset.name:match( pattern )
-            
-            if assetMatch ~= nil then    
-                table.insert( values, {
+    local releases = zpm.GitHub.getAssets(organisation, repository)
+
+    local values = { }
+
+    for _, assets in pairs(releases) do
+
+        for _, asset in pairs(assets.assets) do
+            local assetMatch = asset.name:match(pattern)
+
+            if assetMatch ~= nil then
+                table.insert(values, {
                     name = asset.name,
                     version = assets.version,
                     url = asset.url
                 } )
             end
-            
+
         end
-        
+
     end
 
     return values
 end
 
-function zpm.GitHub.GetAssetsVersion( str )
+function zpm.GitHub.GetAssetsVersion(str)
 
-    local verStr = string.match( str, ".*(%d+%.%d+%.%d+.*)" )
-    return zpm.semver( verStr )
+    local verStr = string.match(str, ".*(%d+%.%d+%.%d+.*)")
+    return zpm.semver(verStr)
 
 end
 
 newoption {
-    trigger     = "github-token",
-    value       = "token",
+    trigger = "github-token",
+    value = "token",
     description = "Uses the given GitHub token"
 }
