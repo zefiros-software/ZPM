@@ -2,7 +2,7 @@ import subprocess
 import sys
 import os
 
-output = str(subprocess.check_output( ["premake5", "install-package"], universal_newlines=True ))
+output = str(subprocess.check_output( ["zpm", "install-package"], universal_newlines=True ))
 
 if ("(c) Zefiros Software" not in output or
     "Zefiros Package Manager" not in output):
