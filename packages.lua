@@ -291,7 +291,7 @@ end
 function zpm.packages.getDependencyDir(dependency, tpe)
     local localDir = zpm.install.manifests.extensions[tpe] and zpm.install.manifests.extensions[tpe].directory or nil
     local rootDir = zpm.util.getRelInstalllOrAbsDir(localDir, _MAIN_SCRIPT_DIR )
-    if dependency.type == zpm.manifest.defaultType then
+    if tpe == zpm.manifest.defaultType then
         rootDir = zpm.install.getExternDirectory()
     end
 
