@@ -53,7 +53,7 @@ dofile("github.lua")
 dofile("install.lua")
 
 
-dofile("action/install.lua")
+dofile("action/actions.lua")
 dofile("commands/commands.lua")
 dofile("premake/override.lua")
 dofile("process/process.lua")
