@@ -14,5 +14,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 script:
     - python ./script/test-install.py
+    - premake5
+    - zpm
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi
