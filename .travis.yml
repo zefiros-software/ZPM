@@ -10,7 +10,7 @@ matrix:
         - os: osx
           language: generic
 install:
-    - wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-travis.sh | bash
+    - bash script/install-zpm-travis.sh
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 script:
     - python ./script/test-install.py
