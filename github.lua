@@ -54,7 +54,7 @@ function zpm.GitHub.get(url)
     if token ~= nil and token ~= false then
         token = "Authorization: token " .. token
     end
-
+    print(url)
     return zpm.wget.get(url, token)
 end
 
@@ -70,9 +70,6 @@ end
 
 function zpm.GitHub.getAssets(organisation, repository)
     local response = zpm.JSON:decode(zpm.GitHub.get(zpm.GitHub.getUrl("repos", organisation, repository, "releases")))
-    if not response then
-        return {}
-    end
 
     local releases = { }
     for _, value in ipairs(response) do
