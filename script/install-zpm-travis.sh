@@ -13,6 +13,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
 elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     wget -O - https://raw.githubusercontent.com/Zefiros-Software/ZPM/master/script/install-zpm-osx.sh | bash; 
     brew update;
+    brew unlink git
     brew install git
     brew install git-lfs;
     git-lfs install
