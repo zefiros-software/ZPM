@@ -29,6 +29,46 @@ zpm.packages.package = { }
 
 zpm.packages.root = { }
 
+function zpm.packages.buildLockTree(package)
+    local dependencies = {}
+
+    -- no point in executing this if there are no dependencies
+    if package.dependencies == nil then
+        return {}
+    end
+
+    if #package.dependencies > 0 then
+
+        for _, dep in ipairs(package.dependencies) do
+
+            local info = {
+                name = dep.fullName,
+                type = dep.type,
+                version = dep.version,
+            }
+
+            local rdep = zpm.packages.buildLockTree(dep)
+            if rdep and #rdep > 0 then
+                info.dependencies = rdep
+            end
+            table.insert(dependencies, info)
+            
+        end
+
+    end
+
+    return dependencies
+end
+
+function zpm.packages.writeLockfile()
+    local tree = zpm.packages.buildLockTree(zpm.packages.root)
+    local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
+
+    local file = io.open( path.join( _MAIN_SCRIPT_DIR, "zpm.json" ), "w")
+    file:write(str)
+    file:close()
+end
+
 function zpm.packages.prepareDict(tpe, vendor, name, repository, shadowRepository, isShadow)
 
     if zpm.packages.package[tpe] == nil then

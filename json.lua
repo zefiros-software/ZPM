@@ -878,7 +878,7 @@ function encode_value(self, value, parents, etc, options, indent)
          end
 
          if options.pretty then
-            result_value = "[ " .. table.concat(ITEMS, ", ") .. " ]"
+            result_value = "[ " .. table.concat(ITEMS, ", ") .. "]"
          else
             result_value = "["  .. table.concat(ITEMS, ",")  .. "]"
          end
@@ -909,7 +909,7 @@ function encode_value(self, value, parents, etc, options, indent)
                local encoded_val = encode_value(self, TT[key], parents, etc, options, subtable_indent)
                table.insert(COMBINED_PARTS, string.format(FORMAT, key_indent, KEYS[i], encoded_val))
             end
-            result_value = "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
+            result_value = "\n" .. indent .. "{\n" .. table.concat(COMBINED_PARTS, ",\n") .. "\n" .. indent .. "}"
 
          else
 

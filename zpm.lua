@@ -279,6 +279,8 @@ function zpm.onLoad()
 
             zpm.packages.load()
             zpm.build.load()
+
+            zpm.packages.writeLockfile()
         end
     end
 end 
