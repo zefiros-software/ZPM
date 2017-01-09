@@ -8,7 +8,7 @@
         "repository": "https://github.com/Zefiros-Software/ZPM",
         "directory": "zpm",
         "modulesDirectory": "modules",
-        "minReqVersion": ">5.0.0-alpha5",
+        "minReqVersion": ">=5.0.0-alpha9",
         "bootstrap": {
             "repository": "https://github.com/Zefiros-Software/Bootstrap.git",
             "directory": "bootstrap"
