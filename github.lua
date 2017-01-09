@@ -54,7 +54,7 @@ function zpm.GitHub.get(url)
     if token ~= nil and token ~= false then
         token = "Authorization: token " .. token
     end
-    print(url)
+
     return zpm.wget.get(url, token)
 end
 
