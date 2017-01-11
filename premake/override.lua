@@ -91,3 +91,11 @@ premake.override(_G, "kind", function(base, knd)
         zpm.packages.root.projects[name].kind = knd
     end
 end )
+
+premake.override(os, "execute", function(base, exec)
+
+    if _OPTIONS["verbose"] then
+        print(exec)
+    end
+    base(exec)
+end )
