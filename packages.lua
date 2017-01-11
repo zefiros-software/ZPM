@@ -163,14 +163,14 @@ function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHas
 
     local buildPath = depPath
     local updated = false
-
-     if isShadow then
-        local buildRep = zpm.packages.package[tpe][vendor][name].repository
+    
+    local buildRep = zpm.packages.package[tpe][vendor][name].repository
+    if isShadow then
 
         buildPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, buildRep))
     end
 
-    if targetHash and not zpm.git.hasCommit(depPath, targetHash) then
+    if (targetHash and not zpm.git.hasCommit(depPath, targetHash)) or _OPTIONS["update"] then
 
         updated = zpm.packages.pullDependency(depPath, repository, vendor, name)
 
