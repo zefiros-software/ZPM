@@ -21,6 +21,7 @@
 --
 -- @endcond
 --]]
+
 premake.override(path, "normalize", function(base, p)
 
     if not zpm.util.hasGitUrl(p) and not zpm.util.hasUrl(p) then

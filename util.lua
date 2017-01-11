@@ -25,6 +25,14 @@
 -- Util
 zpm.util = { }
 
+function zpm.util.split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+
 function zpm.util.getRelInstalllOrAbsDir( dir, root )
 
     if dir and path.getabsolute(dir) == dir then

@@ -309,6 +309,11 @@ newoption {
     description = "Profiles the given commands"
 }
 
+newoption {
+    trigger = "update",
+    description = "Updates the dependencies to the newest version given the constraints"
+}
+
 newaction {
     trigger = "profile",
     description = "Profiles the given commands",
@@ -369,6 +374,8 @@ if _ACTION == "self-update" or
     -- disable main script
     _MAIN_SCRIPT = "."
 
+elseif os.isfile(path.join( _MAIN_SCRIPT_DIR, "zpm.lua" )) then
+    _MAIN_SCRIPT = path.join( _MAIN_SCRIPT_DIR, "zpm.lua" )
 end
 
 return zpm
