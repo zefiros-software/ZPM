@@ -625,10 +625,13 @@ function zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
     local zipFile = path.join(vendorPath, "archive.zip")
     local tag = ""
 
-    if zpm.packages.lockTreeCursor and not _OPTIONS["update"] then
-        hash = zpm.packages.lockTreeCursor.hash
-        version = zpm.packages.lockTreeCursor.version
-        tag = zpm.packages.lockTreeCursor.tag
+    local cursor = zpm.packages.lockTreeCursor 
+    if cursor and not _OPTIONS["update"] and
+       cursor.hash and cursor.version and cursor.tag then
+       
+        hash = cursor.hash
+        version = cursor.version
+        tag = cursor.tag
 
         folder = string.format("%s-%s", dest, version)
         alreadyInstalled = os.isdir(folder)
