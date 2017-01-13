@@ -170,7 +170,7 @@ function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHas
         buildPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, buildRep))
     end
 
-    if (targetHash and not zpm.git.hasCommit(depPath, targetHash)) or _OPTIONS["update"] then
+    if not targetHash or not zpm.git.hasCommit(depPath, targetHash) or _OPTIONS["update"] then
 
         updated = zpm.packages.pullDependency(depPath, repository, vendor, name)
 
