@@ -76,6 +76,7 @@ function zpm.packages.writeLockfile()
     local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
 
     if #tree.dependencies > 0 then
+        printf( "Generating lockfile..." )
         local file = io.open( path.join( _MAIN_SCRIPT_DIR, "zpm.lock" ), "w")
         file:write(str)
         file:close()
@@ -331,7 +332,7 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
 
         if ok then
 
-            local loaded, version, hash, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
+            local loaded, version, hash, tag, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
 
 
             if loaded then
@@ -348,6 +349,7 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
                     overrides = dependency.overrides,
                     options = dependency.options,
                     updated = updated,
+                    tag = tag,
                     type = tpe,
                     hash = hash
                 } )
@@ -409,10 +411,10 @@ end
 
 function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, name, root)
 
-    local ok, expDir, version, hash, alreadyInstalled
+    local ok, expDir, version, hash, tag, alreadyInstalled
     if dependency.path == nil then
         local externDir, depDir = zpm.packages.getDependencyDir(dependency, tpe)
-        ok, version, hash, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
+        ok, version, hash, tag, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
 
         zpm.assert(ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!",
         vendor, name, dependency.version, dependency.name)
@@ -431,7 +433,7 @@ function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, n
 
     root = pack
 
-    return loaded, version, hash, expDir, root, dependency
+    return loaded, version, hash, tag, expDir, root, dependency
 end
 
 function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, alreadyInstalled)
@@ -613,7 +615,7 @@ function zpm.packages.extract(vendorPath, repo, tpe, versions, dest, dependency)
         zpm.packages.process[tpe](dependency, vendorPath, repo, versions, dest)
     end
 
-    return continue, version, hash, folder, alreadyInstalled
+    return continue, version, hash, tag, folder, alreadyInstalled
 end
 
 function zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
