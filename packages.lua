@@ -321,7 +321,7 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
 
     lpackage.lockTree = zpm.packages.lockTreeCursor
 
-    for i, dependency in ipairs(dependencies) do
+    for _, dependency in ipairs(dependencies) do
 
         local depMod = bootstrap.getModule(dependency.name)
 
@@ -334,8 +334,11 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
 
             local loaded, version, hash, tag, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
 
-
             if loaded then
+
+                if not lpackage.dependencies then
+                    lpackage.dependencies = {}
+                end
 
                 local isShadow = zpm.packages.package[tpe][depMod[1]][depMod[2]].isShadow
                 dependencies = table.merge(dependencies, {
@@ -353,7 +356,7 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
                     type = tpe,
                     hash = hash
                 } )
-                lpackage.dependencies[i] = dependencies
+                table.insert(lpackage.dependencies, dependencies)
 
             else
                 printf(zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, dependencies)
