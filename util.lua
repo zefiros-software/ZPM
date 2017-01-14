@@ -120,6 +120,13 @@ function zpm.util.getAlphaNumeric(str)
 end
 
 function zpm.util.concat(t1, t2)
+    if type(t1) ~= "table" then
+        t1 = {t1}
+    end
+
+    if type(t2) ~= "table" then
+        t2 = {t2}
+    end
     for i = 1, #t2 do
         t1[#t1 + 1] = t2[i]
     end
