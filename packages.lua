@@ -240,7 +240,7 @@ function zpm.packages.installPackage(package, folder, name)
 
     end
 
-    if package.alreadyInstalled == false then
+    if not package.alreadyInstalled then
 
         if package.modules ~= nil and #package.modules > 0 then
 
@@ -466,17 +466,13 @@ function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, a
     local name = pak[2]
     local vendor = pak[1]
 
-    local mods = lpackage.modules ~= nil and lpackage.modules or { }
-
-    if lpackage.dev ~= nil and lpackage.dev.modules ~= nil then
-        mods = zpm.util.concat(mods, lpackage.dev.modules)
-    end
-
-    zpm.packages.loadModules(mods)
-
     lpackage = zpm.packages.preProcess(lpackage)
+    
     root = zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage, alreadyInstalled)
     root = zpm.packages.postProcess(root)
+
+    local mods = lpackage.modules ~= nil and lpackage.modules or { }
+    zpm.packages.loadModules(mods)
 
     root = zpm.packages.resolveDependencies(root, vendor, name, path.getdirectory(packageFile))
 

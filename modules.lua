@@ -28,36 +28,8 @@ zpm.modules.modules = { }
 
 function zpm.modules.suggestModule(vendor, name)
 
-    if zpm.modules.modules[vendor] == nil or zpm.modules.modules[vendor][name] == nil then
-
-        local str = string.format("%s/%s", vendor, name)
-        local suggest = zpm.modules.search:query(str, #str *(1 - zpm.modules.searchMaxDist))
-
-        if #suggest > 0 then
-
-            if not zpm.modules.isModuleInstalled(suggest[1].str) then
-
-                printf(zpm.colors.error .. "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
-
-                printf(zpm.colors.green .. zpm.colors.bright .. "Did you mean module '%s' (y/N [enter])?", suggest[1].str)
-
-                local answer = io.read()
-                if answer == "Y" or answer == "y" then
-                    return true, bootstrap.getModule(suggest[1].str)
-                end
-
-            end
-        else
-
-            zpm.assert(zpm.modules.modules[vendor] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor)
-            zpm.assert(zpm.modules.modules[vendor][name] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
-
-        end
-
-        return false, { vendor, name }
-    end
-
-    return true, { vendor, name }
+    zpm.assert(zpm.modules.modules[vendor] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor)
+    zpm.assert(zpm.modules.modules[vendor][name] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
 end
 
 function zpm.modules.isModuleInstalled(vendor, name)
@@ -69,41 +41,6 @@ function zpm.modules.isModuleInstalled(vendor, name)
     end
 
     return os.isdir(path.join(zpm.install.getModulesDir(), vendor))
-
-end
-
-function zpm.modules.requestModules(modules)
-
-    if modules == nil then
-        return nil
-    end
-
-    for _, module in ipairs(modules) do
-
-        local pak = bootstrap.getModule(module)
-        local name = pak[2]
-        local vendor = pak[1]
-
-        local ok, result, suggest = pcall(zpm.modules.suggestModule, vendor, name)
-        if ok and result then
-
-            vendor = suggest[1]
-            name = suggest[2]
-
-            local modPath = path.join(zpm.install.getModulesDir(), path.join(vendor, name))
-
-            zpm.util.askModuleConfirmation(string.format("Do you want to install or update module '%s/%s'?", vendor, name),
-            function()
-                local modPath = path.join(zpm.install.getModulesDir(), path.join(vendor, name))
-
-                local head = path.join(modPath, "head")
-
-                zpm.modules.update(head, modPath, { vendor, name })
-            end ,
-            function()
-            end )
-        end
-    end
 
 end
 
@@ -146,11 +83,9 @@ function zpm.modules.installOrUpdateModule()
         module = bootstrap.getModule(_ARGS[1])
     end
 
-    local ok, suggest = zpm.modules.suggestModule(module[1], module[2])
+    local ok = zpm.modules.suggestModule(module[1], module[2])
 
     if ok then
-
-        module = suggest
 
         local modPath = path.join(zpm.install.getModulesDir(), path.join(module[1], module[2]))
 
