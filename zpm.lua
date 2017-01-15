@@ -24,7 +24,7 @@
 
 -- Module initialisation
 zpm = { }
-zpm._VERSION = "1.0.1-beta"
+zpm._VERSION = "1.0.2-beta"
 
 -- Dependencies
 zpm.JSON =(loadfile "json.lua")()
