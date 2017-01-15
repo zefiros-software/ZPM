@@ -258,7 +258,7 @@ function zpm.onLoad()
 
     zpm.checkGit()
 
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2016", zpm._VERSION))
+    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
 
     zpm.wget.initialise()
 
