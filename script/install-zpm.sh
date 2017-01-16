@@ -15,7 +15,8 @@ while getopts "u" opt; do
 done
 
 if [[ "$local_install" == false && "$EUID" != 0 ]]; then
-    sudo bash $(basename $BASH_SOURCE) "$@"
+    echo $(basename $BASH_SOURCE) "$@"
+    sudo $(basename $BASH_SOURCE) "$@"
     exit $?
 fi
 
