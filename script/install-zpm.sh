@@ -15,7 +15,7 @@ while getopts "u" opt; do
     esac
 done
 
-if [[ "$local_install" == false && $EUID != 0 ]]; then
+if [[ "$local_install" == false && "$EUID" != 0 ]]; then
     sudo "$0" "$@"
     exit $?
 fi
