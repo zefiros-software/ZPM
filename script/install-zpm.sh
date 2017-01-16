@@ -15,7 +15,7 @@ while getopts "u" opt; do
     esac
 done
 
-if [ "$local_install" == false ] then
+if [ "$local_install" == false ]; then
     [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 fi
 
