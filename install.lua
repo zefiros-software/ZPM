@@ -101,7 +101,16 @@ function zpm.install.getSharedDataDir()
     if osStr == "windows" then
         return os.getenv("ALLUSERSPROFILE")
     elseif osStr == "linux" then
-        return "/usr/local/"
+        
+        -- Test if there is a User mode install present
+        -- if yes, prefer this over the global install
+        local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
+        if os.isdir( userInstallPath ) then
+            return userInstallPath;
+        else
+            return "/usr/local/"
+        end
+            
     elseif osStr == "macosx" then
         return "/usr/local/"
     else

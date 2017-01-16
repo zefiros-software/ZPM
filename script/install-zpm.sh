@@ -1,24 +1,24 @@
 #!/bin/bash
 
-install_dir=~/zpm-install
+install_dir=~/.zpm/$install_dir
 shared_dir=/usr/local/zpm/
 cache_dir=/var/tmp/zpm-cache/
 
-while getopts "p:" opt; do
+while getopts "u" opt; do
     case "$opt" in
-    p)
-        shared_dir=$OPTARG"/zpm/"
-        shared_dir=$OPTARG"/zpm-cache/"
+    u)
+        shared_dir=~/.zpm/zpm/
+        cache_dir=~/.zpm/zpm-cache/
     ;;
     esac
 done
 
-sudo rm -rf ~/zpm-install || true
-sudo rm -rf /usr/local/zpm/ || true
-sudo rm -rf /var/tmp/zpm-cache/ || true
+rm -rf $install_dir || true
+rm -rf $shared_dir || true
+rm -rf $cache_dir || true
 
-mkdir ~/zpm-install
-cd ~/zpm-install
+mkdir -p $install_dir
+cd $install_dir
 
 rm premake5.tar.gz || true
 rm premake5 || true
@@ -29,14 +29,14 @@ tar xvzf premake5.tar.gz
 chmod a+x premake5
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 
-sudo mkdir /usr/local/zpm/ || true
-sudo mkdir /var/tmp/zpm-cache/ || true
+mkdir -p $shared_dir || true
+mkdir -p $cache_dir || true
 
-sudo chmod -R 777 /usr/local/zpm/
-sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/
+chmod -R 755 $shared_dir
+setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-sudo chmod -R 777 /var/tmp/zpm-cache/
-sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
+sudo chmod -R 755 $cache_dir
+sudo setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install-zpm;
@@ -44,10 +44,10 @@ else
     ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm;
 fi
 
-sudo chmod -R 777 /usr/local/zpm/
-sudo setfacl -d -m u::rwX,g::rwX,o::- /usr/local/zpm/
+sudo chmod -R 755 $shared_dir
+sudo setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-sudo chmod -R 777 /var/tmp/zpm-cache/
-sudo setfacl -d -m u::rwX,g::rwX,o::- /var/tmp/zpm-cache/
+sudo chmod -R 755 $cache_dir
+sudo setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
-rm -rf ~/zpm-install
+rm -rf $install_dir
