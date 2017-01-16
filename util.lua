@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Zefiros Software.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,14 @@
 
 -- Util
 zpm.util = { }
+
+function zpm.util.split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
 
 function zpm.util.getRelInstalllOrAbsDir( dir, root )
 
@@ -112,6 +120,13 @@ function zpm.util.getAlphaNumeric(str)
 end
 
 function zpm.util.concat(t1, t2)
+    if type(t1) ~= "table" then
+        t1 = {t1}
+    end
+
+    if type(t2) ~= "table" then
+        t2 = {t2}
+    end
     for i = 1, #t2 do
         t1[#t1 + 1] = t2[i]
     end

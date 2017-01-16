@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Zefiros Software.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
 
 -- Module initialisation
 zpm = { }
-zpm._VERSION = "1.0.1-beta"
+zpm._VERSION = "1.0.2-beta"
 
 -- Dependencies
 zpm.JSON =(loadfile "json.lua")()
@@ -258,7 +258,7 @@ function zpm.onLoad()
 
     zpm.checkGit()
 
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2016", zpm._VERSION))
+    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
 
     zpm.wget.initialise()
 
@@ -307,6 +307,11 @@ newoption {
 newoption {
     trigger = "profile",
     description = "Profiles the given commands"
+}
+
+newoption {
+    trigger = "update",
+    description = "Updates the dependencies to the newest version given the constraints"
 }
 
 newaction {
@@ -369,6 +374,8 @@ if _ACTION == "self-update" or
     -- disable main script
     _MAIN_SCRIPT = "."
 
+elseif os.isfile(path.join( _MAIN_SCRIPT_DIR, "zpm.lua" )) then
+    _MAIN_SCRIPT = path.join( _MAIN_SCRIPT_DIR, "zpm.lua" )
 end
 
 return zpm

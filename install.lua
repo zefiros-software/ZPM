@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Zefiros Software.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -328,8 +328,8 @@ function zpm.install.setup( checkLatest )
         local premakeCmd = zpm.install.getPremakeCmd( "-" .. tostring( asset.version ) )
         
         local premakeFile = path.join( folder, premakeCmd )
-        
-        if not os.isfile( premakeFile ) then
+
+        if not os.isfile( premakeFile ) and asset.version >= zpm.semver(zpm.install.minReqVersion:match(">=?(.*)")) then
     
             printf( "- Installing premake version '%s'", tostring( asset.version ) )
             local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]

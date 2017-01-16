@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Zefiros Software.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,9 @@ zpm.packages = { }
 
 zpm.packages.package = { }
 
+zpm.packages.lockTree = {}
+zpm.packages.lockTreeCursor = {}
+
 zpm.packages.root = { }
 
 function zpm.packages.buildLockTree(package)
@@ -45,7 +48,11 @@ function zpm.packages.buildLockTree(package)
                 name = dep.fullName,
                 type = dep.type,
                 version = dep.version,
+                tag = dep.tag
             }
+            if dep.hash and #dep.hash > 0 then
+                info.hash = dep.hash
+            end
 
             local rdep = zpm.packages.buildLockTree(dep)
             if rdep and #rdep > 0 then
@@ -61,12 +68,19 @@ function zpm.packages.buildLockTree(package)
 end
 
 function zpm.packages.writeLockfile()
-    local tree = zpm.packages.buildLockTree(zpm.packages.root)
+    local tree = {
+        dependencies = zpm.packages.buildLockTree(zpm.packages.root),
+        name = zpm.packages.root.name
+    }
+
     local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
 
-    local file = io.open( path.join( _MAIN_SCRIPT_DIR, "zpm.json" ), "w")
-    file:write(str)
-    file:close()
+    if #tree.dependencies > 0 then
+        printf( "Generating lockfile..." )
+        local file = io.open( path.join( _MAIN_SCRIPT_DIR, "zpm.lock" ), "w")
+        file:write(str)
+        file:close()
+    end
 end
 
 function zpm.packages.prepareDict(tpe, vendor, name, repository, shadowRepository, isShadow)
@@ -119,7 +133,7 @@ function zpm.packages.pullDependency(depPath, repository, vendor, name)
     return updated
 end
 
-function zpm.packages.loadDependency(tpe, dependency, module, basedir)
+function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHash)
 
     local p = path.getabsolute(path.join(basedir, dependency.path))
 
@@ -146,23 +160,44 @@ function zpm.packages.loadDependency(tpe, dependency, module, basedir)
 
     local depPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, repository))
 
-    local updated = zpm.packages.pullDependency(depPath, repository, vendor, name)
+    local isShadow = zpm.packages.package[tpe][vendor][name].isShadow
 
     local buildPath = depPath
-
-    if zpm.packages.package[tpe][vendor][name].isShadow then
-        local buildRep = zpm.packages.package[tpe][vendor][name].repository
+    local updated = false
+    
+    local buildRep = zpm.packages.package[tpe][vendor][name].repository
+    if isShadow then
 
         buildPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, buildRep))
+    end
 
-        updated = zpm.packages.pullDependency(buildPath, buildRep) or updated
+    if not targetHash or not zpm.git.hasCommit(depPath, targetHash) or _OPTIONS["update"] then
+
+        updated = zpm.packages.pullDependency(depPath, repository, vendor, name)
+
+        if isShadow then
+            updated = zpm.packages.pullDependency(buildPath, buildRep) or updated
+        end
+
     end
 
     return depPath, buildPath, updated
 
 end
 
+function zpm.packages.loadLockFile()
+
+    local file = path.join( _MAIN_SCRIPT_DIR, "zpm.lock" )
+    if os.isfile(file) then
+        local fileStr = zpm.util.readAll(file)
+        zpm.packages.lockTree = zpm.JSON:decode(fileStr)
+        zpm.packages.lockTreeCursor = zpm.packages.lockTree
+    end
+end
+
 function zpm.packages.load()
+
+    zpm.packages.loadLockFile()
 
     local package = path.join(_MAIN_SCRIPT_DIR, zpm.install.packages.fileName)
 
@@ -205,7 +240,7 @@ function zpm.packages.installPackage(package, folder, name)
 
     end
 
-    if package.alreadyInstalled == false then
+    if not package.alreadyInstalled then
 
         if package.modules ~= nil and #package.modules > 0 then
 
@@ -267,18 +302,43 @@ function zpm.packages.postExtract(package, isRoot)
     end
 end
 
+function zpm.packages.findInLockTree( lockTree, vendor, name, tpe )
+
+    if lockTree and lockTree.dependencies then
+        local name = string.format("%s/%s", vendor, name)
+        for _, dep in ipairs(lockTree.dependencies) do
+
+            if dep.name == name and  dep.type == tpe then
+                return dep
+            end
+        end
+    end
+
+    return nil
+end
+
 function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedir )
-    for i, dependency in ipairs(dependencies) do
+
+    lpackage.lockTree = zpm.packages.lockTreeCursor
+
+    for _, dependency in ipairs(dependencies) do
 
         local depMod = bootstrap.getModule(dependency.name)
-        local ok, depPath, buildPath, updated = pcall(zpm.packages.loadDependency, tpe, dependency, depMod, basedir)
+
+        zpm.packages.lockTreeCursor = zpm.packages.findInLockTree( lpackage.lockTree, depMod[1], depMod[2], tpe )
+        local targetHash = zpm.packages.lockTreeCursor and zpm.packages.lockTreeCursor.hash or nil
+
+        local ok, depPath, buildPath, updated = pcall(zpm.packages.loadDependency, tpe, dependency, depMod, basedir, targetHash)
 
         if ok then
 
-            local loaded, version, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
-
+            local loaded, version, hash, tag, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
 
             if loaded then
+
+                if not lpackage.dependencies then
+                    lpackage.dependencies = {}
+                end
 
                 local isShadow = zpm.packages.package[tpe][depMod[1]][depMod[2]].isShadow
                 dependencies = table.merge(dependencies, {
@@ -292,9 +352,11 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
                     overrides = dependency.overrides,
                     options = dependency.options,
                     updated = updated,
-                    type = tpe
+                    tag = tag,
+                    type = tpe,
+                    hash = hash
                 } )
-                lpackage.dependencies[i] = dependencies
+                table.insert(lpackage.dependencies, dependencies)
 
             else
                 printf(zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, dependencies)
@@ -304,6 +366,8 @@ function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedi
         end
     end
 
+    zpm.packages.lockTreeCursor = lpackage.lockTree
+  
     return lpackage
 end
 
@@ -350,15 +414,16 @@ end
 
 function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, name, root)
 
-    local ok, expDir, version, alreadyInstalled
+    local ok, expDir, version, hash, tag, alreadyInstalled
     if dependency.path == nil then
         local externDir, depDir = zpm.packages.getDependencyDir(dependency, tpe)
-        ok, version, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
+        ok, version, hash, tag, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
 
         zpm.assert(ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!",
         vendor, name, dependency.version, dependency.name)
     else
         version = "LOCAL"
+        hash = ""
         expDir = buildPath
         alreadyInstalled = false
 
@@ -371,7 +436,7 @@ function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, n
 
     root = pack
 
-    return loaded, version, expDir, root
+    return loaded, version, hash, tag, expDir, root, dependency
 end
 
 function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, alreadyInstalled)
@@ -401,17 +466,13 @@ function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, a
     local name = pak[2]
     local vendor = pak[1]
 
-    local mods = lpackage.modules ~= nil and lpackage.modules or { }
-
-    if lpackage.dev ~= nil and lpackage.dev.modules ~= nil then
-        mods = zpm.util.concat(mods, lpackage.dev.modules)
-    end
-
-    zpm.packages.loadModules(mods)
-
     lpackage = zpm.packages.preProcess(lpackage)
+    
     root = zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage, alreadyInstalled)
     root = zpm.packages.postProcess(root)
+
+    local mods = lpackage.modules ~= nil and lpackage.modules or { }
+    zpm.packages.loadModules(mods)
 
     root = zpm.packages.resolveDependencies(root, vendor, name, path.getdirectory(packageFile))
 
@@ -479,85 +540,62 @@ function zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage,
     return lpackage
 end
 
+function zpm.packages.mayExtract(tpe)
+    return tpe == zpm.manifest.defaultType or not 
+       zpm.install.manifests.extensions[tpe] or
+       zpm.install.manifests.extensions[tpe].defaultExtract
+end
+
+function zpm.packages.getHashFile(folder)
+    return path.join(folder, ".HASH-HEAD")
+end
+
 zpm.packages.process = {}
 
 zpm.packages._extractCache = { }
 function zpm.packages.extract(vendorPath, repo, tpe, versions, dest, dependency)
 
-    local continue = true
-    local version = versions
-    local folder = string.format("%s-%s", dest, version)
-    local alreadyInstalled = os.isdir(folder)
+    local folder = string.format("%s-%s", dest, versions)
+    local continue, alreadyInstalled, version, hash, hashCheck, folder, zipFile, tag = zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
+    local hashFile = zpm.packages.getHashFile(folder)
 
-    if tpe == zpm.manifest.defaultType or not 
-       zpm.install.manifests.extensions[tpe] or
-       zpm.install.manifests.extensions[tpe].defaultExtract then
-
-        local zipFile = path.join(vendorPath, "archive.zip")
+    if zpm.packages.mayExtract(tpe) then
 
         if os.isfile(zipFile) then
             os.remove(zipFile)
         end
 
-        -- head of the master branch
-        if versions == "@head" then
+        local isHead = versions == "@head"
 
-            local hashFile = path.join(folder, ".HASH-HEAD")
+        if not _OPTIONS["ignore-updates"] and 
+           not hashCheck and
+           (zpm.packages._extractCache[repo] == nil or 
+                (zpm.packages._extractCache[repo] ~= nil and 
+                 zpm.packages._extractCache[repo][versions] == nil)) then
 
-            if not _OPTIONS["ignore-updates"] and not
-                (os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)) and
-                (zpm.packages._extractCache[repo] == nil or(zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] == nil)) then
+            zpm.packages._extractCache[repo] = { }
+            zpm.packages._extractCache[repo][versions] = { }
 
-                zpm.packages._extractCache[repo] = { }
-                zpm.packages._extractCache[repo][versions] = { }
+            if alreadyInstalled and isHead then
 
-                if alreadyInstalled then
+                zpm.util.rmdir(folder)
 
-                    zpm.util.rmdir(folder)
+                -- continue installation
+                alreadyInstalled = false
 
-                    -- continue installation
-                    alreadyInstalled = false
+                zpm.assert(os.isdir(folder) == false, "Failed to remove existing version of '%s'!", folder)
 
-                    zpm.assert(os.isdir(folder) == false, "Failed to remove existing head!")
+            end
 
-                end
+            if not alreadyInstalled then
 
-                zpm.git.archive(repo, zipFile, "master")
+                zpm.git.archive(repo, zipFile, tag)
 
                 file = io.open(hashFile, "w")
-                file:write(zpm.git.getHeadHash(repo))
+                file:write(hash)
             end
-
-            -- git commit hash
-        elseif versions:gsub("#", "") ~= versions then
-
-            if not alreadyInstalled and
-                (zpm.packages._extractCache[repo] == nil or(zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][versions] == nil)) then
-
-                zpm.packages._extractCache[repo] = { }
-                zpm.packages._extractCache[repo][versions] = { }
-
-                zpm.git.archive(repo, zipFile, versions:gsub("#", ""))
-            end
-
-            -- normal resolve
-        else
-
-            continue, tag, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
-            version = tag.version
-
-            if not alreadyInstalled and
-                (zpm.packages._extractCache[repo] == nil or 
-                    (zpm.packages._extractCache[repo] ~= nil and zpm.packages._extractCache[repo][version] == nil)) then
-
-                zpm.packages._extractCache[repo] = { }
-                zpm.packages._extractCache[repo][version] = { }
-
-                zpm.git.archive( repo, zipFile, tag.tag )
-            end
-
         end
-
+        
         if continue and not alreadyInstalled then
 
             zpm.assert(os.isfile(zipFile), "Repository '%s' failed to archive!", repo)
@@ -576,7 +614,59 @@ function zpm.packages.extract(vendorPath, repo, tpe, versions, dest, dependency)
         zpm.packages.process[tpe](dependency, vendorPath, repo, versions, dest)
     end
 
-    return continue, version, folder, alreadyInstalled
+    return continue, version, hash, tag, folder, alreadyInstalled
+end
+
+function zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
+
+    local continue = true
+    local version = versions
+    local alreadyInstalled = os.isdir(folder)
+    local hash = ""
+    local zipFile = path.join(vendorPath, "archive.zip")
+    local tag = ""
+
+    local cursor = zpm.packages.lockTreeCursor 
+    if cursor and not _OPTIONS["update"] and
+       cursor.hash and cursor.version and cursor.tag then
+       
+        hash = cursor.hash
+        version = cursor.version
+        tag = cursor.tag
+
+        folder = string.format("%s-%s", dest, version)
+        alreadyInstalled = os.isdir(folder)
+
+    -- head of the master branch
+    elseif versions == "@head" then
+    
+        hash = zpm.git.getHeadHash(repo)
+        tag = "master"
+
+    -- git commit hash
+    elseif versions:gsub("#", "") ~= versions then
+
+        hash = versions:gsub("#", "")
+        tag = hash
+
+    -- normal resolve
+    else
+
+        continue, tag, folder, alreadyInstalled = zpm.packages.getBestVersion( repo, versions, zipFile, dest )
+        version = tag.version
+        hash = tag.hash
+        tag = tag.tag
+    end
+    
+    
+    local hashFile = zpm.packages.getHashFile(folder)
+    local hashCheck = os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)
+
+    if versions == "@head" then
+        alreadyInstalled = hashCheck
+    end
+
+    return continue, alreadyInstalled, version, hash, hashCheck, folder, zipFile, tag
 end
 
 function zpm.packages.getBestVersion(repo, versions, zipFile, dest)

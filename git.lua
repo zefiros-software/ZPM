@@ -1,5 +1,5 @@
 --[[ @cond ___LICENSE___
--- Copyright (c) 2016 Koen Visscher, Paul Visscher and individual contributors.
+-- Copyright (c) 2017 Zefiros Software.
 --
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this software and associated documentation files (the "Software"), to deal
@@ -121,27 +121,31 @@ function zpm.git.getTags(destination)
 
     os.chdir(destination)
 
-    local tagStr, errorCode = os.outputof("git tag")
+    local tagStr, errorCode = os.outputof("git show-ref --tags")
     local tags = { }
 
     for _, s in ipairs(tagStr:explode("\n")) do
 
         if s:len() > 0 then
 
-            local version = s:match("[.-]*([%d+%.]+.*)")
+            local split = zpm.util.split(s, " ")
+            local ref, version = split[1], split[2]
+            version = version:match("[._-]*([%d+%.]+.*)")
             if pcall(zpm.semver, version) then
                 table.insert(tags, {
                     version = version,
-                    tag = s
+                    hash = ref,
+                    tag = s:match("refs/tags/(.*)")
                 } )
             else
 
-                version = s:gsub("_", "%."):match("[.-]*([%d+%.]+.*)")
+                version = version:gsub("_", "%."):match("[._-]*([%d+%.]+.*)")
 
                 if pcall(zpm.semver, version) then
                     table.insert(tags, {
                         version = version,
-                        tag = s
+                        hash = ref,
+                        tag = s:match("refs/tags/(.*)")
                     } )
                 end
             end
@@ -156,6 +160,19 @@ function zpm.git.getTags(destination)
     os.chdir(current)
 
     return tags
+end
+
+function zpm.git.hasCommit(destination, hash)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
+    local tagStr, errorCode = os.outputof(string.format("git cat-file -t %s", hash))
+
+    os.chdir(current)
+
+    return errorCode == 0 and tagStr:find("commit")
 end
 
 function zpm.git.archive(destination, output, tag)

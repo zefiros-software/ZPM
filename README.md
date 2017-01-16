@@ -39,7 +39,7 @@ When a bug is found, please insert it in the issue tracker, so we can resolve it
 This project is licensed under the MIT license by [Zefiros Software](https://zefiros.eu).
 
 ```
-Copyright (c) 2016 Mick van Duijn, Koen Visscher and Paul Visscher
+Copyright (c) 2017 Zefiros Software.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
