@@ -234,11 +234,11 @@ local function initialiseCacheFolder()
     end
 
     if not os.isdir(zpm.cache) then
-        zpm.assert(os.mkdir(zpm.cache), "The cache directory could not be made!")
+        zpm.assert(os.mkdir(zpm.cache), "The cache directory '%s' could not be made!", zpm.cache)
     end
     
     if not os.isdir(zpm.temp) then
-        zpm.assert(os.mkdir(zpm.temp), "The temp directory could not be made!")
+        zpm.assert(os.mkdir(zpm.temp), "The temp directory '%s' could not be made!", zpm.temp)
     end
 
 end
