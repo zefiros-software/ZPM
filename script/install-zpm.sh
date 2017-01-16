@@ -1,6 +1,6 @@
 #!/bin/bash
 
-install_dir=~/.zpm/$install_dir
+install_dir=~/.zpm/zpm_install
 shared_dir=/usr/local/zpm/
 cache_dir=/var/tmp/zpm-cache/
 
