@@ -1,4 +1,18 @@
 #!/bin/bash
+
+install_dir=~/zpm-install
+shared_dir=/usr/local/zpm/
+cache_dir=/var/tmp/zpm-cache/
+
+while getopts "p:" opt; do
+    case "$opt" in
+    p)
+        shared_dir=$OPTARG"/zpm/"
+        shared_dir=$OPTARG"/zpm-cache/"
+    ;;
+    esac
+done
+
 sudo rm -rf ~/zpm-install || true
 sudo rm -rf /usr/local/zpm/ || true
 sudo rm -rf /var/tmp/zpm-cache/ || true
