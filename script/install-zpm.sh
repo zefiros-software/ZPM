@@ -3,15 +3,21 @@
 install_dir=~/.zpm_install/
 shared_dir=/usr/local/zpm/
 cache_dir=/var/tmp/zpm-cache/
+local_install=false
 
 while getopts "u" opt; do
     case "$opt" in
     u)
         shared_dir=~/.zpm/zpm/
         cache_dir=~/.zpm/zpm-cache/
+        local_install=true
     ;;
     esac
 done
+
+if [ "$local_install" == false ] then
+    [ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+fi
 
 echo "Shared directory:"
 echo $shared_dir
