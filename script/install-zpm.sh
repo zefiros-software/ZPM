@@ -1,5 +1,4 @@
 #!/bin/bash
-
 install_dir=~/.zpm_install/
 shared_dir=/usr/local/zpm/
 cache_dir=/var/tmp/zpm-cache/
@@ -16,7 +15,7 @@ while getopts "u" opt; do
 done
 
 if [[ "$local_install" == false && "$EUID" != 0 ]]; then
-    sudo "$0" "$@"
+    sudo bash "$0" "$@"
     exit $?
 fi
 
