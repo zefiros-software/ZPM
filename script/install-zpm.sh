@@ -43,10 +43,10 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 ${SUD} mkdir -p $shared_dir || true
 ${SUD} mkdir -p $cache_dir || true
 
-${SUD} chmod -R 775 $shared_dir
+${SUD} chmod -R 777 $shared_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-${SUD} chmod -R 775 $cache_dir
+${SUD} chmod -R 777 $cache_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
@@ -55,10 +55,10 @@ else
     ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm;
 fi
 
-${SUD} chmod -R 775 $shared_dir
+${SUD} chmod -R 777 $shared_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-${SUD} chmod -R 775 $cache_dir
+${SUD} chmod -R 777 $cache_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 rm -rf $install_dir
