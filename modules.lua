@@ -83,19 +83,15 @@ function zpm.modules.installOrUpdateModule()
         module = bootstrap.getModule(_ARGS[1])
     end
 
-    local ok = zpm.modules.suggestModule(module[1], module[2])
+    zpm.modules.suggestModule(module[1], module[2])
 
-    if ok then
+    local modPath = path.join(zpm.install.getModulesDir(), path.join(module[1], module[2]))
 
-        local modPath = path.join(zpm.install.getModulesDir(), path.join(module[1], module[2]))
+    local head = path.join(modPath, "head")
 
-        local head = path.join(modPath, "head")
+    printf("- Installing or updating module '%s/%s'", module[1], module[2])
 
-        printf("- Installing or updating module '%s/%s'", module[1], module[2])
-
-        zpm.modules.update(head, modPath, module)
-
-    end
+    zpm.modules.update(head, modPath, module)
 
 end
 
