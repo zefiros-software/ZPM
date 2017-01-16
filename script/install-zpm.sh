@@ -13,6 +13,11 @@ while getopts "u" opt; do
     esac
 done
 
+echo "Shared directory:"
+echo $shared_dir
+echo "Cache directory:"
+echo $cache_dir
+
 rm -rf $install_dir || true
 rm -rf $shared_dir || true
 rm -rf $cache_dir || true
