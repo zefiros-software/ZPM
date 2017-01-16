@@ -35,8 +35,8 @@ mkdir -p $cache_dir || true
 chmod -R 755 $shared_dir
 setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-sudo chmod -R 755 $cache_dir
-sudo setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
+chmod -R 755 $cache_dir
+setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install-zpm;
@@ -44,10 +44,10 @@ else
     ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm;
 fi
 
-sudo chmod -R 755 $shared_dir
-sudo setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
+chmod -R 755 $shared_dir
+setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-sudo chmod -R 755 $cache_dir
-sudo setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
+chmod -R 755 $cache_dir
+setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 rm -rf $install_dir
