@@ -215,8 +215,6 @@ local function getCacheLocation()
         -- if yes, prefer this over the global install
         local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
         if os.isdir( userInstallPath ) then
-            return userInstallPath;
-        else
             return path.join( userInstallPath, "zpm-cache" );
         end
     end
