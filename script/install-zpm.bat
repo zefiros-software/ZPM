@@ -16,8 +16,7 @@ if defined GH_TOKEN (
 dir
 echo Finished downloading premake...
 
-powershell -command Add-Type -AssemblyName System.IO.Compression.FileSystem ^
-
+powershell -command "Add-Type -AssemblyName System.IO.Compression.FileSystem^
 [System.IO.Compression.ZipFile]::ExtractToDirectory('premake5.zip', '.')"
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
