@@ -3,6 +3,8 @@ platform:
 environment:
     PYTHON: "C:\\Python35"
 build: off
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 install:
     - .\script\install-zpm.bat 
     - "SET PATH=%PATH%;%PYTHON%;%PYTHON%\\Scripts;%ALLUSERSPROFILE%/zpm"
