@@ -4,7 +4,7 @@ environment:
     PYTHON: "C:\\Python35"
 build: off
 install:
-    - ./script/install-zpm.bat 
+    - .\script\install-zpm.bat 
     - "SET PATH=%PATH%;%PYTHON%;%PYTHON%\\Scripts;%ALLUSERSPROFILE%/zpm"
 test_script:
     - python ./script/test-install.py
