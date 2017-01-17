@@ -50,9 +50,9 @@ ${SUD} chmod -R 777 $cache_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install-zpm;
+    ./premake5 --file=zpm/zpm.lua install-zpm
 else
-    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm;
+    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
 fi
 
 ${SUD} chmod -R 777 $shared_dir

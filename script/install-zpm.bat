@@ -1,6 +1,6 @@
 @echo off
 
-rmdir /s /q "%TEMP%/zpm-cache"
+rmdir /s /q "%TEMP%/zpm-cache2"
 rmdir /s /q "%TEMP%/zpm-install"
 
 mkdir "%TEMP%/zpm-install"
@@ -24,10 +24,12 @@ echo Finished cloning ZPM...
 dir zpm
 
 if defined GH_TOKEN (
-    premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install-zpm;
+    premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install-zpm
 ) else (
-    premake5.exe --file=zpm/zpm.lua install-zpm;
+    premake5.exe --file=zpm/zpm.lua install-zpm
 )
+
+exit
 
 rmdir /s /q "%TEMP%/zpm-install"
 
