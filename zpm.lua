@@ -260,6 +260,7 @@ zpm.modules.setSearchDir()
 
 function zpm.onLoad()
 
+    print("Open loading code")
     if _ACTION == "profile" then
         ProFi = require("mindreframer/ProFi", "@head")
         ProFi:start()
