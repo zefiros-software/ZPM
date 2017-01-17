@@ -13,7 +13,7 @@ if defined GH_TOKEN (
 ) else (
     powershell -command "Invoke-WebRequest -Uri https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-windows.zip -OutFile premake5.zip"
 )
-
+dir
 echo Finished downloading premake...
 
 powershell -command Add-Type -AssemblyName System.IO.Compression.FileSystem ^
