@@ -32,7 +32,11 @@ function zpm.wget.downloadWget(destination)
 
     if not os.isfile(setupFile) then
         print("wget not detected - start downloading")
-        http.download(zpm.wget.downloadUrl, setupFile)
+        if os.is("windows") then
+            os.execute( "powershell -command 'Invoke-WebRequest -Uri %s -OutFile %s'", zpm.wget.downloadUrl, setupFile )
+        else
+            http.download(zpm.wget.downloadUrl, setupFile)
+        end
     else
         print("wget archive detected - start exctracting")
     end
