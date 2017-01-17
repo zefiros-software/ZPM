@@ -22,3 +22,5 @@ script:
     - zpm install-package
 after_success:
   - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./script/deploy-docs.sh; fi
+notifications:
+    slack: zefiros:x8zCJkIy5iBNssvmgF0guTs3

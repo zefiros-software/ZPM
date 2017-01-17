@@ -17,6 +17,7 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 
 echo Finished cloning ZPM...
 
+dir 
 premake5.exe --file=zpm/zpm.lua install-zpm
 
 rmdir /s /q "%TEMP%/zpm-install"
