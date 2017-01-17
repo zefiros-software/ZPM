@@ -23,7 +23,7 @@
 --]]
 
 newaction {
-    trigger = "install-zpm",
+    trigger = "install-zpmf",
     description = "Installs zpm-premake in path",
     execute = function()
 

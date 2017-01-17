@@ -33,8 +33,6 @@ zpm.sandbox = require "sandbox"
 
 zpm.cachevar = "ZPM_CACHE"
 
-print("zpm.lua loaded")
-
 dofile("config.lua")
 dofile("printf.lua")
 dofile("assert.lua")
@@ -257,9 +255,7 @@ function zpm.checkGit()
     end
 end
 
-    print("Init")
 initialiseCacheFolder()
-    print("Search")
 zpm.modules.setSearchDir()
 
 function zpm.onLoad()
