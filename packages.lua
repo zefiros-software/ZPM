@@ -589,7 +589,7 @@ function zpm.packages.extract(vendorPath, repo, tpe, versions, dest, dependency)
 
             if not alreadyInstalled then
 
-                zpm.git.archive(repo, zipFile, tag)
+                zpm.git.archive(repo, zipFile, hash)
 
                 file = io.open(hashFile, "w")
                 file:write(hash)
@@ -660,7 +660,7 @@ function zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
     
     
     local hashFile = zpm.packages.getHashFile(folder)
-    local hashCheck = os.isfile(hashFile) and zpm.git.getHeadHash(repo) == zpm.util.readAll(hashFile)
+    local hashCheck = os.isfile(hashFile) and hash == zpm.util.readAll(hashFile)
 
     if versions == "@head" then
         alreadyInstalled = hashCheck
