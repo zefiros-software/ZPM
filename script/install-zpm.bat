@@ -8,7 +8,7 @@ cd "%TEMP%/zpm-install"
 
 if exist "premake5.zip" del /q "premake5.zip"
 
-if defined %GH_TOKEN% (
+if defined GH_TOKEN (
     powershell -command "Invoke-WebRequest -Uri https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-windows.zip -OutFile premake5.zip -Headers @{'Authorization'='token %GH_TOKEN%'}"
 ) else (
     powershell -command "Invoke-WebRequest -Uri https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-windows.zip -OutFile premake5.zip"
@@ -22,7 +22,7 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 
 echo Finished cloning ZPM...
 
-if defined %GH_TOKEN% (
+if defined GH_TOKEN (
     ./premake5 --github-token=%GH_TOKEN% --file=zpm/zpm.lua install-zpm;
 ) else (
     ./premake5 --file=zpm/zpm.lua install-zpm;
