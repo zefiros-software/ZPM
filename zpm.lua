@@ -33,6 +33,8 @@ zpm.sandbox = require "sandbox"
 
 zpm.cachevar = "ZPM_CACHE"
 
+print("zpm.lua loaded")
+
 dofile("config.lua")
 dofile("printf.lua")
 dofile("assert.lua")
