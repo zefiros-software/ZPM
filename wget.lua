@@ -33,7 +33,7 @@ function zpm.wget.downloadWget(destination)
     if not os.isfile(setupFile) then
         print("wget not detected - start downloading")
         if os.is("windows") then
-            os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s"', zpm.wget.downloadUrl, setupFile )
+            os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', zpm.wget.downloadUrl, setupFile )
         else
             http.download(zpm.wget.downloadUrl, setupFile)
         end
