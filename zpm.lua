@@ -255,7 +255,9 @@ function zpm.checkGit()
     end
 end
 
+    print("Init")
 initialiseCacheFolder()
+    print("Search")
 zpm.modules.setSearchDir()
 
 function zpm.onLoad()
