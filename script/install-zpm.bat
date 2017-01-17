@@ -13,12 +13,9 @@ if defined GH_TOKEN (
 ) else (
     powershell -command "Invoke-WebRequest -Uri https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-windows.zip -OutFile premake5.zip"
 )
-dir
 echo Finished downloading premake...
 
-powershell -command "Add-Type -AssemblyName System.IO.Compression.FileSystem ^
-
-[System.IO.Compression.ZipFile]::ExtractToDirectory('premake5.zip', '.')"
+powershell -command "Expand-Archive premake5.zip -DestinationPath ."
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 
