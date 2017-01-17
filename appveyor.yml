@@ -4,7 +4,7 @@ environment:
     PYTHON: "C:\\Python35"
 build: off
 install:
-    - powershell -command "Invoke-WebRequest -Uri https://goo.gl/1Zcf72 -OutFile %TEMP%/install-zpm.bat" && %TEMP%/install-zpm.bat 
+    - ./script/install-zpm.bat 
     - "SET PATH=%PATH%;%PYTHON%;%PYTHON%\\Scripts;%ALLUSERSPROFILE%/zpm"
 test_script:
     - python ./script/test-install.py
