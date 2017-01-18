@@ -131,13 +131,13 @@ function zpm.git.getTags(destination)
             local split = zpm.util.split(s, " ")
             local ref, version = split[1], split[2]
             version = version:match("[._-]*([%d+%.]+.*)")
-            if pcall(zpm.semver, version) then
+            if version and pcall(zpm.semver, version) then
                 table.insert(tags, {
                     version = version,
                     hash = ref,
                     tag = s:match("refs/tags/(.*)")
                 } )
-            else
+            elseif version then
 
                 version = version:gsub("_", "%."):match("[._-]*([%d+%.]+.*)")
 
