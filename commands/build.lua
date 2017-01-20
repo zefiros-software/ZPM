@@ -157,7 +157,7 @@ function zpm.build.rcommands.project( proj )
         files(dummyFile)
     --end
 
-    location( zpm.install.getExternDirectory() )
+    location( path.join(zpm.build._currentExportPath, ".zpm" ) )
     targetdir( zpm.build._currentTargetPath )
     objdir( zpm.build._currentObjPath )
     warnings "Off"
