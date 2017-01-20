@@ -25,6 +25,12 @@
 -- Util
 zpm.util = { }
 
+function zpm.util.first(t)
+    for key, val in pairs(t) do
+        return key, val
+    end
+end
+
 function zpm.util.split(s, delimiter)
     result = {};
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do

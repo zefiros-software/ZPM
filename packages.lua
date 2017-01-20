@@ -243,7 +243,7 @@ function zpm.packages.installPackage(package, folder, name)
     if not package.alreadyInstalled then
 
         if package.modules ~= nil and #package.modules > 0 then
-
+        
             zpm.modules.installOrUpdateModules(package.modules)
 
         end

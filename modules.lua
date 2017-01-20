@@ -48,9 +48,12 @@ function zpm.modules.installOrUpdateModules(modules)
 
     for _, module in ipairs(modules) do
 
+        if type(module) == "table" then
+            module = zpm.util.first(module)
+        end
+
         local pak = bootstrap.getModule(module)
-        local name = pak[2]
-        local vendor = pak[1]
+        local name, vendor = pak[2], pak[1]
 
         zpm.assert(zpm.modules.modules[vendor] ~= nil, "Requiring module with vendor '%s' does not exist!", vendor)
         zpm.assert(zpm.modules.modules[vendor][name] ~= nil, "Requiring module with vendor '%s' and name '%s' does not exist!", vendor, name)
