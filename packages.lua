@@ -138,8 +138,8 @@ function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHas
     local p = path.getabsolute(path.join(basedir, dependency.path))
     local bPath, bPathP = path.getabsolute(p), nil
 
-    if dependency.shadowpath then
-        bPathP = path.getabsolute(path.join(basedir, dependency.shadowpath))
+    if dependency.buildpath then
+        bPathP = path.getabsolute(path.join(basedir, dependency.buildpath))
         if os.isdir(bPathP) then
             bPath = path.getabsolute(bPathP)
         else
