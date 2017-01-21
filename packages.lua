@@ -136,9 +136,19 @@ end
 function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHash)
 
     local p = path.getabsolute(path.join(basedir, dependency.path))
+    local bPath, bPathP = path.getabsolute(p), nil
 
-    if dependency.path ~= nil and os.isdir(p) then
-        return path.getabsolute(p), path.getabsolute(p), true
+    if dependency.shadowpath then
+        bPathP = path.getabsolute(path.join(basedir, dependency.shadowpath))
+        if os.isdir(bPathP) then
+            bPath = path.getabsolute(bPathP)
+        else
+            return path.getabsolute(p), bPath, true
+        end
+    end
+
+    if dependency.path and os.isdir(p) then
+        return path.getabsolute(p), bPath, true
     end
 
     local name = module[2]
@@ -168,15 +178,21 @@ function zpm.packages.loadDependency(tpe, dependency, module, basedir, targetHas
     local buildRep = zpm.packages.package[tpe][vendor][name].repository
     if isShadow then
 
-        buildPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, buildRep))
+        if bPathP then
+            buildPath = bPath
+        else
+            buildPath = path.join(dependencyPath, zpm.util.getRepoDir(vendor .. "/" .. name, buildRep))
+        end
     end
 
     if not targetHash or not zpm.git.hasCommit(depPath, targetHash) or _OPTIONS["update"] then
 
         updated = zpm.packages.pullDependency(depPath, repository, vendor, name)
 
-        if isShadow then
+        if isShadow and not bPathP then
             updated = zpm.packages.pullDependency(buildPath, buildRep) or updated
+        elseif bPathP then
+            updated = true
         end
 
     end
@@ -643,10 +659,11 @@ function zpm.packages.getVersion(vendorPath, repo, versions, dest, folder)
         hash = zpm.git.getHeadHash(repo)
         tag = "master"
 
-    -- git commit hash
+    -- git commit hash or branch
     elseif versions:gsub("#", "") ~= versions then
 
         hash = versions:gsub("#", "")
+        version = hash
         tag = hash
 
     -- normal resolve

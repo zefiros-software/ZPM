@@ -390,5 +390,9 @@ function zpm.build.getShadowBuildVersion(dir, build, version)
         end
     end
 
-    error(string.format("The version '%s' could not be satisfied with the build file!", version))
+    if version ~= "@head" then
+        warningf("The version '%s' could not be satisfied with the build file, choosing '@head'!", version)
+
+        return zpm.build.getShadowBuildVersion(dir, build, "@head")
+    end
 end
