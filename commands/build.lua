@@ -144,6 +144,7 @@ end
 function zpm.build.rcommands.project( proj )
 
     local name = zpm.build.getProjectName( proj, zpm.build._currentDependency.version, zpm.build._currentDependency.options )
+    zpm.build._currentDependency.__currentFilter = {}
 
     project( name )
 
@@ -186,6 +187,44 @@ function zpm.build.rcommands.dependson( depdson )
 end
 
 
+function zpm.build.rcommands.links( lnks )
+
+    if type(lnks) ~= "table" then
+        lnks = {lnks}
+    end
+    
+    local name = project().name
+    local dep = zpm.build._currentDependency
+    local fltr = dep.__currentFilter
+    if zpm.build._currentDependency.projects[name] then
+    
+        local parent = nil
+        if dep.projects[name] then
+            parent = dep.projects[name].postbuild
+        end
+        
+        zpm.build._currentDependency.projects[name].postbuild = function()
+            if parent ~= nil then
+                parent()
+            end
+                    
+            filter( fltr )
+
+            for _, p in ipairs(lnks) do            
+                local linkProj = zpm.build.getProjectName( p, dep.version, dep.options )
+                if dep.projects[linkProj] then
+                    links(linkProj)
+                else
+                    links(p)
+                end
+            end
+        end
+    else 
+        links(lnks)
+    end
+end
+
+
 function zpm.build.rcommands.kind( knd )
 
     local name = project().name
@@ -197,5 +236,6 @@ end
 
 function zpm.build.rcommands.filter( ... )
         
+    zpm.build._currentDependency.__currentFilter = ...
     filter( ... )
 end

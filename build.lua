@@ -89,12 +89,18 @@ function zpm.build.getEnv()
 
     for name, func in pairs(zpm.build.commands) do
         env.zpm[name] = function(...)
+            if not zpm.build._currentDependency.__currentFilter then
+                filter( zpm.build._currentDependency.__currentFilter )
+            end
             return func(...)
         end
     end
 
     for name, func in pairs(zpm.build.rcommands) do
         env[name] = function(...)
+            if name ~= "filter" and zpm.build._currentDependency.__currentFilter then
+                filter( zpm.build._currentDependency.__currentFilter )
+            end
             return func(...)
         end
     end
@@ -107,6 +113,11 @@ function zpm.build.getEnv()
                 env[name] = function(command)
                     zpm.util.askShellConfirmation(string.format("Allow usage of command '%s'", zpm.util.tostring(command)),
                     function()
+                        if not zpm.build._currentDependency.__currentFilter then
+                            zpm.build._currentDependency.__currentFilter = {}
+                        end
+                        filter( zpm.build._currentDependency.__currentFilter )
+                        
                         _G[name](command)
                     end ,
                     function()
@@ -127,6 +138,11 @@ function zpm.build.getEnv()
                         for i, dir in ipairs(args) do
                             args[i] = path.join(zpm.build._currentExportPath, dir)
                         end
+                        
+                        if not zpm.build._currentDependency.__currentFilter then
+                            zpm.build._currentDependency.__currentFilter = {}
+                        end
+                        filter( zpm.build._currentDependency.__currentFilter )
 
                         _G[name](args)
                     end
@@ -142,17 +158,28 @@ function zpm.build.getEnv()
                             for i, dir in ipairs(args) do
                                 args[i] = path.join(zpm.build._currentExportPath, dir)
                             end
-
+                            
+                            if not zpm.build._currentDependency.__currentFilter then
+                                filter( zpm.build._currentDependency.__currentFilter )
+                            end
                             _G["remove" .. name](args)
                         end
                     end
 
                 else
                     env[name] = function(...)
+                        if not zpm.build._currentDependency.__currentFilter then
+                            zpm.build._currentDependency.__currentFilter = {}
+                        end
+                        filter( zpm.build._currentDependency.__currentFilter )
+                        
                         _G[name](...)
                     end
                     if _G["remove" .. name] ~= nil then
                         env["remove" .. name] = function(...)
+                            if not zpm.build._currentDependency.__currentFilter then
+                                filter( zpm.build._currentDependency.__currentFilter )
+                            end
                             _G["remove" .. name](...)
                         end
                     end
@@ -203,6 +230,11 @@ function zpm.build.buildDependency(dep)
 
                         dep.projects[uses].export()
                     end
+                end
+
+                if conf.postbuild ~= nil then
+                    project(p)
+                    dep.projects[p].postbuild()
                 end
             end
 
