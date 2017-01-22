@@ -60,6 +60,7 @@ end )
 zpm._projectFirstCache = { }
 premake.override(_G, "project", function(base, proj)
 
+    zpm.__currentProject = proj
     local val = base(proj)
 
     if proj ~= nil and zpm.build._isBuilding == false and zpm._workspaceCache ~= nil and zpm._projectFirstCache[zpm._workspaceCache] == nil then
@@ -86,9 +87,7 @@ premake.override(_G, "kind", function(base, knd)
 
     base(knd)
     if zpm.build._isRoot then
-
-        local name = project().name
-        zpm.packages.root.projects[name].kind = knd
+        zpm.packages.root.projects[zpm.__currentProject].kind = knd
     end
 end )
 

@@ -74,7 +74,8 @@ end
 function zpm.build.commands.export( commands )
 
     local name = project().name
-        
+    filter(zpm.build._currentDependency.__currentFilter)
+
     local parent = zpm.build._currentDependency.projects[name].export
     local currExp = zpm.build._currentExportPath 
     local currDep = zpm.build._currentDependency
@@ -194,6 +195,9 @@ function zpm.build.rcommands.links( lnks )
     end
     
     local name = project().name
+
+    filter(zpm.build._currentDependency.__currentFilter)
+
     local dep = zpm.build._currentDependency
     local fltr = dep.__currentFilter
     if zpm.build._currentDependency.projects[name] then
@@ -228,7 +232,7 @@ end
 function zpm.build.rcommands.kind( knd )
 
     local name = project().name
-
+    filter(zpm.build._currentDependency.__currentFilter)
     zpm.build._currentDependency.projects[name].kind = knd
 
     kind( knd )
