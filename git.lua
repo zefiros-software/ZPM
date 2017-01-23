@@ -60,7 +60,7 @@ end
 function zpm.git.checkoutVersion(destination, version)
 
     if version == "@head" then
-        zpm.git.checkout(destination, "master")
+        zpm.git.checkout(destination, "HEAD")
     elseif version:gsub("#", "") ~= version then
         zpm.git.checkout(destination, version:gsub("#", ""))
     else
@@ -92,7 +92,7 @@ function zpm.git.pull(destination, url)
 
     os.execute("git fetch origin --tags -q -j 8")
 
-    if os.outputof("git log HEAD..origin/master --oneline"):len() > 0 then
+    if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
 
         os.execute("git checkout -q .")
         os.execute("git reset --hard origin/HEAD")
@@ -111,7 +111,7 @@ end
 
 function zpm.git.clone(destination, url)
 
-    os.execute( string.format( "git clone -b master -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
+    os.execute( string.format( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination ) )
 
 end
 
@@ -232,7 +232,7 @@ end
 function zpm.git.lfs.checkoutVersion(destination, version)
 
     if version == "@head" then
-        zpm.git.lfs.checkout(destination, "master")
+        zpm.git.lfs.checkout(destination, "HEAD")
     elseif version:gsub("#", "") ~= version then
         zpm.git.lfs.checkout(destination, version:gsub("#", ""))
     else
@@ -252,10 +252,10 @@ function zpm.git.lfs.pull(destination, url)
 
     os.execute("git fetch origin --tags -q -j 8")
 
-    if os.outputof("git log HEAD..origin/master --oneline"):len() > 0 then
+    if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
         os.execute("git checkout -q .")
         os.execute("git reset --hard origin/HEAD")
-        os.execute("git lfs pull origin master -q")
+        os.execute("git lfs pull origin HEAD -q")
         os.execute("git submodule update --init --recursive -j 8")
     end
 

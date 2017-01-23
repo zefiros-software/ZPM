@@ -68,7 +68,8 @@ function zpm.build.getEnv()
         },
         path =
         {
-            join = path.join
+            join = path.join,
+            normalize = path.normalize
         },
         table = table,
         print = print,
