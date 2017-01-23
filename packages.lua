@@ -701,7 +701,7 @@ function zpm.packages.getBestVersion(repo, versions, zipFile, dest)
         end
     end
 
-    zpm.assert(false, "Versions '%s' could not by satisfied on repo '%s'!", versions, repo)
+    zpm.assert(false, "Versions '%s' could not be satisfied on repo '%s'!", versions, repo)
 
     return false
 end
