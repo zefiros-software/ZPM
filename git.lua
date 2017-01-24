@@ -150,13 +150,15 @@ function zpm.git.getTags(destination)
                 else
 
                     local version, pattern = version:match("(%d+%.%d+%.%d+)%.?(.*)")
-                    version = ("%s+b%s"):format(version, pattern)
-                    if pcall(zpm.semver, version) then
-                        table.insert(tags, {
-                            version = version,
-                            hash = ref,
-                            tag = s:match("refs/tags/(.*)")
-                        } )
+                    if version and pattern then
+                        version = ("%s+b%s"):format(version, pattern)
+                        if pcall(zpm.semver, version) then
+                            table.insert(tags, {
+                                version = version,
+                                hash = ref,
+                                tag = s:match("refs/tags/(.*)")
+                            } )
+                        end
                     end
                 end
             end
