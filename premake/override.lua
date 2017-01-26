@@ -31,6 +31,20 @@ premake.override(path, "normalize", function(base, p)
     return p
 end )
 
+
+premake.override(premake.tools.gcc, "getcxxflags", function(base, cfg)
+   
+    local cxx = base(cfg)
+    if table.contains(cxx, "-std=c++14" ) then
+        local i = table.indexof(cxx, "-std=c++11" )
+        if i then
+            cxx[i] = nil
+        end
+    end
+    return table.filterempty(cxx)
+
+end)
+
 local builtWorkspaces = { }
 
 zpm._workspaceCache = nil
