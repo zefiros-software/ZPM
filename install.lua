@@ -269,6 +269,7 @@ function zpm.install.createSymLinks()
 
     local userInstallPath=path.join( os.getenv("HOME"), ".zpm" )
     local usrPath = nil
+    local sudo = "sudo"
     if not os.isdir( userInstallPath ) then
         usrPath = "/usr/bin/"
         if os.get() == "macosx" then
@@ -279,20 +280,21 @@ function zpm.install.createSymLinks()
         if not os.isdir(usrPath) then
             os.mkdir(usrPath)
         end
+        sudo = ""
     end
 
     if os.get() == "linux" or os.get() == "macosx" then
         if usrPath then
         
             for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
-                os.execute( string.format( "sudo ln -sf %s %s%s", prem, usrPath, path.getname( prem ) ) )
+                os.execute( string.format( "%s ln -sf %s %s%s", sudo, prem, usrPath, path.getname( prem ) ) )
             end 
         
-            os.execute( string.format( "sudo ln -sf %s %szpm", path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
+            os.execute( string.format( "%s ln -sf %s %szpm", sudo, path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
         
             if  os.get() == "macosx" then
                 -- workaround for premake search path in osx
-                os.execute( string.format( "sudo ln -sf %s/premake-system.lua %spremake-system.lua", zpm.install.getInstallDir(), usrPath ) )
+                os.execute( string.format( "%s ln -sf %s/premake-system.lua %spremake-system.lua", sudo, zpm.install.getInstallDir(), usrPath ) )
             end
         end
     end
