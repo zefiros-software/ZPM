@@ -276,7 +276,7 @@ function zpm.install.createSymLinks()
             usrPath = "/usr/local/bin/"
         end
     elseif os.get() == "linux" then
-        usrPath = path.join( os.getenv("HOME"), "bin" )
+        usrPath = path.join( os.getenv("HOME"), "bin/" )
         if not os.isdir(usrPath) then
             os.mkdir(usrPath)
         end
