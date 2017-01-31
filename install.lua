@@ -290,11 +290,11 @@ function zpm.install.createSymLinks()
                 os.execute( string.format( "%s ln -sf %s %s%s", sudo, prem, usrPath, path.getname( prem ) ) )
             end 
         
-            os.execute( string.format( "%s ln -sf %s %szpm", sudo, path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
+            os.execute( string.format( "%s ln -sf %s %s/zpm", sudo, path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
         
             if  os.get() == "macosx" then
                 -- workaround for premake search path in osx
-                os.execute( string.format( "%s ln -sf %s/premake-system.lua %spremake-system.lua", sudo, zpm.install.getInstallDir(), usrPath ) )
+                os.execute( string.format( "%s ln -sf %s/premake-system.lua %s/premake-system.lua", sudo, zpm.install.getInstallDir(), usrPath ) )
             end
         end
     end
