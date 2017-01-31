@@ -287,7 +287,7 @@ function zpm.install.createSymLinks()
         if usrPath then
         
             for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
-                os.execute( string.format( "%s ln -sf %s %s%s", sudo, prem, usrPath, path.getname( prem ) ) )
+                os.execute( string.format( "%s ln -sf %s %s/%s", sudo, prem, usrPath, path.getname( prem ) ) )
             end 
         
             os.execute( string.format( "%s ln -sf %s %s/zpm", sudo, path.join( zpm.install.getInstallDir(), "premake5"), usrPath ) )
