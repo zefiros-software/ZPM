@@ -267,16 +267,19 @@ end
 
 function zpm.install.createSymLinks()
 
-    usrPath = "/usr/bin/"
-    if os.get() == "macosx" then
-        usrPath = "/usr/local/bin/"
+    local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
+    local usrPath = nil
+    if not os.isdir( userInstallPath ) then
+        usrPath = "/usr/bin/"
+        if os.get() == "macosx" then
+            usrPath = "/usr/local/bin/"
+        end
+    else if os.get() == "linux" then
+        usrPath = path.join( os.getenv("HOME"), "bin" )
     end
 
     if os.get() == "linux" or os.get() == "macosx" then
-        
-        -- only create symlinks when its not a local install!
-        local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
-        if not os.isdir( userInstallPath ) then
+        if usrPath then
         
             for _, prem in ipairs( os.matchfiles( path.join( zpm.install.getInstallDir(), "premake*" ) ) ) do
                 os.execute( string.format( "sudo ln -sf %s %s%s", prem, usrPath, path.getname( prem ) ) )
