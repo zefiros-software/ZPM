@@ -267,14 +267,14 @@ end
 
 function zpm.install.createSymLinks()
 
-    local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
+    local userInstallPath=path.join( os.getenv("HOME"), ".zpm" )
     local usrPath = nil
     if not os.isdir( userInstallPath ) then
         usrPath = "/usr/bin/"
         if os.get() == "macosx" then
             usrPath = "/usr/local/bin/"
         end
-    else if os.get() == "linux" then
+    elseif os.get() == "linux" then
         usrPath = path.join( os.getenv("HOME"), "bin" )
         if not os.isdir(usrPath) then
             os.mkdir(usrPath)
