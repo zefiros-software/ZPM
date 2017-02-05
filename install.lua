@@ -294,7 +294,7 @@ function zpm.install.createSymLinks()
         sudo = ""
 
         if os.get() == "osx" then
-            local prof = path.join( os.getenv("HOME"), ".profile" )
+            local prof = path.join( os.getenv("HOME"), ".bash_profile" )
             if os.isfile( prof ) then
 
                 if not is.dir( usrPath ) then
