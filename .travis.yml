@@ -17,8 +17,8 @@ install:
     - bash script/install-zpm-travis.sh
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./script/deploy-docs.sh && chmod +x ./script/install-docs.sh && ./script/install-docs.sh; fi
 script:
-    - ls -l ~/
-    - ls -l ~/bin
+    - ls -la ~/
+    - ls -la ~/bin
     - python ./script/test-install.py
     - premake5 install-package
     - zpm install-package
