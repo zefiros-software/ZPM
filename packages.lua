@@ -75,7 +75,7 @@ function zpm.packages.writeLockfile()
 
     local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
     local file = path.join( _MAIN_SCRIPT_DIR, "zpm.lock" )
-    if #tree.dependencies > 0 and os.isfile(file) and zpm.util.readAll(file) ~= str then
+    if #tree.dependencies > 0 and (not os.isfile(file) or _OPTIONS["update"]) then
         printf( "Generating lockfile..." )
         local file = io.open( file, "w")
         file:write(str)
