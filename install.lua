@@ -302,9 +302,9 @@ function zpm.install.createSymLinks()
                 end
                 
                 local profStr = zpm.util.readAll(prof)
-                if not profStr:contains( "PATH=~/bin:$PATH" ) then
+                if not profStr:contains( "export PATH=~/bin:$PATH" ) then
                     local f = assert(io.open(prof, "a"))
-                    f:write("\nPATH=~/bin:$PATH")
+                    f:write("\nexport PATH=~/bin:$PATH")
                     f:close()
                     os.executef("source %s", prof )
                 end
