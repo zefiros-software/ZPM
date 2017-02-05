@@ -286,7 +286,7 @@ function zpm.install.createSymLinks()
         if os.get() == "macosx" then
             usrPath = "/usr/local/bin/"
         end
-    elseif os.get() == "linux" then
+    elseif os.get() == "linux" or os.get() == "macosx" then
         usrPath = path.join( os.getenv("HOME"), "bin/" )
         if not os.isdir(usrPath) then
             os.mkdir(usrPath)
@@ -296,11 +296,7 @@ function zpm.install.createSymLinks()
         if os.get() == "osx" then
             local prof = path.join( os.getenv("HOME"), ".bash_profile" )
             if os.isfile( prof ) then
-
-                if not is.dir( usrPath ) then
-                    os.mkdir( usrPath )
-                end
-                
+                            
                 local profStr = zpm.util.readAll(prof)
                 if not profStr:contains( "export PATH=~/bin:$PATH" ) then
                     local f = assert(io.open(prof, "a"))
