@@ -1,10 +1,10 @@
 @echo off
 
-rmdir /s /q "%TEMP%/zpm-cache2"
-rmdir /s /q "%TEMP%/zpm-install"
+rmdir /s /q "%USERPROFILE%/zpm-cache" 2>NUL
+rmdir /s /q "%USERPROFILE%/zpm-install" 2>NUL
 
-mkdir "%TEMP%/zpm-install"
-cd "%TEMP%/zpm-install"
+mkdir "%USERPROFILE%/zpm-install"
+cd "%USERPROFILE%/zpm-install"
 
 if exist "premake5.zip" del /q "premake5.zip"
 
@@ -27,9 +27,7 @@ if defined GH_TOKEN (
     premake5.exe --file=zpm/zpm.lua install-zpm
 )
 
-exit
-
-rmdir /s /q "%TEMP%/zpm-install"
+rmdir /s /q "%USERPROFILE%/zpm-install"
 
 echo ZPM is installed, however a restart is required!
 

@@ -1,15 +1,15 @@
 #!/bin/bash
 install_dir=~/.zpm_install/
-shared_dir=/usr/local/zpm/
-cache_dir=/var/tmp/zpm-cache/
-local_install=false
+shared_dir=~/.zpm/zpm/
+cache_dir=~/.zpm/zpm-cache/
+local_install=true
 
-while getopts "u" opt; do
+while getopts "g" opt; do
     case "$opt" in
-    u)
-        shared_dir=~/.zpm/zpm/
-        cache_dir=~/.zpm/zpm-cache/
-        local_install=true
+    g)        
+        shared_dir=/usr/local/zpm/
+        cache_dir=/var/tmp/zpm-cache/
+        local_install=false
     ;;
     esac
 done
@@ -31,8 +31,8 @@ rm -rf $cache_dir || true
 mkdir -p $install_dir
 cd $install_dir
 
-rm premake5.tar.gz || true
-rm premake5 || true
+rm -f premake5.tar.gz || true
+rm -f premake5 || true
 
 wget -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz
 
@@ -43,10 +43,10 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 ${SUD} mkdir -p $shared_dir || true
 ${SUD} mkdir -p $cache_dir || true
 
-${SUD} chmod -R 777 $shared_dir
+${SUD} chmod -R 775 $shared_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-${SUD} chmod -R 777 $cache_dir
+${SUD} chmod -R 775 $cache_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
@@ -55,10 +55,10 @@ else
     ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
 fi
 
-${SUD} chmod -R 777 $shared_dir
+${SUD} chmod -R 775 $shared_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
 
-${SUD} chmod -R 777 $cache_dir
+${SUD} chmod -R 775 $cache_dir
 ${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
 
 rm -rf $install_dir

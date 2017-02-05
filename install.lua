@@ -77,7 +77,7 @@ function zpm.install.getMainRegistry()
 end
 
 function zpm.install.getMainRegistryDir()
-    return zpm.util.getRelInstalllOrAbsDir(zpm.install.registry.directory, zpm.install.getSharedInstallDir())
+    return zpm.util.getRelInstalllOrAbsDir(zpm.install.registry.directory, zpm.install.getInstallDir())
 end
 
 function zpm.install.getExternDirectory()    
@@ -86,8 +86,28 @@ end
 
 function zpm.install.getDataDir()
 
-    return zpm.install.getSharedDataDir()
+    -- Test if there is a User mode install present
+    -- if yes, prefer this over the global install
 
+    local osStr = os.get()
+    if osStr == "windows" then
+        local userInstallPath = path.join( os.getenv("USERPROFILE"), ".zpm" ); 
+        if os.isdir( userInstallPath ) then
+            return userInstallPath;
+        else
+            return zpm.install.getSharedDataDir()
+        end 
+
+    elseif osStr == "linux" or osStr == "macosx" then
+        local userInstallPath = path.join( os.getenv("HOME"), ".zpm" ); 
+        if os.isdir( userInstallPath ) then
+            return userInstallPath;
+        else
+            return zpm.install.getSharedDataDir()
+        end    
+    else
+        zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
+    end
 end
 
 function zpm.install.getSharedDataDir()
@@ -101,16 +121,7 @@ function zpm.install.getSharedDataDir()
     if osStr == "windows" then
         return os.getenv("ALLUSERSPROFILE")
     elseif osStr == "linux" then
-        
-        -- Test if there is a User mode install present
-        -- if yes, prefer this over the global install
-        local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
-        if os.isdir( userInstallPath ) then
-            return userInstallPath;
-        else
-            return "/usr/local/"
-        end
-            
+        return "/usr/local/"
     elseif osStr == "macosx" then
         return "/usr/local/"
     else

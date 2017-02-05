@@ -28,8 +28,13 @@ zpm._VERSION = "1.0.2-beta"
 
 -- Dependencies
 zpm.JSON =(loadfile "json.lua")()
-zpm.semver = require "semver"
 zpm.sandbox = require "sandbox"
+
+if bootstrap.semver then
+    zpm.semver = bootstrap.semver
+else
+    zpm.semver = require "semver"
+end
 
 zpm.cachevar = "ZPM_CACHE"
 
@@ -205,21 +210,18 @@ local function getCacheLocation()
     end
 
     if os.get() == "windows" then
-        local temp = os.getenv("TEMP")
+        local temp = path.join(os.getenv("USERPROFILE"), "/AppData/Local/Temp/")
         zpm.assert(temp, "The temp directory could not be found!")
         return path.join(temp, "zpm-cache")
-    end
-
-    if os.get() == "linux" then
-        -- Test if there is a User mode install present
-        -- if yes, prefer this over the global install
-        local userInstallPath=path.join( os.getenv("HOME"), ".zpm" ); 
-        if os.isdir( userInstallPath ) then
-            return path.join( userInstallPath, "zpm-cache" );
+    else
+        
+        local home = path.join( os.getenv("HOME"), ".zpm" ); 
+        if not os.isdir(home) then
+            os.mkdir(home)
         end
+        
+        return path.join( home, "zpm-cache" );
     end
-
-    return "/var/tmp/zpm-cache"
 end
 
 
