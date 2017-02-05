@@ -30,7 +30,7 @@ zpm._VERSION = "1.0.2-beta"
 zpm.JSON =(loadfile "json.lua")()
 zpm.sandbox = require "sandbox"
 
-if bootstrap.semver then
+if bootstrap and bootstrap.semver then
     zpm.semver = bootstrap.semver
 else
     zpm.semver = require "semver"
