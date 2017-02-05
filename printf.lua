@@ -24,7 +24,7 @@
 
 zpm.colors = require "ansicolors"
 zpm.colors.error = zpm.colors.red .. zpm.colors.bright
-zpm.colors.warning = zpm.colors.magenta .. zpm.colors.bright
+zpm.colors.warning = zpm.colors.onmagenta .. zpm.colors.white .. zpm.colors.bright
  
 function printf(...)
     print(string.format(...), zpm.colors.reset)

@@ -24,7 +24,11 @@ echo $shared_dir
 echo "Cache directory:"
 echo $cache_dir
 
-mkdir $install_dir
+rm -rf $install_dir || true
+rm -rf $shared_dir || true
+rm -rf $cache_dir || true
+
+mkdir -p $install_dir
 cd $install_dir
 
 rm -f premake5.tar.gz || true
@@ -36,11 +40,11 @@ tar xvzf premake5.tar.gz
 chmod a+x premake5
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
 
-${SUD} mkdir $shared_dir || true
-${SUD} mkdir $shared_dir || true
+${SUD} mkdir -p $shared_dir || true
+${SUD} mkdir -p $cache_dir || true
 
 ${SUD} chmod -R 775 $shared_dir
-${SUD} chmod -R 775 $shared_dir
+${SUD} chmod -R 775 $cache_dir
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install-zpm;
@@ -49,6 +53,6 @@ else
 fi
 
 ${SUD} chmod -R 775 $shared_dir
-${SUD} chmod -R 775 $shared_dir
+${SUD} chmod -R 775 $cache_dir
 
 rm -rf $install_dir

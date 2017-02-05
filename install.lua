@@ -439,9 +439,9 @@ function zpm.install.updatePremake( checkOnly, verbose )
         if latest ~= nil and version > zpm.semver( _PREMAKE_VERSION ) then
         
             if checkOnly then
-                printf( zpm.colors.green .. zpm.colors.bright .. "A new version '%s' of premake is available, current is '%s'\nPlease run 'premake5 self-update'", tostring( version ), _PREMAKE_VERSION )
+                printf( zpm.colors.ongreen .. zpm.colors.white .. zpm.colors.bright .. "A new version '%s' of premake is available, current is '%s'\nPlease run 'premake5 self-update'", tostring( version ), _PREMAKE_VERSION )
             else
-                printf( zpm.colors.green .. zpm.colors.bright .. "Updating premake to version '%s' from current version '%s'..." , tostring( version ), _PREMAKE_VERSION )
+                printf( zpm.colors.ongreen .. zpm.colors.white .. zpm.colors.bright .. "Updating premake to version '%s' from current version '%s'..." , tostring( version ), _PREMAKE_VERSION )
                 
                 local latestPremake = zpm.util.downloadFromArchive( latest.url, "premake*" )[1]
             
@@ -463,7 +463,7 @@ function zpm.install.updatePremake( checkOnly, verbose )
                     
                 end
         
-                printf( zpm.colors.green .. zpm.colors.bright .. "Succesfully updated premake to version '%s'" , tostring( version ) )
+                printf( zpm.colors.ongreen .. zpm.colors.white .. zpm.colors.bright .. "Succesfully updated premake to version '%s'" , tostring( version ) )
                 zpm.install.updatedPremake = true
             end
         
