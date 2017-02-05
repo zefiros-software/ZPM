@@ -292,6 +292,25 @@ function zpm.install.createSymLinks()
             os.mkdir(usrPath)
         end
         sudo = ""
+
+        if os.get() == "osx" then
+            local prof = path.join( os.getenv("HOME"), ".profile" )
+            if os.isfile( prof ) then
+
+                if not is.dir( usrPath ) then
+                    os.mkdir( usrPath )
+                end
+                
+                local profStr = zpm.util.readAll(prof)
+                if not profStr:contains( "PATH=~/bin:$PATH" ) then
+                    local f = assert(io.open(prof, "a"))
+                    f:write("\nPATH=~/bin:$PATH")
+                    f:close()
+                    os.executef("source %s", prof )
+                end
+                
+            end
+        end
     end
 
     if os.get() == "linux" or os.get() == "macosx" then
