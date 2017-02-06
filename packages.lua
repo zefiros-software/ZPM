@@ -67,6 +67,54 @@ function zpm.packages.buildLockTree(package)
     return dependencies
 end
 
+function zpm.packages.writeLockDiff(new, old, depth, addLine)
+    local oldDeps = old.dependencies or {}
+    if new.dependencies then
+        local dstr = addLine and "|     " or "      "
+        dstr = dstr:rep(depth)
+
+        for _, dep in ipairs(new.dependencies) do
+            local found = false
+            for _, odep in ipairs(oldDeps) do
+                if dep.name == odep.name then
+                    if not dep.hash or not odep.hash or dep.hash == odep.hash then
+                        if dep.hash == odep.hash or not odep.hash then
+                            printf( zpm.colors.yellow .. "%s\\_ %s (%s)", dstr, dep.name, dep.version )
+                        else
+                            printf( zpm.colors.green .. "%s\\_ %s (%s) => (%s) %s", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
+                        end
+                    else
+                        if odep.hash then
+                            printf( zpm.colors.green .. "%s\\_ %s (%s) => (%s) %s", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
+                        else
+                            printf( zpm.colors.green .. "%s\\_ %s (%s)", dstr, dep.name, dep.version )
+                        end
+                    end
+
+                    if dep.dependencies and #dep.dependencies > 0 then
+                        zpm.packages.writeLockDiff(dep, odep, depth + 1, #new.dependencies > 1)
+                    end
+
+                    found = true
+                end
+            end
+
+            if not found then 
+                if dep.hash then
+                    printf( zpm.colors.green .. "%s+- %s (%s) %s", dstr, dep.name, dep.version, dep.hash:sub(0,6) )
+                else
+                    printf( zpm.colors.green .. "%s+- %s (%s)", dstr, dep.name, dep.version )
+                end
+
+                if dep.dependencies and #dep.dependencies > 0 then
+                    zpm.packages.writeLockDiff(dep, {}, depth + 1, #new.dependencies > 1)
+                end
+            end
+        end
+    end
+
+end
+
 function zpm.packages.writeLockfile()
     local tree = {
         dependencies = zpm.packages.buildLockTree(zpm.packages.root),
@@ -75,8 +123,15 @@ function zpm.packages.writeLockfile()
 
     local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
     local file = path.join( _MAIN_SCRIPT_DIR, "zpm.lock" )
-    if #tree.dependencies > 0 and (not os.isfile(file) or _OPTIONS["update"]) then
-        printf( "Generating lockfile..." )
+    if #tree.dependencies > 0 then --and (not os.isfile(file) or _OPTIONS["update"]) then
+
+        local oldLock = {}
+        if os.isfile(file) then
+            oldLock = zpm.JSON:decode(zpm.util.readAll(file))
+        end
+
+        zpm.packages.writeLockDiff(tree, oldLock, 0, #tree.dependencies > 1)
+
         local file = io.open( file, "w")
         file:write(str)
         file:close()
