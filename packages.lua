@@ -32,6 +32,273 @@ zpm.packages.lockTreeCursor = {}
 
 zpm.packages.root = { }
 
+
+
+function zpm.packages.load()
+
+    zpm.packages.loadLockFile()
+
+    local package = path.join(_MAIN_SCRIPT_DIR, zpm.install.packages.fileName)
+
+    if os.isfile(package) then
+
+        local externDir = zpm.install.getExternDirectory()
+
+        local ok, root = pcall(zpm.packages.loadFile, package, true, zpm.manifest.defaultType, "LOCAL", nil, zpm.packages.root, false)
+
+        if ok then
+            zpm.packages.root = root
+            if not _OPTIONS["ignore-updates"] then
+                zpm.packages.postExtract(zpm.packages.root, true)
+            end
+        else
+            printf(zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root)
+
+        end
+
+    end
+end
+
+function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, alreadyInstalled, parent)
+
+    local lpackage = {}
+   if os.isfile(packageFile) then
+
+        local file = zpm.util.readAll(packageFile)
+        lpackage = zpm.JSON:decode(file)
+
+        if pname == nil then
+            if lpackage.name == nil and root then
+                lpackage.name = "root/root"
+            end
+            zpm.assert(lpackage.name ~= nil, "No 'name' supplied in '.package.json'!")
+            pname = lpackage.name
+        end
+
+        zpm.packages.checkValidity(lpackage, isRoot, pname)
+    else
+        -- support packages without an .package.json (which would not be uncommon for assets)
+        lpackage = {}
+    end
+
+
+    local pak = bootstrap.getModule(pname)
+    local name = pak[2]
+    local vendor = pak[1]
+
+    lpackage = zpm.packages.preProcess(lpackage)
+    
+    root = zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage, alreadyInstalled)
+    root = zpm.packages.postProcess(root)
+
+    local mods = lpackage.modules ~= nil and lpackage.modules or { }
+    zpm.packages.loadModules(mods)
+    
+    root = zpm.packages.resolveDependencies(root, vendor, name, path.getdirectory(packageFile), parent)
+
+    return root
+end
+
+function zpm.packages.findPeers( peer, tpe, parent )
+
+    if parent then
+        if parent[tpe] then
+            for _, dep in ipairs(parent[tpe]) do
+
+                if dep.name == peer.name and (peer.version and premake.checkVersion(dep.version, peer.version)) then
+                    dep = table.deepcopy(dep)
+                    dep.isPeer = true
+                    return dep
+                end
+
+            end
+        end
+
+        if parent.parent then
+            return zpm.packages.findPeers(peer, parent.parent)
+        end
+    end
+
+    return nil
+end
+
+function zpm.packages.resolvePeers( lpackage, parent )
+
+    if lpackage and lpackage.peers then
+
+        local types = table.deepcopy(zpm.install.manifests.extensions)
+        table.insert(types, "requires")
+        for _, tpe in ipairs(types) do
+            if lpackage.peers[tpe] then
+            
+                local notFound = {}
+                for _, dep in ipairs(lpackage.peers[tpe]) do
+                    local peer = zpm.packages.findPeers( dep, tpe, parent )
+                    if peer then
+                        if not lpackage[tpe] then
+                            lpackage[tpe] = {}
+                        end
+                        table.insert(lpackage[tpe], peer)
+                    else
+                        dep.unmetPeer = true
+                        table.insert(notFound, dep)
+                    end
+                end
+
+                lpackage[tpe] = zpm.util.concat(lpackage[tpe], notFound)
+            end
+        end
+    end
+    
+    return lpackage
+end
+
+function zpm.packages.resolveOptionalPeers( lpackage, parent )
+
+    if lpackage and lpackage.optionalPeers then
+
+        local types = table.keys(zpm.install.manifests.extensions)
+        table.insert(types,"requires")
+        for _, tpe in ipairs(types) do
+            if lpackage.optionalPeers[tpe] then
+            
+                local notFound = {}
+                for i, dep in ipairs(lpackage.optionalPeers[tpe]) do
+                    local peer = zpm.packages.findPeers( dep, tpe, parent )
+                    if peer then
+                        if not lpackage[tpe] then
+                            lpackage[tpe] = {}
+                        end
+                        table.insert(lpackage[tpe], peer)
+                    end
+                end
+            end
+        end
+    end
+    
+    return lpackage
+end
+
+function zpm.packages.resolveDependencies( lpackage, vendor, name, basedir, parent)
+
+    if not lpackage then
+        return lpackage
+    end
+    
+    lpackage = zpm.packages.resolvePeers( lpackage, parent )
+    lpackage = zpm.packages.resolveOptionalPeers( lpackage, parent )
+
+    if lpackage.requires then
+
+        lpackage = zpm.packages.require( lpackage, lpackage.requires, zpm.manifest.defaultType, vendor, name, basedir )
+
+    end
+    
+    for tpe, ext in pairs(zpm.install.manifests.extensions) do
+        if lpackage[tpe] then
+            lpackage = zpm.packages.require( lpackage, lpackage[tpe], tpe, vendor, name, basedir )
+        end
+    end
+
+    return lpackage
+end
+
+function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedir )
+
+    lpackage.lockTree = zpm.packages.lockTreeCursor
+
+    for _, dependency in ipairs(dependencies) do
+
+        local depMod = bootstrap.getModule(dependency.name)
+
+        zpm.packages.lockTreeCursor = zpm.packages.findInLockTree( lpackage.lockTree, depMod[1], depMod[2], tpe )
+        local targetHash = zpm.packages.lockTreeCursor and zpm.packages.lockTreeCursor.hash or nil
+
+        local ok, depPath, buildPath, updated = pcall(zpm.packages.loadDependency, tpe, dependency, depMod, basedir, targetHash)
+
+        if ok then
+
+            local loaded, version, hash, tag, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies, lpackage)
+
+            if loaded then
+
+                if not lpackage.dependencies then
+                    lpackage.dependencies = {}
+                end
+
+                local isShadow = zpm.packages.package[tpe][depMod[1]][depMod[2]].isShadow
+                dependencies = table.merge(dependencies, {
+                    fullName = dependency.name,
+                    version = version,
+                    dependencyPath = depPath,
+                    buildPath = isShadow and buildPath or expDir,
+                    exportPath = expDir,
+                    module = depMod,
+                    isShadow = isShadow,
+                    options = dependency.options,
+                    updated = updated,
+                    tag = tag,
+                    type = tpe,
+                    hash = hash,
+                    loaded = true,
+                    parent = lpackage,
+                    isPeer = dependency.isPeer
+                } )
+
+                if dependencies.options then
+                    for name, opt in pairs(dependencies.options) do
+                        if type(opt) == "string" then
+                            local mtch = opt:match("%%(%w*)%%")
+                            if mtch and lpackage.options and lpackage.options[mtch] then
+                                dependencies.options[name] = lpackage.options[mtch]
+                            end
+                        end
+                    end
+                end
+
+                table.insert(lpackage.dependencies, dependencies)
+
+            else
+                printf(zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, dependencies)
+            end
+        else
+            printf(zpm.colors.error .. "Failed to load package '%s':\n%s", dependency.name, depPath)
+        end
+
+    end
+
+    zpm.packages.lockTreeCursor = lpackage.lockTree
+  
+    return lpackage
+end
+
+function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, name, root, parent)
+
+    local ok, expDir, version, hash, tag, alreadyInstalled
+    if dependency.path == nil then
+        local externDir, depDir = zpm.packages.getDependencyDir(dependency, tpe)
+        ok, version, hash, tag, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
+
+        zpm.assert(ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!",
+        vendor, name, dependency.version, dependency.name)
+    else
+        version = "LOCAL"
+        hash = ""
+        expDir = buildPath
+        alreadyInstalled = false
+
+        -- make sure it exists in dictionary
+        zpm.packages.prepareDict(tpe, vendor, name, dependency.repository, dependency.shadowRepository, dependency.isShadow)
+    end
+
+    local depPak = path.join(buildPath, zpm.install.packages.fileName)
+    local loaded, pack = pcall(zpm.packages.loadFile, depPak, false, tpe, version, string.format("%s/%s", vendor, name), root, alreadyInstalled, parent)
+
+    root = pack
+
+    return loaded, version, hash, tag, expDir, root, dependency
+end
+
 function zpm.packages.buildLockTree(package)
     local dependencies = {}
 
@@ -48,7 +315,8 @@ function zpm.packages.buildLockTree(package)
                 name = dep.fullName,
                 type = dep.type,
                 version = dep.version,
-                tag = dep.tag
+                tag = dep.tag,
+                isPeer = dep.isPeer
             }
             if dep.hash and #dep.hash > 0 then
                 info.hash = dep.hash
@@ -73,42 +341,55 @@ function zpm.packages.writeLockDiff(new, old, depth, addLine)
         local dstr = addLine and "|     " or "      "
         dstr = dstr:rep(depth)
 
-        for _, dep in ipairs(new.dependencies) do
+        for i, dep in ipairs(new.dependencies) do
             local found = false
             for _, odep in ipairs(oldDeps) do
-                if dep.name == odep.name then
+                if dep.name == odep.name and not (odep.isPeer and dep.isPeer) then
                     if not dep.hash or not odep.hash or dep.hash == odep.hash then
                         if dep.hash == odep.hash or not odep.hash then
-                            printf( zpm.colors.yellow .. "%s\\_ %s (%s)", dstr, dep.name, dep.version )
+                            printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.yellow .. " %s (%s)", dstr, dep.name, dep.version )
                         else
-                            printf( zpm.colors.green .. "%s\\_ %s (%s) => (%s) %s", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
+                            printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.green .. " %s (%s) => (%s) %s UPDATED", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
                         end
                     else
                         if odep.hash then
-                            printf( zpm.colors.green .. "%s\\_ %s (%s) => (%s) %s", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
+                            printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.green .. " %s (%s) => (%s) %s UPDATED", dstr, dep.name, odep.version, dep.version, dep.hash:sub(0,6) )
                         else
-                            printf( zpm.colors.green .. "%s\\_ %s (%s)", dstr, dep.name, dep.version )
+                            printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.green .. " %s (%s) ADDED", dstr, dep.name, dep.version )
                         end
                     end
 
                     if dep.dependencies and #dep.dependencies > 0 then
-                        zpm.packages.writeLockDiff(dep, odep, depth + 1, #new.dependencies > 1)
+                        zpm.packages.writeLockDiff(dep, odep, depth + 1, #new.dependencies ~= i )
                     end
 
                     found = true
                 end
             end
 
-            if not found then 
+            if not found and not dep.isPeer then 
                 if dep.hash then
-                    printf( zpm.colors.green .. "%s+- %s (%s) %s", dstr, dep.name, dep.version, dep.hash:sub(0,6) )
+                    printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.green .. " %s (%s) %s ADDED", dstr, dep.name, dep.version, dep.hash:sub(0,6) )
                 else
-                    printf( zpm.colors.green .. "%s+- %s (%s)", dstr, dep.name, dep.version )
+                    printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.green .. " %s (%s) ADDED", dstr, dep.name, dep.version )
                 end
 
                 if dep.dependencies and #dep.dependencies > 0 then
-                    zpm.packages.writeLockDiff(dep, {}, depth + 1, #new.dependencies > 1)
+                    zpm.packages.writeLockDiff(dep, {}, depth + 1, #new.dependencies ~= i)
                 end
+            end
+        end
+
+        for _, odep in ipairs(oldDeps) do
+            local found = false
+            for _, dep in ipairs(new.dependencies) do
+                if dep.name == odep.name then
+                    found = true
+                end
+            end
+
+            if not found then 
+                printf( zpm.colors.yellow .. "%s\\_" .. zpm.colors.red .. " %s (%s) REMOVED", dstr, odep.name, odep.version )
             end
         end
     end
@@ -123,7 +404,7 @@ function zpm.packages.writeLockfile()
 
     local str = zpm.JSON:encode_pretty(tree, nil, { pretty = true, align_keys = false, indent = "    " })
     local file = path.join( _MAIN_SCRIPT_DIR, "zpm.lock" )
-    if #tree.dependencies > 0 then --and (not os.isfile(file) or _OPTIONS["update"]) then
+    if #tree.dependencies > 0 and (not os.isfile(file) or _OPTIONS["update"]) then
 
         local oldLock = {}
         if os.isfile(file) then
@@ -266,31 +547,6 @@ function zpm.packages.loadLockFile()
     end
 end
 
-function zpm.packages.load()
-
-    zpm.packages.loadLockFile()
-
-    local package = path.join(_MAIN_SCRIPT_DIR, zpm.install.packages.fileName)
-
-    if os.isfile(package) then
-
-        local externDir = zpm.install.getExternDirectory()
-
-        local ok, root = pcall(zpm.packages.loadFile, package, true, zpm.manifest.defaultType, "LOCAL", nil, zpm.packages.root, false)
-
-        if ok then
-            zpm.packages.root = root
-            if not _OPTIONS["ignore-updates"] then
-                zpm.packages.postExtract(zpm.packages.root, true)
-            end
-        else
-            printf(zpm.colors.error .. "Failed to load package '%s' possibly due to an invalid '.package.json':\n%s", package, root)
-
-        end
-
-    end
-end
-
 function zpm.packages.install()
 
     zpm.packages.installPackage(zpm.packages.root, ".", zpm.packages.root.name)
@@ -310,14 +566,16 @@ function zpm.packages.installPackage(package, folder, name)
         end
 
     end
+    
+    -- these are managed independently and should be just updated to the latest
+    -- version available
+    if package.modules ~= nil and #package.modules > 0 then
+        
+        zpm.modules.installOrUpdateModules(package.modules)
+
+    end
 
     if not package.alreadyInstalled then
-
-        if package.modules ~= nil and #package.modules > 0 then
-        
-            zpm.modules.installOrUpdateModules(package.modules)
-
-        end
 
         -- make sure modules exist
         if #package.install > 0 then
@@ -388,80 +646,6 @@ function zpm.packages.findInLockTree( lockTree, vendor, name, tpe )
     return nil
 end
 
-function zpm.packages.require( lpackage, dependencies, tpe, vendor, name, basedir )
-
-    lpackage.lockTree = zpm.packages.lockTreeCursor
-
-    for _, dependency in ipairs(dependencies) do
-
-        local depMod = bootstrap.getModule(dependency.name)
-
-        zpm.packages.lockTreeCursor = zpm.packages.findInLockTree( lpackage.lockTree, depMod[1], depMod[2], tpe )
-        local targetHash = zpm.packages.lockTreeCursor and zpm.packages.lockTreeCursor.hash or nil
-
-        local ok, depPath, buildPath, updated = pcall(zpm.packages.loadDependency, tpe, dependency, depMod, basedir, targetHash)
-
-        if ok then
-
-            local loaded, version, hash, tag, expDir, dependencies = zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, depMod[1], depMod[2], lpackage.dependencies)
-
-            if loaded then
-
-                if not lpackage.dependencies then
-                    lpackage.dependencies = {}
-                end
-
-                local isShadow = zpm.packages.package[tpe][depMod[1]][depMod[2]].isShadow
-                dependencies = table.merge(dependencies, {
-                    fullName = dependency.name,
-                    version = version,
-                    dependencyPath = depPath,
-                    buildPath = isShadow and buildPath or expDir,
-                    exportPath = expDir,
-                    module = depMod,
-                    isShadow = isShadow,
-                    overrides = dependency.overrides,
-                    options = dependency.options,
-                    updated = updated,
-                    tag = tag,
-                    type = tpe,
-                    hash = hash
-                } )
-                table.insert(lpackage.dependencies, dependencies)
-
-            else
-                printf(zpm.colors.error .. "Failed to load package '%s' with version '%s':\n%s", dependency.name, version, dependencies)
-            end
-        else
-            printf(zpm.colors.error .. "Failed to load package '%s':\n%s", dependency.name, depPath)
-        end
-    end
-
-    zpm.packages.lockTreeCursor = lpackage.lockTree
-  
-    return lpackage
-end
-
-function zpm.packages.resolveDependencies( lpackage, vendor, name, basedir)
-
-    if lpackage == nil then
-        return lpackage
-    end
-
-    if lpackage.requires ~= nil then
-
-        lpackage = zpm.packages.require( lpackage, lpackage.requires, zpm.manifest.defaultType, vendor, name, basedir )
-
-    end
-    
-    for tpe, ext in pairs(zpm.install.manifests.extensions) do
-        if lpackage[tpe] then
-            zpm.packages.require( lpackage, lpackage[tpe], tpe, vendor, name, basedir )
-        end
-    end
-
-    return lpackage
-end
 
 function zpm.packages.getDependencyDir(dependency, tpe)
     local localDir = zpm.install.manifests.extensions[tpe] and zpm.install.manifests.extensions[tpe].directory or nil
@@ -483,72 +667,6 @@ function zpm.packages.getDependencyDir(dependency, tpe)
     return rootDir, dir
 end
 
-function zpm.packages.loadPackage(depPath, buildPath, dependency, tpe, vendor, name, root)
-
-    local ok, expDir, version, hash, tag, alreadyInstalled
-    if dependency.path == nil then
-        local externDir, depDir = zpm.packages.getDependencyDir(dependency, tpe)
-        ok, version, hash, tag, expDir, alreadyInstalled = zpm.packages.extract(externDir, depPath, tpe, dependency.version, depDir, dependency)
-
-        zpm.assert(ok, zpm.colors.error .. "Package '%s/%s'; cannot satisfy version '%s' for dependency '%s'!",
-        vendor, name, dependency.version, dependency.name)
-    else
-        version = "LOCAL"
-        hash = ""
-        expDir = buildPath
-        alreadyInstalled = false
-
-        -- make sure it exists in dictionary
-        zpm.packages.prepareDict(tpe, vendor, name, dependency.repository, dependency.shadowRepository, dependency.isShadow)
-    end
-
-    local depPak = path.join(buildPath, zpm.install.packages.fileName)
-    local loaded, pack = pcall(zpm.packages.loadFile, depPak, false, tpe, version, string.format("%s/%s", vendor, name), root, alreadyInstalled)
-
-    root = pack
-
-    return loaded, version, hash, tag, expDir, root, dependency
-end
-
-function zpm.packages.loadFile(packageFile, isRoot, tpe, version, pname, root, alreadyInstalled)
-
-    local lpackage = {}
-   if os.isfile(packageFile) then
-
-        local file = zpm.util.readAll(packageFile)
-        lpackage = zpm.JSON:decode(file)
-
-        if pname == nil then
-            if lpackage.name == nil and root then
-                lpackage.name = "root/root"
-            end
-            zpm.assert(lpackage.name ~= nil, "No 'name' supplied in '.package.json'!")
-            pname = lpackage.name
-        end
-
-        zpm.packages.checkValidity(lpackage, isRoot, pname)
-    else
-        -- support packages without an .package.json (which would not be uncommon for assets)
-        lpackage = {}
-    end
-
-
-    local pak = bootstrap.getModule(pname)
-    local name = pak[2]
-    local vendor = pak[1]
-
-    lpackage = zpm.packages.preProcess(lpackage)
-    
-    root = zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage, alreadyInstalled)
-    root = zpm.packages.postProcess(root)
-
-    local mods = lpackage.modules ~= nil and lpackage.modules or { }
-    zpm.packages.loadModules(mods)
-
-    root = zpm.packages.resolveDependencies(root, vendor, name, path.getdirectory(packageFile))
-
-    return root
-end
 
 function zpm.packages.preProcess(lpackage)
     return lpackage
@@ -580,7 +698,7 @@ function zpm.packages.storePackage(isRoot, tpe, vendor, name, version, lpackage,
 
     if isRoot then
         if lpackage.dev ~= nil then
-            local move = zpm.packages.extendDev( { "assets", "settings", "options", "requires", "modules", "install", })
+            local move = zpm.packages.extendDev( { "assets", "settings", "options", "requires", "modules", "install", "peers" })
             for _, m in ipairs(move) do
 
                 if lpackage.dev[m] ~= nil then

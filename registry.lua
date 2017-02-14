@@ -43,18 +43,9 @@ end
 
 function zpm.registry.update()
 
-    local checkFile = path.join(zpm.cache, "REGISTRY-CHECK")
-
-    -- check once every 20 minutes
-    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) <(60 * 20) then
-        return nil
-    end
+    printf("Hit: %s", zpm.install.registry.repository)
 
     zpm.git.cloneOrPull(zpm.install.getMainRegistryDir(), zpm.install.registry.repository)
-
-    file = io.open(checkFile, "w")
-    file:write("")
-    file:close()
 end
 
 function zpm.registry.load()
@@ -72,6 +63,7 @@ function zpm.registry.load()
 
     for _, repo in ipairs(repos) do
 
+        printf("Hit: %s", repos.repository)
         local manok, registryPath = pcall(zpm.registry.loadFile, repo)
         if manok then
 

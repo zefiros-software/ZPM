@@ -110,6 +110,22 @@ function zpm.useProject(proj)
     end
 end
 
+function zpm.optionalUses(projects)
+
+    if type(projects) ~= "table" then
+        projects = { projects }
+    end
+    
+    for _, projecName in ipairs(projects) do
+
+        if zpm.hasDependency(projectName) then
+            zpm.uses(projectName)
+        end
+
+    end
+
+end
+
 function zpm.uses(projects)
 
     if type(projects) ~= "table" then
@@ -178,6 +194,10 @@ function zpm.setting(opt)
     zpm.assert(zpm.config.settings ~= nil, "Setting '%s' does not exist!", opt)
     zpm.assert(zpm.config.settings[opt] ~= nil, "Setting '%s' does not exist!", opt)
     return zpm.config.settings[opt]
+end
+
+function zpm.hasDependency(name)
+    return zpm.build.findProject(name, false) ~= nil
 end
 
 function zpm.buildLibraries()

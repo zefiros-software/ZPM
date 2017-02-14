@@ -44,6 +44,16 @@ newaction {
 
 newaction {
     trigger = "install-package",
+    description = "Installs all package dependencies alias for 'install'",
+    execute = function()
+
+        zpm.packages.install()
+
+    end
+}
+
+newaction {
+    trigger = "install",
     description = "Installs all package dependencies",
     execute = function()
 

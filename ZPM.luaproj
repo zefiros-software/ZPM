@@ -24,11 +24,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="action\actions.lua" />
-    <Compile Include="action\install-module.lua" />
-    <Compile Include="action\install.lua" />
-    <Compile Include="action\update-module.lua" />
-    <Compile Include="action\update-modules.lua" />
+    <Compile Include="actions\actions.lua" />
+    <Compile Include="actions\install-module.lua" />
+    <Compile Include="actions\install.lua" />
+    <Compile Include="actions\update-module.lua" />
+    <Compile Include="actions\update-modules.lua" />
     <Compile Include="ansicolors.lua" />
     <Compile Include="assert.lua" />
     <Compile Include="assets.lua" />
@@ -54,11 +54,9 @@
     <Compile Include="util.lua" />
     <Compile Include="wget.lua" />
     <Compile Include="zpm.lua" />
-    <Compile Include="_manifest.lua" />
-    <Compile Include="_preload.lua" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="action\" />
+    <Folder Include="actions\" />
     <Folder Include="commands\" />
     <Folder Include="process\" />
     <Folder Include="premake\" />

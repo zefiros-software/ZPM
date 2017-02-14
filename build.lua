@@ -284,7 +284,9 @@ function zpm.build.findRootProject(name)
 
 end
 
-function zpm.build.findProject(name)
+function zpm.build.findProject(name, printWarning)
+
+    printWarning = printWarning == nil and true or false
 
     for _, project in pairs(zpm.build._currentDependency.dependencies) do
 
@@ -296,7 +298,9 @@ function zpm.build.findProject(name)
 
     end
 
-    printf(zpm.colors.error .. "Could not find project '%s', did you load it correctly as a dependency?", name)
+    if printWarning then
+        printf(zpm.colors.error .. "Could not find project '%s', did you load it correctly as a dependency?", name)
+    end
 
     return nil
 

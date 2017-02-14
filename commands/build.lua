@@ -99,6 +99,21 @@ function zpm.build.commands.export( commands )
     zpm.sandbox.run( commands, {env = zpm.build.getEnv()})     
 end
 
+function zpm.build.commands.optionalUses(proj)
+    if type(proj) ~= "table" then
+        proj = {proj}
+    end
+    
+    for _, p in ipairs(proj) do
+
+        if zpm.hasDependency(proj) then
+            zpm.build.command.uses(proj)
+        end
+
+    end
+
+end
+
 function zpm.build.commands.uses( proj )
 
     if type(proj) ~= "table" then
@@ -140,6 +155,10 @@ end
 
 function zpm.build.commands.isDev()
     return zpm.isDev()
+end
+
+function zpm.build.commands.hasDependency(name)
+    return zpm.hasDependency(name)
 end
 
 function zpm.build.rcommands.project( proj )
