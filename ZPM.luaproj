@@ -33,6 +33,7 @@
     <Compile Include="assert.lua" />
     <Compile Include="assets.lua" />
     <Compile Include="build.lua" />
+    <Compile Include="class.lua" />
     <Compile Include="commands\assets.lua" />
     <Compile Include="commands\build.lua" />
     <Compile Include="commands\commands.lua" />

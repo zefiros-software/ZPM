@@ -22,6 +22,6 @@
 -- @endcond
 --]]
 
-function zpm.packages.process.assets(dependency, vendorPath, repo, versions, dest)
-    zpm.assets.executeCommands(path.join(repo, zpm.install.manifests.extensions.assets.fileName ), repo, folder )
-end
+--function zpm.packages.process.assets(dependency, vendorPath, repo, versions, dest)
+--    zpm.assets.executeCommands(path.join(repo, zpm.install.manifests.extensions.assets.fileName ), repo, folder )
+--end

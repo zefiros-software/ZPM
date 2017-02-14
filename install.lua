@@ -50,11 +50,7 @@ zpm.install = {
         registries = zpm.config.install.registry.registries,
         build = zpm.config.install.registry.build
     },
-    manifests = {
-        manifest = zpm.config.install.manifests.manifest,
-        buildFile = zpm.config.install.manifests.buildFile,
-        extensions = zpm.config.install.manifests.extensions
-    },
+    manifests = zpm.config.install.manifests,
     packages =
     {
         fileName = zpm.config.install.packages.fileName
@@ -67,6 +63,62 @@ zpm.install = {
 -- patch settings with the default settings defined for manifest loading
 zpm.install.manifests.fileName = zpm.config.install.manifests.fileName
 zpm.install.manifests.buildFile = zpm.config.install.manifests.buildFile
+
+
+function zpm.install.getCacheLocation()
+    local folder = os.getenv(zpm.cachevar)
+
+    if folder then
+        return folder
+    end
+
+    if os.get() == "windows" then
+        local temp = path.join(os.getenv("USERPROFILE"), "/AppData/Local/Temp/")
+        zpm.assert(temp, "The temp directory could not be found!")
+        return path.join(temp, "zpm-cache")
+    else
+        
+        local home = path.join( os.getenv("HOME"), ".zpm" ); 
+        if not os.isdir(home) then
+            os.mkdir(home)
+        end
+        
+        return path.join( home, "zpm-cache" );
+    end
+end
+
+
+function zpm.install.initialiseCacheFolder()
+
+    -- cache the cache location
+    zpm.cache = zpm.install.getCacheLocation()
+    zpm.temp = path.join(zpm.cache, "temp")
+
+    if os.isdir(zpm.temp) then
+        os.rmdir(zpm.temp)
+    end
+
+    if not os.isdir(zpm.cache) then
+        zpm.assert(os.mkdir(zpm.cache), "The cache directory '%s' could not be made!", zpm.cache)
+    end
+    
+    if not os.isdir(zpm.temp) then
+        zpm.assert(os.mkdir(zpm.temp), "The temp directory '%s' could not be made!", zpm.temp)
+    end
+
+end
+
+function zpm.install.checkGit()
+
+    local version, errorCode = os.outputof("git --version")
+    zpm.assert(version:contains("git version"), "Failed to detect git on PATH:\n %s", version)
+
+    mversion = version:match(".*(%d+%.%d+%.%d).*")
+
+    if premake.checkVersion(mversion, ">=2.9.0") == false then
+        warningf("Git version should be >=2.9.0, current is '%s'", mversion)
+    end
+end
 
 function zpm.install.getModulesDir()
     return bootstrap.directories[1]

@@ -22,28 +22,27 @@
 -- @endcond
 --]]
 
--- Manifests
-zpm.manifest = { }
-zpm.manifest.defaultType = "library"
+Manifest = newclass( "Manifest" )
 
-function zpm.manifest.load()
+function Manifest:init()
+    self.defaultType = "library"
+end
+
+function Manifest:load()
 
     for _, dir in ipairs(table.insertflat( { _MAIN_SCRIPT_DIR }, zpm.registry.dirs)) do
-        
-        zpm.manifest.loadType( path.join(dir, zpm.install.manifests.manifest), zpm.manifest.defaultType )
 
-        for name, ext in pairs(zpm.install.manifests.extensions) do
-            zpm.manifest.loadType(path.join(dir, ext.manifest), name )
+        for name, ext in pairs(zpm.install.manifests) do
+            self.loadType(path.join(dir, ext.manifest), name )
         end
         
     end
-
 end
 
-function zpm.manifest.loadType( localManFile, tpe )
+function Manifest:loadType( localManFile, tpe )
 
     if os.isfile(localManFile) then
-        local manok, err = pcall(zpm.manifest.loadFile, localManFile, tpe)
+        local manok, err = pcall(Manifest.loadFile, self, localManFile, tpe)
         if not manok then
             printf(zpm.colors.error .. "Failed to load manifest '%s':\n%s", dir, err)
         end
@@ -51,7 +50,7 @@ function zpm.manifest.loadType( localManFile, tpe )
 
 end
 
-function zpm.manifest.loadFile(file, tpe)
+function Manifest:loadFile(file, tpe)
 
     if not os.isfile(file) then
         return nil
@@ -91,3 +90,5 @@ function zpm.manifest.loadFile(file, tpe)
     end
 
 end
+
+zpm.manifest = Manifest:new()

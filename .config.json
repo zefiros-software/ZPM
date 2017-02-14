@@ -23,15 +23,15 @@
             "build": ".build.json"
         },        
         "manifests": {
-            "manifest": ".manifest.json",
-            "buildFile": ".build.lua",
-            "extensions": {
-                "assets": {
-                    "directory": "assets",
-                    "manifest": ".assets.json",
-                    "fileName": ".assets.lua",
-                    "defaultExtract": false
-                }
+            "libraries": {
+                "manifest": ".manifest.json",
+                "buildFile": ".build.lua"
+            },
+            "assets": {
+                "directory": "assets",
+                "manifest": ".assets.json",
+                "fileName": ".assets.lua",
+                "defaultExtract": false
             }
         },
         "modules": {

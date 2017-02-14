@@ -24,11 +24,12 @@
 
 -- Module initialisation
 zpm = { }
-zpm._VERSION = "1.0.2-beta"
+zpm._VERSION = "1.0.3-beta"
 
 -- Dependencies
 zpm.JSON =(loadfile "json.lua")()
 zpm.sandbox = require "sandbox"
+require "class"
 
 if bootstrap and bootstrap.semver then
     zpm.semver = bootstrap.semver
@@ -222,62 +223,8 @@ function zpm.buildLibraries()
 end
 
 
-local function getCacheLocation()
-    local folder = os.getenv(zpm.cachevar)
 
-    if folder then
-        return folder
-    end
-
-    if os.get() == "windows" then
-        local temp = path.join(os.getenv("USERPROFILE"), "/AppData/Local/Temp/")
-        zpm.assert(temp, "The temp directory could not be found!")
-        return path.join(temp, "zpm-cache")
-    else
-        
-        local home = path.join( os.getenv("HOME"), ".zpm" ); 
-        if not os.isdir(home) then
-            os.mkdir(home)
-        end
-        
-        return path.join( home, "zpm-cache" );
-    end
-end
-
-
-local function initialiseCacheFolder()
-
-    -- cache the cache location
-    zpm.cache = getCacheLocation()
-    zpm.temp = path.join(zpm.cache, "temp")
-
-    if os.isdir(zpm.temp) then
-        os.rmdir(zpm.temp)
-    end
-
-    if not os.isdir(zpm.cache) then
-        zpm.assert(os.mkdir(zpm.cache), "The cache directory '%s' could not be made!", zpm.cache)
-    end
-    
-    if not os.isdir(zpm.temp) then
-        zpm.assert(os.mkdir(zpm.temp), "The temp directory '%s' could not be made!", zpm.temp)
-    end
-
-end
-
-function zpm.checkGit()
-
-    local version, errorCode = os.outputof("git --version")
-    zpm.assert(version:contains("git version"), "Failed to detect git on PATH:\n %s", version)
-
-    mversion = version:match(".*(%d+%.%d+%.%d).*")
-
-    if premake.checkVersion(mversion, ">=2.9.0") == false then
-        warningf("Git version should be >=2.9.0, current is '%s'", mversion)
-    end
-end
-
-initialiseCacheFolder()
+zpm.install.initialiseCacheFolder()
 zpm.modules.setSearchDir()
 
 function zpm.onLoad()
@@ -287,7 +234,7 @@ function zpm.onLoad()
         ProFi:start()
     end
 
-    zpm.checkGit()
+    zpm.install.checkGit()
 
     print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
 
@@ -298,7 +245,7 @@ function zpm.onLoad()
         zpm.install.updatePremake(true)
 
         zpm.registry.load()
-        zpm.manifest.load()
+        zpm.manifest:load()
         zpm.modules.load()
 
         if _ACTION ~= "self-update" and
