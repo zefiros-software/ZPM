@@ -24,43 +24,40 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="actions\actions.lua" />
-    <Compile Include="actions\install-module.lua" />
-    <Compile Include="actions\install.lua" />
-    <Compile Include="actions\update-module.lua" />
-    <Compile Include="actions\update-modules.lua" />
-    <Compile Include="ansicolors.lua" />
-    <Compile Include="assert.lua" />
-    <Compile Include="assets.lua" />
-    <Compile Include="build.lua" />
-    <Compile Include="class.lua" />
-    <Compile Include="commands\assets.lua" />
-    <Compile Include="commands\build.lua" />
-    <Compile Include="commands\commands.lua" />
-    <Compile Include="config.lua" />
-    <Compile Include="git.lua" />
-    <Compile Include="github.lua" />
-    <Compile Include="install.lua" />
-    <Compile Include="json.lua" />
-    <Compile Include="manifest.lua" />
-    <Compile Include="modules.lua" />
-    <Compile Include="packages.lua" />
-    <Compile Include="premake\override.lua" />
-    <Compile Include="printf.lua" />
-    <Compile Include="process\assets.lua" />
-    <Compile Include="process\process.lua" />
-    <Compile Include="registry.lua" />
-    <Compile Include="sandbox.lua" />
-    <Compile Include="semver.lua" />
-    <Compile Include="util.lua" />
-    <Compile Include="wget.lua" />
+    <Compile Include="extern\ansicolors.lua" />
+    <Compile Include="extern\class.lua" />
+    <Compile Include="extern\json.lua" />
+    <Compile Include="extern\load.lua" />
+    <Compile Include="extern\sandbox.lua" />
+    <Compile Include="extern\semver.lua" />
+    <Compile Include="src\config.lua" />
+    <Compile Include="src\config.actions.lua" />
+    <Compile Include="src\env.lua" />
+    <Compile Include="src\install.lua" />
+    <Compile Include="src\loader.lua" />
+    <Compile Include="src\options.lua" />
+    <Compile Include="test\action\test.lua" />
+    <Compile Include="test\extern\luaunit.lua" />
+    <Compile Include="test\src\testConfig.lua" />
+    <Compile Include="test\src\load.lua" />
+    <Compile Include="test\src\testLoader.lua" />
+    <Compile Include="test\src\testUtil.lua" />
+    <Compile Include="test\tests.lua" />
     <Compile Include="zpm.lua" />
+    <Compile Include="src\load.lua" />
+    <Compile Include="src\util.lua" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="actions\" />
-    <Folder Include="commands\" />
-    <Folder Include="process\" />
-    <Folder Include="premake\" />
+    <Folder Include="extern\" />
+    <Folder Include="src\" />
+    <Folder Include="test\" />
+    <Folder Include="test\action\" />
+    <Folder Include="test\extern\" />
+    <Folder Include="test\src\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="config.json" />
+    <Content Include=".package.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

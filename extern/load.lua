@@ -22,25 +22,14 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "1.0.3-beta"
+require "class"
+
+zpm.json = require "json"
+zpm.sandbox = require "sandbox"
+zpm.colors = require "ansicolors"
+
+if bootstrap and bootstrap.semver then
+    zpm.semver = bootstrap.semver
+else
+    zpm.semver = require "semver"
 end
-
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
-
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end
-
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
-
-    zpm.loader = Loader:new()
-    zpm.loader.config:load()
-end
-
-return zpm

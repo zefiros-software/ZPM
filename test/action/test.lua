@@ -22,25 +22,16 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "1.0.3-beta"
-end
+local u = require( "extern/luaunit" )
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
-
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end
-
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
-
-    zpm.loader = Loader:new()
-    zpm.loader.config:load()
-end
-
-return zpm
+newaction {
+	
+	trigger = "test",
+	description = "Run the automated test suite",
+	
+	execute = function ()
+		lu = u.LuaUnit.new()
+		os.exit( lu:runSuite( "--verbose" ) )
+	end
+	
+}	

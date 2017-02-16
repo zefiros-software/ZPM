@@ -22,25 +22,22 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "1.0.3-beta"
-end
+Test = {} 
 
-dofile "extern/load.lua"
+-- Libraries
+ u = require "extern.luaunit"
+
+require "zpm"
+
+-- Mocking
+
+-- Load environment
+dofile "action/test.lua"
+
+-- Run suite
 dofile "src/load.lua"
 
-function zpm.onLoad()
-
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end
-
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
-
-    zpm.loader = Loader:new()
-    zpm.loader.config:load()
+function Test:testZPMExists()
+    u.assertNotEquals( zpm, nil )
+    u.assertIsTable( zpm )
 end
-
-return zpm

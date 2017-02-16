@@ -22,25 +22,43 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "1.0.3-beta"
+function Test:testConfigExists()
+    u.assertNotEquals(Config, nil)
+    u.assertIsTable(Config)
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function Test:testConfig_Call()
+    local conf = Config:new(nil)
 
-function zpm.onLoad()
-
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end
-
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
-
-    zpm.loader = Loader:new()
-    zpm.loader.config:load()
+    conf.values = {foo = "Bar"}
+    
+    u.assertEquals(conf("foo"), "Bar")
+    u.assertNotEquals(conf("foo"), "bar")
 end
 
-return zpm
+function Test:testConfig_Call2()
+    local conf = Config:new(nil)
+
+    conf.values = {foo = {bar = "foo"}}
+    
+    u.assertEquals(conf("foo.bar"), "foo")
+    u.assertNotEquals(conf("foo.bar"), "Far")
+end
+
+function Test:testConfig_CallSet()
+    local conf = Config:new(nil)
+
+    conf.values = {foo = {bar = "foo"}}
+    conf("foo", "foo")
+    u.assertEquals(conf("foo"), "foo")
+    u.assertNotEquals(conf("foo"), "bar")
+end
+
+function Test:testConfig_CallSet2()
+    local conf = Config:new(nil)
+
+    conf.values = {foo = {bar = "foo"}}
+    conf("foo.bar", "bar")
+    u.assertEquals(conf("foo.bar"), "bar")
+    u.assertNotEquals(conf("foo.bar"), "foo")
+end

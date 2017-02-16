@@ -5,3 +5,4 @@ test/local/obj/*
 *.user
 # ignore merge files
 *.orig
+.config.json

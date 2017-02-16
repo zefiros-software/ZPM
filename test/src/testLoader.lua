@@ -22,25 +22,61 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "1.0.3-beta"
+function Test:testLoaderExists()
+    u.assertNotEquals(Loader, nil)
+    u.assertIsTable(Loader)
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function Test:testLoader_fixMainScript()
 
-function zpm.onLoad()
+    u.assertNotEquals(_MAIN_SCRIPT, "zpm.lua")
 
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end
+    local ld = Loader:new()
 
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
-
-    zpm.loader = Loader:new()
-    zpm.loader.config:load()
+    u.assertNotEquals(_MAIN_SCRIPT, "zpm.lua")
 end
 
-return zpm
+function Test:testLoader_fixMainScriptZpmlua()
+
+    _MAIN_SCRIPT = ""
+
+    local zpmFile = path.join(_MAIN_SCRIPT_DIR, "zpm.lua")
+    local f = io.open(zpmFile, "w")
+    f:write("")
+    f:close()
+
+    local ld = Loader:new()
+
+    u.assertEquals(_MAIN_SCRIPT, zpmFile)
+
+    os.remove(zpmFile)
+
+    _MAIN_SCRIPT = ""
+end
+
+function Test:testLoader_fixMainScriptZpmlua2()
+
+    _ACTION = "self-update"
+    _MAIN_SCRIPT = ""
+
+    local ld = Loader:new()
+
+    u.assertEquals(_MAIN_SCRIPT, ".")
+
+    _ACTION = ""
+end
+
+function Test:testLoader_checkGitVersion()
+
+    local ld = Loader:new()
+
+    u.assertTrue(ld.gitCheckPassed)
+end
+
+function Test:testLoader_initialiseCache()
+
+    local ld = Loader:new()
+
+    u.assertTrue(os.isdir(ld.cache))
+    u.assertTrue(os.isdir(ld.temp))
+end
