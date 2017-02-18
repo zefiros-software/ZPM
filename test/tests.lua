@@ -26,6 +26,7 @@ Test = {}
 
 -- Libraries
  u = require "extern.luaunit"
+require "extern.luacov"
 
 require "zpm"
 
