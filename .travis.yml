@@ -19,9 +19,9 @@ script:
     - python ./script/test-install.py
     - premake5 install-package
     - zpm install-package
-	- zpm test --file=test/tests.lua --systemscript=- --scripts=./
+    - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
-    -  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash) ; fi
+    -  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
 notifications:
     slack: 
         secure: "BGyhlljTOPXouu8KWF7qOmbyxXB9TtPfxis4Vh7T7i+8KO9gw4FBfEL/y6MStIlDdcz1hYBzz7qfmx0NWpE3FgY31DwjgMCHenSLc9j9b5o/6i2+nBqNz+6QAZJhe6McCoS05Y+qwNpp++AdVIRZzexfQSd7NoBy7gwYctcZrUWHCRhlINCWpPWmeIRo3AKptbmUrbMgMEA8A+o9mJziy32zR8MJc4xQrcqpEBwbfbHCFoBlcr10o38YFTK0I2Xj+9rFWY1DS7pQOVirMsappKdZHvYsb/H7Ylbslf/L0g9htbXMH5K2UeOWMCH06s23pxZoCqK4RNtlAzw0AFFqtl30eBxgXuwQUw7rvYzEhQpvuQauTQNLNj2BEObPCDZLYY6XKDoqdrViRQTikw7NFvsW3FSnNPDCoDW3HGZY2kP2miBFQApktQOrY7ivucFTsUS/9LRrcxT4qXK0NMjv6Gw5TUnhPO+NpZ7V8V7BzQgtACWREe63pFSp6WE2Gil6G/MPRALA1QuszMXIV0vX8W4VqmPHVQFQz7Aiy3FTnvPx/8hGd+3HjOnDdOENQXoDVovG+6uXzv24oAVDOmtigmySckIxxHRpuJ2dt80+dsPzER3nxuLseeVsuLmWFmyljSIYzWODxGy6fAEpa7E9NNgH6vJ7BXjIA+O/LPpNLEM="
