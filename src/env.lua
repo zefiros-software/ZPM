@@ -29,21 +29,16 @@ function zpm.env.scriptPath()
     return str:match("(.*/)")
 end
 
-function zpm.env.getInstallDir()
-    return path.join(zpm.env.getDataDir(), zpm.env.directory)
-end
-
-function zpm.env.getCache()
+function zpm.env.getCacheDirectory()
     local folder = os.getenv("ZPM_CACHE")
 
     if folder then
-        return folder
+        return path.normalize(folder)
     end
 
     if os.get() == "windows" then
-        local temp = path.join(os.getenv("USERPROFILE"), "/AppData/Local/Temp/")
-        zpm.assert(temp, "The temp directory could not be found!")
-        return path.join(temp, "zpm-cache")
+        local temp = path.join(os.getenv("USERPROFILE"), "AppData/Local/Temp/")
+        return path.normalize(path.join(temp, "zpm-cache"))
     else
 
         local home = path.join(os.getenv("HOME"), ".zpm");
@@ -51,11 +46,11 @@ function zpm.env.getCache()
             os.mkdir(home)
         end
 
-        return path.join(home, "zpm-cache");
+        return path.normalize(path.join(home, "zpm-cache"));
     end
 end
 
-function zpm.env.getDataDir()
+function zpm.env.getDataDirectory()
 
     -- Test if there is a User mode install present
     -- if yes, prefer this over the global install
@@ -66,7 +61,7 @@ function zpm.env.getDataDir()
         if os.isdir(userInstallPath) then
             return userInstallPath;
         else
-            return zpm.env.getSharedDataDir()
+            return zpm.env.getSharedDataDirectory()
         end
 
     elseif osStr == "linux" or osStr == "macosx" then
@@ -74,17 +69,18 @@ function zpm.env.getDataDir()
         if os.isdir(userInstallPath) then
             return userInstallPath;
         else
-            return zpm.env.getSharedDataDir()
+            return zpm.env.getSharedDataDirectory()
         end
     else
         zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
     end
 end
 
-function zpm.env.getSharedDataDir()
+function zpm.env.getSharedDataDirectory()
 
-    if os.getenv("ZPM_SHARED_DIR") ~= "" and os.getenv("ZPM_SHARED_DIR") ~= nil then
-        return os.getenv("ZPM_SHARED_DIR")
+    local shared = os.getenv("ZPM_SHARED_DIR")
+    if shared ~= "" and shared ~= nil then
+        return shared
     end
 
     local osStr = os.get()

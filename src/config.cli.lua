@@ -44,11 +44,12 @@ newaction {
             help = true
         end
 
-        if help then
+        if help or _OPTIONS["help"] then
             printf("%%{yellow}Config action must be one of the following commands:\n" ..
             " - set [key] [value]\tSets the key on a specified value\n" ..
             " - add [key] [value]\tAdds a value to the array on the given key\n" ..
-            " - get [key]\t\tGets the value on a specified key")
+            " - get [key]\t\tGets the value on a specified key\n\n" ..
+            " --parents\tMake parent keys as needed")
         end
     end
 }

@@ -145,7 +145,9 @@ end
 function Config:__call(key, value)
 
     return self:_findKey(self.values, key, function(cursor, key)
-        cursor[key] = value
+        if value ~= nil then
+            cursor[key] = value
+        end
         return cursor[key]
     end )
 end
@@ -164,8 +166,8 @@ function Config:_findKey(tab, key, func, ensureTable)
                     cursor[key] = { cursor[key] }
                 end
             end
-            func(cursor, key)
-            return true
+            
+            return func(cursor, key)
         end
 
         if _OPTIONS["parents"] and not cursor[key] then

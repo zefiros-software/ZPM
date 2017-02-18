@@ -22,12 +22,7 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "config.cli.lua"
-dofile "install.lua"
-dofile "install.cli.lua"
-dofile "util.lua"
-dofile "env.lua"
-dofile "options.lua"
-dofile "show.cli.lua"
+newoption {
+    trigger = "github-token",
+    description = "Uses the given GitHub token"
+}

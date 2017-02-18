@@ -22,12 +22,37 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "config.cli.lua"
-dofile "install.lua"
-dofile "install.cli.lua"
-dofile "util.lua"
-dofile "env.lua"
-dofile "options.lua"
-dofile "show.cli.lua"
+local function _installZPM()
+
+    printf("%%{greenbg white bright}Installing ZPM version '%s'!", zpm._VERSION)
+
+    zpm.loader.install:install()
+end
+
+newaction {
+    trigger = "install-zpm",
+    description = "Installs ZPM in path",
+    execute = function()
+        _installZPM()
+    end
+}
+
+newaction {
+    trigger = "install",
+    description = "Shows various ZPM settings",
+    execute = function()
+        local help = false
+        if #_ARGS == 0 or _ARGS[1] == "package" then
+        elseif #_ARGS == 1 and _ARGS[1] == "zpm" then
+            _installZPM()
+        else
+            help = true
+        end
+
+        if help or _OPTIONS["help"] then
+            printf("%%{yellow}Show action must be one of the following commands:\n" ..
+            " - package (default)\tSets the key on a specified value\n" ..
+            " - zpm  \t\tInstalls ZPM")
+        end
+    end
+}

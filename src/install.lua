@@ -27,3 +27,20 @@ Installer = newclass "Installer"
 function Installer:init(loader)
     self.loader = loader
 end
+
+function Installer:getDirectory()
+    return path.normalize(path.join(zpm.env.getDataDirectory(), self.loader.config("install.directory")))
+end
+
+function Installer:install()
+    self:_createDirectory()
+end
+
+function Installer:_createDirectory()
+    local folder = self:getDirectory()
+
+    if not os.isdir(folder) then
+
+        zpm.assert(os.mkdir(folder), "Cannot create instalation folder '%s'!", folder)
+    end
+end

@@ -22,12 +22,27 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "config.cli.lua"
-dofile "install.lua"
-dofile "install.cli.lua"
-dofile "util.lua"
-dofile "env.lua"
-dofile "options.lua"
-dofile "show.cli.lua"
+newaction {
+    trigger = "show",
+    description = "Shows various ZPM settings",
+    execute = function()
+        local help = false
+        if #_ARGS == 1 then
+            if _ARGS[1] == "cache" then
+                printf("ZPM cache location: %s\n", zpm.env.getCacheDirectory());
+            elseif _ARGS[1] == "install" then
+                printf("ZPM installation location: %s\n", zpm.loader.install:getDirectory());
+            else
+                help = true
+            end
+        else
+            help = true
+        end
+
+        if help or _OPTIONS["help"] then
+            printf("%%{yellow}Show action must be one of the following commands:\n" ..
+            " - cache \tSets the key on a specified value\n" ..
+            " - install \tAdds a value to the array on the given key")
+        end
+    end
+}

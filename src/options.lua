@@ -76,23 +76,3 @@ newaction {
         zpm.install.createSymLinks()
     end
 }
-
-newaction {
-    trigger = "show-cache",
-    description = "Shows the location of the ZPM cache",
-    execute = function()
-
-        printf("ZPM cache location: %s\n", zpm.env.getCacheLocation());
-
-    end
-}
-
-newaction {
-    trigger = "show-install",
-    description = "Shows the location of the ZPM install",
-    execute = function()
-
-        printf("ZPM install location: %s\n", zpm.install.getInstallDir());
-
-    end
-}

@@ -31,7 +31,7 @@ function Loader:init()
     self:initialiseCache()
     
     self.config = Config:new(self)
-    self.installer = Installer:new(self)
+    self.install = Installer:new(self)
 end
 
 function Loader:fixMainScript()
@@ -70,7 +70,7 @@ function Loader:checkGitVersion()
 end
 
 function Loader:initialiseCache()
-    self.cache = zpm.env.getCache()
+    self.cache = zpm.env.getCacheDirectory()
     self.temp = path.join(zpm.cache, "temp")
 
     if os.isdir(self.temp) then

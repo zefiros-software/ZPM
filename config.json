@@ -1,5 +1,5 @@
 {
-    "GitHub": {
+    "github": {
         "host": "https://github.com/",
         "apiHost": "https://api.github.com/",
         "token": false
