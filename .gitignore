@@ -7,3 +7,5 @@ test/local/obj/*
 *.orig
 .config.json
 .vs/*
+luacov.report.out
+luacov.stats.out

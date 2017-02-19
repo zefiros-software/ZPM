@@ -36,7 +36,7 @@ require "zpm"
 dofile "action/test.lua"
 
 -- Run suite
-dofile "src/load.lua"
+dofile "src/testLoad.lua"
 
 function Test:testZPMExists()
     u.assertNotEquals( zpm, nil )
