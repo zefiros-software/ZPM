@@ -239,3 +239,16 @@ function Test:testConfig_Add5()
     u.assertEquals( conf("foo"), {2, {bar=3}} )
     u.assertEquals( conf("bar"), {3} )
 end
+
+function Test:testConfig_Add6()
+    local conf = Config:new(nil)
+    
+    conf:set("foo", 2)
+    conf:add("foo", 3)
+    u.assertEquals( conf("foo"), {2, 3} )
+end
+
+function Test:testConfig_NonExists()
+    local conf = Config:new(nil)
+    u.assertEquals( conf("bar"), nil )
+end
