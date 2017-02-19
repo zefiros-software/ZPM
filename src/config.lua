@@ -178,15 +178,9 @@ function Config:_findKey(tab, key, func, ensureTable)
         end
 
         if cursor[key] then
-            if i == #sep then
-                return cursor[key]
-            else
-                cursor = cursor[key]
-            end
+            cursor = cursor[key]
         else
             return nil
         end
     end
-
-    return nil
 end
