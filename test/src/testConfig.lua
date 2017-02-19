@@ -62,3 +62,47 @@ function Test:testConfig_CallSet2()
     u.assertEquals(conf("foo.bar"), "bar")
     u.assertNotEquals(conf("foo.bar"), "foo")
 end
+
+function Test:testConfig_CallSet3()
+    local conf = Config:new(nil)
+
+    conf.values = {foo = {bar = "foo"}}
+    conf("foo.bar", "bar")
+    conf("foo.bar2", "bar2")
+    u.assertEquals(conf("foo.bar"), "bar")
+    u.assertEquals(conf("foo.bar2"), "bar2")
+    u.assertNotEquals(conf("foo.bar"), "foo")
+end
+
+function Test:testConfig_SetNotExists()
+    local conf = Config:new(nil)
+    u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.set, conf, "foo.bar", 2 )
+end
+
+function Test:testConfig_SetNotExistsParents()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:set( "foo.bar", 2)
+    u.assertEquals( conf("foo.bar"), 2 )
+    u.assertEquals( conf("foo"), {bar = 2} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
+
+function Test:testConfig_SetNotExistsParents2()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:set( "foo.bar", { foo = 2})
+    u.assertEquals( conf("foo.bar"), { foo = 2} )
+    u.assertEquals( conf("foo"), {bar = { foo = 2}} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
