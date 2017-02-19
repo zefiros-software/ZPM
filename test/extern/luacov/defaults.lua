@@ -39,13 +39,13 @@ return {
   -- All will be included if nothing is listed.
   -- Do not include the '.lua' extension. Path separator is always '/'.
   -- Overruled by `exclude`.
-  include = {},
+  include = {"src/**", "zpm.lua"},
 
   --- Lua patterns for files to exclude when reporting.
   -- Nothing will be excluded if nothing is listed.
   -- Do not include the '.lua' extension. Path separator is always '/'.
   -- Overrules `include`.
-  exclude = {"**/src/base/**"},
+  exclude = {},
 
   --- Table mapping names of modules to be included to their filenames.
   -- Has no effect if empty.
