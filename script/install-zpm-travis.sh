@@ -5,8 +5,8 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo add-apt-repository ppa:git-core/ppa -y
     sudo apt-get install git -y
     curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
-    sudo rm /usr/local/bin/git-lfs || true
-    sudo rm /usr/bin/git-lfs || true
+    sudo rm -f /usr/local/bin/git-lfs || true
+    sudo rm -f /usr/bin/git-lfs || true
     sudo apt-get install git-lfs -y
     /usr/bin/git-lfs install
     sudo apt-get install g++-multilib -y
