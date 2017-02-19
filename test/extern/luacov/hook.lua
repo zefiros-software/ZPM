@@ -35,7 +35,7 @@ function hook.new(runner)
       local data = runner.data
       local file = data[name]
 
-      if not file then
+      if not file or not file.max then
          -- New or ignored file.
          if ignored_files[name] then
             return
