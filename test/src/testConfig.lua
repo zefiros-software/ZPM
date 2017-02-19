@@ -106,3 +106,41 @@ function Test:testConfig_SetNotExistsParents2()
     _OPTIONS["parents"] = nil
     u.assertIsNil( _OPTIONS["parents"])
 end
+
+
+function Test:testConfig_SetNotExistsParents2JSON()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:set( "foo.bar", "{\"foo\": 2}")
+    u.assertEquals( conf("foo.bar"), { foo = 2} )
+    u.assertEquals( conf("foo"), {bar = { foo = 2}} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
+
+function Test:testConfig_Set()
+    local conf = Config:new(nil)
+    
+    conf:set("foo", 2)
+    u.assertEquals( conf("foo"), 2 )
+end
+
+function Test:testConfig_Set2()
+    local conf = Config:new(nil)
+    
+    conf:set("foo", { bar = 2 } )
+    u.assertEquals( conf("foo"), { bar = 2 } )
+    u.assertEquals( conf("foo.bar"), 2 )
+end
+
+function Test:testConfig_Set2JSON()
+    local conf = Config:new(nil)
+    
+    conf:set("foo", "{ \"bar\": 2 }" )
+    u.assertEquals( conf("foo"), { bar = 2 } )
+    u.assertEquals( conf("foo.bar"), 2 )
+end

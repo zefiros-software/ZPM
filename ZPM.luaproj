@@ -41,9 +41,18 @@
     <Compile Include="src\options.lua" />
     <Compile Include="src\show.cli.lua" />
     <Compile Include="test\action\test.lua" />
+    <Compile Include="test\extern\luacov.lua" />
+    <Compile Include="test\extern\luacov\defaults.lua" />
+    <Compile Include="test\extern\luacov\hook.lua" />
+    <Compile Include="test\extern\luacov\reporter.lua" />
+    <Compile Include="test\extern\luacov\reporter\default.lua" />
+    <Compile Include="test\extern\luacov\runner.lua" />
+    <Compile Include="test\extern\luacov\stats.lua" />
+    <Compile Include="test\extern\luacov\tick.lua" />
+    <Compile Include="test\extern\luacov\util.lua" />
     <Compile Include="test\extern\luaunit.lua" />
     <Compile Include="test\src\testConfig.lua" />
-    <Compile Include="test\src\load.lua" />
+    <Compile Include="test\src\testLoad.lua" />
     <Compile Include="test\src\testLoader.lua" />
     <Compile Include="test\src\testUtil.lua" />
     <Compile Include="test\tests.lua" />
@@ -57,11 +66,15 @@
     <Folder Include="test\" />
     <Folder Include="test\action\" />
     <Folder Include="test\extern\" />
+    <Folder Include="test\extern\bin\" />
+    <Folder Include="test\extern\luacov\" />
+    <Folder Include="test\extern\luacov\reporter\" />
     <Folder Include="test\src\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.json" />
     <Content Include=".package.json" />
+    <Content Include="test\extern\bin\luacov" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

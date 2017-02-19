@@ -28,6 +28,8 @@ function Config:init(loader)
     self.loader = loader
     self.values = { }
     self.configName = "config.json"
+    self.mayStore = false
+    self.storeFile = path.join(_PREMAKE_DIR, "." .. self.configName)
     self.globalConfig = path.join(_PREMAKE_DIR, "." .. self.configName)
 end
 
@@ -86,14 +88,15 @@ function Config:get(key)
 end
 
 function Config:_store(keys, value, add)
+    
+    if not self.mayStore then
+        return nil
+    end
 
     add = iif(add ~= nil, add, false)
-    -- we store in the user config
-    local file = path.join(_PREMAKE_DIR, "." .. self.configName)
-
     local config = { }
-    if os.isfile(file) then
-        local ok, json = pcall(zpm.json.decode, zpm.json, zpm.util.readAll(file))
+    if os.isfile(self.storeFile) then
+        local ok, json = pcall(zpm.json.decode, zpm.json, zpm.util.readAll(self.storeFile))
         if ok then
             config = json
         end

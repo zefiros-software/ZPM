@@ -27,6 +27,9 @@ newaction {
     description = "Interacts with the ZPM configuration",
     execute = function()
         local help = false
+
+        zpm.loader.config.mayStore = true
+
         if #_ARGS > 1 then
             if _ARGS[1] == "set" then
                 zpm.assert(#_ARGS == 3, "No key and value specified")
