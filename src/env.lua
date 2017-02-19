@@ -52,25 +52,16 @@ end
 
 function zpm.env.getDataDirectory()
 
-    -- Test if there is a User mode install present
-    -- if yes, prefer this over the global install
+    local folder = os.getenv("ZPM_DATA_DIR")
+    if folder then
+        return path.normalize(folder)
+    end
 
     local osStr = os.get()
     if osStr == "windows" then
-        local userInstallPath = path.join(os.getenv("USERPROFILE"), ".zpm");
-        if os.isdir(userInstallPath) then
-            return userInstallPath;
-        else
-            return zpm.env.getSharedDataDirectory()
-        end
-
+        return path.join(os.getenv("USERPROFILE"), ".zpm");
     elseif osStr == "linux" or osStr == "macosx" then
-        local userInstallPath = path.join(os.getenv("HOME"), ".zpm");
-        if os.isdir(userInstallPath) then
-            return userInstallPath;
-        else
-            return zpm.env.getSharedDataDirectory()
-        end
+        return path.join(os.getenv("HOME"), ".zpm");
     else
         zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
     end
@@ -78,9 +69,9 @@ end
 
 function zpm.env.getSharedDataDirectory()
 
-    local shared = os.getenv("ZPM_SHARED_DIR")
-    if shared ~= "" and shared ~= nil then
-        return shared
+    local folder = os.getenv("ZPM_SHARED_DIR")
+    if folder then
+        return path.normalize(folder)
     end
 
     local osStr = os.get()

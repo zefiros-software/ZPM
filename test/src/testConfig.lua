@@ -144,3 +144,98 @@ function Test:testConfig_Set2JSON()
     u.assertEquals( conf("foo"), { bar = 2 } )
     u.assertEquals( conf("foo.bar"), 2 )
 end
+
+function Test:testConfig_AddNotExists()
+    local conf = Config:new(nil)
+    u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.add, conf, "foo.bar", 2 )
+end
+
+function Test:testConfig_AddNotExistsParents()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:add( "foo.bar", 2)
+    u.assertEquals( conf("foo.bar"), {2} )
+    u.assertEquals( conf("foo"), {bar = {2}} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
+
+function Test:testConfig_AddNotExistsParents2()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:add( "foo.bar", { foo = 2})
+    u.assertEquals( conf("foo.bar"), {{foo = 2}} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
+
+
+function Test:testConfig_AddNotExistsParents2JSON()
+    local conf = Config:new(nil)
+
+    u.assertIsNil( _OPTIONS["parents"])
+    _OPTIONS["parents"] = true
+
+    conf:add( "foo.bar", "{\"foo\": 2}")
+    u.assertEquals( conf("foo.bar"), {{ foo = 2}} )
+
+    _OPTIONS["parents"] = nil
+    u.assertIsNil( _OPTIONS["parents"])
+end
+
+function Test:testConfig_Add()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", 2)
+    u.assertEquals( conf("foo"), {2} )
+end
+
+function Test:testConfig_Add2()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", { bar = 2 } )
+    u.assertEquals( conf("foo"), {{ bar = 2 }} )
+end
+
+function Test:testConfig_Add2JSON()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", "{ \"bar\": 2 }" )
+    u.assertEquals( conf("foo"), {{ bar = 2 }} )
+end
+
+function Test:testConfig_Add3()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", 2)
+    conf:add("foo", 3)
+    u.assertEquals( conf("foo"), {2, 3} )
+end
+
+function Test:testConfig_Add4()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", 2)
+    conf:add("foo", 3)
+    conf:add("bar", 3)
+    u.assertEquals( conf("foo"), {2, 3} )
+    u.assertEquals( conf("bar"), {3} )
+end
+
+function Test:testConfig_Add5()
+    local conf = Config:new(nil)
+    
+    conf:add("foo", 2)
+    conf:add("foo", {bar=3})
+    conf:add("bar", 3)
+    u.assertEquals( conf("foo"), {2, {bar=3}} )
+    u.assertEquals( conf("bar"), {3} )
+end
