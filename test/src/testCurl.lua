@@ -23,14 +23,12 @@
 --]]
 
 function Test:testCurl()
+
     local loader = Loader:new()
     u.assertNotNil(loader.curl)
 end
 
 function Test:testCurl_downloadCurl()
-    if not os.is("windows") then
-        return nil
-    end
     
     local curl = path.join(_MAIN_SCRIPT_DIR, "curl.exe")
     if os.isfile(curl) then

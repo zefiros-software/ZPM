@@ -28,7 +28,9 @@ function Curl:init(loader)
     self.loader = loader
     self.location = iif(os.is("windows"), self.loader.bin, "curl")
 
-    self:_downloadCurl(self.location)
+    if not os.is("windows") then
+        self:_downloadCurl(self.location)
+    end
 end
 
 function Curl:_downloadCurl(destination)
