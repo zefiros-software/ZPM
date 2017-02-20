@@ -22,13 +22,25 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "config.cli.lua"
-dofile "install.lua"
-dofile "install.cli.lua"
-dofile "curl.lua"
-dofile "util.lua"
-dofile "env.lua"
-dofile "options.lua"
-dofile "show.cli.lua"
+function Test:testCurl()
+    local loader = Loader:new()
+    u.assertNotNil(loader.curl)
+end
+
+function Test:testCurl_downloadCurl()
+    if not os.is("windows") then
+        return nil
+    end
+    
+    local curl = path.join(_MAIN_SCRIPT_DIR, "curl.exe")
+    if os.isfile(curl) then
+        os.remove(curl)
+    end
+
+    local loader = Loader:new()
+    loader.curl:_downloadCurl(_MAIN_SCRIPT_DIR)
+
+    u.assertTrue(os.isfile(curl))
+
+    os.remove(curl)
+end

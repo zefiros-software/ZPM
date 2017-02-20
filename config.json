@@ -45,9 +45,7 @@
             "directory": "extern"
         }
     },
-    "wget": {
-        "downloadUrl": "https://downloads.sourceforge.net/project/gnuwin32/wget/1.11.4-1/wget-1.11.4-1-setup.exe?r=%26ts=1484668775%26use_mirror=heanet"
-    },
+    "curl": "http://www.paehl.com/open_source/?download=curl_752_1_ssl.zip",
     "settings": {
     }
 }

@@ -22,13 +22,30 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "config.cli.lua"
-dofile "install.lua"
-dofile "install.cli.lua"
-dofile "curl.lua"
-dofile "util.lua"
-dofile "env.lua"
-dofile "options.lua"
-dofile "show.cli.lua"
+Curl = newclass "Curl"
+
+function Curl:init(loader)
+    self.loader = loader
+    self.location = iif(os.is("windows"), self.loader.bin, "curl")
+
+    self:_downloadCurl(self.location)
+end
+
+function Curl:_downloadCurl(destination)
+
+    local destFile = path.join(destination, "curl.exe")
+    if not os.is("windows") or os.isfile(destFile) then
+        return nil
+    end
+    
+    local setupFile = path.join(self.loader.temp, "curl.zip")
+
+    if not os.isfile(setupFile) then
+        os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', self.loader.config("curl"), setupFile )
+    end
+
+    zip.extract(setupFile, self.loader.temp)
+
+    zpm.assert(os.rename(path.join(self.loader.temp, "curl.exe"), destFile))
+    zpm.assert(os.isfile(destFile), "Curl is not installed!")
+end

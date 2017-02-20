@@ -31,7 +31,10 @@ function Loader:init()
     self:initialiseCache()
     
     self.config = Config:new(self)
+    self.config:load()
+
     self.install = Installer:new(self)
+    self.curl = Curl:new(self)
 end
 
 function Loader:fixMainScript()
@@ -71,7 +74,8 @@ end
 
 function Loader:initialiseCache()
     self.cache = zpm.env.getCacheDirectory()
-    self.temp = path.join(zpm.cache, "temp")
+    self.temp = path.join(self.cache, "temp")
+    self.bin = path.join(self.cache, "bin")
 
     if os.isdir(self.temp) then
         os.rmdir(self.temp)
@@ -83,5 +87,9 @@ function Loader:initialiseCache()
     
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
+    end
+    
+    if not os.isdir(self.bin) then
+        zpm.assert(os.mkdir(self.bin), "The bin directory '%s' could not be made!", self.bin)
     end
 end

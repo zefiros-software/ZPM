@@ -32,6 +32,7 @@
     <Compile Include="extern\semver.lua" />
     <Compile Include="src\config.lua" />
     <Compile Include="src\config.cli.lua" />
+    <Compile Include="src\curl.lua" />
     <Compile Include="src\env.lua" />
     <Compile Include="src\github.cli.lua" />
     <Compile Include="src\github.lua" />
@@ -52,6 +53,7 @@
     <Compile Include="test\extern\luacov\util.lua" />
     <Compile Include="test\extern\luaunit.lua" />
     <Compile Include="test\src\testConfig.lua" />
+    <Compile Include="test\src\testCurl.lua" />
     <Compile Include="test\src\testLoad.lua" />
     <Compile Include="test\src\testLoader.lua" />
     <Compile Include="test\src\testUtil.lua" />
