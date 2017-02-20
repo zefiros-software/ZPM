@@ -43,7 +43,11 @@ function Curl:_downloadCurl(destination)
     local setupFile = path.join(self.loader.temp, "curl.zip")
 
     if not os.isfile(setupFile) then
-        os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', self.loader.config("curl"), setupFile )
+        if os.is("windows") then
+            os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', self.loader.config("curl"), setupFile )
+        else
+            http.download(self.loader.config("curl"), setupFile)
+        end
     end
 
     zip.extract(setupFile, self.loader.temp)
