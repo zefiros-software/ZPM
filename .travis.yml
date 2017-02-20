@@ -19,7 +19,7 @@ matrix:
           osx_image: xcode8
           language: generic
 install:
-    - bash script/install-zpm-osx.sh
+    - bash script/install-zpm.sh
 script:
     - premake5 install-package
     - zpm install-package
