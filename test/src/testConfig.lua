@@ -252,3 +252,21 @@ function Test:testConfig_NonExists()
     local conf = Config:new(nil)
     u.assertEquals( conf("bar"), nil )
 end
+
+function Test:testConfig_Get()
+    local conf = Config:new(nil)
+    u.assertStrContains( conf:set("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:get("foo"), "'foo' is set to" )
+end
+
+function Test:testConfig_Get()
+    local conf = Config:new(nil)
+    u.assertStrContains( conf:set("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:get("foo"), "'foo' is set to" )
+end
+
+function Test:testConfig_Load()
+    local conf = Config:new(nil)
+    conf:load()
+    u.assertStrContains( conf("github.host"), "https://github.com/" )
+end
