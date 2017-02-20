@@ -15,8 +15,8 @@ cd $install_dir
 
 rm -f premake5.tar.gz || true
 
-wget  -nv -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz
-tar xzf premake5.tar.gz
+wget -q --show-progress -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz
+tar xzf premake5.tar.gz > /dev/null
 chmod a+x premake5
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm

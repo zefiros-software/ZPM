@@ -270,3 +270,34 @@ function Test:testConfig_Load()
     conf:load()
     u.assertStrContains( conf("github.host"), "https://github.com/" )
 end
+
+function Test:testConfig_Store()
+    local conf = Config:new(nil)
+    conf.mayStore = true
+    conf.storeFile = "test.json"
+
+    u.assertFalse(os.isfile(conf.storeFile))
+
+    conf:set("foo", 2)    
+    conf:set("bar", {})
+    conf:set("bar.foo", {foo=5})
+
+    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)),{bar={foo={foo=5}},foo=2})
+
+    os.remove(conf.storeFile)
+end
+
+function Test:testConfig_StoreAdd()
+    local conf = Config:new(nil)
+    conf.mayStore = true
+    conf.storeFile = "test.json"
+
+    u.assertFalse(os.isfile(conf.storeFile))
+
+    conf:add("foo", 2)    
+    conf:add("foo", 4)
+
+    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)),{foo={2,4}})
+
+    os.remove(conf.storeFile)
+end

@@ -30,7 +30,6 @@ function Config:init(loader)
     self.configName = "config.json"
     self.mayStore = false
     self.storeFile = path.join(_PREMAKE_DIR, "." .. self.configName)
-    self.globalConfig = path.join(_PREMAKE_DIR, "." .. self.configName)
 end
 
 function Config:load()
@@ -58,7 +57,7 @@ function Config:set(key, value)
         self:_store(key, value)
         return self:_print(key)
     else
-        errorf( "Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key )
+        errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
     end
 end
 
@@ -78,7 +77,7 @@ function Config:add(key, value)
         self:_store(key, value, true)
         return self:_print(key)
     else
-        errorf( "Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key )
+        errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
     end
 end
 
@@ -88,7 +87,7 @@ function Config:get(key)
 end
 
 function Config:_store(keys, value, add)
-    
+
     if not self.mayStore then
         return nil
     end
@@ -101,7 +100,7 @@ function Config:_store(keys, value, add)
             config = json
         end
     end
-
+    
     self:_findKey(config, keys, function(cursor, key)
         if add then
             table.insert(cursor[key], value)
@@ -109,7 +108,7 @@ function Config:_store(keys, value, add)
             cursor[key] = value
         end
 
-        zpm.util.writeAll(self.globalConfig, zpm.json:encode_pretty(config))
+        zpm.util.writeAll(self.storeFile, zpm.json:encode_pretty(config))
     end , true)
 end
 
@@ -172,12 +171,12 @@ function Config:_findKey(tab, key, func, ensureTable)
                     cursor[key] = { cursor[key] }
                 end
             end
-            
+
             return func(cursor, key)
         end
 
         if _OPTIONS["parents"] and not cursor[key] then
-            cursor[key] = {}
+            cursor[key] = { }
         end
 
         if cursor[key] then
