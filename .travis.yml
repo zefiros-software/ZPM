@@ -14,9 +14,8 @@ matrix:
           osx_image: xcode8
           language: generic
 install:
-    - bash script/install-zpm-travis.sh
+    - bash script/install-zpm-osx.sh
 script:
-    - python ./script/test-install.py
     - premake5 install-package
     - zpm install-package
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
