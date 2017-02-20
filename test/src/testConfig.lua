@@ -85,7 +85,7 @@ function Test:testConfig_SetNotExistsParents()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:set( "foo.bar", 2)
+    u.assertStrContains( conf:set( "foo.bar", 2), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), 2 )
     u.assertEquals( conf("foo"), {bar = 2} )
 
@@ -99,7 +99,7 @@ function Test:testConfig_SetNotExistsParents2()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:set( "foo.bar", { foo = 2})
+    u.assertStrContains( conf:set( "foo.bar", { foo = 2}), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), { foo = 2} )
     u.assertEquals( conf("foo"), {bar = { foo = 2}} )
 
@@ -114,7 +114,7 @@ function Test:testConfig_SetNotExistsParents2JSON()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:set( "foo.bar", "{\"foo\": 2}")
+    u.assertStrContains( conf:set( "foo.bar", "{\"foo\": 2}"), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), { foo = 2} )
     u.assertEquals( conf("foo"), {bar = { foo = 2}} )
 
@@ -125,14 +125,14 @@ end
 function Test:testConfig_Set()
     local conf = Config:new(nil)
     
-    conf:set("foo", 2)
+    u.assertStrContains( conf:set("foo", 2), "'foo' is set to" )
     u.assertEquals( conf("foo"), 2 )
 end
 
 function Test:testConfig_Set2()
     local conf = Config:new(nil)
     
-    conf:set("foo", { bar = 2 } )
+    u.assertStrContains( conf:set("foo", { bar = 2 } ), "'foo' is set to" )
     u.assertEquals( conf("foo"), { bar = 2 } )
     u.assertEquals( conf("foo.bar"), 2 )
 end
@@ -140,7 +140,7 @@ end
 function Test:testConfig_Set2JSON()
     local conf = Config:new(nil)
     
-    conf:set("foo", "{ \"bar\": 2 }" )
+    u.assertStrContains( conf:set("foo", "{ \"bar\": 2 }" ), "'foo' is set to" )
     u.assertEquals( conf("foo"), { bar = 2 } )
     u.assertEquals( conf("foo.bar"), 2 )
 end
@@ -156,7 +156,7 @@ function Test:testConfig_AddNotExistsParents()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:add( "foo.bar", 2)
+    u.assertStrContains( conf:add( "foo.bar", 2), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), {2} )
     u.assertEquals( conf("foo"), {bar = {2}} )
 
@@ -170,7 +170,7 @@ function Test:testConfig_AddNotExistsParents2()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:add( "foo.bar", { foo = 2})
+    u.assertStrContains( conf:add( "foo.bar", { foo = 2}), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), {{foo = 2}} )
 
     _OPTIONS["parents"] = nil
@@ -184,7 +184,7 @@ function Test:testConfig_AddNotExistsParents2JSON()
     u.assertIsNil( _OPTIONS["parents"])
     _OPTIONS["parents"] = true
 
-    conf:add( "foo.bar", "{\"foo\": 2}")
+    u.assertStrContains( conf:add( "foo.bar", "{\"foo\": 2}"), "'foo.bar' is set to" )
     u.assertEquals( conf("foo.bar"), {{ foo = 2}} )
 
     _OPTIONS["parents"] = nil
@@ -194,38 +194,38 @@ end
 function Test:testConfig_Add()
     local conf = Config:new(nil)
     
-    conf:add("foo", 2)
+    u.assertStrContains( conf:add("foo", 2), "'foo' is set to" )
     u.assertEquals( conf("foo"), {2} )
 end
 
 function Test:testConfig_Add2()
     local conf = Config:new(nil)
     
-    conf:add("foo", { bar = 2 } )
+    u.assertStrContains( conf:add("foo", { bar = 2 } ), "'foo' is set to" )
     u.assertEquals( conf("foo"), {{ bar = 2 }} )
 end
 
 function Test:testConfig_Add2JSON()
     local conf = Config:new(nil)
     
-    conf:add("foo", "{ \"bar\": 2 }" )
+    u.assertStrContains( conf:add("foo", "{ \"bar\": 2 }" ), "'foo' is set to" )
     u.assertEquals( conf("foo"), {{ bar = 2 }} )
 end
 
 function Test:testConfig_Add3()
     local conf = Config:new(nil)
     
-    conf:add("foo", 2)
-    conf:add("foo", 3)
+    u.assertStrContains( conf:add("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:add("foo", 3), "'foo' is set to" )
     u.assertEquals( conf("foo"), {2, 3} )
 end
 
 function Test:testConfig_Add4()
     local conf = Config:new(nil)
     
-    conf:add("foo", 2)
-    conf:add("foo", 3)
-    conf:add("bar", 3)
+    u.assertStrContains( conf:add("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:add("foo", 3), "'foo' is set to" )
+    u.assertStrContains( conf:add("bar", 3), "'bar' is set to" )
     u.assertEquals( conf("foo"), {2, 3} )
     u.assertEquals( conf("bar"), {3} )
 end
@@ -233,9 +233,9 @@ end
 function Test:testConfig_Add5()
     local conf = Config:new(nil)
     
-    conf:add("foo", 2)
-    conf:add("foo", {bar=3})
-    conf:add("bar", 3)
+    u.assertStrContains( conf:add("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:add("foo", {bar=3}), "'foo' is set to" )
+    u.assertStrContains( conf:add("bar", 3), "'bar' is set to" )
     u.assertEquals( conf("foo"), {2, {bar=3}} )
     u.assertEquals( conf("bar"), {3} )
 end
@@ -243,8 +243,8 @@ end
 function Test:testConfig_Add6()
     local conf = Config:new(nil)
     
-    conf:set("foo", 2)
-    conf:add("foo", 3)
+    u.assertStrContains( conf:set("foo", 2), "'foo' is set to" )
+    u.assertStrContains( conf:add("foo", 3), "'foo' is set to" )
     u.assertEquals( conf("foo"), {2, 3} )
 end
 
