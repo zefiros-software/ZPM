@@ -56,7 +56,7 @@ function Config:set(key, value)
     local cursor = self:__call(key, value)
     if cursor then
         self:_store(key, value)
-        self:_print(key)
+        return self:_print(key)
     else
         errorf( "Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key )
     end
@@ -76,7 +76,7 @@ function Config:add(key, value)
 
     if cursor then
         self:_store(key, value, true)
-        self:_print(key)
+        return self:_print(key)
     else
         errorf( "Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key )
     end
@@ -84,7 +84,7 @@ end
 
 function Config:get(key)
 
-    self:_print(key)
+    return self:_print(key)
 end
 
 function Config:_store(keys, value, add)
@@ -115,13 +115,16 @@ end
 
 function Config:_print(key)
 
-    local c = self:_findKey(self.values, key, function(cursor, key)
-        local c = iif(cursor[key] ~= nil, cursor[key], "")
+    local str = ""
+    local c = self:_findKey(self.values, key, function(cursor, k)
+        local c = iif(cursor[k] ~= nil, cursor[k], "")
         if type(c) == "table" then
             c = table.tostring(c, 4)
         end
-        printf("\nValue '%s' is set to:\n%%{bright cyan}%s", key, c)
+        str = string.format("\nValue '%s' is set to:\n%s", key, c)
     end )
+    printf(str)
+    return str
 end
 
 function Config:_loadFile(file)
