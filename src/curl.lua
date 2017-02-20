@@ -36,7 +36,7 @@ end
 function Curl:_downloadCurl(destination)
 
     local destFile = path.join(destination, "curl.exe")
-    if not os.is("windows") or os.isfile(destFile) then
+    if os.isfile(destFile) then
         return nil
     end
     
