@@ -34,7 +34,7 @@ cd $install_dir
 rm -f premake5.tar.gz || true
 rm -f premake5 || true
 
-wget https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz -O premake5.tar.gz
+curl -o https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz -O premake5.tar.gz
 
 tar xvzf premake5.tar.gz
 chmod a+x premake5
