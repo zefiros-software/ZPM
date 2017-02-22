@@ -46,7 +46,7 @@ function Curl:_downloadCurl(destination)
         if os.is("windows") then
             os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', self.loader.config("curl"), setupFile )
         else
-            http.download(self.loader.config("curl"), setupFile)
+            os.executef( "curl -0 %s %s", setupFile, self.loader.config("curl"))
         end
     end
 
