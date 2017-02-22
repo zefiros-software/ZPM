@@ -5,5 +5,6 @@ install:
     - .\script\install-zpm.bat 
     - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
 test_script:
-    - zpm
+    - zpm install-package
+    - premake5 install-package
     - .\test.bat
