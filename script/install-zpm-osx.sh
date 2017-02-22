@@ -17,8 +17,7 @@ cd $install_dir
 
 rm -f premake5.tar.gz || true
 
-curl -o premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz
-tar xzf premake5.tar.gz > /dev/null
+curl -L -o premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz | tar xzf
 chmod a+x premake5
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
