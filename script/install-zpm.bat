@@ -3,6 +3,8 @@
 rmdir /s /q "%USERPROFILE%/zpm-cache" 2>NUL
 rmdir /s /q "%USERPROFILE%/zpm-install" 2>NUL
 
+set root=%cd%
+
 mkdir "%USERPROFILE%/zpm-install"
 cd "%USERPROFILE%/zpm-install"
 
@@ -26,6 +28,8 @@ if defined GH_TOKEN (
 ) else (
     premake5.exe --file=zpm/zpm.lua install-zpm
 )
+
+echo %root%
 
 rmdir /s /q "%USERPROFILE%/zpm-install"
 

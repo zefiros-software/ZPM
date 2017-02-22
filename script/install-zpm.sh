@@ -6,6 +6,8 @@ cache_dir=~/.zpm/zpm-cache/
 echo "Shared directory: ${shared_dir}"
 echo "Cache directory: ${cache_dir}"
 
+root=$(pwd)
+
 rm -rf $install_dir || true
 rm -rf $shared_dir || true
 rm -rf $cache_dir || true
@@ -29,5 +31,7 @@ if [ -z "$GH_TOKEN" ]; then
 else
     ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
 fi
+
+cd $root
 
 rm -rf $install_dir
