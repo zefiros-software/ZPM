@@ -29,7 +29,7 @@ if defined GH_TOKEN (
     premake5.exe --file=zpm/zpm.lua install-zpm
 )
 
-echo %root%
+cd %root%
 
 rmdir /s /q "%USERPROFILE%/zpm-install"
 
