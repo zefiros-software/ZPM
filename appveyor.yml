@@ -6,5 +6,4 @@ install:
     - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
 test_script:
     - zpm
-    - premake5
     - .\test.bat
