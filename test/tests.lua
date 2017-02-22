@@ -28,7 +28,7 @@ Test = {}
  u = require "extern.luaunit"
 require "extern.luacov"
 
-require "../zpm"
+dofile "../zpm.lua"
 
 -- Mocking
 
