@@ -99,3 +99,24 @@ function zpm.util.isArray(tab)
     end
     return true
 end 
+
+function zpm.util.getGitUrl(str)
+    local str2 = str:match("(https://.*\.git).*")
+    if str2 == nil then
+        return str:match("(ssh://git@.*\.git).*")
+    end
+
+    return str2
+end
+
+function zpm.util.isGitUrl(str)
+    return str == zpm.util.getGitUrl(str)
+end
+
+function zpm.util.hasGitUrl(str)
+    return zpm.util.getGitUrl(str) ~= nil
+end
+
+function zpm.util.hasUrl(str)
+    return str:match(".*(https?://).*") ~= nil
+end

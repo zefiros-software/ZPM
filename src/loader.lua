@@ -34,7 +34,7 @@ function Loader:init()
     self.config:load()
 
     self.install = Installer:new(self)
-    self.curl = Curl:new(self)
+    self.http = Http:new(self)
 end
 
 function Loader:fixMainScript()

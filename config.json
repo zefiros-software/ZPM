@@ -45,7 +45,6 @@
             "directory": "extern"
         }
     },
-    "curl": "http://www.paehl.com/open_source/?download=curl_752_1_ssl.zip",
     "settings": {
     }
 }

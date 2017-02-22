@@ -25,4 +25,4 @@
 dofile "testLoader.lua"
 dofile "testConfig.lua"
 dofile "testUtil.lua"
-dofile "testCurl.lua"
+dofile "testHttp.lua"

@@ -22,36 +22,19 @@
 -- @endcond
 --]]
 
-Curl = newclass "Curl"
-
-function Curl:init(loader)
-    self.loader = loader
-    self.location = iif(os.is("windows"), self.loader.bin, "curl")
-
-    if not os.is("windows") then
-        self:_downloadCurl(self.location)
-    end
+-- Handy little helper
+function os.outputoff(...)
+    return os.outputof(string.format(...))
 end
 
-function Curl:_downloadCurl(destination)
+-- Unfortunately premake normalises most paths,
+-- which results in some links like http:// to be 
+-- reduced to http:/ which of course is incorrect
+premake.override(path, "normalize", function(base, p)
 
-    local destFile = path.join(destination, "curl.exe")
-    if os.isfile(destFile) then
-        return nil
-    end
-    
-    local setupFile = path.join(self.loader.temp, "curl.zip")
-
-    if not os.isfile(setupFile) then
-        if os.is("windows") then
-            os.executef( 'powershell -command "Invoke-WebRequest -Uri %s -OutFile %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox"', self.loader.config("curl"), setupFile )
-        else
-            os.executef( "curl -0 %s %s", setupFile, self.loader.config("curl"))
-        end
+    if not zpm.util.hasGitUrl(p) and not zpm.util.hasUrl(p) then
+        return base(p)
     end
 
-    zip.extract(setupFile, self.loader.temp)
-
-    zpm.assert(os.rename(path.join(self.loader.temp, "curl.exe"), destFile))
-    zpm.assert(os.isfile(destFile), "Curl is not installed!")
-end
+    return p
+end )
