@@ -7,4 +7,4 @@ install:
 test_script:
     - zpm install-package
     - premake5 install-package
-    - .\test.bat
+    - test.bat
