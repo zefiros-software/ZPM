@@ -28,40 +28,40 @@ function Test:testHttp()
     u.assertNotNil(loader.http)
 end
 
-function Test:testHttp_get()
-    
-    local web = Http:new()
-    u.assertStrContains(web:get("http://example.com/"), "This domain is established to be used for illustrative examples in documents.")
+function Test:testHttp_get()    
+  
+    local loader = Loader:new()
+    u.assertStrContains(loader.http:get("http://example.com/"), "This domain is established to be used for illustrative examples in documents.")
 end
 
-function Test:testHttp_getHeaders()
+function Test:testHttp_getHeaders()    
     
-    local web = Http:new()
-    u.assertStrContains(web:get("http://scooterlabs.com/echo", {testHeader="FOOOO"}), "[testHeader] => FOOOO")
+    local loader = Loader:new()
+    u.assertStrContains(loader.http:get("http://scooterlabs.com/echo", {testHeader="FOOOO"}), "[testHeader] => FOOOO")
 end
 
-function Test:testHttp_getHeaders2()
+function Test:testHttp_getHeaders2()    
     
-    local web = Http:new()
-    local result = web:get("http://scooterlabs.com/echo", {testHeader="FOOOO", foo="bar"})
+    local loader = Loader:new()
+    local result = loader.http:get("http://scooterlabs.com/echo", {testHeader="FOOOO", foo="bar"})
     u.assertStrContains(result, "[testHeader] => FOOOO")
     u.assertStrContains(result, "[foo] => bar")
 end
 
-function Test:testHttp_download()
+function Test:testHttp_download()    
     
-    local web = Http:new()
-    web:download("http://scooterlabs.com/echo", "test.txt", {testHeader="FOOOO", foo="bar"})
+    local loader = Loader:new()
+    loader.http:download("http://scooterlabs.com/echo", "test.txt", {testHeader="FOOOO", foo="bar"})
     local str = zpm.util.readAll("test.txt")
     u.assertStrContains(str, "[testHeader] => FOOOO")
     u.assertStrContains(str, "[foo] => bar")
     os.remove("test.txt")
 end
 
-function Test:testHttp_download2()
+function Test:testHttp_download2()    
     
-    local web = Http:new()
-    web:download("http://example.com/", "test.txt")
+    local loader = Loader:new()
+    loader.http:download("http://example.com/", "test.txt")
     local str = zpm.util.readAll("test.txt")
     u.assertStrContains(str, "This domain is established to be used for illustrative examples in documents.")
     os.remove("test.txt")

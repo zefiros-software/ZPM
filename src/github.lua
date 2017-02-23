@@ -22,7 +22,13 @@
 -- @endcond
 --]]
 
-Installer = newclass "Github"
+Github = newclass "Github"
+
+local function _getAssetsVersion(str)
+
+    local verStr = string.match(str, ".*(%d+%.%d+%.%d+.*)")
+    return zpm.semver(verStr)
+end
 
 function Github:init(loader)
     self.loader = loader
@@ -31,10 +37,9 @@ end
 function Github:get(url)
     local token = self:_getToken()
     if token then
-        token = "Authorization: token " .. token
+        token = { Authorization = "token " .. token }
     end
-
-    return zpm.wget.get(url, token)
+    return self.loader.http:get(url, token)
 end
 
 function Github:getUrl(prefix, organisation, repository, resource)
@@ -47,9 +52,9 @@ function Github:getUrl(prefix, organisation, repository, resource)
     return self:get(url)
 end
 
-function Github:getAssets(organisation, repository)
+function Github:getReleases(organisation, repository)
 
-    local response = zpm.json:decode(zpm.GitHub.getUrl("repos", organisation, repository, "releases"))
+    local response = zpm.json:decode(self:getUrl("repos", organisation, repository, "releases"))
 
     local releases = { }
     table.foreachi(response, function(value)
@@ -112,12 +117,6 @@ function Github:_getToken()
     if gh then
         return gh
     end
-
-    return self.loader.config("github.token")
-end
-
-local function _getAssetsVersion(str)
-
-    local verStr = string.match(str, ".*(%d+%.%d+%.%d+.*)")
-    return zpm.semver(verStr)
+    local token = self.loader.config("github.token")
+    return iif(token and token:len() > 0, token, nil)
 end

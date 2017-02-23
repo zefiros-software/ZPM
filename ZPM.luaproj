@@ -32,14 +32,15 @@
     <Compile Include="extern\semver.lua" />
     <Compile Include="src\config.lua" />
     <Compile Include="src\config.cli.lua" />
-    <Compile Include="src\curl.lua" />
     <Compile Include="src\env.lua" />
     <Compile Include="src\github.cli.lua" />
     <Compile Include="src\github.lua" />
+    <Compile Include="src\http.lua" />
     <Compile Include="src\install.cli.lua" />
     <Compile Include="src\install.lua" />
     <Compile Include="src\loader.lua" />
     <Compile Include="src\options.lua" />
+    <Compile Include="src\premake.lua" />
     <Compile Include="src\show.cli.lua" />
     <Compile Include="test\action\test.lua" />
     <Compile Include="test\extern\luacov.lua" />
@@ -53,7 +54,8 @@
     <Compile Include="test\extern\luacov\util.lua" />
     <Compile Include="test\extern\luaunit.lua" />
     <Compile Include="test\src\testConfig.lua" />
-    <Compile Include="test\src\testCurl.lua" />
+    <Compile Include="test\src\testGithub.lua" />
+    <Compile Include="test\src\testHttp.lua" />
     <Compile Include="test\src\testLoad.lua" />
     <Compile Include="test\src\testLoader.lua" />
     <Compile Include="test\src\testUtil.lua" />

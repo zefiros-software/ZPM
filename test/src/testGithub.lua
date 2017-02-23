@@ -22,8 +22,30 @@
 -- @endcond
 --]]
 
-dofile "testLoader.lua"
-dofile "testGithub.lua"
-dofile "testConfig.lua"
-dofile "testUtil.lua"
-dofile "testHttp.lua"
+function Test:testGithub()
+    local loader = Loader:new()
+    u.assertNotEquals(loader.github, nil)
+    u.assertIsTable(Loader)
+end
+
+function Test:testGithub_getReleases()
+    local loader = Loader:new()
+    local results = loader.github:getReleases("premake", "premake-core")
+    u.assertTrue(#results > 5)
+    u.assertTrue(results[1].version == zpm.semver(5, 0, 0, "alpha11"))
+    u.assertTrue(results[2].version == zpm.semver(5, 0, 0, "alpha10"))
+    u.assertTrue(results[3].version == zpm.semver(5, 0, 0, "alpha9"))
+
+    u.assertTrue(results[1].assets[1].name:contains("premake-5.0.0-alpha11"))
+    u.assertTrue(results[2].assets[2].name:contains("premake-5.0.0-alpha10"))
+    u.assertTrue(results[3].assets[3].name:contains("premake-5.0.0-alpha9"))
+
+    for _, release in ipairs(results) do
+        u.assertNotNil(release.version)
+        u.assertNotNil(release.assets)
+        for _, asset in ipairs(release.assets) do
+            u.assertNotNil(asset.name)
+            u.assertNotNil(asset.url)
+        end
+    end
+end

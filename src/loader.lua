@@ -35,6 +35,7 @@ function Loader:init()
 
     self.install = Installer:new(self)
     self.http = Http:new(self)
+    self.github = Github:new(self)
 end
 
 function Loader:fixMainScript()

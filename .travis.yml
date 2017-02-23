@@ -6,8 +6,6 @@ matrix:
           python: 3.5 
           addons:
             apt:
-                sources:
-                    - ppa:git-core/ppa
                 packages:
                     - git
           dist: trusty

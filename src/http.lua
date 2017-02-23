@@ -24,32 +24,27 @@
 
 Http = newclass "Http"
 
+local function _scriptPath()
+    local str = debug.getinfo(2, "S").source:sub(2)
+    return str:match("(.*/)")
+end
+
 function Http:init(loader)
     self.loader = loader
+    self.location = iif(os.is("windows"), path.join( _scriptPath(), "../bin/curl.exe" ), "curl")
 end
 
 function Http:get(url, headers, extra)
     headers = iif(headers == nil, { }, headers)
     extra = iif(extra == nil, "", extra)
     local headerStr = ""
-    local response, code
-    if os.is("windows") then
-    
-        for header, value in pairs(headers) do
-            headerStr = iif(headerStr:len() == 0, "", headerStr .. ";") ..("%s='%s'"):format(header, value)
-        end
-        response, code = os.outputoff('powershell -command "Invoke-WebRequest -Uri %s  -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::FireFox -Headers @{%s} %s | Select-Object -Expand Content"', url, headerStr, extra)
-    else
-
-        for header, value in pairs(headers) do
-            headerStr = headerStr ..(" -H '%s: %s'"):format(header, value)
-        end
-        response, code = os.outputoff("curl -L %s %s %s", headerStr, url, extra)
+    for header, value in pairs(headers) do
+        headerStr = headerStr ..(" -H \"%s: %s\""):format(header, value)
     end
+    local response, code = os.outputoff("%s -s -L %s %s %s", self.location, headerStr, url, extra)
     return response
 end
 
 function Http:download(url, outFile, headers)
-    local extra = iif(os.is("windows"), ("-OutFile '%s'"):format(outFile), ("-o %s"):format(outFile))
-    return self:get(url, headers, extra )
+    return self:get(url, headers, ("--output %s"):format(outFile) )
 end
