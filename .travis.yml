@@ -17,7 +17,8 @@ matrix:
           osx_image: xcode8
           language: generic
 install:
-    - bash script/install-zpm.sh
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash script/install-zpm.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash script/install-zpm-osx.sh; fi
 script:
     - premake5 install-package
     - zpm install-package
