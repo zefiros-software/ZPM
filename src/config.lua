@@ -29,7 +29,7 @@ function Config:init(loader)
     self.values = { }
     self.configName = "config.json"
     self.mayStore = false
-    self.storeFile = path.join(_PREMAKE_DIR, "." .. self.configName)
+    self.storeFile = path.join(zpm.env.getDataDirectory(), "." .. self.configName)
 end
 
 function Config:load()
@@ -100,16 +100,22 @@ function Config:_store(keys, value, add)
             config = json
         end
     end
-    
+
     self:_findKey(config, keys, function(cursor, key)
         if add then
             table.insert(cursor[key], value)
         else
-            cursor[key] = value
+            if type(value) == "table" then
+                cursor[key] = table.merge(cursor[key], value)
+            else
+                cursor[key] = value
+            end
         end
-
         zpm.util.writeAll(self.storeFile, zpm.json:encode_pretty(config))
-    end , true)
+    end , true, true)
+
+    -- reload to get the actual value
+    self:load()
 end
 
 function Config:_print(key)
@@ -157,7 +163,7 @@ function Config:__call(key, value)
     end )
 end
 
-function Config:_findKey(tab, key, func, ensureTable)
+function Config:_findKey(tab, key, func, ensureTable, store)
 
     ensureTable = iif(ensureTable ~= nil, ensureTable, false)
     local sep = key:explode("%.")
@@ -175,7 +181,7 @@ function Config:_findKey(tab, key, func, ensureTable)
             return func(cursor, key)
         end
 
-        if _OPTIONS["parents"] and not cursor[key] then
+        if (_OPTIONS["parents"] or store) and not cursor[key] then
             cursor[key] = { }
         end
 

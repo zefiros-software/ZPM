@@ -73,7 +73,7 @@ end
 function zpm.util.writeAll(file, str)
 
     local f = io.open(file, "w")
-    f:write(str:match("^\n(.*)"))
+    f:write(str)
     f:close()
 
     zpm.assert(os.isfile(file), "'%s' failed to write", file)

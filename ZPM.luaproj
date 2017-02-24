@@ -40,6 +40,7 @@
     <Compile Include="src\install.lua" />
     <Compile Include="src\loader.lua" />
     <Compile Include="src\options.lua" />
+    <Compile Include="src\premake-system.lua" />
     <Compile Include="src\premake.lua" />
     <Compile Include="src\show.cli.lua" />
     <Compile Include="test\action\test.lua" />

@@ -59,9 +59,9 @@ function zpm.env.getDataDirectory()
 
     local osStr = os.get()
     if osStr == "windows" then
-        return path.join(os.getenv("USERPROFILE"), "zpm");
+        return path.normalize(path.join(os.getenv("USERPROFILE"), "zpm"))
     elseif osStr == "linux" or osStr == "macosx" then
-        return path.join(os.getenv("HOME"), ".zpm");
+        return path.normalize(path.join(os.getenv("HOME"), ".zpm"))
     else
         zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
     end
@@ -77,7 +77,7 @@ function zpm.env.getSharedDataDirectory()
     local osStr = os.get()
 
     if osStr == "windows" then
-        return os.getenv("ALLUSERSPROFILE")
+        return path.normalize(os.getenv("ALLUSERSPROFILE"))
     elseif osStr == "linux" then
         return "/usr/local/"
     elseif osStr == "macosx" then

@@ -25,7 +25,7 @@
 local function _installZPM()
 
     printf("%%{greenbg white bright}Installing ZPM version '%s'!", zpm._VERSION)
-
+    
     zpm.loader.install:install()
 end
 
@@ -39,12 +39,10 @@ newaction {
 
 newaction {
     trigger = "install",
-    description = "Shows various ZPM settings",
+    description = "Installs ZPM",
     execute = function()
         local help = false
         if #_ARGS == 0 or _ARGS[1] == "package" then
-        elseif #_ARGS == 1 and _ARGS[1] == "zpm" then
-            _installZPM()
         else
             help = true
         end

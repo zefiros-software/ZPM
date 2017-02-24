@@ -33,9 +33,11 @@ newaction {
         if #_ARGS > 1 then
             if _ARGS[1] == "set" then
                 zpm.assert(#_ARGS == 3, "No key and value specified")
+                printf( "%%{yellow}Using config file '%s'", zpm.loader.config.storeFile )
                 zpm.loader.config:set(_ARGS[2], _ARGS[3])
             elseif _ARGS[1] == "add" then
                 zpm.assert(#_ARGS == 3, "No key and value specified")
+                printf( "%%{yellow}Using config file '%s'", zpm.loader.config.storeFile )
                 zpm.loader.config:add(_ARGS[2], _ARGS[3])
             elseif _ARGS[1] == "get" then
                 zpm.assert(#_ARGS == 2, "No key specified")
