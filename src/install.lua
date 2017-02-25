@@ -105,6 +105,8 @@ end
 function Installer:_installPremake()
 
     local latest = self:_getLatestPremake()
+
+    zpm.assert(#latest.assets == 0, "Found no matching premake versions to download!")
     zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
 
     if self:_getCurrentVersion() < latest.version then
@@ -129,8 +131,9 @@ function Installer:_installNewVersion(asset)
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
     end
-
+    
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
+    zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
 end
 
 function Installer:_getLatestPremake()
