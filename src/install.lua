@@ -62,7 +62,7 @@ end
 
 function Installer:_getPremakeSystem()
 
-    return path.join(_PREMAKE_DIR, "premake-system.lua")
+    return path.join(zpm.env.getBinDirectory(), "premake-system.lua")
 end
 
 function Installer:_writePremakeSystem()
