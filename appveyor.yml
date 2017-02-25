@@ -3,8 +3,6 @@ platform:
 build: off
 install:
     - .\script\install-zpm.bat 
-    - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm"
+    - "SET PATH=%PATH%;%ALLUSERSPROFILE%/zpm/bin"
 test_script:
-    - zpm install-package
-    - premake5 install-package
     - test.bat
