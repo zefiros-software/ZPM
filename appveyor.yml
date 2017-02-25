@@ -3,6 +3,6 @@ platform:
 build: off
 install:
     - .\script\install-zpm.bat && SET PATH="%PATH%;%USERPROFILE%\zpm\bin\"
-    - dir "%USERPROFILE%/zpm/bin"
+    - dir "%USERPROFILE%/zpm/"
 test_script:
     - test.bat
