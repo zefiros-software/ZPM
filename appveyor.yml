@@ -2,6 +2,7 @@ platform:
   - Win32
 build: off
 install:
+    - echo %PATH%
     - git --version
     - .\script\install-zpm.bat && SET PATH="%PATH%;%USERPROFILE%\zpm\bin\"
     - dir "%USERPROFILE%/zpm/"
