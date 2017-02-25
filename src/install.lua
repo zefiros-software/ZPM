@@ -213,7 +213,7 @@ function Installer:_exportPath()
     if os.isfile( prof ) then
                             
         local profStr = zpm.util.readAll(prof)
-        local line = ("export PATH=%s:$PATH"):format(zpm.env.getBinDirectory())
+        local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
         if not profStr:contains(line) then
             local f = assert(io.open(prof, "a"))
             f:write("\n"..line)
