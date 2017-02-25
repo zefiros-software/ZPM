@@ -28,7 +28,7 @@ function Loader:init()
 
     self:fixMainScript()
     self:checkGitVersion()
-    self:initialiseCache()
+    self:initialiseFolders()
 
     self.install = Installer:new(self)
     
@@ -76,7 +76,18 @@ function Loader:checkGitVersion()
     end
 end
 
-function Loader:initialiseCache()
+function Loader:initialiseFolders()
+
+    self:_initialiseCache()
+
+    
+    local binDir = zpm.env.getBinDirectory()
+    if not os.isdir(binDir) then
+        zpm.assert(os.mkdir(binDir), "The bin directory '%s' could not be made!", binDir)
+    end
+end
+
+function Loader:_initialiseCache()
 
     self.cache = zpm.env.getCacheDirectory()
     self.temp = path.join(self.cache, "temp")
