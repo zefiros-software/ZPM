@@ -55,7 +55,7 @@ function Github:getUrl(prefix, organisation, repository, resource)
 end
 
 function Github:getReleases(organisation, repository, pattern)
-    pattern = iif(pattern ~= nil, pattern, "%*")
+    pattern = iif(pattern ~= nil, pattern, ".*")
     local response = zpm.json:decode(self:getUrl("repos", organisation, repository, "releases"))
 
     local releases = { }
