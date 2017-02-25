@@ -132,6 +132,8 @@ function Installer:_installNewVersion(asset)
         zpm.util.hideProtectedFile(globalCmd)
     end
     
+    print("Installed in '%s'", globalCmd)
+
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
 end
