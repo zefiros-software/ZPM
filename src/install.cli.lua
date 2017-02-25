@@ -25,7 +25,12 @@
 local function _installZPM()
 
     printf("%%{greenbg white bright}Installing ZPM version '%s'!", zpm._VERSION)
-    
+
+    if not zpm.__isLoaded or zpm.__isLoaded == nil then
+        zpm.onLoad()
+        zpm.__isLoaded = true
+    end
+
     zpm.loader.install:install()
 end
 

@@ -38,7 +38,7 @@ function Config:load()
     -- since each new key will override the old ones
     self:_loadOverideFile(_PREMAKE_DIR, configName)
 
-    for _, p in ripairs(zpm.util.traversePath(_MAIN_SCRIPT_DIR)) do
+    for _, p in ripairs(zpm.util.traversePath(zpm.env.getDataDirectory())) do
         self:_loadOverideFile(p, configName)
     end
 

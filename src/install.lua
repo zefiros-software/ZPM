@@ -34,7 +34,7 @@ function Installer:init(loader)
 end
 
 function Installer:install()
-    self:_createDirectory()
+    self:_createDirectories()
     self:_writePremakeSystem()
 
     local system = self:_getPremakeSystem()
@@ -52,12 +52,22 @@ function Installer:_getPremakeSystem()
     return path.join(_PREMAKE_DIR, "premake-system.lua")
 end
 
-function Installer:_createDirectory()
+function Installer:_getInstallDirectory()
+
+    return path.join(zpm.env.getCacheDirectory(), "install")
+end
+
+function Installer:_createDirectories()
     local folder = zpm.env.getDataDirectory()
 
     if not os.isdir(folder) then
-
         zpm.assert(os.mkdir(folder), "Cannot create instalation folder '%s'!", folder)
+    end
+
+    local install = self:_getInstallDirectory()
+    
+    if not os.isdir(install) then
+        zpm.assert(os.mkdir(install), "Cannot create instalation folder '%s'!", install)
     end
 end
 
