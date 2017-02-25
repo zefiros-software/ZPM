@@ -70,9 +70,11 @@ if _ACTION ~= "update-bootstrap" and
         bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
     end
 
-    zpm = dofile(path.join(_PREMAKE_DIR, "../zpm/zpm.lua"))
-    zpm.onLoad()
-    zpm.__isLoaded = true
+    if not zpm or not zpm.__isLoaded then
+        zpm = dofile(path.join(_PREMAKE_DIR, "../zpm/zpm.lua"))
+        zpm.onLoad()
+        zpm.__isLoaded = true
+    end
 else
     _MAIN_SCRIPT = "."
 end

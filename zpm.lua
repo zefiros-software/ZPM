@@ -37,7 +37,7 @@ function zpm.onLoad()
         ProFi:start()
     end
 
-    print(string.format("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION))
+    printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
 
     zpm.loader = Loader:new()
     zpm.loader.config:load()
