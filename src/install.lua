@@ -190,6 +190,7 @@ function Installer:_installInPath()
                 $key.Dispose()
             ]])            
             os.executef( "@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir )
+            os.executef( "echo @powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir )
         end
     
     elseif os.is("linux") or os.is("macosx") then
