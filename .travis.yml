@@ -22,6 +22,8 @@ install:
 script:
     - echo $PATH
     - cat ~/.bashrc
+    - ls -la ~/
+    - ls -la ~/.zpm
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
     -  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
