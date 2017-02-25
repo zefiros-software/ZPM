@@ -106,7 +106,7 @@ function Installer:_installPremake()
 
     local latest = self:_getLatestPremake()
 
-    zpm.assert(#latest.assets == 0, "Found no matching premake versions to download!")
+    zpm.assert(#latest.assets > 0, "Found no matching premake versions to download!")
     zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
 
     if self:_getCurrentVersion() < latest.version then
