@@ -1,3 +1,3 @@
 echo %PATH%
-where zpm
+C:\Users\appveyor\zpm\bin\zpm
 zpm test --file=test/tests.lua --systemscript=- --scripts=./
