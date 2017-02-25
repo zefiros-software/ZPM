@@ -125,7 +125,7 @@ function Installer:_installNewVersion(asset)
 
     zpm.assert(file, "Failed to download '%s'!", asset.url)
 
-    local globalCmd = path.join(_PREMAKE_DIR, _PREMAKE_COMMAND)
+    local globalCmd = path.join(zpm.env.getBinDirectory(), _PREMAKE_COMMAND)
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
     end
@@ -179,7 +179,6 @@ function Installer:_installInPath()
     
         local cPath = os.getenv( "PATH" )
         local dir = zpm.env.getBinDirectory()
-        print(string.contains( cPath, dir ))
         if not string.contains( cPath, dir ) then
             printf( "- Installing zpm in path" )
             
