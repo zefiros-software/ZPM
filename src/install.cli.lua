@@ -30,7 +30,7 @@ local function _installZPM()
         zpm.onLoad()
         zpm.__isLoaded = true
     end
-
+    
     zpm.loader.install:install()
 end
 

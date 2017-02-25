@@ -72,7 +72,7 @@ end
 
 function zpm.util.writeAll(file, str)
 
-    local f = io.open(file, "w")
+    local f = io.open(file, "wb")
     f:write(str)
     f:close()
 

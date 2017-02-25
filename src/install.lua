@@ -74,7 +74,7 @@ end
 function Installer:_writePremakeSystem()
 
     local folder = zpm.env.getDataDirectory()
-    local file = io.open(self:_getPremakeSystem(), "w")
+    local file = io.open(self:_getPremakeSystem(), "wb")
     file:write(("local CMD = \"%s\"\n"):format(folder) .. 
                ("local BOOTSTRAP_DIR = \"%s\"\n"):format(self.loader.config("install.bootstrap.directory")) .. 
                ("local BOOTSTRAP_REPO = \"%s\"\n"):format(self.loader.config("install.bootstrap.repository")) .. 
@@ -83,6 +83,7 @@ function Installer:_writePremakeSystem()
                ("local REGISTRY_DIR = \"%s\"\n"):format(self.loader.config("install.registry.directory")) .. 
                ("local REGISTRY_REPO = \"%s\"\n"):format(self.loader.config("install.registry.repository")) .. 
                ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.branch")))
+
     file:write(zpm.util.readAll(path.join(_scriptPath(), "premake-system.lua")))
     file:close()
 end
