@@ -20,6 +20,7 @@ install:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash script/install-zpm.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then bash script/install-zpm-osx.sh; fi
 script:
+    - echo $PATH
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
     -  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then bash <(curl -s https://codecov.io/bash); fi
