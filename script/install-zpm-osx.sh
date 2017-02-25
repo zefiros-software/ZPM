@@ -23,3 +23,5 @@ fi
 cd $root
 
 rm -rf $install_dir
+
+source ~/.bashrc

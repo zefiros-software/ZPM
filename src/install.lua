@@ -218,12 +218,6 @@ function Installer:_exportPath()
             local f = assert(io.open(prof, "a"))
             f:write("\n"..line)
             f:close()
-
-            if os.is("linux") then
-                os.executef(". %s", prof )
-            else
-                os.executef("source %s", prof )
-            end
         end                
     end
 end
