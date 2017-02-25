@@ -30,6 +30,8 @@ function Config:init(loader)
     self.configName = "config.json"
     self.mayStore = false
     self.storeFile = path.join(zpm.env.getDataDirectory(), "." .. self.configName)
+
+    self.__loadedFiles = {}
 end
 
 function Config:load()
@@ -40,14 +42,14 @@ function Config:load()
 
     self:_loadOverideFile(_MAIN_SCRIPT_DIR, configName)
 
-    for _, p in ripairs(zpm.util.traversePath(zpm.env.getDataDirectory())) do
+    for _, p in ripairs(zpm.util.traversePath(zpm.env.getSrcDirectory())) do
         self:_loadOverideFile(p, configName)
     end
 
     self:_loadOverideFile(zpm.env.scriptPath())
 end
 
-function Config:set(key, value)
+function Config:set(key, value, force)
 
     local ok, json = pcall(zpm.json.decode, zpm.json, value)
     if ok then
@@ -56,8 +58,10 @@ function Config:set(key, value)
 
     local cursor = self:__call(key, value)
     if cursor then
-        self:_store(key, value)
-        return self:_print(key)
+        self:_store(key, value, false, force)
+        if not force then
+            return self:_print(key)
+        end
     else
         errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
     end
@@ -88,9 +92,9 @@ function Config:get(key)
     return self:_print(key)
 end
 
-function Config:_store(keys, value, add)
+function Config:_store(keys, value, add, force)
 
-    if not self.mayStore then
+    if not self.mayStore and not force then
         return nil
     end
 
@@ -116,7 +120,8 @@ function Config:_store(keys, value, add)
         zpm.util.writeAll(self.storeFile, zpm.json:encode_pretty(config))
     end , true, true)
 
-    -- reload to get the actual value
+    -- reload to get the actual value  
+    self.__loadedFiles = {}
     self:load()
 end
 
@@ -135,13 +140,13 @@ function Config:_print(key)
 end
 
 function Config:_loadFile(file)
-
-    if not os.isfile(file) then
+    if not os.isfile(file) or table.contains(self.__loadedFiles, file) then
         return nil
     end
 
     local config = zpm.json:decode(zpm.util.readAll(file))
     self:_loadJSON(config)
+    table.insert(self.__loadedFiles, file)
 end
 
 function Config:_loadJSON(json)

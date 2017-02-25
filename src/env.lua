@@ -87,3 +87,8 @@ function zpm.env.getSharedDataDirectory()
     end
 
 end
+
+function zpm.env.getSrcDirectory()
+
+    return path.join(zpm.env.getDataDirectory(), "zpm")
+end

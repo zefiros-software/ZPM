@@ -41,6 +41,7 @@ function zpm.onLoad()
 
     zpm.loader = Loader:new()
     zpm.loader.config:load()
+    zpm.loader.install:checkVersion()
 end
 
 return zpm

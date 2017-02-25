@@ -48,3 +48,45 @@ end
 function Http:download(url, outFile, headers)
     return self:get(url, headers, ("--output %s"):format(outFile) )
 end
+
+function Http:downloadFromArchive(url, pattern)
+    if url:contains(".zip") then
+        return self:downloadFromZip(url, pattern)
+    end
+    return self:downloadFromTarGz(url, pattern)
+end
+
+function Http:downloadFromZipTo(url, destination, pattern)
+
+    local zipFile = path.join(zpm.loader.temp, os.uuid() .. ".zip")
+
+    self:download(url, zipFile)
+    zip.extract(zipFile, destination)
+
+    return os.matchfiles(path.join(destination, pattern))
+end
+
+function Http:downloadFromTarGzTo(url, destination, pattern)
+
+    local zipFile = path.join(zpm.loader.temp, os.uuid() .. ".tar.gz")
+
+    self:download(url, zipFile)
+
+    os.executef("tar xzvf %S -C %s", zipFile, destination)
+
+    return os.matchfiles(path.join(destination, pattern))
+end
+
+function Http:downloadFromZip(url, pattern)
+
+    local dest = path.join(zpm.loader.temp, os.uuid())
+    zpm.assert(os.mkdir(dest), "Failed to create temporary directory '%s'!", dest)
+    return self:downloadFromZipTo(url, dest, pattern)
+end
+
+function Http:downloadFromTarGz(url, pattern)
+
+    local dest = path.join(zpm.loader.temp, os.uuid())
+    zpm.assert(os.mkdir(dest), "Failed to create temporary directory '%s'!", dest)
+    return self:downloadFromTarGzTo(url, dest, pattern)
+end

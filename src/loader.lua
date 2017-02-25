@@ -29,13 +29,15 @@ function Loader:init()
     self:fixMainScript()
     self:checkGitVersion()
     self:initialiseCache()
+
+    self.install = Installer:new(self)
     
     self.config = Config:new(self)
     self.config:load()
-
-    self.install = Installer:new(self)
-    self.http = Http:new(self)
+    
     self.github = Github:new(self)
+    self.http = Http:new(self)
+
 end
 
 function Loader:fixMainScript()

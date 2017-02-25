@@ -120,3 +120,14 @@ end
 function zpm.util.hasUrl(str)
     return str:match(".*(https?://).*") ~= nil
 end
+
+function zpm.util.hideProtectedFile(file)
+
+    local hash = os.uuid()
+    local dir = path.join(zpm.loader.temp, hash)
+    local fileh = path.join(dir, hash)
+
+    zpm.assert(os.mkdir(dir), "The archive directory could not be made!")
+    zpm.assert(os.rename(file, fileh))
+
+end

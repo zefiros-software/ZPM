@@ -35,6 +35,7 @@ function Github:init(loader)
 end
 
 function Github:get(url)
+
     local token = self:_getToken()
     if token then
         token = { Authorization = "token " .. token }
@@ -43,6 +44,7 @@ function Github:get(url)
 end
 
 function Github:getUrl(prefix, organisation, repository, resource)
+
     local url = self.loader.config("github.apiHost") .. prefix .. "/" .. organisation .. "/" .. repository
 
     if resource then
@@ -52,8 +54,8 @@ function Github:getUrl(prefix, organisation, repository, resource)
     return self:get(url)
 end
 
-function Github:getReleases(organisation, repository)
-
+function Github:getReleases(organisation, repository, pattern)
+    pattern = iif(pattern ~= nil, pattern, "%*")
     local response = zpm.json:decode(self:getUrl("repos", organisation, repository, "releases"))
 
     local releases = { }
@@ -64,10 +66,12 @@ function Github:getReleases(organisation, repository)
 
             local assetTab = { }
             table.foreachi(value["assets"], function(asset)
-                table.insert(assetTab, {
-                    name = asset["name"],
-                    url = asset["browser_download_url"]
-                } )
+                if asset.name:match(pattern) then
+                    table.insert(assetTab, {
+                        name = asset["name"],
+                        url = asset["browser_download_url"]
+                    } )
+                end
             end )
 
             table.insert(releases, {
@@ -79,32 +83,6 @@ function Github:getReleases(organisation, repository)
 
     table.sort(releases, function(t1, t2) return t1.version > t2.version end)
     return releases
-end
-
-function Github:matchAssets(organisation, repository, pattern)
-
-    local releases = self:getAssets(organisation, repository)
-
-    local values = { }
-
-    for _, assets in pairs(releases) do
-
-        for _, asset in pairs(assets.assets) do
-            local assetMatch = asset.name:match(pattern)
-
-            if assetMatch then
-                table.insert(values, {
-                    name = asset.name,
-                    version = assets.version,
-                    url = asset.url
-                } )
-            end
-
-        end
-
-    end
-
-    return values
 end
 
 function Github:_getToken()

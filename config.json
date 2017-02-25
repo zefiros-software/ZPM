@@ -7,9 +7,7 @@
     "install": {
         "repository": "https://github.com/Zefiros-Software/ZPM",
         "branch": "features/refactor",
-        "directory": "zpm",
         "modulesDirectory": "modules",
-        "minReqVersion": ">=5.0.0-alpha9",
         "bootstrap": {
             "repository": "https://github.com/Zefiros-Software/Bootstrap.git",
             "directory": "bootstrap"
