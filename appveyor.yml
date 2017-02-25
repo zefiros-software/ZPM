@@ -2,6 +2,6 @@ platform:
   - Win32
 build: off
 install:
-    - .\script\install-zpm.bat && SET PATH=%PATH%;%USERPROFILE%\zpm\bin\
+    - .\script\install-zpm.bat
 test_script:
     - test.bat
