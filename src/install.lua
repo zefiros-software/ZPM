@@ -49,6 +49,7 @@ function Installer:install()
     end
 
     self:_installPremake()
+    self:_installInPath()
 end
 
 function Installer:checkVersion()
@@ -85,31 +86,51 @@ function Installer:_getCurrentVersion()
     return zpm.semver(_PREMAKE_VERSION)
 end
 
-function Installer:_installPremake()
+function Installer:_updatePremake()
 
     local latest = self:_getLatestPremake()
     zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
 
-    if self:_getCurrentVersion() <= latest.version then
-        printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
+    if self:_getCurrentVersion() < latest.version then
+        printf("%%{green bright} - Updating premake version from '%s' to '%s'", _PREMAKE_VERSION, tostring(latest.version))
 
-        -- first try to download the new file
-        local asset = latest.assets[1]
-        local file = self.loader.http:downloadFromArchive(asset.url, "premake*")[1]
-
-        zpm.assert(file, "Failed to download '%s'!", asset.url)
-
-        local globalCmd = path.join(_PREMAKE_DIR, _PREMAKE_COMMAND)
-        if os.isfile(globalCmd) then
-            zpm.util.hideProtectedFile(globalCmd)
-        end
-
-        zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
+        self:_installNewVersion(latest.assets[1])
 
         return true
     end
 
     return false
+end
+
+function Installer:_installPremake()
+
+    local latest = self:_getLatestPremake()
+    zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
+
+    if self:_getCurrentVersion() < latest.version then
+        printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
+
+        self:_installNewVersion(latest.assets[1])
+
+        return true
+    end
+
+    return false
+end
+
+function Installer:_installNewVersion(asset)
+
+    -- first try to download the new file
+    local file = self.loader.http:downloadFromArchive(asset.url, "premake*")[1]
+
+    zpm.assert(file, "Failed to download '%s'!", asset.url)
+
+    local globalCmd = path.join(_PREMAKE_DIR, _PREMAKE_COMMAND)
+    if os.isfile(globalCmd) then
+        zpm.util.hideProtectedFile(globalCmd)
+    end
+
+    zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
 end
 
 function Installer:_getLatestPremake()
@@ -150,4 +171,54 @@ function Installer:_getPremakeVersions()
 
     return self.__PremakeVersion
 
+end
+
+function Installer:_installInPath()
+
+    if os.is("windows") then
+    
+        local cPath = os.getenv( "PATH" )
+        local dir = zpm.env.getBinDirectory()
+        print(string.contains( cPath, dir ))
+        if not string.contains( cPath, dir ) then
+            printf( "- Installing zpm in path" )
+            
+            local cmd = path.join( self.loader.temp, "path.ps1" )
+
+            zpm.util.writeAll(cmd,[[
+                $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
+                $path = $key.GetValue('Path',$null,'DoNotExpandEnvironmentNames')
+                $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
+                $key.Dispose()
+            ]])            
+            os.executef( "@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=%%PATH%%;%s", cmd, dir )
+        end
+    
+    elseif os.is("linux") or os.is("macosx") then
+    
+        self:_exportPath()
+    
+    else
+        zpm.assert( false, "Current platform '%s' not supported!", os.get() )
+    end
+end
+
+function Installer:_exportPath()
+
+    if not (os.is("linux") or os.is("macosx")) then
+        return nil
+    end
+
+    local prof = path.join( os.getenv("HOME"), iif(os.is("macosx"), ".bash_profile", ".bashrc") )
+    if os.isfile( prof ) then
+                            
+        local profStr = zpm.util.readAll(prof)
+        local line = ("export PATH=%s:$PATH"):format(zpm.env.getBinDirectory())
+        if not profStr:contains(line) then
+            local f = assert(io.open(prof, "a"))
+            f:write("\n"..line)
+            f:close()
+            os.executef("source %s", prof )
+        end                
+    end
 end

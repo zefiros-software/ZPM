@@ -92,3 +92,8 @@ function zpm.env.getSrcDirectory()
 
     return path.join(zpm.env.getDataDirectory(), "zpm")
 end
+
+function zpm.env.getBinDirectory()
+
+    return path.join(zpm.env.getDataDirectory(), "bin")
+end

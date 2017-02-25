@@ -1,16 +1,9 @@
 #!/bin/bash
 install_dir=~/.zpm_install/
-shared_dir=~/.zpm/zpm/
-cache_dir=~/.zpm/zpm-cache/
-
-echo "Shared directory: ${shared_dir}"
-echo "Cache directory: ${cache_dir}"
 
 root=$(pwd)
 
 rm -rf $install_dir || true
-rm -rf $shared_dir || true
-rm -rf $cache_dir || true
 
 mkdir -p $install_dir
 cd $install_dir
@@ -21,15 +14,12 @@ curl -L -o premake5.tar.gz https://github.com/premake/premake-core/releases/down
 tar xzf premake5.tar.gz
 chmod a+x premake5
 
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
-
-mkdir -p $shared_dir || true
-mkdir -p $cache_dir || true
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm -b features/refactor
 
 if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install-zpm
+    ./premake5 --file=../zpm/zpm.lua install-zpm
 else
-    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
+    ./premake5 --github-token=$GH_TOKEN --file=../zpm/zpm.lua install-zpm
 fi
 
 cd $root

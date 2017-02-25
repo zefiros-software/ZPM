@@ -63,6 +63,7 @@ function Loader:fixMainScript()
 end
 
 function Loader:checkGitVersion()
+
     local version, errorCode = os.outputof("git --version")
     zpm.assert(version:contains("git version"), "Failed to detect git on PATH:\n %s", version)
 
@@ -76,9 +77,9 @@ function Loader:checkGitVersion()
 end
 
 function Loader:initialiseCache()
+
     self.cache = zpm.env.getCacheDirectory()
     self.temp = path.join(self.cache, "temp")
-    self.bin = path.join(self.cache, "bin")
 
     if os.isdir(self.temp) then
         os.rmdir(self.temp)
@@ -90,9 +91,5 @@ function Loader:initialiseCache()
     
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
-    end
-    
-    if not os.isdir(self.bin) then
-        zpm.assert(os.mkdir(self.bin), "The bin directory '%s' could not be made!", self.bin)
     end
 end
