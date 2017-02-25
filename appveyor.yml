@@ -4,5 +4,4 @@ build: off
 install:
     - .\script\install-zpm.bat && SET PATH="%PATH%;%USERPROFILE%/zpm/bin"
 test_script:
-    - echo %PATH%
     - test.bat
