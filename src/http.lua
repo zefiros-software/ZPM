@@ -72,7 +72,7 @@ function Http:downloadFromTarGzTo(url, destination, pattern)
 
     self:download(url, zipFile)
 
-    os.executef("tar xzvf %s -C %s", zipFile, destination)
+    os.executef("tar xzf %s -C %s", zipFile, destination)
 
     return os.matchfiles(path.join(destination, pattern))
 end

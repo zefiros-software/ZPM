@@ -121,12 +121,12 @@ function Installer:_installNewVersion(asset)
 
     zpm.assert(file, "Failed to download '%s'!", asset.url)
 
-    local globalCmd = path.join(zpm.env.getBinDirectory(), _PREMAKE_COMMAND)
+    local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.is("windows"), "zpm.exe", "zpm"))
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
     end
     
-    printf("Installed in '%s'", globalCmd)
+    printf("Installed in '%s' in directory '%s'", globalCmd, zpm.env.getBinDirectory())
 
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
