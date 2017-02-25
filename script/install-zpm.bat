@@ -34,3 +34,5 @@ cd %root%
 rmdir /s /q "%USERPROFILE%/zpm-install"
 
 echo ZPM is installed, however a restart is required!
+
+SET PATH=%PATH%;%USERPROFILE%\zpm\bin\
