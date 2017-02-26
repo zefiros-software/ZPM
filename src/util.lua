@@ -89,7 +89,7 @@ function zpm.util.traversePath(dir)
     return bases
 end
 
-function zpm.util.isArray(tab)
+function zpm.util.isArray(t)
     local i = 0
     for _ in pairs(t) do
         i = i + 1
@@ -101,9 +101,9 @@ function zpm.util.isArray(tab)
 end 
 
 function zpm.util.getGitUrl(str)
-    local str2 = str:match("(https://.*\.git).*")
+    local str2 = str:match("(https://.*%.git).*")
     if str2 == nil then
-        return str:match("(ssh://git@.*\.git).*")
+        return str:match("(git@.*%.git).*")
     end
 
     return str2
@@ -130,4 +130,5 @@ function zpm.util.hideProtectedFile(file)
     zpm.assert(os.mkdir(dir), "The archive directory could not be made!")
     zpm.assert(os.rename(file, fileh))
 
+    return fileh
 end
