@@ -70,10 +70,10 @@ end
 function Test:testHttp_downloadFromZipTo()    
     
     local loader = Loader:new()
-    local downloaded = loader.http:downloadFromZipTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip", "./")
+    local downloaded = loader.http:downloadFromZipTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip", "./", "premake5.exe")
     
     u.assertEquals(#downloaded,1)
-    u.assertStrContains(downloaded[1],".zip")
+    u.assertStrContains(downloaded[1],"premake5.exe")
     u.assertTrue(os.isfile(downloaded[1]))
     u.assertTrue(os.isfile("./premake5.exe"))
     
@@ -85,10 +85,10 @@ function Test:testHttp_downloadFromTarGzTo()
  
     if not os.is("windows") then
         local loader = Loader:new()
-        local downloaded = loader.http:downloadFromTarGzTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz", "./")
+        local downloaded = loader.http:downloadFromTarGzTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz", "./", "premake5")
     
         u.assertEquals(#downloaded,1)
-        u.assertStrContains(downloaded[1],".tar.gz")
+        u.assertStrContains(downloaded[1],"premake5")
         u.assertTrue(os.isfile(downloaded[1]))
         u.assertTrue(os.isfile("./premake5"))
     
@@ -100,10 +100,10 @@ end
 function Test:testHttp_downloadFromZip()    
     
     local loader = Loader:new()
-    local downloaded = loader.http:downloadFromZipTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
+    local downloaded = loader.http:downloadFromZip("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
     
     u.assertEquals(#downloaded,1)
-    u.assertStrContains(downloaded[1],".zip")
+    u.assertStrContains(downloaded[1],"premake5.exe")
     u.assertTrue(os.isfile(downloaded[1]))    
     u.assertTrue(downloaded[1]:contains(loader.temp))    
     os.remove(downloaded[1])
@@ -113,10 +113,10 @@ function Test:testHttp_downloadFromTarGz()
  
     if not os.is("windows") then
         local loader = Loader:new()
-        local downloaded = loader.http:downloadFromTarGzTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
+        local downloaded = loader.http:downloadFromTarGz("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     
         u.assertEquals(#downloaded,1)
-        u.assertStrContains(downloaded[1],".tar.gz")
+        u.assertStrContains(downloaded[1],"premake5")
         u.assertTrue(os.isfile(downloaded[1]))    
         u.assertTrue(downloaded[1]:contains(loader.temp))  
         os.remove(downloaded[1])
@@ -129,7 +129,7 @@ function Test:testHttp_downloadFromArchive()
     local downloaded = loader.http:downloadFromArchive("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
     
     u.assertEquals(#downloaded,1)
-    u.assertStrContains(downloaded[1],".zip")
+    u.assertStrContains(downloaded[1],"premake5.exe")
     u.assertTrue(os.isfile(downloaded[1]))    
     u.assertTrue(downloaded[1]:contains(loader.temp))    
     os.remove(downloaded[1])
@@ -142,7 +142,7 @@ function Test:testHttp_downloadFromArchive2()
         local downloaded = loader.http:downloadFromArchive("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     
         u.assertEquals(#downloaded,1)
-        u.assertStrContains(downloaded[1],".tar.gz")
+        u.assertStrContains(downloaded[1],"premake5")
         u.assertTrue(os.isfile(downloaded[1]))    
         u.assertTrue(downloaded[1]:contains(loader.temp))  
         os.remove(downloaded[1])

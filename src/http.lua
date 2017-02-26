@@ -53,22 +53,23 @@ end
 
 function Http:downloadFromZipTo(url, destination, pattern)
 
+    pattern = iif(pattern == nil, "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".zip")
 
     self:download(url, zipFile)
     zip.extract(zipFile, destination)
-
+    
     return os.matchfiles(path.join(destination, pattern))
 end
 
 function Http:downloadFromTarGzTo(url, destination, pattern)
 
+    pattern = iif(pattern == nil, "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".tar.gz")
 
     self:download(url, zipFile)
 
     os.executef("tar xzf %s -C %s", zipFile, destination)
-
     return os.matchfiles(path.join(destination, pattern))
 end
 
