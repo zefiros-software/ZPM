@@ -22,9 +22,46 @@
 -- @endcond
 --]]
 
-dofile "testLoader.lua"
-dofile "testGithub.lua"
-dofile "testConfig.lua"
-dofile "testUtil.lua"
-dofile "testHttp.lua"
-dofile "testEnv.lua"
+function Test:testEnv_scriptPath()
+
+    u.assertNotNil(zpm.env.scriptPath())
+    u.assertStrContains(zpm.env.scriptPath(), "src")
+end
+
+function Test:testEnv_getCacheDirector()
+
+    local dir = zpm.env.getCacheDirectory()
+    u.assertNotNil(dir)
+    u.assertStrContains(dir, "zpm")
+end
+
+function Test:testEnv_getCacheDirector_SetENV()
+    
+    local mock = os.getenv
+    os.getenv = function() return "foo" end
+   
+    local dir = zpm.env.getCacheDirectory()
+    u.assertNotNil(dir)
+    u.assertEquals(dir, "foo")
+    
+    os.getenv = mock
+end
+
+function Test:testEnv_getDataDirector()
+
+    local dir = zpm.env.getDataDirectory()
+    u.assertNotNil(dir)
+    u.assertStrContains(dir, "zpm")
+end
+
+function Test:testEnv_getDataDirector_SetENV()
+    
+    local mock = os.getenv
+    os.getenv = function() return "foo2" end
+   
+    local dir = zpm.env.getDataDirectory()
+    u.assertNotNil(dir)
+    u.assertEquals(dir, "foo2")
+    
+    os.getenv = mock
+end

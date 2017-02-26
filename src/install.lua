@@ -24,12 +24,6 @@
 
 Installer = newclass "Installer"
 
-local function _scriptPath()
-
-    local str = debug.getinfo(2, "S").source:sub(2)
-    return str:match("(.*/)")
-end
-
 function Installer:init(loader)
 
     self.loader = loader
@@ -89,7 +83,7 @@ function Installer:_writePremakeSystem()
     ("local REGISTRY_REPO = \"%s\"\n"):format(self.loader.config("install.registry.repository")) ..
     ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.branch")))
 
-    file:write(zpm.util.readAll(path.join(_scriptPath(), "premake-system.lua")))
+    file:write(zpm.util.readAll(path.join(zpm.env.scriptPath(), "premake-system.lua")))
     file:close()
 end
 

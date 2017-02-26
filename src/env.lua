@@ -42,10 +42,6 @@ function zpm.env.getCacheDirectory()
     else
 
         local home = path.join(os.getenv("HOME"), ".zpm");
-        if not os.isdir(home) then
-            os.mkdir(home)
-        end
-
         return path.normalize(path.join(home, "zpm-cache"));
     end
 end
@@ -65,27 +61,6 @@ function zpm.env.getDataDirectory()
     else
         zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
     end
-end
-
-function zpm.env.getSharedDataDirectory()
-
-    local folder = os.getenv("ZPM_SHARED_DIR")
-    if folder then
-        return path.normalize(folder)
-    end
-
-    local osStr = os.get()
-
-    if osStr == "windows" then
-        return path.normalize(os.getenv("ALLUSERSPROFILE"))
-    elseif osStr == "linux" then
-        return "/usr/local/"
-    elseif osStr == "macosx" then
-        return "/usr/local/"
-    else
-        zpm.assert(false, "Current platform '%s' is currently not supported!", osStr)
-    end
-
 end
 
 function zpm.env.getSrcDirectory()

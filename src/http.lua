@@ -24,14 +24,9 @@
 
 Http = newclass "Http"
 
-local function _scriptPath()
-    local str = debug.getinfo(2, "S").source:sub(2)
-    return str:match("(.*/)")
-end
-
 function Http:init(loader)
     self.loader = loader
-    self.location = iif(os.is("windows"), path.join( _scriptPath(), "../bin/curl.exe" ), "curl")
+    self.location = iif(os.is("windows"), path.join( zpm.env.scriptPath(), "../bin/curl.exe" ), "curl")
 end
 
 function Http:get(url, headers, extra)
