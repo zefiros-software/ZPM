@@ -52,6 +52,17 @@ function Installer:install()
     self:_installInPath()
 end
 
+function Installer:update()
+
+    self:_writePremakeSystem()
+
+    premake.action.call("update-bootstrap")
+    premake.action.call("update-zpm")
+    premake.action.call("update-registry")
+
+    self:_updatePremake()
+end
+
 function Installer:checkVersion()
 
     local latest = self:_getLatestPremake()
@@ -204,19 +215,21 @@ end
 
 function Installer:_exportPath()
 
-    if not (os.is("linux") or os.is("macosx")) then
-        return nil
-    end
-
     local prof = path.join( os.getenv("HOME"), iif(os.is("macosx"), ".bash_profile", ".bashrc") )
+    local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
+
     if os.isfile( prof ) then
                             
         local profStr = zpm.util.readAll(prof)
-        local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
         if not profStr:contains(line) then
             local f = assert(io.open(prof, "a"))
             f:write("\n"..line)
             f:close()
         end                
+    else
+        warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file does not exist!", line, prof)
     end
+
+    printf("We have added ZPM installation path in your '%s' file,\nehowever if this does not work you have to" ..
+           "add '%s' manually in your shell profile.", prof, line)
 end

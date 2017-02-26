@@ -34,12 +34,26 @@ local function _installZPM()
     zpm.loader.install:install()
 end
 
+
+
+newaction {
+    trigger = "self-update",
+    description = "Updates the premake executable to the latest version",
+    execute = function()
+    
+        zpm.loader.install:update()
+
+        premake.action.call("update-bootstrap")
+        premake.action.call("update-registry")
+        premake.action.call("update-zpm")
+        premake.action.call("update-modules")
+    end
+}
+
 newaction {
     trigger = "install-zpm",
     description = "Installs ZPM in path",
-    execute = function()
-        _installZPM()
-    end
+    execute = _installZPM
 }
 
 newaction {
@@ -48,6 +62,8 @@ newaction {
     execute = function()
         local help = false
         if #_ARGS == 0 or _ARGS[1] == "package" then
+        elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
+            _installZPM()
         else
             help = true
         end
@@ -56,6 +72,36 @@ newaction {
             printf("%%{yellow}Show action must be one of the following commands:\n" ..
             " - package (default)\tSets the key on a specified value\n" ..
             " - zpm  \t\tInstalls ZPM")
+        end
+    end
+}
+
+newaction {
+    trigger = "update",
+    description = "Updates ZPM",
+    execute = function()
+        local help = false
+        if #_ARGS == 1 or _ARGS[1] == "self" then
+            premake.action.call("self-update")
+        elseif #_ARGS == 1 or _ARGS[1] == "bootstrap" then
+            premake.action.call("update-bootstrap")
+        elseif #_ARGS == 1 or _ARGS[1] == "registry" then
+            premake.action.call("update-registry")
+        elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
+            premake.action.call("update-zpm")
+        elseif #_ARGS == 1 or _ARGS[1] == "modules" then
+            premake.action.call("update-modules")
+        else
+            help = true
+        end
+
+        if help or _OPTIONS["help"] then
+            printf("%%{yellow}Show action must be one of the following commands:\n" ..
+            " - self \tUpdates everything underneath\n" ..
+            " - bootstrap \tUpdates the bootstrap module loader\n" ..
+            " - registry \tUpdates the ZPM library registry\n" ..
+            " - zpm \t\tUpdates ZPM itself\n" ..
+            " - modules \tUpdates the installed modules")
         end
     end
 }

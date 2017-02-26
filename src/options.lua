@@ -47,10 +47,6 @@ newoption {
     description = "Profiles the given commands"
 }
 
-newoption {
-    trigger = "update",
-    description = "Updates the dependencies to the newest version given the constraints"
-}
 
 newaction {
     trigger = "profile",
@@ -61,18 +57,7 @@ newaction {
     end
 }
 
-newaction {
-    trigger = "self-update",
-    description = "Updates the premake executable to the latest version",
-    execute = function()
-
-        zpm.install.updatePremake(false, true)
-
-        premake.action.call("update-bootstrap")
-        premake.action.call("update-registry")
-        premake.action.call("update-zpm")
-        premake.action.call("update-modules")
-
-        zpm.install.createSymLinks()
-    end
+newoption {
+    trigger = "update",
+    description = "Updates the dependencies to the newest version given the constraints"
 }
