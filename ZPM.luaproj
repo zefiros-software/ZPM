@@ -55,6 +55,7 @@
     <Compile Include="test\extern\luacov\util.lua" />
     <Compile Include="test\extern\luaunit.lua" />
     <Compile Include="test\src\testConfig.lua" />
+    <Compile Include="test\src\testEnv.lua" />
     <Compile Include="test\src\testGithub.lua" />
     <Compile Include="test\src\testHttp.lua" />
     <Compile Include="test\src\testLoad.lua" />

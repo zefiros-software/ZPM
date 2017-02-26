@@ -28,14 +28,14 @@ function Test:testEnv_scriptPath()
     u.assertStrContains(zpm.env.scriptPath(), "src")
 end
 
-function Test:testEnv_getCacheDirector()
+function Test:testEnv_getCacheDirectory()
 
     local dir = zpm.env.getCacheDirectory()
     u.assertNotNil(dir)
     u.assertStrContains(dir, "zpm")
 end
 
-function Test:testEnv_getCacheDirector_SetENV()
+function Test:testEnv_getCacheDirectory_SetENV()
     
     local mock = os.getenv
     os.getenv = function() return "foo" end
@@ -47,14 +47,14 @@ function Test:testEnv_getCacheDirector_SetENV()
     os.getenv = mock
 end
 
-function Test:testEnv_getDataDirector()
+function Test:testEnv_getDataDirectory()
 
     local dir = zpm.env.getDataDirectory()
     u.assertNotNil(dir)
     u.assertStrContains(dir, "zpm")
 end
 
-function Test:testEnv_getDataDirector_SetENV()
+function Test:testEnv_getDataDirectory_SetENV()
     
     local mock = os.getenv
     os.getenv = function() return "foo2" end
