@@ -80,23 +80,3 @@ function Test:testLoader_initialiseCache()
     u.assertTrue(os.isdir(ld.cache))
     u.assertTrue(os.isdir(ld.temp))
 end
-
-function Test:testLoader_initialiseCacheRemove()
-
-    local ld = Loader:new()
-
-    u.assertTrue(os.isdir(ld.cache))
-    u.assertTrue(os.isdir(ld.temp))
-
-    local file = path.join(ld.cache, "Test.txt")
-    zpm.util.writeAll(file, "FOO")
-
-    u.assertTrue(os.isfile(file))
-
-    Loader:new()
-    
-    u.assertFalse(os.isfile(file))
-
-    u.assertTrue(os.isdir(ld.cache))
-    u.assertTrue(os.isdir(ld.temp))
-end
