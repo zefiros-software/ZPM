@@ -280,14 +280,8 @@ function Test:testConfig_Get()
     local conf = Config:new(nil)
     conf.printf = function() end
     u.assertStrContains(conf:set("foo", 2), "'foo' is set to")
-    u.assertStrContains(conf:get("foo"), "'foo' is set to")
-end
-
-function Test:testConfig_Get()
-    local conf = Config:new(nil)
-    conf.printf = function() end
-    u.assertStrContains(conf:set("foo", 2), "'foo' is set to")
-    u.assertStrContains(conf:get("foo"), "'foo' is set to")
+    u.assertStrContains(conf:print("foo"), "'foo' is set to")
+    u.assertEquals(conf:get("foo"), 2)
 end
 
 function Test:testConfig_Load()

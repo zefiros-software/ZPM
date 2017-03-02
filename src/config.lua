@@ -61,7 +61,7 @@ function Config:set(key, value, force)
     if cursor then
         self:_store(key, value, false, force)
         if not force then
-            return self:_print(key)
+            return self:print(key)
         end
     else
         errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
@@ -82,7 +82,7 @@ function Config:add(key, value)
 
     if cursor then
         self:_store(key, value, true)
-        return self:_print(key)
+        return self:print(key)
     else
         errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
     end
@@ -90,7 +90,21 @@ end
 
 function Config:get(key)
 
-    return self:_print(key)
+    return self:__call(key)
+end
+
+function Config:print(key)
+
+    local str = ""
+    local c = self:_findKey(self.values, key, function(cursor, k)
+        local c = iif(cursor[k] ~= nil, cursor[k], "")
+        if type(c) == "table" then
+            c = table.tostring(c, 4)
+        end
+        str = string.format("\nValue '%s' is set to:\n%s", key, c)
+    end )
+    self.printf(str)
+    return str
 end
 
 function Config:_store(keys, value, add, force)
@@ -124,20 +138,6 @@ function Config:_store(keys, value, add, force)
     -- reload to get the actual value  
     self.__loadedFiles = {}
     self:load()
-end
-
-function Config:_print(key)
-
-    local str = ""
-    local c = self:_findKey(self.values, key, function(cursor, k)
-        local c = iif(cursor[k] ~= nil, cursor[k], "")
-        if type(c) == "table" then
-            c = table.tostring(c, 4)
-        end
-        str = string.format("\nValue '%s' is set to:\n%s", key, c)
-    end )
-    self.printf(str)
-    return str
 end
 
 function Config:_loadFile(file)
