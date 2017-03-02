@@ -61,13 +61,22 @@ function Test:testConfig_CallSet2()
     local conf = Config:new(nil)
     conf.printf = function() end
 
+    conf("foo", "foo")
+    u.assertEquals(conf("foo"), "foo")
+    u.assertNotEquals(conf("foo"), "bar")
+end
+
+function Test:testConfig_CallSet3()
+    local conf = Config:new(nil)
+    conf.printf = function() end
+
     conf.values = { foo = { bar = "foo" } }
     conf("foo.bar", "bar")
     u.assertEquals(conf("foo.bar"), "bar")
     u.assertNotEquals(conf("foo.bar"), "foo")
 end
 
-function Test:testConfig_CallSet3()
+function Test:testConfig_CallSet4()
     local conf = Config:new(nil)
     conf.printf = function() end
 
@@ -77,6 +86,17 @@ function Test:testConfig_CallSet3()
     u.assertEquals(conf("foo.bar"), "bar")
     u.assertEquals(conf("foo.bar2"), "bar2")
     u.assertNotEquals(conf("foo.bar"), "foo")
+end
+
+function Test:testConfig_CallSet5()
+    local conf = Config:new(nil)
+    conf.printf = function() end
+
+    u.assertIsNil(conf("github.token", "bar"))
+    u.assertEquals(conf("github.token"), nil)
+
+    u.assertNotNil(conf("github", { token = "bar" }))
+    u.assertEquals(conf("github.token"), "bar")
 end
 
 function Test:testConfig_SetNotExists()

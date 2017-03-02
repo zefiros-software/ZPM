@@ -49,3 +49,74 @@ function Test:testGithub_getReleases()
         end
     end
 end
+
+function Test:testGithub_getToken()
+
+    local ghtoken = _OPTIONS["github-token"]
+    local mock = os.getenv
+    os.getenv = function() return nil end
+    _OPTIONS["github-token"] = nil
+
+    local loader = Loader:new()
+    loader.config("github.token", nil)
+
+    local token = loader.github:_getToken()
+    u.assertEquals(token, nil)
+    
+    os.getenv = mock
+    _OPTIONS["github-token"] = ghtoken
+end
+
+function Test:testGithub_getToken2()
+
+    local ghtoken = _OPTIONS["github-token"]
+    local mock = os.getenv
+    os.getenv = function() return "test-foo" end
+    _OPTIONS["github-token"] = nil
+
+    local loader = Loader:new()
+    loader.config("github.token", nil)
+
+    local token = loader.github:_getToken()
+    u.assertEquals(token, "test-foo")
+    
+    os.getenv = mock
+    _OPTIONS["github-token"] = ghtoken
+end
+
+function Test:testGithub_getToken3()
+
+    local ghtoken = _OPTIONS["github-token"]
+    local mock = os.getenv
+    os.getenv = function() return nil end
+    _OPTIONS["github-token"] = "test-foo"
+
+    local loader = Loader:new()
+    loader.config("github.token", nil)
+
+    local token = loader.github:_getToken()
+    u.assertEquals(token, "test-foo")
+    
+    os.getenv = mock
+    _OPTIONS["github-token"] = ghtoken
+end
+
+function Test:testGithub_getToken4()
+
+    local ghtoken = _OPTIONS["github-token"]
+    local mock = os.getenv
+    os.getenv = function() return nil end
+    _OPTIONS["github-token"] = nil
+
+    local loader = Loader:new()
+    loader.config.printf = function() end
+    loader.config:set("github", {token = "Test-foo"})
+
+    u.assertEquals(loader.config("github.token"), "Test-foo")
+
+    local token = loader.github:_getToken()
+    u.assertEquals(token, "Test-foo")
+    
+    os.getenv = mock
+    _OPTIONS["github-token"] = ghtoken
+end
