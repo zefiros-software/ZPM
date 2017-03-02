@@ -45,3 +45,15 @@ function Test:testInstall_writePremakeSystem()
 
     os.remove(inst.premakeSystemFile)
 end
+
+function Test:testInstall_install()
+
+    local loader = Loader:new()
+    loader.install:install()
+end
+
+function Test:testInstall_update()
+
+    local loader = Loader:new()
+    loader.install:update()
+end
