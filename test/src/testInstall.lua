@@ -22,10 +22,26 @@
 -- @endcond
 --]]
 
-dofile "testLoader.lua"
-dofile "testGithub.lua"
-dofile "testConfig.lua"
-dofile "testUtil.lua"
-dofile "testHttp.lua"
-dofile "testEnv.lua"
-dofile "testInstall.lua"
+function Test:testInstall_premakeSystemFile()
+
+    local inst = Installer:new(nil)
+
+    u.assertStrContains(inst.premakeSystemFile, "premake-system.lua")
+end
+
+function Test:testInstall_writePremakeSystem()
+
+    local loader = Loader:new()
+    local inst = loader.install
+    inst.premakeSystemFile = "test-premake-system.lua"
+
+    u.assertFalse(os.isfile(inst.premakeSystemFile))
+
+    inst:_writePremakeSystem()
+
+    u.assertTrue(os.isfile(inst.premakeSystemFile))
+
+    u.assertStrContains(zpm.util.readAll(inst.premakeSystemFile), zpm.util.readAll(path.join(zpm.env.getScriptPath(), "../../src/premake-system.lua")))
+
+    os.remove(inst.premakeSystemFile)
+end

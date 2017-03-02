@@ -47,7 +47,7 @@ function Config:load()
         self:_loadOverideFile(p, configName)
     end
 
-    self:_loadOverideFile(zpm.env.scriptPath())
+    self:_loadOverideFile(zpm.env.getScriptPath())
 end
 
 function Config:set(key, value, force)

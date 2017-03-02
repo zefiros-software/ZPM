@@ -24,8 +24,8 @@
 
 function Test:testEnv_scriptPath()
 
-    u.assertNotNil(zpm.env.scriptPath())
-    u.assertStrContains(zpm.env.scriptPath(), "src")
+    u.assertNotNil(zpm.env.getScriptPath())
+    u.assertStrContains(zpm.env.getScriptPath(), "src")
 end
 
 function Test:testEnv_getCacheDirectory()

@@ -34,9 +34,8 @@ function Installer:install()
 
     self:_writePremakeSystem()
 
-    local system = self:_getPremakeSystem()
-    if os.isfile(system) then
-        dofile(system)
+    if os.isfile(self.premakeSystemFile) then
+        dofile(self.premakeSystemFile)
 
         premake.action.call("update-bootstrap")
         premake.action.call("update-zpm")
@@ -84,7 +83,7 @@ function Installer:_writePremakeSystem()
     ("local REGISTRY_REPO = \"%s\"\n"):format(self.loader.config("install.registry.repository")) ..
     ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.branch")))
 
-    file:write(zpm.util.readAll(path.join(zpm.env.scriptPath(), "premake-system.lua")))
+    file:write(zpm.util.readAll(path.join(zpm.env.getScriptPath(), "premake-system.lua")))
     file:close()
 end
 
