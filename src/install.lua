@@ -224,6 +224,6 @@ function Installer:_exportPath()
         warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file does not exist!", line, prof)
     end
 
-    printf("We have added ZPM installation path in your '%s' file,\nhowever if this does not work you have to add\n"..
+    printf("%%{yellow bright}We have added ZPM installation path in your '%s' file, however if this does not work\n you have to add " ..
            "'%s' manually in your shell profile.", prof, line)
 end
