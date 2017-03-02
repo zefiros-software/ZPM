@@ -27,6 +27,7 @@ Installer = newclass "Installer"
 function Installer:init(loader)
 
     self.loader = loader
+    self.premakeSystemFile = self:_getPremakeSystem()
 end
 
 function Installer:install()
@@ -73,7 +74,7 @@ end
 function Installer:_writePremakeSystem()
 
     local folder = zpm.env.getDataDirectory()
-    local file = io.open(self:_getPremakeSystem(), "wb")
+    local file = io.open(self.premakeSystemFile, "wb")
     file:write(("local CMD = \"%s\"\n"):format(folder) ..
     ("local BOOTSTRAP_DIR = \"%s\"\n"):format(self.loader.config("install.bootstrap.directory")) ..
     ("local BOOTSTRAP_REPO = \"%s\"\n"):format(self.loader.config("install.bootstrap.repository")) ..

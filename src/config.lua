@@ -30,6 +30,7 @@ function Config:init(loader)
     self.configName = "config.json"
     self.mayStore = false
     self.storeFile = path.join(zpm.env.getDataDirectory(), "." .. self.configName)
+    self.printf = printf
 
     self.__loadedFiles = {}
 end
@@ -135,7 +136,7 @@ function Config:_print(key)
         end
         str = string.format("\nValue '%s' is set to:\n%s", key, c)
     end )
-    printf(str)
+    self.printf(str)
     return str
 end
 
