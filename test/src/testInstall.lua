@@ -57,3 +57,22 @@ function Test:testInstall_update()
     local loader = Loader:new()
     loader.install:update()
 end
+
+function Test:testInstall_getLatestPremake()
+    local loader = Loader:new() 
+    loader.config.printf = function() end
+    loader.config.values.cache.premake = nil
+    loader.__latestPremake = nil
+
+    local latest = loader.install:_getLatestPremake()
+    u.assertEquals(latest.isCached, nil)
+
+    local latest2 = loader.install:_getLatestPremake()
+    u.assertEquals(latest2.isCached, nil)
+
+    loader.install.__latestPremake = nil
+
+    local latest3 = loader.install:_getLatestPremake()
+    u.assertEquals(latest3.isCached, true)
+
+end

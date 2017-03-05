@@ -54,7 +54,7 @@ function Test:testGithub_getToken()
 
     local ghtoken = _OPTIONS["github-token"]
     local mock = os.getenv
-    os.getenv = function() return nil end
+    os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = nil
 
     local loader = Loader:new()
@@ -71,7 +71,7 @@ function Test:testGithub_getToken2()
 
     local ghtoken = _OPTIONS["github-token"]
     local mock = os.getenv
-    os.getenv = function() return "test-foo" end
+    os.getenv = function(env) return iif(env == "GH_TOKEN", "test-foo", mock(env) ) end
     _OPTIONS["github-token"] = nil
 
     local loader = Loader:new()
@@ -88,7 +88,7 @@ function Test:testGithub_getToken3()
 
     local ghtoken = _OPTIONS["github-token"]
     local mock = os.getenv
-    os.getenv = function() return nil end
+    os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = "test-foo"
 
     local loader = Loader:new()
@@ -105,7 +105,7 @@ function Test:testGithub_getToken4()
 
     local ghtoken = _OPTIONS["github-token"]
     local mock = os.getenv
-    os.getenv = function() return nil end
+    os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = nil
 
     local loader = Loader:new()

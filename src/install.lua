@@ -28,6 +28,7 @@ function Installer:init(loader)
 
     self.loader = loader
     self.premakeSystemFile = self:_getPremakeSystem()
+    self.cacheTime = 60 * 60 * 24
 end
 
 function Installer:install()
@@ -143,11 +144,12 @@ function Installer:_getLatestPremake()
 
         -- check once a day
         local checkTime = self.loader.config("cache.premake.checkTime")
-        if checkTime and os.difftime(os.time(), checkTime) < (60 * 60 * 24) then
+        if checkTime and os.difftime(os.time(), checkTime) < self.cacheTime then
             local cache = self.loader.config("cache.premake")
             self.__latestPremake = {
                 version = zpm.semver(cache.version),
-                assets = cache.assets
+                assets = cache.assets,
+                isCached = true
             }
         else
             self.__latestPremake = self:_getPremakeVersions()[1]

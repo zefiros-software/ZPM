@@ -58,6 +58,7 @@
     <Compile Include="test\src\testEnv.lua" />
     <Compile Include="test\src\testGithub.lua" />
     <Compile Include="test\src\testHttp.lua" />
+    <Compile Include="test\src\testInstall.lua" />
     <Compile Include="test\src\testLoad.lua" />
     <Compile Include="test\src\testLoader.lua" />
     <Compile Include="test\src\testUtil.lua" />
