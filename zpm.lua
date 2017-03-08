@@ -210,7 +210,7 @@ local function getCacheLocation()
     end
 
     if os.get() == "windows" then
-        local temp = path.join(os.getenv("USERPROFILE"), "/AppData/Local/Temp/")
+        local temp = path.join(os.getenv("USERPROFILE"), "AppData/Local/Temp/")
         zpm.assert(temp, "The temp directory could not be found!")
         return path.join(temp, "zpm-cache")
     else
