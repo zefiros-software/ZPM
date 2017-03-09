@@ -38,3 +38,68 @@ premake.override(path, "normalize", function(base, p)
 
     return p
 end )
+
+
+-- this was taken from 
+-- https://github.com/premake/premake-core/blob/785671fad5946a129300ffcd0f61561f690bddb4/src/_premake_main.lua
+premake.override(premake.main, "processCommandLine", function()
+    -- Process special options
+    if (_OPTIONS["version"]) then
+        printf("ZPM (Zefiros Package Manager) %s", zpm._VERSION)
+        printf("premake5 (Premake Build Script Generator) %s", _PREMAKE_VERSION)
+        os.exit(0)
+    end
+
+    if (_OPTIONS["help"]) then
+        premake.showhelp()
+        os.exit(1)
+    end
+
+    -- Validate the command-line arguments. This has to happen after the
+    -- script has run to allow for project-specific options
+    ok, err = premake.option.validate(_OPTIONS)
+    if not ok then
+        printf("Error: %s", err)
+        os.exit(1)
+    end
+
+    -- If no further action is possible, show a short help message
+    if not _OPTIONS.interactive then
+        if not _ACTION then
+            print("Type 'zpm --help' for help")
+            os.exit(1)
+        end
+
+        local action = premake.action.current()
+        if not action then
+            printf("Error: no such action '%s'", _ACTION)
+            os.exit(1)
+        end
+
+        if premake.action.isConfigurable() and not os.isfile(_MAIN_SCRIPT) then
+            printf("No zpm script (%s) found!", path.getname(_MAIN_SCRIPT))
+            os.exit(1)
+        end
+    end
+	end)
+
+ premake.override(premake.main, "locateUserScript", function()
+    local defaults = { "zpm.lua", "premake5.lua", "premake4.lua" }
+    for _, default in ipairs(defaults) do
+        if os.isfile(default) then
+            _MAIN_SCRIPT = default
+            break
+        end
+    end
+
+    if not _MAIN_SCRIPT then
+        _MAIN_SCRIPT = defaults[1]
+    end
+
+    if _OPTIONS.file then
+        _MAIN_SCRIPT = _OPTIONS.file
+    end
+
+    _MAIN_SCRIPT = path.getabsolute(_MAIN_SCRIPT)
+    _MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
+	end)

@@ -4,6 +4,15 @@
         "apiHost": "https://api.github.com/",
         "token": false
     },
+    "cache": {
+        "premake": {
+            "cacheTime": 86400
+        },
+        "registry": {
+            "cacheTime": 1
+        }
+    },
+    "registries": [],
     "install": {
         "repository": "https://github.com/Zefiros-Software/ZPM",
         "branch": "features/refactor",
@@ -15,30 +24,28 @@
         "registry": {
             "repository": "https://github.com/Zefiros-Software/Manifest.git",
             "directory": "registry",
-            "directories": "registries",
-            "fileName": ".registries.json",
-            "modules": ".modules.json",
-            "registries": ".registries.json",
-            "build": ".build.json"
+            "modules": "modules.json",
+            "registries": "registries.json",
+            "build": "build.json"
         },
         "manifests": {
             "libraries": {
                 "manifest": ".manifest.json",
-                "buildFile": ".build.lua"
+                "buildFile": "build.lua"
             },
             "assets": {
                 "directory": "assets",
-                "manifest": ".assets.json",
-                "fileName": ".assets.lua",
+                "manifest": "assets.json",
+                "fileName": "assets.lua",
                 "defaultExtract": false
             }
         },
         "modules": {
-            "fileName": ".modules.json",
+            "fileName": "modules.json",
             "directory": "modules"
         },
         "packages": {
-            "fileName": ".package.json"
+            "fileName": "package.json"
         },
         "extern": {
             "directory": "extern"

@@ -22,18 +22,49 @@
 -- @endcond
 --]]
 
+zpm.git = { }
 
-newoption {
-    trigger = "allow-shell",
-    description = "Allows the usage of shell commands without confirmation"
-}
+function zpm.git.pull(destination, url)
 
-newoption {
-    trigger = "allow-install",
-    description = "Allows the usage of install scripts without confirmation"
-}
+    local current = os.getcwd()
 
-newoption {
-    trigger = "allow-module",
-    description = "Allows the updating and installing of modules without confirmation"
-}
+    os.chdir(destination)
+
+    if url then
+        os.executef("git remote set-url origin %s", url)
+    end
+
+    os.execute("git fetch origin --tags -q -j 8")
+
+    local updated = false
+
+    if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
+
+        os.execute("git checkout -q .")
+        os.execute("git reset --hard origin/HEAD")
+        os.execute("git submodule update --init --recursive -j 8")
+
+        updated = true
+    end
+
+    os.chdir(current)
+
+    return updated
+end
+
+function zpm.git.clone(destination, url)
+
+    os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination )
+end
+
+function zpm.git.cloneOrPull(destination, url)
+
+
+    if os.isdir(destination) then
+
+        return zpm.git.pull(destination, url)
+    else
+
+        zpm.git.clone(destination, url)
+    end
+end

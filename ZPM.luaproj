@@ -30,9 +30,11 @@
     <Compile Include="extern\load.lua" />
     <Compile Include="extern\sandbox.lua" />
     <Compile Include="extern\semver.lua" />
+    <Compile Include="src\cli.lua" />
     <Compile Include="src\config.lua" />
     <Compile Include="src\config.cli.lua" />
     <Compile Include="src\env.lua" />
+    <Compile Include="src\git.lua" />
     <Compile Include="src\github.cli.lua" />
     <Compile Include="src\github.lua" />
     <Compile Include="src\http.lua" />
@@ -42,6 +44,7 @@
     <Compile Include="src\options.lua" />
     <Compile Include="src\premake-system.lua" />
     <Compile Include="src\premake.lua" />
+    <Compile Include="src\registry.lua" />
     <Compile Include="src\show.cli.lua" />
     <Compile Include="test\action\test.lua" />
     <Compile Include="test\extern\luacov.lua" />

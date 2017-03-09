@@ -24,7 +24,8 @@
 
 function Test:testInstall_premakeSystemFile()
 
-    local inst = Installer:new(nil)
+    local loader = Loader:new()
+    local inst = loader.install
 
     u.assertStrContains(inst.premakeSystemFile, "premake-system.lua")
 end
@@ -56,6 +57,14 @@ function Test:testInstall_update()
 
     local loader = Loader:new()
     loader.install:update()
+end
+
+function Test:testInstall_update2()
+    local mock = Installer._getCurrentVersion
+    Installer._getCurrentVersion = function() return zpm.semver("0.0.0") end
+    local loader = Loader:new()
+    loader.install:update()
+    Installer._getCurrentVersion = mock
 end
 
 function Test:testInstall_getLatestPremake()

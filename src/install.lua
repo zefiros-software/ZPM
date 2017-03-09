@@ -28,7 +28,7 @@ function Installer:init(loader)
 
     self.loader = loader
     self.premakeSystemFile = self:_getPremakeSystem()
-    self.cacheTime = 60 * 60 * 24
+    self.cacheTime = self.loader.config("cache.premake.cacheTime")
 end
 
 function Installer:install()

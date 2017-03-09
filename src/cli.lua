@@ -22,18 +22,66 @@
 -- @endcond
 --]]
 
+zpm.cli = {}
+
+function zpm.cli.showVersion()
+
+    return _OPTIONS["version"]
+end
+
+
+function zpm.cli.showHelp()
+
+    return _OPTIONS["help"]
+end
+
 
 newoption {
-    trigger = "allow-shell",
-    description = "Allows the usage of shell commands without confirmation"
+    trigger = "cached-only",
+    description = "Only use the cached repositories (usefull on slow connections)"
 }
 
-newoption {
-    trigger = "allow-install",
-    description = "Allows the usage of install scripts without confirmation"
-}
+function zpm.cli.cachedOnly()
+
+    return _OPTIONS["cached-only"]
+end
+
 
 newoption {
-    trigger = "allow-module",
-    description = "Allows the updating and installing of modules without confirmation"
+    trigger = "update",
+    description = "Updates the dependencies to the newest version given the constraints"
 }
+
+function zpm.cli.update()
+
+    return _OPTIONS["update"]
+end
+
+
+newoption {
+    trigger = "profile",
+    description = "Profiles the given commands"
+}
+
+newaction {
+    trigger = "profile",
+    description = "Profiles the given commands",
+    onStart = function()
+        ProFi = require("mindreframer/ProFi", "@head")
+        ProFi:start()
+    end,
+    onEnd = function()
+        ProFi:stop()
+        ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))
+    end
+}
+
+
+
+
+
+
+
+
+
+

@@ -31,6 +31,7 @@ local function _getAssetsVersion(str)
 end
 
 function Github:init(loader)
+
     self.loader = loader
 end
 

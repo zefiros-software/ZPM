@@ -132,3 +132,12 @@ function zpm.util.hideProtectedFile(file)
 
     return fileh
 end
+
+function zpm.util.getRelativeOrAbsoluteDir( root, dir )
+
+    if dir and path.getabsolute(dir) == dir then
+        return dir
+    end
+
+    return path.join(root, dir)
+end

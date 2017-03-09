@@ -41,7 +41,7 @@ newaction {
                 zpm.loader.config:add(_ARGS[2], _ARGS[3])
             elseif _ARGS[1] == "get" then
                 zpm.assert(#_ARGS == 2, "No key specified")
-                zpm.loader.config:get(_ARGS[2])
+                zpm.loader.config:print(_ARGS[2])
             else
                 help = true
             end

@@ -25,6 +25,7 @@
 Config = newclass "Config"
 
 function Config:init(loader)
+
     self.loader = loader
     self.values = { }
     self.configName = "config.json"

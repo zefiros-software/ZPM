@@ -31,17 +31,21 @@ dofile "extern/load.lua"
 dofile "src/load.lua"
 
 function zpm.onLoad()
-
-    if _ACTION == "profile" then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
+    
+    if not zpm._mayLoad() then
+        return
     end
 
     printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
 
     zpm.loader = Loader:new()
-    zpm.loader.config:load()
     zpm.loader.install:checkVersion()
+    zpm.loader.registries:load()
+end
+
+function zpm._mayLoad()
+
+    return not zpm.cli.showVersion() and not zpm.cli.showHelp()
 end
 
 return zpm

@@ -23,9 +23,9 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm -b features/refactor
 echo Finished cloning ZPM...
 
 if defined GH_TOKEN (
-    premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install-zpm
+    premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install zpm
 ) else (
-    premake5.exe --file=zpm/zpm.lua install-zpm
+    premake5.exe --file=zpm/zpm.lua install zpm
 )
 
 cd %root%

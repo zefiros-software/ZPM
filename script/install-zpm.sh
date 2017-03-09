@@ -17,9 +17,9 @@ chmod a+x premake5
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm -b features/refactor
 
 if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install-zpm
+    ./premake5 --file=zpm/zpm.lua install zpm
 else
-    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
+    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install zpm
 fi
 
 cd $root

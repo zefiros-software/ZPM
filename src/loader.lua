@@ -29,15 +29,15 @@ function Loader:init()
     self:fixMainScript()
     self:checkGitVersion()
     self:initialiseFolders()
-
-    self.install = Installer:new(self)
     
     self.config = Config:new(self)
-    self.config:load()
-    
+    self.config:load()    
+
+    self.install = Installer:new(self)
     self.github = Github:new(self)
     self.http = Http:new(self)
-
+    self.registries = Registries:new(self)
+    self.registries.isRoot = true
 end
 
 function Loader:fixMainScript()

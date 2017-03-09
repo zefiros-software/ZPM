@@ -34,28 +34,6 @@ local function _installZPM()
     zpm.loader.install:install()
 end
 
-
-
-newaction {
-    trigger = "self-update",
-    description = "Updates the premake executable to the latest version",
-    execute = function()
-    
-        zpm.loader.install:update()
-
-        premake.action.call("update-bootstrap")
-        premake.action.call("update-registry")
-        premake.action.call("update-zpm")
-        premake.action.call("update-modules")
-    end
-}
-
-newaction {
-    trigger = "install-zpm",
-    description = "Installs ZPM in path",
-    execute = _installZPM
-}
-
 newaction {
     trigger = "install",
     description = "Installs ZPM",
@@ -82,7 +60,8 @@ newaction {
     execute = function()
         local help = false
         if #_ARGS == 1 or _ARGS[1] == "self" then
-            premake.action.call("self-update")
+            zpm.loader.install:update()
+            premake.action.call("update-modules")
         elseif #_ARGS == 1 or _ARGS[1] == "bootstrap" then
             premake.action.call("update-bootstrap")
         elseif #_ARGS == 1 or _ARGS[1] == "registry" then
