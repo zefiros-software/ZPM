@@ -41,7 +41,6 @@ newaction {
         local help = false
         if #_ARGS == 0 or _ARGS[1] == "package" then
         elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
-            bootstrap = {}
             _installZPM()
         else
             help = true
