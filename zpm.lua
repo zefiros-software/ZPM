@@ -31,6 +31,8 @@ dofile "extern/load.lua"
 dofile "src/load.lua"
 
 function zpm.onLoad()
+
+    bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
     
     if not zpm._mayLoad() then
         return

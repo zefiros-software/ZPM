@@ -62,12 +62,7 @@ newaction {
     end
 }
 
-if _ACTION ~= "update" then
-
-    local boostrapFile = path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua")
-    if os.isfile(boostrapFile) and not bootstrap then
-        bootstrap = dofile(boostrapFile)
-    end
+if _ACTION ~= "update" then 
 
     if not zpm and not zpm.__isLoaded then
         zpm = dofile(path.join(_PREMAKE_DIR, "../zpm/zpm.lua"))
