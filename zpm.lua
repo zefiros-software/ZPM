@@ -39,10 +39,9 @@ function zpm.onLoad()
     printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
 
     zpm.loader = Loader:new()
-    print("2")
     zpm.loader.install:checkVersion()
-    print("4")
     zpm.loader.registries:load()
+    print(5)
 end
 
 function zpm._mayLoad()
