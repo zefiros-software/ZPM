@@ -25,14 +25,15 @@
 if not zpm then
     zpm = {}
     zpm._VERSION = "1.0.3-beta"
+
+    -- load bootstrap when it does not already exists
+    bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
 end
 
 dofile "extern/load.lua"
 dofile "src/load.lua"
 
 function zpm.onLoad()
-
-    bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
     
     if not zpm._mayLoad() then
         return
