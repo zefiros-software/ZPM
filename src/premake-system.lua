@@ -62,11 +62,9 @@ newaction {
     end
 }
 
-if _ACTION ~= "update-bootstrap" and
-    _ACTION ~= "update-zpm" and
-    _ACTION ~= "update-registry" then
+if _ACTION ~= "update" then
 
-    if _ACTION ~= "install-zpm" then
+    if not (_ACTION == "install" and _ARGS[1] == "zpm" ) then
         bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
     end
 
