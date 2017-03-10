@@ -34,17 +34,21 @@ end
 function Installer:install()
 
     self:_writePremakeSystem()
+    print(6)
 
     if os.isfile(self.premakeSystemFile) then
         dofile(self.premakeSystemFile)
+    print(7)
 
         premake.action.call("update-bootstrap")
         premake.action.call("update-zpm")
         premake.action.call("update-registry")
+    print(8)
     end
 
     self:_installPremake()
     self:_installInPath()
+    print(9)
 end
 
 function Installer:update()

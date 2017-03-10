@@ -41,7 +41,6 @@ function zpm.onLoad()
     zpm.loader = Loader:new()
     zpm.loader.install:checkVersion()
     zpm.loader.registries:load()
-    print(5)
 end
 
 function zpm._mayLoad()
