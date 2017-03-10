@@ -64,15 +64,14 @@ newaction {
 
 if _ACTION ~= "update" then
 
-    if not (_ACTION == "install" and _ARGS[1] == "zpm" ) then
-        bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
+    local boostrapFile = path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua")
+    if os.isfile(boostrapFile) and not bootstrap then
+        bootstrap = dofile(boostrapFile)
     end
 
-    if not zpm or not zpm.__isLoaded then
+    if not zpm and not zpm.__isLoaded then
         zpm = dofile(path.join(_PREMAKE_DIR, "../zpm/zpm.lua"))
         zpm.onLoad()
         zpm.__isLoaded = true
     end
-else
-    _MAIN_SCRIPT = "."
 end
