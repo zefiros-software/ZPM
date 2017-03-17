@@ -22,31 +22,25 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "2.0.0"
+Package = newclass "Package"
+
+function Package:init(loader, settings)
+
+    self.loader = loader
+    self.fullName = settings.fullName
+    self.name = settings.name
+    self.vendor = settings.vendor
+
+    self.repository = settings.repository
+    self.build = iif(settings.build == nil, self.repository, settings.build)
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function Package:pull()
 
-function zpm.onLoad()
-    
-    if not zpm._mayLoad() then
-        return
+    if not self.__pulled then
+
+        zpm.git.cloneOrPull()
+
+        self.__pulled = true
     end
-
-    printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
-
-    zpm.loader = Loader:new()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
 end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and not zpm.cli.showHelp()
-end
-
-return zpm

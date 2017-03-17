@@ -82,7 +82,9 @@ function Installer:_writePremakeSystem()
     ("local INSTALL_REPO = \"%s\"\n"):format(self.loader.config("install.repository")) ..
     ("local REGISTRY_DIR = \"%s\"\n"):format(self.loader.config("install.registry.directory")) ..
     ("local REGISTRY_REPO = \"%s\"\n"):format(self.loader.config("install.registry.repository")) ..
-    ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.branch")))
+    ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.zpm.branch")) ..
+    ("local REGISTRY_BRANCH = \"%s\"\n"):format(self.loader.config("install.registry.branch")) ..
+    ("local BOOTSTRAP_BRANCH = \"%s\"\n"):format(self.loader.config("install.bootstrap.branch")))
 
     file:write(zpm.util.readAll(path.join(zpm.env.getScriptPath(), "premake-system.lua")))
     file:close()

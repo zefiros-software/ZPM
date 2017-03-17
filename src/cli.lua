@@ -24,6 +24,12 @@
 
 zpm.cli = {}
 
+function zpm.cli.verbose()
+
+    return _OPTIONS["verbose"]
+end
+
+
 function zpm.cli.showVersion()
 
     return _OPTIONS["version"]
@@ -57,7 +63,6 @@ function zpm.cli.update()
     return _OPTIONS["update"]
 end
 
-
 newoption {
     trigger = "profile",
     description = "Profiles the given commands"
@@ -76,12 +81,67 @@ newaction {
     end
 }
 
+function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
 
+    interactf("%s, use '--allow-module' to always accept (Y [enter]/n)?", question)
+    local answer = _OPTIONS["allow-module"] or io.read()
+    if answer == "Y" or
+        answer == "y" or
+        answer == "" or
+        _OPTIONS["allow-module"] then
+        return yesFunc()
+    else
+        return noFunc()
+    end
 
+end
 
+newoption {
+    trigger = "y",
+    description = "Always use 'y' to accept CLI interactions"
+}
 
+function zpm.cli.y()
 
+    return _OPTIONS["y"]
+end
 
+newoption {
+    trigger = "n",
+    description = "Always use 'n' to decline CLI interactions"
+}
 
+function zpm.cli.n()
 
+    return _OPTIONS["n"]
+end
 
+newoption {
+    trigger = "no-interactive",
+    description = "Use this option if you can't interact with zpm"
+}
+
+function zpm.cli.noInteractive()
+
+    return _OPTIONS["no-interactive"]
+end
+
+function zpm.cli.askConfirmation(question, yesFunc, noFunc, pred)
+
+    pred = iif(pred ~= nil, pred, function() return false end)
+
+    if not (zpm.cli.y() or zpm.cli.n() or zpm.cli.noInteractive()) then
+        interactf("\n%s (Y [enter]/n)\nUse '--y' or '--no-interactive' to always accept or '--n' to decline.", question)
+    end
+
+    local answer = not zpm.cli.n() and (zpm.cli.y() or zpm.cli.noInteractive() or pred() or io.read())
+    if answer == true or
+        answer == "Y" or
+        answer == "y" or
+        answer == "" then
+        return yesFunc()
+    else
+        return noFunc()
+    end
+
+end

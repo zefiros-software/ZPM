@@ -32,7 +32,7 @@ newaction {
     execute = function()
 
         local destination = path.join(CMD, BOOTSTRAP_DIR)
-        _updateRepo(destination, BOOTSTRAP_REPO, "bootstrap loader")
+        _updateRepo(destination, BOOTSTRAP_REPO, "bootstrap loader", BOOTSTRAP_BRANCH)
     end
 }
 
@@ -54,17 +54,25 @@ newaction {
     execute = function()
 
         local destination = path.join(CMD, REGISTRY_DIR)
-        _updateRepo(destination, REGISTRY_REPO, "registry")
+        _updateRepo(destination, REGISTRY_REPO, "registry", REGISTRY_BRANCH)
+    end
+}
 
-        if os.isdir(REGISTRY_DIR) then
-            assert(os.mkdir(REGISTRY_DIR))
-        end
+newaction {
+    trigger = "repair",
+    shortname = "Repairs ZPM",
+    description = "Repairs the current installation",
+    execute = function()
+
+        premake.action.call("update-bootstrap")
+        premake.action.call("update-zpm")
+        premake.action.call("update-registry")
     end
 }
  
-if _ACTION ~= "update" then
+if not (_ACTION and (_ACTION:contains("update-") or _ACTION == "repair")) then
 
-    if not zpm or(zpm and not zpm.__isLoaded) then
+    if not zpm or (zpm and not zpm.__isLoaded) then
             
         bootstrap = dofile(path.join(_PREMAKE_DIR, "../bootstrap/bootstrap.lua"))
 

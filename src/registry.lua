@@ -24,13 +24,14 @@
 
 Registry = newclass "Registry"
 
-function Registry:init(loader, directory, repository)
+function Registry:init(loader, directory, repository, mayCheck)
 
     self.loader = loader
     self.directory = directory
     self.repository = repository
+    self.mayCheck = mayCheck
 
-    self.registries = Registries:new(loader)
+    self.registries = Registries:new(loader, mayCheck)
 end
 
 function Registry:load()
@@ -63,7 +64,7 @@ end
 
 function Registry:_mayUpdate()
 
-    return not zpm.cli.cachedOnly() and zpm.cli.update()
+    return not zpm.cli.cachedOnly() and zpm.cli.update() and self.mayCheck
 end
 
 function Registry:_tryLoadRegistriesFile()

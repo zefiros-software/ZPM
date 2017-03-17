@@ -30,8 +30,26 @@ function warningf(...)
     print(zpm.colors("%{magenta bright}" .. string.format(...)), zpm.colors("%{reset}"))
 end
  
+function interactf(...)
+    print(zpm.colors("%{cyan bright}" .. string.format(...)), zpm.colors("%{reset}"))
+end
+ 
+function noticef(...)
+    print(zpm.colors("%{yellow}" .. string.format(...)), zpm.colors("%{reset}"))
+end
+ 
 function errorf(...)
     error(zpm.colors("%{red bright}" .. string.format(...)) .. zpm.colors("%{reset}"))
+end
+
+function zpm.sassert(pred, str, ...)
+    if not pred then
+        if zpm.cli.verbose() then
+            assert(pred, string.format(str, ...) .. "\n" .. debug.traceback())
+        else
+            assert(pred, string.format(str, ...))
+        end
+    end
 end
 
 function zpm.assert(pred, str, ...)
@@ -140,4 +158,45 @@ function zpm.util.getRelativeOrAbsoluteDir( root, dir )
     end
 
     return path.join(root, dir)
+end
+
+function zpm.util.isAlphaNumeric(str)
+    return str == str:gsub("[^[%w-_]]*", "")
+end
+
+function zpm.util.concat(t1, t2)
+    if type(t1) ~= "table" then
+        t1 = {t1}
+    end
+
+    if type(t2) ~= "table" then
+        t2 = {t2}
+    end
+    for i = 1, #t2 do
+        t1[#t1 + 1] = t2[i]
+    end
+    return t1
+end
+
+function zpm.util.patternMatch(str, pattern)
+    return str:match(zpm.glob.globtopattern(pattern))
+end
+
+function zpm.util.split(s, delimiter)
+    result = {};
+    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
+        table.insert(result, match);
+    end
+    return result;
+end
+
+function zpm.util.rmdir(folder)
+
+    if os.is("windows") then
+        os.executef("del /f/s/q \"%s\" > NUL", folder)
+        os.executef("rmdir /s/q \"%s\" > NUL", folder)
+    else
+        os.executef("rm -rf \"%s\"", folder)
+    end
+
 end

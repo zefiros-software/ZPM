@@ -39,6 +39,10 @@ premake.override(path, "normalize", function(base, p)
     return p
 end )
 
+premake.override(premake.main, "preAction", function()
+    local action = premake.action.current()
+end )
+
 
 -- this was taken from 
 -- https://github.com/premake/premake-core/blob/785671fad5946a129300ffcd0f61561f690bddb4/src/_premake_main.lua

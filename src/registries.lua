@@ -24,20 +24,22 @@
 
 Registries = newclass "Registries"
 
-function Registries:init(loader)
+function Registries:init(loader, mayCheck)
 
     self.loader = loader
     self.cacheTime = self.loader.config("cache.registry.cacheTime")
     self.registries = { }
     self.isRoot = false
+
+    self.__cacheMayCheck = mayCheck
 end
 
 function Registries:load()
 
     if self:_mayCheck() then
-
-        self:_loadRoot()
     end
+
+    self:_loadRoot()
 
     for _, r in ipairs(self.registries) do
 
@@ -48,6 +50,23 @@ end
 function Registries:addRepository(repo)
 
     table.insert(self.registries, self:_newRegistry(nil, repo))
+end
+
+function Registries:getDirectories()
+
+    local dirs = {}
+
+    for _, r in ipairs(self.registries) do
+
+        table.insert(dirs, r.directory)
+    end
+
+    for _, r in ipairs(self.registries) do        
+
+        dirs = zpm.util.concat(dirs, r.registries:getDirectories())
+    end
+
+    return dirs
 end
 
 function Registries:_loadRoot()
@@ -70,15 +89,21 @@ end
 
 function Registries:_mayCheck()
 
+    if self.__cacheMayCheck ~= nil then
+        return self.__cacheMayCheck
+    end    
+
+    self.__cacheMayCheck = false
+
     local checkTime = self.loader.config("cache.registry.checkTime")
     if not checkTime or os.difftime(os.time(), checkTime) > self.cacheTime then
 
         self.loader.config:set("cache.registry.checkTime", os.time(), true)
 
-        return true
+        self.__cacheMayCheck = true
     end
 
-    return false
+    return self.__cacheMayCheck
 end
 
 function Registries:_getDirectory()
@@ -99,5 +124,5 @@ function Registries:_newRegistry(dir, repo)
         dir = path.join(self:_getDirectory(), string.sha1(repo):sub(-5))
     end
     
-    return Registry:new(self.loader, dir, repo)
+    return Registry:new(self.loader, dir, repo, self:_mayCheck())
 end

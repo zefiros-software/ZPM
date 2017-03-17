@@ -22,31 +22,39 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm._VERSION = "2.0.0"
+Manifests = newclass "Manifests"
+
+function Manifests:init(loader, registries)
+
+    self.loader = loader
+    self.registries = registries
+    self.manifests = {}
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function Manifests:load()
 
-function zpm.onLoad()
-    
-    if not zpm._mayLoad() then
-        return
+    for name, ext in pairs(self.loader.config("install.manifests")) do
+
+        local ok, validOrMessage = pcall(zpm.validate.manifests, ext)
+        if ok and validOrMessage == true then 
+
+            self.manifests[name] = Manifest:new(self.loader, name, ext)
+
+            for _, dir in ipairs(self.registries:getDirectories()) do
+
+                self.manifests[name]:load(dir)
+            end      
+        else
+            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.json:encode_pretty(ext), validOrMessage)
+        end
+    end
+end
+
+function Manifests:__call(tpe, vendorPattern, namePattern, pred)
+
+    if not self.manifests[tpe] then
+        return {}
     end
 
-    printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
-
-    zpm.loader = Loader:new()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
+    return self.manifests[tpe]:search(vendorPattern, namePattern, pred)
 end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and not zpm.cli.showHelp()
-end
-
-return zpm

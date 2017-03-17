@@ -36,8 +36,12 @@ function Loader:init()
     self.install = Installer:new(self)
     self.github = Github:new(self)
     self.http = Http:new(self)
+
     self.registries = Registries:new(self)
     self.registries.isRoot = true
+
+    self.manifests = Manifests:new(self, self.registries)
+    self.modules = Modules:new(self)
 end
 
 function Loader:fixMainScript()
@@ -80,6 +84,9 @@ function Loader:initialiseFolders()
 
     self:_initialiseCache()
 
+    -- allow module loading in the correct directory
+    bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
+
     
     local binDir = zpm.env.getBinDirectory()
     if not os.isdir(binDir) then
@@ -93,7 +100,11 @@ function Loader:_initialiseCache()
     self.temp = path.join(self.cache, "temp")
 
     if os.isdir(self.temp) then
-        os.rmdir(self.temp)
+         zpm.util.rmdir(self.temp)
+    end
+
+    if os.isdir(self.temp) then
+        warningf("Failed to clean temporary directory '%s'", self.temp)
     end
 
     if not os.isdir(self.cache) then
