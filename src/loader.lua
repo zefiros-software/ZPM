@@ -84,9 +84,10 @@ function Loader:initialiseFolders()
 
     self:_initialiseCache()
 
-    -- allow module loading in the correct directory
-    bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
-
+    if bootstrap then
+        -- allow module loading in the correct directory
+        bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
+    end
     
     local binDir = zpm.env.getBinDirectory()
     if not os.isdir(binDir) then
