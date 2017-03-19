@@ -111,7 +111,7 @@ end
 
 function Manifest:_getFactory()
 
-    local factory = Package
+    local factory = ManifestPackage
     if zpm.packageFactory[self.name] then
         factory = zpm.packageFactory[self.name]
     end
@@ -119,6 +119,6 @@ function Manifest:_getFactory()
 end
 
 zpm.packageFactory = {
-    libraries = Package,
-    modules = Module
+    libraries = ManifestPackage,
+    modules = ManifestModule
 }

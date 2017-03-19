@@ -46,7 +46,7 @@ newaction {
             help = true
         end
 
-        if help or _OPTIONS["help"] then
+        if help or zpm.cli.showHelp() then
             printf("%%{yellow}Show action must be one of the following commands:\n" ..
             " - package (default)\tSets the key on a specified value\n" ..
             " - zpm  \t\tInstalls ZPM")
@@ -74,7 +74,7 @@ newaction {
             help = true
         end
 
-        if help or _OPTIONS["help"] then
+        if help or zpm.cli.showHelp() then
             printf("%%{yellow}Show action must be one of the following commands:\n" ..
             " - self \tUpdates everything underneath\n" ..
             " - bootstrap \tUpdates the bootstrap module loader\n" ..

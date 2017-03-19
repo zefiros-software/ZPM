@@ -27,7 +27,6 @@ require "class"
 zpm.json = require "json"
 zpm.sandbox = require "sandbox"
 zpm.colors = require "ansicolors"
-zpm.glob = require "glob"
 
 if bootstrap and bootstrap.semver then
     zpm.semver = bootstrap.semver

@@ -22,14 +22,14 @@
 -- @endcond
 --]]
 
-Module = newclass("Module", Package)
+ManifestModule = newclass("ManifestModule", ManifestPackage)
 
-function Module:init(loader, settings)
+function ManifestModule:init(loader, settings)
 
     self.super:init(loader, settings)
 end
 
-function Module:install()
+function ManifestModule:install()
 
     local headPath = self:getHeadPath()
     local modPath = self:getDirectory()
@@ -37,11 +37,11 @@ function Module:install()
         noticef("- Installing module '%s'", self.fullName)
         self:_update(modPath, headPath)
     else
-        noticef("- Module '%s' is already installed!", self.fullName)
+        noticef("- ManifestModule '%s' is already installed!", self.fullName)
     end
 end
 
-function Module:update()
+function ManifestModule:update()
 
     local headPath = self:getHeadPath()
     local modPath = self:getDirectory()
@@ -49,11 +49,11 @@ function Module:update()
         noticef("- Updating module '%s'", self.fullName)
         self:_update(modPath, headPath)
     else
-        warningf("- Module '%s' is not installed!", self.fullName)
+        warningf("- ManifestModule '%s' is not installed!", self.fullName)
     end
 end
 
-function Module:uninstall()
+function ManifestModule:uninstall()
 
     local modPath = self:getDirectory()
     if os.isdir(modPath) then
@@ -68,27 +68,27 @@ function Module:uninstall()
     end
 end
 
-function Module:getDirectory()
-
-    return path.join(self.loader.modules:getDirectory(), self.fullName)
-end
-
-function Module:getVendorDirectory()
-
-    return path.join(self.loader.modules:getDirectory(), self.vendor)
-end
-
-function Module:getHeadPath()
-    
-    return path.join(self:getDirectory(), "head")
-end
-
-function Module:isInstalled()
+function ManifestModule:isInstalled()
 
     return os.isdir(self:getDirectory())
 end
 
-function Module:_update(modPath, modPath)
+function ManifestModule:getDirectory()
+
+    return path.join(self.loader.modules:getDirectory(), self.fullName)
+end
+
+function ManifestModule:getVendorDirectory()
+
+    return path.join(self.loader.modules:getDirectory(), self.vendor)
+end
+
+function ManifestModule:getHeadPath()
+    
+    return path.join(self:getDirectory(), "head")
+end
+
+function ManifestModule:_update(modPath, modPath)
 
     local modPath = self:getDirectory()
     local headPath = path.join(modPath, "head")

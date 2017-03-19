@@ -26,7 +26,6 @@
   <ItemGroup>
     <Compile Include="extern\ansicolors.lua" />
     <Compile Include="extern\class.lua" />
-    <Compile Include="extern\glob.lua" />
     <Compile Include="extern\json.lua" />
     <Compile Include="extern\load.lua" />
     <Compile Include="extern\sandbox.lua" />
@@ -44,11 +43,12 @@
     <Compile Include="src\loader.lua" />
     <Compile Include="src\manifest.lua" />
     <Compile Include="src\manifests.lua" />
-    <Compile Include="src\module.lua" />
+    <Compile Include="src\manifest-module.lua" />
     <Compile Include="src\modules.cli.lua" />
     <Compile Include="src\modules.lua" />
     <Compile Include="src\options.lua" />
-    <Compile Include="src\package.lua" />
+    <Compile Include="src\manifest-package.lua" />
+    <Compile Include="src\packages.lua" />
     <Compile Include="src\premake-system.lua" />
     <Compile Include="src\premake.lua" />
     <Compile Include="src\registries.lua" />

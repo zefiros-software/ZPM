@@ -41,6 +41,36 @@ end
 function errorf(...)
     error(zpm.colors("%{red bright}" .. string.format(...)) .. zpm.colors("%{reset}"))
 end
+ 
+function cprintf(cond, ...)
+    if cond then
+        print(zpm.colors(string.format(...)), zpm.colors("%{reset}"))
+    end
+end
+ 
+function cwarningf(cond, ...)
+    if cond then
+        print(zpm.colors("%{magenta bright}" .. string.format(...)), zpm.colors("%{reset}"))
+    end
+end
+ 
+function cinteractf(cond, ...)
+    if cond then
+        print(zpm.colors("%{cyan bright}" .. string.format(...)), zpm.colors("%{reset}"))
+    end
+end
+ 
+function cnoticef(cond, ...)
+    if cond then
+        print(zpm.colors("%{yellow}" .. string.format(...)), zpm.colors("%{reset}"))
+    end
+end
+ 
+function cerrorf(cond, ...)
+    if cond then
+        error(zpm.colors("%{red bright}" .. string.format(...)) .. zpm.colors("%{reset}"))
+    end
+end
 
 function zpm.sassert(pred, str, ...)
     if not pred then
@@ -179,7 +209,7 @@ function zpm.util.concat(t1, t2)
 end
 
 function zpm.util.patternMatch(str, pattern)
-    return str:match(zpm.glob.globtopattern(pattern))
+    return str:match(path.wildcards(pattern))
 end
 
 function zpm.util.split(s, delimiter)

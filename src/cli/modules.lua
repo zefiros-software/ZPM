@@ -22,25 +22,10 @@
 -- @endcond
 --]]
 
-Package = newclass "Package"
-
-function Package:init(loader, settings)
-
-    self.loader = loader
-    self.fullName = settings.fullName
-    self.name = settings.name
-    self.vendor = settings.vendor
-
-    self.repository = settings.repository
-    self.build = iif(settings.build == nil, self.repository, settings.build)
-end
-
-function Package:pull()
-
-    if not self.__pulled then
-
-        zpm.git.cloneOrPull()
-
-        self.__pulled = true
+newaction {
+    trigger = "module",
+    description = "Interacts with the ZPM modules",
+    execute = function()
+        zpm.loader.modules:CLI()
     end
-end
+}

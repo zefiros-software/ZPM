@@ -49,7 +49,7 @@ newaction {
             help = true
         end
 
-        if help or _OPTIONS["help"] then
+        if help or zpm.cli.showHelp() then
             printf("%%{yellow}Config action must be one of the following commands:\n" ..
             " - set [key] [value]\tSets the key on a specified value\n" ..
             " - add [key] [value]\tAdds a value to the array on the given key\n" ..
