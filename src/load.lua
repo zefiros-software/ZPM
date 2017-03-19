@@ -25,13 +25,14 @@
 dofile "loader.lua"
 dofile "config.lua"
 dofile "install.lua"
-dofile "registry.lua"
-dofile "registries.lua"
 dofile "packages.lua"
+dofile "modules.lua"
+
+dofile "registry/registries.lua"
+dofile "registry/registry.lua"
 
 dofile "manifest/package.lua"
 dofile "manifest/module.lua"
-dofile "modules.lua"
 
 dofile "common/validate.lua"
 dofile "common/env.lua"
