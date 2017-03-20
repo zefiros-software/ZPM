@@ -26,7 +26,7 @@ zpm.env = { }
 
 function zpm.env.getScriptPath()
     local str = debug.getinfo(2, "S").source:sub(2)
-    return path.join(str:match("(.*/)"), "../")
+    return str:match("(.*/)")
 end
 
 function zpm.env.getCacheDirectory()

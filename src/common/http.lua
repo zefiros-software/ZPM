@@ -26,7 +26,7 @@ Http = newclass "Http"
 
 function Http:init(loader)
     self.loader = loader
-    self.location = iif(os.is("windows"), path.join( zpm.env.getScriptPath(), "../bin/curl.exe" ), "curl")
+    self.location = iif(os.is("windows"), path.join( zpm.env.getScriptPath(), "../../bin/curl.exe" ), "curl")
 end
 
 function Http:get(url, headers, extra)
