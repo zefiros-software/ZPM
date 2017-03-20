@@ -23,26 +23,9 @@
 --]]
 
 newaction {
-    trigger = "show",
-    description = "Shows various ZPM settings",
+    trigger = "library",
+    description = "Interacts with the ZPM libraries",
     execute = function()
-        local help = false
-        if #_ARGS == 1 then
-            if _ARGS[1] == "cache" then
-                printf("ZPM cache location: %s\n", zpm.env.getCacheDirectory())
-            elseif _ARGS[1] == "install" then
-                printf("ZPM installation location: %s\n", zpm.env.getDataDirectory())
-            else
-                help = true
-            end
-        else
-            help = true
-        end
-
-        if help or zpm.cli.showHelp() then
-            printf("%%{yellow}Show action must be one of the following commands:\n" ..
-            " - cache \tSets the key on a specified value\n" ..
-            " - install \tAdds a value to the array on the given key")
-        end
+        zpm.loader.libraries:CLI()
     end
 }

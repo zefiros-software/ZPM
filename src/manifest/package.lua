@@ -22,14 +22,14 @@
 -- @endcond
 --]]
 
-ManifestPackage = newclass "ManifestPackage"
-ManifestPackage:virtual("install")
-ManifestPackage:virtual("update")
-ManifestPackage:virtual("uninstall")
-ManifestPackage:virtual("install")
-ManifestPackage:virtual("isInstalled")
+Package = newclass "Package"
+Package:virtual("install")
+Package:virtual("update")
+Package:virtual("uninstall")
+Package:virtual("install")
+Package:virtual("isInstalled")
 
-function ManifestPackage:init(loader, settings)
+function Package:init(loader, settings)
 
     self.loader = loader
     self.fullName = settings.fullName
@@ -37,5 +37,4 @@ function ManifestPackage:init(loader, settings)
     self.vendor = settings.vendor
 
     self.repository = settings.repository
-    self.build = iif(settings.build == nil, self.repository, settings.build)
 end

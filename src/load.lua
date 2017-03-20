@@ -27,11 +27,13 @@ dofile "config.lua"
 dofile "install.lua"
 dofile "packages.lua"
 dofile "modules.lua"
+dofile "libraries.lua"
 
 dofile "registry/registries.lua"
 dofile "registry/registry.lua"
 
 dofile "manifest/package.lua"
+dofile "manifest/version-package.lua"
 dofile "manifest/module.lua"
 
 dofile "common/validate.lua"
@@ -45,7 +47,8 @@ dofile "common/util.lua"
 
 dofile "cli/config.lua"
 dofile "cli/show.lua"
-dofile "cli/modules.lua"
+dofile "cli/module.lua"
+dofile "cli/library.lua"
 dofile "cli/install.lua"
 dofile "cli/github.lua"
 dofile "cli/cli.lua"

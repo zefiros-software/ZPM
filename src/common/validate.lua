@@ -42,7 +42,7 @@ function zpm.validate.manifest(entry, name, vendor)
 
     zpm.sassert(zpm.util.isGitUrl(entry.repository), "'repository' supplied in manifest definition is not a valid https git url!")
 
-    zpm.sassert(not entry.build or zpm.util.isGitUrl(entry.build), "'build' supplied in manifest definition is not a valid https git url!")
+    zpm.sassert(not entry.definition or zpm.util.isGitUrl(entry.definition), "'definition' supplied in manifest definition is not a valid https git url!")
 
     return true
 end

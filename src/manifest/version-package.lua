@@ -22,27 +22,11 @@
 -- @endcond
 --]]
 
-newaction {
-    trigger = "show",
-    description = "Shows various ZPM settings",
-    execute = function()
-        local help = false
-        if #_ARGS == 1 then
-            if _ARGS[1] == "cache" then
-                printf("ZPM cache location: %s\n", zpm.env.getCacheDirectory())
-            elseif _ARGS[1] == "install" then
-                printf("ZPM installation location: %s\n", zpm.env.getDataDirectory())
-            else
-                help = true
-            end
-        else
-            help = true
-        end
+VersionPackage = newclass("VersionPackage", Package)
 
-        if help or zpm.cli.showHelp() then
-            printf("%%{yellow}Show action must be one of the following commands:\n" ..
-            " - cache \tSets the key on a specified value\n" ..
-            " - install \tAdds a value to the array on the given key")
-        end
-    end
-}
+function VersionPackage:init(loader, settings)
+
+    self.super:init(loader, settings)
+
+    self.definition = iif(settings.definition == nil, self.repository, settings.definition)
+end

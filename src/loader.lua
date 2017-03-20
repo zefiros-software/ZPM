@@ -42,6 +42,7 @@ function Loader:init()
 
     self.manifests = Manifests:new(self, self.registries)
     self.modules = Modules:new(self)
+    self.libraries = Libraries:new(self)
 end
 
 function Loader:fixMainScript()
