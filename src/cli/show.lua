@@ -29,9 +29,9 @@ newaction {
         local help = false
         if #_ARGS == 1 then
             if _ARGS[1] == "cache" then
-                printf(zpm.env.getCacheDirectory())
+                print(zpm.env.getCacheDirectory())
             elseif _ARGS[1] == "install" then
-                printf(zpm.env.getDataDirectory())
+                print(zpm.env.getDataDirectory())
             else
                 help = true
             end
