@@ -17,7 +17,7 @@ matrix:
           osx_image: xcode8
           language: generic
 install:
-    - bash script/install-zpm.sh
+    - . script/install-zpm.sh
 script:
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
