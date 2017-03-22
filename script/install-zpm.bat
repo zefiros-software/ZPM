@@ -29,7 +29,6 @@ echo %CONDA_DIR%
 echo %ZPM_DIR%
 start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /AddToPath=0 /S /D=%CONDA_DIR%
 
-exit
 echo Finished cloning ZPM...
 
 if defined GH_TOKEN (
