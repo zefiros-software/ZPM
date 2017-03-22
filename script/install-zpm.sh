@@ -25,9 +25,9 @@ curl -L -o premake5.tar.gz $premakeURL
 tar xzf premake5.tar.gz
 chmod a+x premake5
 
-ZPM_DIR=$(./premake5 show install) | xargs
-chmod a+x miniconda.sh
+ZPM_DIR=$(./premake5 show install)
 echo $ZPM_DIR
+chmod a+x miniconda.sh
 bash miniconda.sh -b -p "$ZPM_DIR/conda"
 
 
