@@ -27,7 +27,7 @@ chmod a+x premake5
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
 
-ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua) | fmt -su
+ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua | fmt -su) 
 CONDA_DIR="$ZPM_DIR/conda/"
 echo $CONDA_DIR
 chmod a+x miniconda.sh
