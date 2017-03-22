@@ -21,15 +21,14 @@ echo Finished downloading premake...
 powershell -command "Expand-Archive premake5.zip -DestinationPath ."
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
+echo Finished cloning ZPM...
 
+echo Installing Miniconda...
 for /f "tokens=*" %%i in ('".\premake5 show install --file=zpm/zpm.lua"') do set ZPM_DIR=%%i
-set CONDA_DIR="ZPM_DIR%/conda/
+set CONDA_DIR=%ZPM_DIR%/conda/
 for /f "tokens=*" %%i in ('echo %CONDA_DIR:/=\%') do set CONDA_DIR=%%i
-echo %CONDA_DIR%
-echo %ZPM_DIR%
 start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /AddToPath=0 /S /D=%CONDA_DIR%
 
-echo Finished cloning ZPM...
 
 if defined GH_TOKEN (
     premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install zpm
