@@ -22,7 +22,7 @@ powershell -command "Expand-Archive premake5.zip -DestinationPath ."
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
 
-for /f %%i in ('.\premake5 show install --file=zpm/zpm.lua') do set ZPM_DIR=%%i
+for /f "tokens=*" %i in ('.\premake5 show install --file=zpm/zpm.lua') do set ZPM_DIR=%i
 set CONDA_DIR="%ZPM_DIR%/conda/"
 echo %CONDA_DIR%
 start /wait "" miniconda.exe /RegisterPython=0 /AddToPath=0 /S /D=%CONDA_DIR%
