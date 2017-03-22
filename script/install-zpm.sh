@@ -17,11 +17,12 @@ cd $install_dir
 
 rm -f premake5.tar.gz || true
 
+echo $premakeURL
 curl -L -o premake5.tar.gz $premakeURL
 tar xzf premake5.tar.gz
 chmod a+x premake5
 
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm -b features/refactor
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install zpm
