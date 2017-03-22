@@ -37,4 +37,5 @@ function Package:init(loader, settings)
     self.vendor = settings.vendor
 
     self.repository = settings.repository
+    self.definition = iif(settings.definition == nil, self.repository, settings.definition)
 end

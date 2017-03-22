@@ -33,7 +33,6 @@ dofile "registry/registries.lua"
 dofile "registry/registry.lua"
 
 dofile "manifest/package.lua"
-dofile "manifest/version-package.lua"
 dofile "manifest/module.lua"
 
 dofile "common/validate.lua"
