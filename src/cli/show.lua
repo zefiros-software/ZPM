@@ -29,9 +29,9 @@ newaction {
         local help = false
         if #_ARGS == 1 then
             if _ARGS[1] == "cache" then
-                printf("ZPM cache location: %s\n", zpm.env.getCacheDirectory())
+                printf(zpm.env.getCacheDirectory())
             elseif _ARGS[1] == "install" then
-                printf("ZPM installation location: %s\n", zpm.env.getDataDirectory())
+                printf(zpm.env.getDataDirectory())
             else
                 help = true
             end
@@ -46,3 +46,8 @@ newaction {
         end
     end
 }
+
+function zpm.cli.show()
+
+    return _ACTION == "show"
+end

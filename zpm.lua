@@ -46,7 +46,9 @@ end
 
 function zpm._mayLoad()
 
-    return not zpm.cli.showVersion() and not zpm.cli.showHelp()
+    return not zpm.cli.showVersion() and 
+           not zpm.cli.showHelp() and
+           not zpm.cli.show()
 end
 
 return zpm

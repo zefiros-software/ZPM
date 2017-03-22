@@ -4,12 +4,6 @@ install_dir=~/.zpm_install/
 root=$(pwd)
 OS=$(uname)
 
-if [[ "$OS" == "Darwin" ]]; then
-    premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz"
-else
-    premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz"
-fi
-
 rm -rf $install_dir || true
 
 mkdir -p $install_dir
@@ -17,10 +11,24 @@ cd $install_dir
 
 rm -f premake5.tar.gz || true
 
-echo $premakeURL
+if [[ "$OS" == "Darwin" ]]; then
+    curl -L -o miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+
+    premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz"
+else
+    curl -L -o miniconda.sh https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+
+    premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz"
+fi
+
 curl -L -o premake5.tar.gz $premakeURL
 tar xzf premake5.tar.gz
 chmod a+x premake5
+
+ZPM_DIR=$(premake5 show install)
+chmod a+x miniconda
+bash miniconda.sh -b -p "$ZPM_DIR/conda"
+
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
 
