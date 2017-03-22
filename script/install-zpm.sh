@@ -28,9 +28,10 @@ chmod a+x premake5
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
 
 ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua)
-echo $ZPM_DIR
+CONDA_DIR="$ZPM_DIR/conda/"
+echo $CONDA_DIR
 chmod a+x miniconda.sh
-bash miniconda.sh -b -p $ZPM_DIR/conda
+bash miniconda.sh -b -p $CONDA_DIR
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install zpm
