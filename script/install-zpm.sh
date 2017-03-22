@@ -30,7 +30,7 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b feature
 ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua)
 echo $ZPM_DIR
 chmod a+x miniconda.sh
-bash miniconda.sh -b -p "$ZPM_DIR/conda"
+bash miniconda.sh -b -p $ZPM_DIR/conda
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install zpm
