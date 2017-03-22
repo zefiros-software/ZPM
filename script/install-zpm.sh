@@ -2,9 +2,9 @@
 install_dir=~/.zpm_install/
 
 root=$(pwd)
-isOSX=("$(uname)" == "Darwin")
-echo $isOSX
-if $isOSX; then
+OS=$(uname)
+
+if [ "$OS" == "Darin"]; then
     premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-macosx.tar.gz"
 else
     premakeURL="https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz"
@@ -36,7 +36,7 @@ rm -rf $install_dir
 
 
 
-if $isOSX; then
+if [ "$OS" == "Darin"]; then
     source ~/.bash_profile
 else
     source ~/.bashrc
