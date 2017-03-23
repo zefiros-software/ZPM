@@ -9,6 +9,7 @@ cd "%USERPROFILE%/zpm-install"
 
 if exist "premake5.zip" del /q "premake5.zip"
 
+echo Downloading Miniconda...
 powershell -command "Invoke-WebRequest -Uri https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda4-latest-Windows-x86_64.exe"
 
 if defined GH_TOKEN (

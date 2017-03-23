@@ -31,7 +31,7 @@ function Registry:init(loader, directory, repository, mayCheck)
     self.repository = repository
     self.mayCheck = mayCheck
 
-    self.registries = Registries:new(loader, mayCheck)
+    self.registries = Registries(loader, mayCheck)
 end
 
 function Registry:load()

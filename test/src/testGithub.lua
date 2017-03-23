@@ -23,13 +23,13 @@
 --]]
 
 function Test:testGithub()
-    local loader = Loader:new()
+    local loader = Loader()
     u.assertNotEquals(loader.github, nil)
     u.assertIsTable(Loader)
 end
 
 function Test:testGithub_getReleases()
-    local loader = Loader:new()
+    local loader = Loader()
     local results = loader.github:getReleases("premake", "premake-core")
     u.assertTrue(#results > 5)
     u.assertTrue(results[1].version == zpm.semver(5, 0, 0, "alpha11"))
@@ -57,7 +57,7 @@ function Test:testGithub_getToken()
     os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = nil
 
-    local loader = Loader:new()
+    local loader = Loader()
     loader.config("github.token", nil)
 
     local token = loader.github:_getToken()
@@ -74,7 +74,7 @@ function Test:testGithub_getToken2()
     os.getenv = function(env) return iif(env == "GH_TOKEN", "test-foo", mock(env) ) end
     _OPTIONS["github-token"] = nil
 
-    local loader = Loader:new()
+    local loader = Loader()
     loader.config("github.token", nil)
 
     local token = loader.github:_getToken()
@@ -91,7 +91,7 @@ function Test:testGithub_getToken3()
     os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = "test-foo"
 
-    local loader = Loader:new()
+    local loader = Loader()
     loader.config("github.token", nil)
 
     local token = loader.github:_getToken()
@@ -108,7 +108,7 @@ function Test:testGithub_getToken4()
     os.getenv = function(env) return iif(env == "GH_TOKEN", nil, mock(env) ) end
     _OPTIONS["github-token"] = nil
 
-    local loader = Loader:new()
+    local loader = Loader()
     loader.config.printf = function() end
     loader.config:set("github", {token = "Test-foo"})
 

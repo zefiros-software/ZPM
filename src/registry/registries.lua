@@ -124,5 +124,5 @@ function Registries:_newRegistry(dir, repo)
         dir = path.join(self:_getDirectory(), string.sha1(repo):sub(-5))
     end
     
-    return Registry:new(self.loader, dir, repo, self:_mayCheck())
+    return Registry(self.loader, dir, repo, self:_mayCheck())
 end

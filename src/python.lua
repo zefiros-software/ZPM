@@ -22,36 +22,42 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "python.lua"
-dofile "libraries.lua"
+Python = newclass "Python"
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+function Python:init(loader)
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+    self.loader = loader
+end
 
-dofile "common/validate.lua"
-dofile "common/env.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+function Python:update()
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/module.lua"
-dofile "cli/library.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
+    self:conda("config --set always_yes yes --set changeps1 no")
+    self:conda("update --all --yes")
+end
 
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+function Python:__call(command)
+
+    return os.outputoff("%s %command", self:_getPythonExe())
+end
+
+function Python:conda(command)
+
+    local conda = path.join(self:_getDirectory(), "Scripts", iif(os.is("windows"), "conda.exe", "conda"))
+    os.executef("%s %s", conda, command)
+end
+
+function Python:pip(command)
+
+    local pip = path.join(self:_getDirectory(), "Scripts", iif(os.is("windows"), "pip.exe", "pip"))
+    os.executef("%s %s", pip, command)
+end
+
+function Python:_getDirectory()
+    
+    return path.join(zpm.env.getDataDirectory(), "conda")
+end
+
+function Python:_getPythonExe()
+    
+    return path.join(self:_getDirectory(), iif(os.is("windows"), "python.exe", "python"))
+end

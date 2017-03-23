@@ -25,11 +25,13 @@
 Http = newclass "Http"
 
 function Http:init(loader)
+
     self.loader = loader
     self.location = iif(os.is("windows"), path.join( zpm.env.getScriptPath(), "../../bin/curl.exe" ), "curl")
 end
 
 function Http:get(url, headers, extra)
+
     headers = iif(headers == nil, { }, headers)
     extra = iif(extra == nil, "", extra)
     local headerStr = ""
@@ -41,10 +43,12 @@ function Http:get(url, headers, extra)
 end
 
 function Http:download(url, outFile, headers)
+
     return self:get(url, headers, ("--output %s"):format(outFile) )
 end
 
 function Http:downloadFromArchive(url, pattern)
+
     if url:contains(".zip") then
         return self:downloadFromZip(url, pattern)
     end

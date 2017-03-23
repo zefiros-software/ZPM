@@ -24,25 +24,25 @@
 
 function Test:testHttp()
 
-    local loader = Loader:new()
+    local loader = Loader()
     u.assertNotNil(loader.http)
 end
 
 function Test:testHttp_get()    
   
-    local loader = Loader:new()
+    local loader = Loader()
     u.assertStrContains(loader.http:get("http://example.com/"), "This domain is established to be used for illustrative examples in documents.")
 end
 
 function Test:testHttp_getHeaders()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     u.assertStrContains(loader.http:get("http://scooterlabs.com/echo", {testHeader="FOOOO"}), "[testHeader] => FOOOO")
 end
 
 function Test:testHttp_getHeaders2()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     local result = loader.http:get("http://scooterlabs.com/echo", {testHeader="FOOOO", foo="bar"})
     u.assertStrContains(result, "[testHeader] => FOOOO")
     u.assertStrContains(result, "[foo] => bar")
@@ -50,7 +50,7 @@ end
 
 function Test:testHttp_download()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     loader.http:download("http://scooterlabs.com/echo", "test.txt", {testHeader="FOOOO", foo="bar"})
     local str = zpm.util.readAll("test.txt")
     u.assertStrContains(str, "[testHeader] => FOOOO")
@@ -60,7 +60,7 @@ end
 
 function Test:testHttp_download2()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     loader.http:download("http://example.com/", "test.txt")
     local str = zpm.util.readAll("test.txt")
     u.assertStrContains(str, "This domain is established to be used for illustrative examples in documents.")
@@ -69,7 +69,7 @@ end
 
 function Test:testHttp_downloadFromZipTo()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     local downloaded = loader.http:downloadFromZipTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip", "./", "premake5.exe")
     
     u.assertEquals(#downloaded,1)
@@ -84,7 +84,7 @@ end
 function Test:testHttp_downloadFromTarGzTo()   
  
     if not os.is("windows") then
-        local loader = Loader:new()
+        local loader = Loader()
         local downloaded = loader.http:downloadFromTarGzTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz", "./", "premake5")
     
         u.assertEquals(#downloaded,1)
@@ -99,7 +99,7 @@ end
 
 function Test:testHttp_downloadFromZip()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     local downloaded = loader.http:downloadFromZip("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
     
     u.assertEquals(#downloaded,1)
@@ -112,7 +112,7 @@ end
 function Test:testHttp_downloadFromTarGz()   
  
     if not os.is("windows") then
-        local loader = Loader:new()
+        local loader = Loader()
         local downloaded = loader.http:downloadFromTarGz("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     
         u.assertEquals(#downloaded,1)
@@ -125,7 +125,7 @@ end
 
 function Test:testHttp_downloadFromArchive()    
     
-    local loader = Loader:new()
+    local loader = Loader()
     local downloaded = loader.http:downloadFromArchive("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
     
     u.assertEquals(#downloaded,1)
@@ -138,7 +138,7 @@ end
 function Test:testHttp_downloadFromArchive2()   
  
     if not os.is("windows") then
-        local loader = Loader:new()
+        local loader = Loader()
         local downloaded = loader.http:downloadFromArchive("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     
         u.assertEquals(#downloaded,1)

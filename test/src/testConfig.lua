@@ -28,7 +28,7 @@ function Test:testConfigExists()
 end
 
 function Test:testConfig_Call()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf.values = { foo = "Bar" }
@@ -38,7 +38,7 @@ function Test:testConfig_Call()
 end
 
 function Test:testConfig_Call2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf.values = { foo = { bar = "foo" } }
@@ -48,7 +48,7 @@ function Test:testConfig_Call2()
 end
 
 function Test:testConfig_CallSet()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf.values = { foo = { bar = "foo" } }
@@ -58,7 +58,7 @@ function Test:testConfig_CallSet()
 end
 
 function Test:testConfig_CallSet2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf("foo", "foo")
@@ -67,7 +67,7 @@ function Test:testConfig_CallSet2()
 end
 
 function Test:testConfig_CallSet3()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf.values = { foo = { bar = "foo" } }
@@ -77,7 +77,7 @@ function Test:testConfig_CallSet3()
 end
 
 function Test:testConfig_CallSet4()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     conf.values = { foo = { bar = "foo" } }
@@ -89,7 +89,7 @@ function Test:testConfig_CallSet4()
 end
 
 function Test:testConfig_CallSet5()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(conf("github.token", "bar"))
@@ -100,13 +100,13 @@ function Test:testConfig_CallSet5()
 end
 
 function Test:testConfig_SetNotExists()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.set, conf, "foo.bar", 2)
 end
 
 function Test:testConfig_SetNotExistsParents()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -121,7 +121,7 @@ function Test:testConfig_SetNotExistsParents()
 end
 
 function Test:testConfig_SetNotExistsParents2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -136,7 +136,7 @@ function Test:testConfig_SetNotExistsParents2()
 end
 
 function Test:testConfig_SetNotExistsParents2JSON()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -151,7 +151,7 @@ function Test:testConfig_SetNotExistsParents2JSON()
 end
 
 function Test:testConfig_Set()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:set("foo", 2), "'foo' is set to")
@@ -159,7 +159,7 @@ function Test:testConfig_Set()
 end
 
 function Test:testConfig_Set2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:set("foo", { bar = 2 }), "'foo' is set to")
@@ -168,7 +168,7 @@ function Test:testConfig_Set2()
 end
 
 function Test:testConfig_Set2JSON()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:set("foo", "{ \"bar\": 2 }"), "'foo' is set to")
@@ -177,13 +177,13 @@ function Test:testConfig_Set2JSON()
 end
 
 function Test:testConfig_AddNotExists()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.add, conf, "foo.bar", 2)
 end
 
 function Test:testConfig_AddNotExistsParents()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -198,7 +198,7 @@ function Test:testConfig_AddNotExistsParents()
 end
 
 function Test:testConfig_AddNotExistsParents2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -213,7 +213,7 @@ end
 
 
 function Test:testConfig_AddNotExistsParents2JSON()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertIsNil(_OPTIONS["parents"])
@@ -227,7 +227,7 @@ function Test:testConfig_AddNotExistsParents2JSON()
 end
 
 function Test:testConfig_Add()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", 2), "'foo' is set to")
@@ -235,7 +235,7 @@ function Test:testConfig_Add()
 end
 
 function Test:testConfig_Add2()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", { bar = 2 }), "'foo' is set to")
@@ -243,7 +243,7 @@ function Test:testConfig_Add2()
 end
 
 function Test:testConfig_Add2JSON()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", "{ \"bar\": 2 }"), "'foo' is set to")
@@ -251,7 +251,7 @@ function Test:testConfig_Add2JSON()
 end
 
 function Test:testConfig_Add3()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", 2), "'foo' is set to")
@@ -260,7 +260,7 @@ function Test:testConfig_Add3()
 end
 
 function Test:testConfig_Add4()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", 2), "'foo' is set to")
@@ -271,7 +271,7 @@ function Test:testConfig_Add4()
 end
 
 function Test:testConfig_Add5()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:add("foo", 2), "'foo' is set to")
@@ -282,7 +282,7 @@ function Test:testConfig_Add5()
 end
 
 function Test:testConfig_Add6()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
 
     u.assertStrContains(conf:set("foo", 2), "'foo' is set to")
@@ -291,13 +291,13 @@ function Test:testConfig_Add6()
 end
 
 function Test:testConfig_NonExists()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     u.assertEquals(conf("bar"), nil)
 end
 
 function Test:testConfig_Get()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     u.assertStrContains(conf:set("foo", 2), "'foo' is set to")
     u.assertStrContains(conf:print("foo"), "'foo' is set to")
@@ -305,14 +305,14 @@ function Test:testConfig_Get()
 end
 
 function Test:testConfig_Load()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf:load()
     u.assertStrContains(conf("github.host"), "https://github.com/")
 end
 
 function Test:testConfig_Store()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf.mayStore = true
     conf.storeFile = "test.json"
@@ -329,7 +329,7 @@ function Test:testConfig_Store()
 end
 
 function Test:testConfig_StoreAdd()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf.mayStore = true
     conf.storeFile = "test.json"
@@ -345,7 +345,7 @@ function Test:testConfig_StoreAdd()
 end
 
 function Test:testConfig_StoreOverrideExisting()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf.mayStore = true
     conf.storeFile = "test.json"
@@ -360,7 +360,7 @@ function Test:testConfig_StoreOverrideExisting()
 end
 
 function Test:testConfig_StoreOverrideTwiceExisting()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf.mayStore = true
     conf.storeFile = "test.json"
@@ -377,7 +377,7 @@ function Test:testConfig_StoreOverrideTwiceExisting()
 end
 
 function Test:testConfig_StoreMultiple()
-    local conf = Config:new(nil)
+    local conf = Config(nil)
     conf.printf = function() end
     conf.mayStore = true
     conf.storeFile = "test.json"

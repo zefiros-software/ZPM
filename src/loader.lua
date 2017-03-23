@@ -30,19 +30,20 @@ function Loader:init()
     self:checkGitVersion()
     self:initialiseFolders()
     
-    self.config = Config:new(self)
+    self.config = Config(self)
     self.config:load()    
 
-    self.install = Installer:new(self)
-    self.github = Github:new(self)
-    self.http = Http:new(self)
+    self.install = Installer(self)
+    self.github = Github(self)
+    self.http = Http(self)
+    self.python = Python(self)
 
-    self.registries = Registries:new(self)
+    self.registries = Registries(self)
     self.registries.isRoot = true
 
-    self.manifests = Manifests:new(self, self.registries)
-    self.modules = Modules:new(self)
-    self.libraries = Libraries:new(self)
+    self.manifests = Manifests(self, self.registries)
+    self.modules = Modules(self)
+    self.libraries = Libraries(self)
 end
 
 function Loader:fixMainScript()

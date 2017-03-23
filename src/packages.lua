@@ -35,8 +35,8 @@ function Packages:init(loader)
     self.mayInstall = settings.install
     self.mayUpdate = settings.update
     self.mayUninstall = settings.uninstall
-    self.mayShowInstalled = settings.showInstalled
     self.maySearch = settings.search
+    self.mayShow = settings.show
 end
 
 function Packages:CLI()
@@ -85,8 +85,8 @@ function Packages:getSettings()
         install = false,
         update = false,
         uninstall = false,
-        showInstalled = false,
-        search = false
+        search = true,
+        show = false
     }
 end
 
@@ -192,6 +192,11 @@ function Packages:_search(vendor, name, action, pred)
 end
 
 function Packages:_fixName(vendor, name)
+
+    if not vendor then
+        vendor = "*"
+    end
+
     if not name then
         local mod = vendor:explode( "/" )
         vendor, name = mod[1], mod[2]
@@ -200,5 +205,6 @@ function Packages:_fixName(vendor, name)
             name = "*"
         end
     end
+
     return vendor, name
 end

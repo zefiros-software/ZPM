@@ -97,7 +97,7 @@ end
 
 function Test:testUtil_hideProtectedFile()
     
-    zpm.loader = Loader:new()
+    zpm.loader = Loader()
 
     zpm.util.writeAll("test.txt", "HELLO")
     u.assertTrue(os.isfile("test.txt"))

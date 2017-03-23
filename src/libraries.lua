@@ -35,7 +35,7 @@ function Libraries:getSettings()
         install = false,
         update = false,
         uninstall = false,
-        showInstalled = false,
+        show = false,
         search = true
     }
 end

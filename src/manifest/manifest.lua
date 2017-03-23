@@ -99,7 +99,7 @@ function Manifest:_savePackage(fullName, name, vendor, package)
 
     local factory = self:_getFactory()
 
-    self.packages[vendor][name] = factory:new(self.loader, {
+    self.packages[vendor][name] = factory(self.loader, {
         fullName = fullName,
         name = name,
         vendor = vendor, 

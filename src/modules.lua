@@ -40,7 +40,7 @@ function Modules:getSettings()
         install = true,
         update = true,
         uninstall = true,
-        showInstalled = true,
+        show = true,
         search = true
     }
 end

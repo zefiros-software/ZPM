@@ -53,10 +53,10 @@
     <Compile Include="src\manifest\manifests.lua" />
     <Compile Include="src\manifest\module.lua" />
     <Compile Include="src\manifest\package.lua" />
-    <Compile Include="src\manifest\version-package.lua" />
     <Compile Include="src\modules.lua" />
     <Compile Include="src\packages.lua" />
     <Compile Include="src\premake-system.lua" />
+    <Compile Include="src\python.lua" />
     <Compile Include="src\registry\registries.lua" />
     <Compile Include="src\registry\registry.lua" />
     <Compile Include="test\action\test.lua" />
