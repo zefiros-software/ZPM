@@ -31,6 +31,7 @@ end
 
 function Python:yaml2json(yaml)
 
+    os.executef("dir %s", zpm.env.getSrcDirectory())
     return self(("%s %s"):format(path.join(zpm.env.getSrcDirectory(), "py/yaml2json.py"), yaml))
 end
 
