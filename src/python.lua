@@ -31,7 +31,6 @@ end
 
 function Python:yaml2json(yaml)
 
-    os.executef("dir %s", zpm.env.getSrcDirectory())
     return self(("%s %s"):format(path.join(zpm.env.getSrcDirectory(), "py/yaml2json.py"), yaml))
 end
 
@@ -48,17 +47,17 @@ end
 
 function Python:__call(command)
 
-    return os.outputoff("%s %s", self:_getPythonExe(), command)
+    return self:_outputof("%s %s", self:_getPythonExe(), command)
 end
 
 function Python:conda(command)
 
-    self:_execute("%s %s", zpm.util.getExecutable("conda"), command)
+    self:_executef("%s %s", zpm.util.getExecutable("conda"), command)
 end
 
 function Python:pip(command)
 
-    self:_execute("%s %s", zpm.util.getExecutable("pip"), command)
+    self:_executef("%s %s", zpm.util.getExecutable("pip"), command)
 end
 
 function Python:_getBinDirectory()
@@ -71,10 +70,14 @@ function Python:_getDirectory()
     return path.join(zpm.env.getDataDirectory(), "conda")
 end
 
-
-function Python:_execute(command)
+function Python:_execute(...)
     
-    os.executef("%s/activate && %s", self:_getDirectory(), command)
+    os.executef("%s/%s", self:_getBinDirectory(), string.format(...))
+end
+
+function Python:_outputof(...)
+    
+    return os.outputoff("%s/%s", self:_getDirectory(), string.format(...))
 end
 
 function Python:_getPythonExe()
