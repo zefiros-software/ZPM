@@ -25,18 +25,21 @@
 Loader = newclass "Loader"
 
 function Loader:init()
+    
+    self.python = Python(self)
+
+    self.config = Config(self.python)
+    self.config:load()    
+
+    self.cacheTime = self.config("cache.temp.cacheTime")
 
     self:fixMainScript()
     self:checkGitVersion()
     self:initialiseFolders()
-    
-    self.config = Config(self)
-    self.config:load()    
 
     self.install = Installer(self)
     self.github = Github(self)
     self.http = Http(self)
-    self.python = Python(self)
 
     self.registries = Registries(self)
     self.registries.isRoot = true
@@ -102,12 +105,12 @@ function Loader:_initialiseCache()
     self.cache = zpm.env.getCacheDirectory()
     self.temp = path.join(self.cache, "temp")
 
-    if os.isdir(self.temp) then
+    if os.isdir(self.temp) and self:_mayClean() then
          zpm.util.rmdir(self.temp)
-    end
 
-    if os.isdir(self.temp) then
-        warningf("Failed to clean temporary directory '%s'", self.temp)
+        if os.isdir(self.temp) then
+            warningf("Failed to clean temporary directory '%s'", self.temp)
+        end
     end
 
     if not os.isdir(self.cache) then
@@ -117,4 +120,22 @@ function Loader:_initialiseCache()
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
     end
+end
+
+function Loader:_mayClean()
+
+    if self.__cacheMayClean ~= nil then
+        return self.__cacheMayClean
+    end    
+
+    self.__cacheMayClean = false
+    local checkTime = self.config("cache.temp.checkTime")
+    if not checkTime or os.difftime(os.time(), checkTime) > self.cacheTime then
+
+        self.config:set("cache.temp.checkTime", os.time(), true)
+        self.__cacheMayClean = true
+    end
+
+    return self.__cacheMayClean
+
 end

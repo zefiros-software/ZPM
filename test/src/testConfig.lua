@@ -305,7 +305,8 @@ function Test:testConfig_Get()
 end
 
 function Test:testConfig_Load()
-    local conf = Config(nil)
+     
+    local conf = Config()
     conf.printf = function() end
     conf:load()
     u.assertStrContains(conf("github.host"), "https://github.com/")

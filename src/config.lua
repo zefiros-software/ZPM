@@ -24,15 +24,15 @@
 
 Config = newclass "Config"
 
-function Config:init(loader)
+function Config:init(python)
 
-    self.loader = loader
+    self.python = iif(python ~= nil, python, Python())
     self.values = { }
-    self.configName = "config.json"
+    self.configNames = {"config.yaml", "config.yml", "config.json"}
     self.mayStore = false
-    self.storeFile = path.join(zpm.env.getDataDirectory(), "." .. self.configName)
+    self.storeFile = path.join(zpm.env.getDataDirectory(), ".config.json")
     self.printf = printf
-
+    
     self.__loadedFiles = {}
 end
 
@@ -108,7 +108,7 @@ function Config:print(key)
     return str
 end
 
-function Config:_store(keys, value, add, force)
+function Config:_store(keys, value, add, force, settings)
 
     if not self.mayStore and not force then
         return nil
@@ -133,22 +133,24 @@ function Config:_store(keys, value, add, force)
                 cursor[key] = value
             end
         end
-        zpm.util.writeAll(self.storeFile, zpm.json:encode_pretty(config))
+        zpm.util.writeAll(self.storeFile, zpm.json:encode(config))
+        self.python:prettifyJSON(self.storeFile)
     end , true, true)
-
-    -- reload to get the actual value  
-    self.__loadedFiles = {}
-    self:load()
 end
 
 function Config:_loadFile(file)
+
     if not os.isfile(file) or table.contains(self.__loadedFiles, file) then
         return nil
     end
 
-    local config = zpm.json:decode(zpm.util.readAll(file))
-    self:_loadJSON(config)
+    self:_loadJSON(zpm.ser.loadFile(file, self.python))
     table.insert(self.__loadedFiles, file)
+end
+
+function Config:_isYAML(file)
+    
+    return file:contains(".yml") or file:contains(".yaml")
 end
 
 function Config:_loadJSON(json)
@@ -158,8 +160,10 @@ end
 
 function Config:_loadOverideFile(directory)
 
-    self:_loadFile(path.join(directory, self.configName))
-    self:_loadFile(path.join(directory, "." .. self.configName))
+    for _, name in ipairs(self.configNames) do
+        self:_loadFile(path.join(directory, name))
+        self:_loadFile(path.join(directory, "." .. name))
+    end
 end
 
 function Config:__call(key, value)

@@ -27,6 +27,14 @@ function os.outputoff(...)
     return os.outputof(string.format(...))
 end
 
+premake.override(os, "execute", function(base, exec)
+
+    if _OPTIONS["verbose"] then
+        print(exec)
+    end
+    base(exec)
+end )
+
 -- Unfortunately premake normalises most paths,
 -- which results in some links like http:// to be 
 -- reduced to http:/ which of course is incorrect

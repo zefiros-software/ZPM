@@ -38,6 +38,7 @@ dofile "manifest/module.lua"
 
 dofile "common/validate.lua"
 dofile "common/env.lua"
+dofile "common/ser.lua"
 dofile "common/options.lua"
 dofile "common/git.lua"
 dofile "common/premake.lua"

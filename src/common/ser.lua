@@ -22,52 +22,29 @@
 -- @endcond
 --]]
 
-Python = newclass "Python"
+zpm.ser = { }
 
-function Python:init(loader)
+function zpm.ser.loadFile(file, python)
 
-    self.loader = loader
+    if not python then
+        python = zpm.loader.python
+    end
+
+    if os.isfile(file) then
+
+        local json
+        if zpm.ser.isYAML(file) then
+            json = python:yaml2json(file)
+        else
+            json = zpm.util.readAll(file)
+        end
+        return zpm.json:decode(json)
+    end
+
+    return {}
 end
 
-function Python:yaml2json(yaml)
-
-    return self(("%s %s"):format(path.join(zpm.env.getSrcDirectory(), "py/yaml2json.py"), yaml))
-end
-
-function Python:prettifyJSON(json)
-
-    return self(("%s %s"):format(path.join(zpm.env.getSrcDirectory(), "py/prettifyjson.py"), json))
-end
-
-function Python:update()
-
-    self:conda("config --set always_yes yes --set changeps1 no")
-    self:conda("update --all --yes")
-end
-
-function Python:__call(command)
-
-    return os.outputoff("%s %s", self:_getPythonExe(), command)
-end
-
-function Python:conda(command)
-
-    local conda = path.join(self:_getDirectory(), "Scripts", zpm.util.getExecutable("conda"))
-    os.executef("%s %s", conda, command)
-end
-
-function Python:pip(command)
-
-    local pip = path.join(self:_getDirectory(), "Scripts", zpm.util.getExecutable("pip"))
-    os.executef("%s %s", pip, command)
-end
-
-function Python:_getDirectory()
+function zpm.ser.isYAML(file)
     
-    return path.join(zpm.env.getDataDirectory(), "conda")
-end
-
-function Python:_getPythonExe()
-    
-    return path.join(self:_getDirectory(), zpm.util.getExecutable("python"))
+    return file:contains(".yml") or file:contains(".yaml")
 end

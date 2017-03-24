@@ -43,8 +43,8 @@ function Installer:install()
         premake.action.call("update-registry")
     end
 
-    self.loader.python:pip("install pipenv")
-
+    self.loader.python:conda("install pyyaml")
+    
     self:_installPremake()
     self:_installInPath()
 end
@@ -56,8 +56,7 @@ function Installer:update()
     premake.action.call("update-bootstrap")
     premake.action.call("update-zpm")
     premake.action.call("update-registry")
-    
-    self.loader.python:update()
+
     self:_updatePremake()
 end
 

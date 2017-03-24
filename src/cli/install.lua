@@ -61,7 +61,8 @@ newaction {
         local help = false
         if #_ARGS == 1 and _ARGS[1] == "self" then
             zpm.loader.install:update()
-            premake.action.call("update-modules")
+            zpm.loader.modules:update("*/*")    
+            self.loader.python:update()
         elseif #_ARGS == 1 and _ARGS[1] == "bootstrap" then
             premake.action.call("update-bootstrap")
         elseif #_ARGS == 1 and _ARGS[1] == "registry" then

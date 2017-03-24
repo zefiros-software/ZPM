@@ -230,3 +230,8 @@ function zpm.util.rmdir(folder)
     end
 
 end
+
+function zpm.util.getExecutable(file)
+
+    return iif(os.is("windows"), file .. ".exe", file)
+end
