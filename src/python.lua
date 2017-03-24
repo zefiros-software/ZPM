@@ -79,5 +79,5 @@ end
 
 function Python:_getPythonExe()
     
-    return path.join(self:_getDirectory(), zpm.util.getExecutable(iif(os.is("windows"), "python", "python3")))
+    return zpm.util.getExecutable(iif(os.is("windows"), "python", "python3"))
 end
