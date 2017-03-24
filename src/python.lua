@@ -52,14 +52,12 @@ end
 
 function Python:conda(command)
 
-    local conda = path.join(self:_getBinDirectory(), zpm.util.getExecutable("conda"))
-    self:_execute("%s %s", conda, command)
+    self:_execute("%s %s", zpm.util.getExecutable("conda"), command)
 end
 
 function Python:pip(command)
 
-    local pip = path.join(self:_getBinDirectory(), zpm.util.getExecutable("pip"))
-    self:_execute("%s %s", pip, command)
+    self:_execute("%s %s", zpm.util.getExecutable("pip"), command)
 end
 
 function Python:_getBinDirectory()
