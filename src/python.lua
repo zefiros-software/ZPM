@@ -52,19 +52,30 @@ end
 
 function Python:conda(command)
 
-    local conda = path.join(self:_getDirectory(), "Scripts", zpm.util.getExecutable("conda"))
-    os.executef("%s %s", conda, command)
+    local conda = path.join(self:_getBinDirectory(), zpm.util.getExecutable("conda"))
+    self:_execute("%s %s", conda, command)
 end
 
 function Python:pip(command)
 
-    local pip = path.join(self:_getDirectory(), "Scripts", zpm.util.getExecutable("pip"))
-    os.executef("%s %s", pip, command)
+    local pip = path.join(self:_getBinDirectory(), zpm.util.getExecutable("pip"))
+    self:_execute("%s %s", pip, command)
+end
+
+function Python:_getBinDirectory()
+    
+    return path.join(self:_getDirectory(), iif(os.is("windows"), "Scripts", "bin"))
 end
 
 function Python:_getDirectory()
     
     return path.join(zpm.env.getDataDirectory(), "conda")
+end
+
+
+function Python:_execute(command)
+    
+    os.executef("%s/activate && %s", self:_getDirectory(), command)
 end
 
 function Python:_getPythonExe()
