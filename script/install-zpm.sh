@@ -32,7 +32,7 @@ CONDA_DIR="$ZPM_DIR/conda/"
 chmod a+x miniconda.sh
 bash miniconda.sh -b -p $CONDA_DIR
 
-ls /home/travis/.zpm/zpm/py/
+ls /home/travis/.zpm/zpm/
 
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install zpm
