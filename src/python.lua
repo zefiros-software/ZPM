@@ -47,7 +47,7 @@ end
 
 function Python:__call(command)
 
-    return self:_outputof("%s %s", self:_getPythonExe(), command)
+    return os.outputoff("%s %s", self:_getPythonExe(), command)
 end
 
 function Python:conda(command)
@@ -75,12 +75,7 @@ function Python:_execute(...)
     os.executef("%s/%s", self:_getBinDirectory(), string.format(...))
 end
 
-function Python:_outputof(...)
-    
-    return os.outputoff("%s/%s", self:_getDirectory(), string.format(...))
-end
-
 function Python:_getPythonExe()
     
-    return zpm.util.getExecutable(iif(os.is("windows"), "python", "python3"))
+    return path.join(self:_getDirectory(), zpm.util.getExecutable(iif(os.is("windows"), "python", "bin/python")))
 end
