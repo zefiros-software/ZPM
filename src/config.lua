@@ -81,7 +81,7 @@ function Config:add(key, value)
     local cursor = self:_findKey(self.values, key, function(cursor, key)
         table.insert(cursor[key], value)
         return cursor[key]
-    end, true)
+    end, true, true)
 
     if cursor then
         self:_store(key, value, true)
@@ -117,7 +117,7 @@ function Config:__call(key, value, createKeys)
             cursor[key] = value
         end
         return cursor[key]
-    end, createKeys )
+    end, false, createKeys )
 end
 
 function Config:_store(keys, value, add, force)
