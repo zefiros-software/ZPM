@@ -58,11 +58,3 @@ newaction {
         end
     end
 }
-
-if _ACTION == "config" then
-    
-    newoption {
-        trigger = "parents",
-        description = "Make parent keys as needed"
-    }
-end

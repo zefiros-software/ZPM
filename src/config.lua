@@ -58,14 +58,14 @@ function Config:set(key, value, force)
         value = json
     end
 
-    local cursor = self:__call(key, value)
+    local cursor = self:__call(key, value, true)
     if cursor then
         self:_store(key, value, false, force)
         if not force then
             return self:print(key)
         end
     else
-        errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
+        errorf("Failed to find the complete key '%s'.", key)
     end
 end
 
@@ -79,13 +79,13 @@ function Config:add(key, value)
     local cursor = self:_findKey(self.values, key, function(cursor, key)
         table.insert(cursor[key], value)
         return cursor[key]
-    end , true)
+    end, true)
 
     if cursor then
         self:_store(key, value, true)
         return self:print(key)
     else
-        errorf("Failed to find the complete key '%s', please run again with option '--parents' set to force creation", key)
+        errorf("Failed to find the complete key '%s'.", key)
     end
 end
 
@@ -108,7 +108,17 @@ function Config:print(key)
     return str
 end
 
-function Config:_store(keys, value, add, force, settings)
+function Config:__call(key, value, createKeys)
+
+    return self:_findKey(self.values, key, function(cursor, key)
+        if value ~= nil then
+            cursor[key] = value
+        end
+        return cursor[key]
+    end, createKeys )
+end
+
+function Config:_store(keys, value, add, force)
 
     if not self.mayStore and not force then
         return nil
@@ -166,17 +176,7 @@ function Config:_loadOverideFile(directory)
     end
 end
 
-function Config:__call(key, value)
-
-    return self:_findKey(self.values, key, function(cursor, key)
-        if value ~= nil then
-            cursor[key] = value
-        end
-        return cursor[key]
-    end )
-end
-
-function Config:_findKey(tab, key, func, ensureTable, store)
+function Config:_findKey(tab, key, func, ensureTable, createKeys)
 
     ensureTable = iif(ensureTable ~= nil, ensureTable, false)
     local sep = key:explode("%.")
@@ -194,7 +194,7 @@ function Config:_findKey(tab, key, func, ensureTable, store)
             return func(cursor, key)
         end
 
-        if (_OPTIONS["parents"] or store) and not cursor[key] then
+        if createKeys and not cursor[key] then
             cursor[key] = { }
         end
 
