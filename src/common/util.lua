@@ -138,6 +138,11 @@ function zpm.util.traversePath(dir)
 end
 
 function zpm.util.isArray(t)
+
+    if not t or type(t) ~= "table" then
+        return false
+    end
+
     local i = 0
     for _ in pairs(t) do
         i = i + 1
@@ -235,3 +240,26 @@ function zpm.util.getExecutable(file)
 
     return iif(os.is("windows"), file .. ".exe", file)
 end
+
+function zpm.util.mergeAppend(...)
+		  local result = {}
+		  local arg = {...}
+		  for _,t in ipairs(arg) do
+
+			     if type(t) == "table" then
+				        for k,v in pairs(t) do
+					           if zpm.util.isArray(result[k]) and zpm.util.isArray(v) then
+                    result[k] = zpm.util.concat(result[k], v)
+                elseif type(result[k]) == "table" and type(v) == "table" then
+						              result[k] = table.merge(result[k], v)
+					           else
+						              result[k] = v
+					           end
+            end
+			     else
+				        error("invalid value")
+			     end
+		  end
+
+		  return result
+	end

@@ -165,7 +165,7 @@ end
 
 function Config:_loadJSON(json)
 
-    self.values = table.merge(json, self.values)
+    self.values = zpm.util.mergeAppend(self.values, json)
 end
 
 function Config:_loadOverideFile(directory)

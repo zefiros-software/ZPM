@@ -395,3 +395,24 @@ function Test:testConfig_StoreMultiple()
 
     os.remove(conf.storeFile)
 end
+
+function Test:testConfig_loadFile1()
+    local conf = Config(nil)
+    conf.printf = function() end
+    conf:_loadFile("test/files/conf.yml")
+    print(table.tostring(conf:get("registries")))
+    u.assertEquals(conf:get("registries"), {"https://localhost/"})
+
+    os.remove(conf.storeFile)
+end
+
+function Test:testConfig_loadFile2()
+    local conf = Config(nil)
+    conf.printf = function() end
+    conf:_loadFile("test/files/conf.yml")
+    conf:_loadFile("test/files/conf2.yml")
+    print(table.tostring(conf:get("registries")))
+    u.assertEquals(conf:get("registries"), {"https://localhost/", "https://127.0.0.1/"})
+
+    os.remove(conf.storeFile)
+end

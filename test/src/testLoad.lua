@@ -22,10 +22,11 @@
 -- @endcond
 --]]
 
+dofile "common/testGithub.lua"
+dofile "common/testUtil.lua"
+dofile "common/testHttp.lua"
+dofile "common/testEnv.lua"
+
 dofile "testLoader.lua"
-dofile "testGithub.lua"
 dofile "testConfig.lua"
-dofile "testUtil.lua"
-dofile "testHttp.lua"
-dofile "testEnv.lua"
 dofile "testInstall.lua"
