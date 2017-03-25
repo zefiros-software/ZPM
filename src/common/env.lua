@@ -46,6 +46,11 @@ function zpm.env.getCacheDirectory()
     end
 end
 
+function zpm.env.getTempDirectory()
+
+    return path.join(zpm.env.getCacheDirectory(), "temp")
+end
+
 function zpm.env.getDataDirectory()
 
     local folder = os.getenv("ZPM_DATA_DIR")

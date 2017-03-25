@@ -86,7 +86,7 @@ function Manifest:_loadFile(file)
         if ok and validOrMessage == true then
             self:_savePackage(package.name, name, vendor, package)
         else
-            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.json:encode_pretty(package), validOrMessage)
+            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.json.encode(package), validOrMessage)
         end
     end
 end
@@ -104,7 +104,7 @@ function Manifest:_savePackage(fullName, name, vendor, package)
         name = name,
         vendor = vendor, 
         repository = package.repository,
-        build = package.build
+        definition = package.definition
     })
 end
 
@@ -112,13 +112,9 @@ end
 function Manifest:_getFactory()
 
     local factory = Package
-    if zpm.packageFactory[self.name] then
-        factory = zpm.packageFactory[self.name]
+    local conf = self.loader.config("install.manifests")[self.name]
+    if conf and conf.package and _G[conf.package] then
+        factory = _G[conf.package]
     end
     return factory
 end
-
-zpm.packageFactory = {
-    libraries = Package,
-    modules = Module
-}

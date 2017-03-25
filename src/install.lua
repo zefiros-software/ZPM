@@ -155,7 +155,6 @@ function Installer:_getLatestPremake()
             }
         else
             self.__latestPremake = self:_getPremakeVersions()[1]
-
             -- cache the value for a day
             self.loader.config:set("cache", { 
                 premake = { 

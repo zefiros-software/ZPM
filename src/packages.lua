@@ -23,20 +23,38 @@
 --]]
 
 Packages = newclass("Packages")
-Packages:virtual("getSettings")
-Packages:virtual("getName")
-Packages:virtual("getNameSingle")
 
-function Packages:init(loader)
+function Packages:init(loader, settings, name, nameSingle)
 
     self.loader = loader
 
-    local settings = self:getSettings()
-    self.mayInstall = settings.install
-    self.mayUpdate = settings.update
-    self.mayUninstall = settings.uninstall
-    self.maySearch = settings.search
-    self.mayShow = settings.show
+    settings = iif(settings, settings, {})
+    self.mayInstall = iif(settings.install ~= nil, settings.install, false)
+    self.mayUpdate = iif(settings.update ~= nil, settings.update, false)
+    self.mayUninstall = iif(settings.uninstall ~= nil, settings.uninstall, false)
+    self.maySearch = iif(settings.search ~= nil, settings.search, true)
+    self.mayShow = iif(settings.show ~= nil, settings.show, false)
+
+    self.name = iif(name, name, "package")
+    self.nameSingle = iif(nameSingle, nameSingle, "packages")
+
+    newaction {
+        trigger = self:getNameSingle(),
+        description = ("Interacts with the ZPM %s"):format(self:getName()),
+        execute = function()
+            self:CLI()
+        end
+    }
+end
+
+function Packages:getName()
+    
+    return self.name
+end
+
+function Packages:getNameSingle()
+    
+    return self.nameSingle
 end
 
 function Packages:CLI()
@@ -69,7 +87,7 @@ function Packages:CLI()
     end
 
     if help or zpm.cli.showHelp() then
-        noticef("Modules action must be one of the following commands:")
+        noticef("Action must be one of the following commands:")
         cnoticef(self.mayInstall, " - install   [vendor] [name]\tInstalls modules with given vendor and name")
         cnoticef(self.mayUninstall, " - uninstall [vendor] [name]\tUninstalls modules with given vendor and name")
         cnoticef(self.maySearch, " - search    [vendor] [name]\tSearches modules with given vendor and name")
@@ -90,30 +108,24 @@ function Packages:getSettings()
     }
 end
 
-function Packages:getName()
-    
-    return "packages"
-end
-
-function Packages:getNameSingle()
-    
-    return "package"
-end
-
 function Packages:install(vendor, name)
 
-    local modules = self:_search(vendor, name, "install")
+    local packages = self:_search(vendor, name, "install")
     local install = function()
 
         printf("\nInstalling %s...", self:getName())
-        for _, mod in ipairs(modules) do
+        for _, mod in ipairs(packages) do
             mod:install()
         end
     end
     local no = function()
         warningf("You chose to abort the installation!")
     end
-    zpm.cli.askConfirmation(("Do you want to install these %s?"):format(self:getName()), install, no)
+    if #packages > 0 then
+        zpm.cli.askConfirmation(("Do you want to install these %s?"):format(self:getName()), install, no)
+    else
+        warningf("No %s were found.", self:getName())
+    end
 end
 
 function Packages:update(vendor, name)
@@ -154,11 +166,11 @@ end
 
 function Packages:showInstalled()
 
-    local results = self.loader.manifests(self:getName(), "*", "*", function(m) return m:isInstalled() end)
+    local packages = self.loader.manifests(self:getName(), "*", "*", function(m) return m:isInstalled() end)
     if #packages > 0 then
         noticef("The following %s are installed:", self:getName())
 
-        for _, r in ipairs(results) do
+        for _, r in ipairs(packages) do
             noticef(" - %s", r.fullName)
         end
     else
@@ -170,28 +182,32 @@ function Packages:search(vendor, name)
 
     vendor, name = self:_fixName(vendor, name)
 
-    local results = self.loader.manifests(self:getName(), vendor, name)
+    local packages = self.loader.manifests(self:getName(), vendor, name)
     
-    noticef("The following %s match '%s/%s':", self:getName(), vendor, name)
-    for _, r in ipairs(results) do
-        noticef(" - %s", r.fullName)
+    if #packages > 0 then
+        noticef("The following %s match '%s/%s':", self:getName(), vendor, name)
+        for _, r in ipairs(packages) do
+            noticef(" - %s", r.fullName)
+        end
+    else
+        noticef("No %s were found.", self:getName())
     end
 end
 
 function Packages:_search(vendor, name, action, pred)
 
     vendor, name = self:_fixName(vendor, name)
-    local results = self.loader.manifests(self:getName(), vendor, name, pred)
+    local packages = self.loader.manifests(self:getName(), vendor, name, pred)
 
-    if #results > 0 then
+    if #packages > 0 then
 
         noticef("Are you sure you want to %s %s that match '%s/%s':", action, self:getName(), vendor, name)
 
-        for _, r in ipairs(results) do
+        for _, r in ipairs(packages) do
             noticef(" - %s", r.fullName)
         end
 
-        return results
+        return packages
     end
 
     return {}

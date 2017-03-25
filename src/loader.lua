@@ -25,6 +25,8 @@
 Loader = newclass "Loader"
 
 function Loader:init()
+
+    self:_preInit()
     
     self.python = Python(self)
 
@@ -45,8 +47,6 @@ function Loader:init()
     self.registries.isRoot = true
 
     self.manifests = Manifests(self, self.registries)
-    self.modules = Modules(self)
-    self.libraries = Libraries(self)
 end
 
 function Loader:fixMainScript()
@@ -86,36 +86,48 @@ function Loader:checkGitVersion()
 end
 
 function Loader:initialiseFolders()
-
-    self:_initialiseCache()
-
-    if bootstrap then
-        -- allow module loading in the correct directory
-        bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
-    end
     
     local binDir = zpm.env.getBinDirectory()
     if not os.isdir(binDir) then
         zpm.assert(os.mkdir(binDir), "The bin directory '%s' could not be made!", binDir)
     end
-end
-
-function Loader:_initialiseCache()
-
-    self.cache = zpm.env.getCacheDirectory()
-    self.temp = path.join(self.cache, "temp")
 
     if os.isdir(self.temp) and self:_mayClean() then
          zpm.util.rmdir(self.temp)
 
         if os.isdir(self.temp) then
             warningf("Failed to clean temporary directory '%s'", self.temp)
+        else
+            zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
         end
+    end    
+end
+
+function Loader:_preInit()
+
+    self:_initialiseCache()
+
+    if bootstrap then
+        -- allow module loading in the correct directory
+        bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
+    end    
+
+    if zpm.cli.profile() then
+        ProFi = require("mindreframer/ProFi", "@head")
+        ProFi:setHookCount(0)
+        ProFi:start()
     end
+end
+
+function Loader:_initialiseCache()
+
+    self.cache = zpm.env.getCacheDirectory()
 
     if not os.isdir(self.cache) then
         zpm.assert(os.mkdir(self.cache), "The cache directory '%s' could not be made!", self.cache)
-    end
+    end    
+    
+    self.temp = zpm.env.getTempDirectory()
     
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)

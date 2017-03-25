@@ -37,6 +37,8 @@ function Manifests:load()
 
         local ok, validOrMessage = pcall(zpm.validate.manifests, ext)
         if ok and validOrMessage == true then 
+            
+            self.loader[name] = self:_createPackages(name, ext)
 
             self.manifests[name] = Manifest(self.loader, name, ext)
 
@@ -45,7 +47,7 @@ function Manifests:load()
                 self.manifests[name]:load(dir)
             end      
         else
-            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.json:encode_pretty(ext), validOrMessage)
+            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.json.encode(ext), validOrMessage)
         end
     end
 end
@@ -57,4 +59,14 @@ function Manifests:__call(tpe, vendorPattern, namePattern, pred)
     end
 
     return self.manifests[tpe]:search(vendorPattern, namePattern, pred)
+end
+
+function Manifests:_createPackages(name, ext)
+
+    local factory = Packages
+    if ext.class  and _G[ext.class] then
+        factory = _G[ext.class]
+    end
+    
+    return factory(self.loader, ext, name, ext.name)
 end

@@ -49,8 +49,6 @@ dofile "common/util.lua"
 dofile "cli/cli.lua"
 dofile "cli/config.lua"
 dofile "cli/show.lua"
-dofile "cli/module.lua"
-dofile "cli/library.lua"
 dofile "cli/install.lua"
 dofile "cli/github.lua"
 

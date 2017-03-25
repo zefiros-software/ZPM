@@ -31,12 +31,12 @@ end
 
 function Python:yaml2json(yaml)
 
-    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "../py/yaml2json.py"), yaml))
+    return self(("%s \"%s\""):format(path.join(zpm.env.getScriptPath(), "../py/yaml2json.py"), yaml))
 end
 
 function Python:prettifyJSON(json)
 
-    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "../py/prettifyjson.py"), json))
+    return self(("%s \"%s\""):format(path.join(zpm.env.getScriptPath(), "../py/prettifyjson.py"), json:gsub("\"", "\\\"")))
 end
 
 function Python:update()
@@ -47,7 +47,7 @@ end
 
 function Python:__call(command)
 
-    return os.outputoff("%s %s", self:_getPythonExe(), command)
+    return os.outputoff(string.format("%s %s", self:_getPythonExe(), command))
 end
 
 function Python:conda(command)

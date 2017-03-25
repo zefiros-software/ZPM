@@ -63,22 +63,14 @@ function zpm.cli.update()
     return _OPTIONS["update"]
 end
 
+function zpm.cli.profile()
+
+    return _OPTIONS["profile"] or _ACTION == "profile"
+end
+
 newoption {
     trigger = "profile",
     description = "Profiles the given commands"
-}
-
-newaction {
-    trigger = "profile",
-    description = "Profiles the given commands",
-    onStart = function()
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:start()
-    end,
-    onEnd = function()
-        ProFi:stop()
-        ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))
-    end
 }
 
 function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)

@@ -53,7 +53,7 @@ end
 
 function Config:set(key, value, force)
 
-    local ok, json = pcall(zpm.json.decode, zpm.json, value)
+    local ok, json = pcall(zpm.json.decode, value)
     if ok then
         value = json
     end
@@ -71,7 +71,7 @@ end
 
 function Config:add(key, value)
 
-    local ok, json = pcall(zpm.json.decode, zpm.json, value)
+    local ok, json = pcall(zpm.json.decode, value)
     if ok then
         value = json
     end
@@ -127,7 +127,7 @@ function Config:_store(keys, value, add, force)
     add = iif(add ~= nil, add, false)
     local config = { }
     if os.isfile(self.storeFile) then
-        local ok, json = pcall(zpm.json.decode, zpm.json, zpm.util.readAll(self.storeFile))
+        local ok, json = pcall(zpm.json.decode, zpm.util.readAll(self.storeFile))
         if ok then
             config = json
         end
@@ -143,8 +143,7 @@ function Config:_store(keys, value, add, force)
                 cursor[key] = value
             end
         end
-        zpm.util.writeAll(self.storeFile, zpm.json:encode(config))
-        zpm.ser.prettify(self.storeFile, self.python)
+        zpm.util.writeAll(self.storeFile, zpm.ser.prettify(zpm.json.encode(config), self.python))
     end , true, true)
 end
 

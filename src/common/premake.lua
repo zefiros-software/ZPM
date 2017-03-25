@@ -40,7 +40,7 @@ end )
 -- reduced to http:/ which of course is incorrect
 premake.override(path, "normalize", function(base, p)
 
-    if not zpm.util.hasGitUrl(p) and not zpm.util.hasUrl(p) then
+    if not zpm.util.hasGitUrl(p) and not zpm.util.hasUrl(p) and not p:contains("\\\"") then
         return base(p)
     end
 
@@ -93,6 +93,16 @@ premake.override(premake.main, "processCommandLine", function()
             os.exit(1)
         end
     end
+	end)
+
+ premake.override(premake.main, "postAction", function(base)
+    
+    if zpm.cli.profile() and ProFi then
+        ProFi:stop()
+        ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))
+    end
+
+    base()
 	end)
 
  premake.override(premake.main, "locateUserScript", function()

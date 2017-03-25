@@ -25,23 +25,26 @@
 zpm.ser = { }
 
 function zpm.ser.loadFile(file, python)
-
     if not python then
         python = zpm.loader.python
     end
-
+    
+    local json = {}
     if os.isfile(file) then
-
-        local json
         if zpm.ser.isYAML(file) then
-            json = python:yaml2json(file)
+            local temp = path.join(zpm.env.getTempDirectory(), file:sha1())
+            if os.isfile(temp) and os.stat(temp).mtime > os.stat(file).mtime then
+                json = zpm.util.readAll(temp)
+            else
+                json = python:yaml2json(file)
+                zpm.util.writeAll(temp, json)
+            end
         else
             json = zpm.util.readAll(file)
         end
-        return zpm.json:decode(json)
-    end
-
-    return {}
+        json = zpm.json.decode(json)
+    end    
+    return json
 end
 
 function zpm.ser.prettify(file, python)
@@ -50,17 +53,15 @@ function zpm.ser.prettify(file, python)
         python = zpm.loader.python
     end
 
-    if os.isfile(file) and zpm.ser.isJSON(file) then
-        python:prettifyJSON(file)
-    end
+    return python:prettifyJSON(file)
 end
 
 function zpm.ser.isYAML(file)
     
-    return file:contains(".yml") or file:contains(".yaml")
+    return file:endswith(".yml") or file:endswith(".yaml")
 end
 
 function zpm.ser.isJSON(file)
     
-    return file:contains(".json")
+    return file:endswith(".json")
 end

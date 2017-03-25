@@ -24,33 +24,12 @@
 
 Modules = newclass("Modules", Packages)
 
-function Modules:init(loader)
+function Modules:init(loader, settings, name, nameSingle)
 
-    self.super:init(loader)
+    self.super:init(loader, settings, name, nameSingle)
 end
 
 function Modules:getDirectory()
 
     return bootstrap.directories[1]
-end
-
-function Modules:getSettings()
-    
-    return {
-        install = true,
-        update = true,
-        uninstall = true,
-        show = true,
-        search = true
-    }
-end
-
-function Modules:getName()
-    
-    return "modules"
-end
-
-function Modules:getNameSingle()
-    
-    return "module"
 end

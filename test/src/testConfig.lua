@@ -328,7 +328,7 @@ function Test:testConfig_Store()
     conf:set("bar", { })
     conf:set("bar.foo", { foo = 5 })
 
-    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)), { bar = { foo = { foo = 5 } }, foo = 2 })
+    u.assertEquals(zpm.json.decode(zpm.util.readAll(conf.storeFile)), { bar = { foo = { foo = 5 } }, foo = 2 })
 
     os.remove(conf.storeFile)
 end
@@ -344,7 +344,7 @@ function Test:testConfig_StoreAdd()
     conf:add("foo", 2)
     conf:add("foo", 4)
 
-    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)), { foo = { 2, 4 } })
+    u.assertEquals(zpm.json.decode(zpm.util.readAll(conf.storeFile)), { foo = { 2, 4 } })
 
     os.remove(conf.storeFile)
 end
@@ -359,7 +359,7 @@ function Test:testConfig_StoreOverrideExisting()
 
     conf:load()
     u.assertStrContains(conf:set("github", { host = "localhost" }), "'github' is set to")
-    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)), { github = { host = "localhost" } })
+    u.assertEquals(zpm.json.decode(zpm.util.readAll(conf.storeFile)), { github = { host = "localhost" } })
 
     os.remove(conf.storeFile)
 end
@@ -376,7 +376,7 @@ function Test:testConfig_StoreOverrideTwiceExisting()
 
     conf:load()
     u.assertStrContains(conf:set("github", { host = "localhost" }), "'github' is set to")
-    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)), { github = { token = false, host = "localhost" } })
+    u.assertEquals(zpm.json.decode(zpm.util.readAll(conf.storeFile)), { github = { token = false, host = "localhost" } })
 
     os.remove(conf.storeFile)
 end
@@ -391,7 +391,7 @@ function Test:testConfig_StoreMultiple()
 
     conf:load()
     u.assertStrContains(conf:set("github.host", "localhost"), "'github.host' is set to")
-    u.assertEquals(zpm.json:decode(zpm.util.readAll(conf.storeFile)), { github = { host = "localhost" } })
+    u.assertEquals(zpm.json.decode(zpm.util.readAll(conf.storeFile)), { github = { host = "localhost" } })
 
     os.remove(conf.storeFile)
 end
@@ -401,8 +401,6 @@ function Test:testConfig_loadFile1()
     conf.printf = function() end
     conf:_loadFile("test/files/conf.yml")
     u.assertEquals(conf:get("registries"), {"https://localhost/"})
-
-    os.remove(conf.storeFile)
 end
 
 function Test:testConfig_loadFile2()
@@ -411,8 +409,6 @@ function Test:testConfig_loadFile2()
     conf:_loadFile("test/files/conf.yml")
     conf:_loadFile("test/files/conf2.yml")
     u.assertEquals(conf:get("registries"), {"https://localhost/", "https://127.0.0.1/"})
-
-    os.remove(conf.storeFile)
 end
 
 function Test:testConfig_loadFile3()
@@ -421,6 +417,18 @@ function Test:testConfig_loadFile3()
     conf:_loadFile("test/files/conf.yml")
     conf:_loadFile("test/files/conf3.yml")
     u.assertEquals(conf:get("registries"), {"https://localhost/", test= "hello"})
+end
+function Test:testConfig_loadFile4()
+    local conf = Config(nil)
+    conf.printf = function() end
 
-    os.remove(conf.storeFile)
+    conf:_loadFile("test/files/conf4.yml")
+    conf:_loadFile("test/files/conf5.yml")
+    u.assertEquals(conf:get("cache"), {
+        premake= {
+            cacheTime= 86400,
+            checkTime= 1490467948,
+            version= "5.0.0-alpha11"
+        }
+    })
 end

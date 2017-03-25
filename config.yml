@@ -23,15 +23,10 @@ cache:
         # when you use ZPM on slow connections
         cacheTime: 1
     temp:
-        # Delete the ZPM's temp folder once a day
-        cacheTime: 86400
-# By default no extra registries are loaded,
-# however new once can be added by adding git urls
-# to this value. The main registry is in the ZPM install
-# directoy, instead of in this value by design.
-# This should make updating more stable.
+        # Delete the ZPM's temp folder once a week
+        cacheTime: 604800
 registries: []
-install: 
+install:
     # Bootstrap is the wrapper that allows for more complex module loading.
     # In special we can load modules from specific versions, with a 
     # directory structure we handle during module installation.
@@ -65,7 +60,7 @@ install:
         # can be switched to a more unstable branch to 
         # get new features early
         branch: features/refactor
-    manifests: 
+    manifests:
         # These key value defines what kind of packages 
         # may be loaded withing ZPM. To add new package
         # types just specify a key with at least a value 'manifest'
@@ -75,18 +70,27 @@ install:
         # Example:
         #   plugins:
         #       manifest: plugins.yml
-        libraries: 
-            manifest: libraries.yml
-            buildFile: build.lua
-        assets: 
+        assets:
             manifest: assets.yml
-        modules: 
-            manifest: modules.yml
+            name: asset
+        libraries:
+            buildFile: build.lua
+            manifest: libraries.yml
+            name: library
+        modules:
+            class: Modules
             directory: modules
-    package: 
-        # The package definition resided in this definition
-        fileName: package.yml
+            install: true
+            manifest: modules.yml
+            name: module
+            package: Module
+            search: true
+            show: true
+            uninstall: true
     extern:
         # When ZPM needs to download packages, we store it in this directory 
         directory: extern
-settings: 
+    package:
+        # The package definition resided in this definition
+        fileName: package.yml
+settings:

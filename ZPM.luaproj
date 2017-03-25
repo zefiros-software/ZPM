@@ -26,16 +26,19 @@
   <ItemGroup>
     <Compile Include="extern\ansicolors.lua" />
     <Compile Include="extern\class.lua" />
-    <Compile Include="extern\json.lua" />
     <Compile Include="extern\load.lua" />
+    <Compile Include="extern\lunajson.lua" />
+    <Compile Include="extern\lunajson\decoder.lua" />
+    <Compile Include="extern\lunajson\encoder.lua" />
+    <Compile Include="extern\lunajson\sax.lua" />
+    <Compile Include="extern\lunajson\_str_lib.lua" />
+    <Compile Include="extern\lunajson\_str_lib_lua53.lua" />
     <Compile Include="extern\sandbox.lua" />
     <Compile Include="extern\semver.lua" />
     <Compile Include="src\cli\cli.lua" />
     <Compile Include="src\cli\config.lua" />
     <Compile Include="src\cli\github.lua" />
     <Compile Include="src\cli\install.lua" />
-    <Compile Include="src\cli\library.lua" />
-    <Compile Include="src\cli\module.lua" />
     <Compile Include="src\cli\show.lua" />
     <Compile Include="src\common\env.lua" />
     <Compile Include="src\common\git.lua" />
@@ -72,19 +75,20 @@
     <Compile Include="test\extern\luacov\util.lua" />
     <Compile Include="test\extern\luaunit.lua" />
     <Compile Include="test\src\testConfig.lua" />
-    <Compile Include="test\src\testEnv.lua" />
-    <Compile Include="test\src\testGithub.lua" />
-    <Compile Include="test\src\testHttp.lua" />
+    <Compile Include="test\src\common\testEnv.lua" />
+    <Compile Include="test\src\common\testGithub.lua" />
+    <Compile Include="test\src\common\testHttp.lua" />
     <Compile Include="test\src\testInstall.lua" />
     <Compile Include="test\src\testLoad.lua" />
     <Compile Include="test\src\testLoader.lua" />
-    <Compile Include="test\src\testUtil.lua" />
+    <Compile Include="test\src\common\testUtil.lua" />
     <Compile Include="test\tests.lua" />
     <Compile Include="zpm.lua" />
     <Compile Include="src\load.lua" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extern\" />
+    <Folder Include="extern\lunajson\" />
     <Folder Include="src\" />
     <Folder Include="src\cli\" />
     <Folder Include="src\common\" />
@@ -96,12 +100,16 @@
     <Folder Include="test\extern\bin\" />
     <Folder Include="test\extern\luacov\" />
     <Folder Include="test\extern\luacov\reporter\" />
+    <Folder Include="test\files\" />
     <Folder Include="test\src\" />
+    <Folder Include="test\src\common\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.yml" />
     <Content Include=".package.json" />
     <Content Include="test\extern\bin\luacov" />
+    <Content Include="test\files\conf5.yml" />
+    <Content Include="test\files\conf4.yml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
 </Project>

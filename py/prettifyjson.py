@@ -1,6 +1,4 @@
-import json, sys 
-with open(sys.argv[1], 'r') as stream:
-    pretty_json = json.dumps(json.load(stream), sort_keys=True, indent=4)
-
-with open(sys.argv[1], 'w') as stream:
-    stream.write(pretty_json)
+from io import StringIO
+import json, sys
+pretty_json = json.dumps(json.load(StringIO(sys.argv[1])), sort_keys=True, indent=4)
+sys.stdout.write(pretty_json)

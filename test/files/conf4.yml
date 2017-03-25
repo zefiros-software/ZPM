@@ -1,0 +1,4 @@
+cache: 
+    premake: 
+        # Check the new premake version once a day
+        cacheTime: 86400
