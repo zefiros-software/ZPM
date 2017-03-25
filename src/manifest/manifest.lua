@@ -86,7 +86,7 @@ function Manifest:_loadFile(file)
         if ok and validOrMessage == true then
             self:_savePackage(package.name, name, vendor, package)
         else
-            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.json.encode(package), validOrMessage)
+            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.ser.prettify(zpm.json.encode(package), self.loader.python), validOrMessage)
         end
     end
 end

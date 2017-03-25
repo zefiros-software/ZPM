@@ -47,7 +47,7 @@ function Manifests:load()
                 self.manifests[name]:load(dir)
             end      
         else
-            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.json.encode(ext), validOrMessage)
+            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.ser.prettify(zpm.json.encode(ext), self.loader.python), validOrMessage)
         end
     end
 end

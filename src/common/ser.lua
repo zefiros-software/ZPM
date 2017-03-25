@@ -47,13 +47,13 @@ function zpm.ser.loadFile(file, python)
     return json
 end
 
-function zpm.ser.prettify(file, python)
+function zpm.ser.prettify(json, python)
 
     if not python then
         python = zpm.loader.python
     end
 
-    return python:prettifyJSON(file)
+    return python:prettifyJSON(json)
 end
 
 function zpm.ser.isYAML(file)
