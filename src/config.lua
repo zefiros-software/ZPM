@@ -49,6 +49,8 @@ function Config:load()
     end
 
     self:_loadOverideFile(zpm.env.getScriptPath())
+
+    print(table.tostring(self.values, 10))
 end
 
 function Config:set(key, value, force)
