@@ -44,7 +44,23 @@ function zpm.ser.loadFile(file, python)
     return {}
 end
 
+function zpm.ser.prettify(file, python)
+
+    if not python then
+        python = zpm.loader.python
+    end
+
+    if os.isfile(file) and zpm.ser.isJSON(file) then
+        python:prettifyJSON(file)
+    end
+end
+
 function zpm.ser.isYAML(file)
     
     return file:contains(".yml") or file:contains(".yaml")
+end
+
+function zpm.ser.isJSON(file)
+    
+    return file:contains(".json")
 end

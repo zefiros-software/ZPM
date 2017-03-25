@@ -94,7 +94,7 @@ function Registry:_loadRegistriesFile()
     for _, reg in ipairs(localRegFiles) do
         if os.isfile(reg) then
 
-            return zpm.json:decode(zpm.util.readAll(reg))
+            return zpm.ser.loadFile(reg, self.loader.python)
         end
     end
 

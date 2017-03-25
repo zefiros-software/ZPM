@@ -75,7 +75,7 @@ end
 
 function Manifest:_loadFile(file)
     
-    local manifests = zpm.json:decode(zpm.util.readAll(file))
+    local manifests = zpm.ser.loadFile(file, self.loader.python)
 
     for _, package in ipairs(manifests) do
 

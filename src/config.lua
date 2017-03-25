@@ -144,7 +144,7 @@ function Config:_store(keys, value, add, force)
             end
         end
         zpm.util.writeAll(self.storeFile, zpm.json:encode(config))
-        self.python:prettifyJSON(self.storeFile)
+        zpm.ser.prettify(self.storeFile, self.python)
     end , true, true)
 end
 
