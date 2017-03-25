@@ -31,12 +31,12 @@ end
 
 function Python:yaml2json(yaml)
 
-    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "py/yaml2json.py"), yaml))
+    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "../py/yaml2json.py"), yaml))
 end
 
 function Python:prettifyJSON(json)
 
-    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "py/prettifyjson.py"), json))
+    return self(("%s %s"):format(path.join(zpm.env.getScriptPath(), "../py/prettifyjson.py"), json))
 end
 
 function Python:update()
