@@ -102,7 +102,9 @@ end
 function Test:testConfig_SetNotExists()
     local conf = Config(nil)
     conf.printf = function() end
-    u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.set, conf, "foo.bar", 2)
+    conf:set("foo.bar", 2)
+    u.assertEquals(conf("foo"), { bar = 2 })
+    u.assertEquals(conf("foo.bar"), 2)
 end
 
 function Test:testConfig_SetNotExistsParents()
@@ -179,7 +181,9 @@ end
 function Test:testConfig_AddNotExists()
     local conf = Config(nil)
     conf.printf = function() end
-    u.assertErrorMsgContains("Failed to find the complete key 'foo.bar'", conf.add, conf, "foo.bar", 2)
+    conf:add("foo.bar", 2)
+    u.assertEquals(conf("foo"), { bar = {2} })
+    u.assertEquals(conf("foo.bar"), {2})
 end
 
 function Test:testConfig_AddNotExistsParents()
