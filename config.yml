@@ -52,7 +52,7 @@ install:
         # This is the default directory wherein we store the registry
         directory: registry
         # The default branch for the registry is the master branch
-        branch: master
+        branch: dev
         # The root manifest, and root pacakge may define new registries that get loaded
         # by default. This manifest file holds these registries.
         manifest: registries.yml
