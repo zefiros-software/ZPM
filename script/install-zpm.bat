@@ -30,6 +30,7 @@ set CONDA_DIR=%ZPM_DIR%/conda/
 for /f "tokens=*" %%i in ('echo %CONDA_DIR:/=\%') do set CONDA_DIR=%%i
 start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /AddToPath=0 /S /D=%CONDA_DIR%
 
+%CONDA_DIR%/Scripts/conda install pyyaml
 
 if defined GH_TOKEN (
     premake5.exe --github-token=%GH_TOKEN% --file=zpm/zpm.lua install zpm

@@ -32,6 +32,8 @@ CONDA_DIR="$ZPM_DIR/conda/"
 chmod a+x miniconda.sh
 bash miniconda.sh -b -p $CONDA_DIR
 
+$CONDA_DIR/bin/conda install pyyaml
+
 if [ -z "$GH_TOKEN" ]; then
     ./premake5 --file=zpm/zpm.lua install zpm
 else

@@ -42,9 +42,7 @@ function Installer:install()
         premake.action.call("update-zpm")
         premake.action.call("update-registry")
     end
-
-    self.loader.python:conda("install pyyaml")
-    
+        
     self:_installPremake()
     self:_installInPath()
 end
