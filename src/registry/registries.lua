@@ -77,7 +77,7 @@ function Registries:_loadRoot()
 
         for _, p in ripairs(zpm.util.traversePath(_MAIN_SCRIPT_DIR)) do
 
-            table.insert(self.registries, self:_newRegistry(p))
+            table.insert(self.registries, self:_newRegistry(p, nil, true))
         end
 
         for _, r in ripairs(self.loader.config("registries")) do
@@ -113,10 +113,10 @@ end
 
 function Registries:_getMainRegistry()
 
-    return self:_newRegistry(self:_getDirectory(), self.loader.config("install.registry.repository"))
+    return self:_newRegistry(self:_getDirectory(), self.loader.config("install.registry.repository"), true)
 end
 
-function Registries:_newRegistry(dir, repo)
+function Registries:_newRegistry(dir, repo, mayLoadRegistries)
 
     zpm.assert(not repo or zpm.util.isGitUrl(repo), "Registry '%s' is not a git url!", repo)
 
@@ -124,5 +124,5 @@ function Registries:_newRegistry(dir, repo)
         dir = path.join(self:_getDirectory(), string.sha1(repo):sub(-5))
     end
     
-    return Registry(self.loader, dir, repo, self:_mayCheck())
+    return Registry(self.loader, dir, repo, self:_mayCheck(), isRoot)
 end

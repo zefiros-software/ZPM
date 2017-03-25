@@ -400,7 +400,6 @@ function Test:testConfig_loadFile1()
     local conf = Config(nil)
     conf.printf = function() end
     conf:_loadFile("test/files/conf.yml")
-    print(table.tostring(conf:get("registries")))
     u.assertEquals(conf:get("registries"), {"https://localhost/"})
 
     os.remove(conf.storeFile)
@@ -411,8 +410,17 @@ function Test:testConfig_loadFile2()
     conf.printf = function() end
     conf:_loadFile("test/files/conf.yml")
     conf:_loadFile("test/files/conf2.yml")
-    print(table.tostring(conf:get("registries")))
     u.assertEquals(conf:get("registries"), {"https://localhost/", "https://127.0.0.1/"})
+
+    os.remove(conf.storeFile)
+end
+
+function Test:testConfig_loadFile3()
+    local conf = Config(nil)
+    conf.printf = function() end
+    conf:_loadFile("test/files/conf.yml")
+    conf:_loadFile("test/files/conf3.yml")
+    u.assertEquals(conf:get("registries"), {"https://localhost/", test= "hello"})
 
     os.remove(conf.storeFile)
 end

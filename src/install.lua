@@ -76,14 +76,14 @@ function Installer:_writePremakeSystem()
     local folder = zpm.env.getDataDirectory()
     local file = io.open(self.premakeSystemFile, "wb")
     file:write(("local CMD = \"%s\"\n"):format(folder) ..
-    ("local BOOTSTRAP_DIR = \"%s\"\n"):format(self.loader.config("install.bootstrap.directory")) ..
-    ("local BOOTSTRAP_REPO = \"%s\"\n"):format(self.loader.config("install.bootstrap.repository")) ..
-    ("local INSTALL_DIR = \"%s\"\n"):format(zpm.env.getSrcDirectory()) ..
-    ("local INSTALL_REPO = \"%s\"\n"):format(self.loader.config("install.repository")) ..
+    ("local ZPM_DIR = \"%s\"\n"):format(zpm.env.getSrcDirectory()) ..
+    ("local ZPM_REPO = \"%s\"\n"):format(self.loader.config("install.zpm.repository")) ..
+    ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.zpm.branch")) ..
     ("local REGISTRY_DIR = \"%s\"\n"):format(self.loader.config("install.registry.directory")) ..
     ("local REGISTRY_REPO = \"%s\"\n"):format(self.loader.config("install.registry.repository")) ..
-    ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.zpm.branch")) ..
     ("local REGISTRY_BRANCH = \"%s\"\n"):format(self.loader.config("install.registry.branch")) ..
+    ("local BOOTSTRAP_DIR = \"%s\"\n"):format(self.loader.config("install.bootstrap.directory")) ..
+    ("local BOOTSTRAP_REPO = \"%s\"\n"):format(self.loader.config("install.bootstrap.repository")) ..
     ("local BOOTSTRAP_BRANCH = \"%s\"\n"):format(self.loader.config("install.bootstrap.branch")))
 
     file:write(zpm.util.readAll(path.join(zpm.env.getScriptPath(), "premake-system.lua")))

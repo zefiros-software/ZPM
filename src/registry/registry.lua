@@ -24,12 +24,13 @@
 
 Registry = newclass "Registry"
 
-function Registry:init(loader, directory, repository, mayCheck)
+function Registry:init(loader, directory, repository, mayCheck, mayLoadRegistries)
 
     self.loader = loader
     self.directory = directory
     self.repository = repository
     self.mayCheck = mayCheck
+    self.mayLoadRegistries = mayLoadRegistries
 
     self.registries = Registries(loader, mayCheck)
 end
@@ -54,12 +55,15 @@ end
 
 function Registry:_getFileName()
 
-    return self.loader.config("install.registry.registries")
+    return self.loader.config("install.registry.manifest")
 end
 
 function Registry:_getRegistryFiles()
-
-    return {path.join(self.directory, "." .. self:_getFileName()), path.join(self.directory, self:_getFileName())}
+    
+    if self.mayLoadRegistries then
+        return {path.join(self.directory, "." .. self:_getFileName()), path.join(self.directory, self:_getFileName())}
+    end
+    return {}
 end
 
 function Registry:_mayUpdate()
