@@ -70,7 +70,7 @@ function Python:_getDirectory()
     return path.join(zpm.env.getDataDirectory(), "conda")
 end
 
-function Python:_execute(...)
+function Python:_executef(...)
     
     os.executef("%s/%s", self:_getBinDirectory(), string.format(...))
 end

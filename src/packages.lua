@@ -118,43 +118,51 @@ end
 
 function Packages:update(vendor, name)
 
-    local modules = self:_search(vendor, name, "update", function(m) return m:isInstalled() end)
+    local packages = self:_search(vendor, name, "update", function(m) return m:isInstalled() end)
     local update = function()
 
-        printf("\nUpdating modules...")
-        for _, mod in ipairs(modules) do
-            mod:update()
+        printf("\nUpdating %s...", self:getName())
+        for _, p in ipairs(packages) do
+            p:update()
         end
     end
     local no = function()
-        warningf("You chose not to update the modules!")
+        warningf("You chose not to update the %s!", self:getName())
     end
-    zpm.cli.askConfirmation(("Do you want to update these %s?"):format(self:getName()), update, no)
+    if #packages > 0 then
+        zpm.cli.askConfirmation(("Do you want to update these %s?"):format(self:getName()), update, no)
+    end
 end
 
 function Packages:uninstall(vendor, name)
 
-    local modules = self:_search(vendor, name, "uninstall", function(m) return m:isInstalled() end)
+    local packages = self:_search(vendor, name, "uninstall", function(m) return m:isInstalled() end)
     local uninstall = function()
 
-        printf("\nUninstalling modules...")
-        for _, mod in ipairs(modules) do
-            mod:uninstall()
+        printf("\nUninstalling %s...", self:getName())
+        for _, p in ipairs(packages) do
+            p:uninstall()
         end
     end
     local no = function()
         warningf("You chose to abort the uninstall process!")
     end
-    zpm.cli.askConfirmation(("Do you want to uninstall these %s?"):format(self:getName()), uninstall, no)
+    if #packages > 0 then
+        zpm.cli.askConfirmation(("Do you want to uninstall these %s?"):format(self:getName()), uninstall, no)
+    end
 end
 
 function Packages:showInstalled()
 
-    noticef("The following modules are installed:")
-
     local results = self.loader.manifests(self:getName(), "*", "*", function(m) return m:isInstalled() end)
-    for _, r in ipairs(results) do
-        noticef(" - %s", r.fullName)
+    if #packages > 0 then
+        noticef("The following %s are installed:", self:getName())
+
+        for _, r in ipairs(results) do
+            noticef(" - %s", r.fullName)
+        end
+    else
+        noticef("No %s are installed.", self:getName())
     end
 end
 
@@ -184,8 +192,6 @@ function Packages:_search(vendor, name, action, pred)
         end
 
         return results
-    else
-        warningf("No %s found that matches with '%s %s'", self:getNameSingle(), vendor, name)
     end
 
     return {}

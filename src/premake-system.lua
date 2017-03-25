@@ -6,6 +6,7 @@ local function _updateRepo(destination, url, name, branch)
 
         printf(" - Updating '%s'", name)
         os.chdir(destination)
+        print(destination)
         if branch then        
             os.executef("git checkout %s", branch)
         else
@@ -47,8 +48,8 @@ newaction {
     description = "Updates the zpm module",
     execute = function()
 
-        local destination = path.join(CMD, INSTALL_DIR)
-        _updateRepo(destination, INSTALL_REPO, "zpm", ZPM_BRANCH)
+        local destination = path.join(CMD, ZPM_DIR)
+        _updateRepo(destination, ZPM_REPO, "zpm", ZPM_BRANCH)
     end
 }
 
