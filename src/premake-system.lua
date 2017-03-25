@@ -6,12 +6,18 @@ local function _updateRepo(destination, url, name, branch)
 
         printf(" - Updating '%s'", name)
         os.chdir(destination)
-        if branch then
+        print(destination)
+        if branch then        
             os.executef("git checkout %s", branch)
         else
             os.execute("git checkout .")
         end
-        os.execute("git pull")
+
+        if url and branch then
+            os.executef("git pull %s %s", url, branch)
+        else
+            os.execute("git pull")
+        end
 
         os.chdir(current)
 

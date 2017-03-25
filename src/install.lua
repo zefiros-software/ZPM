@@ -76,7 +76,7 @@ function Installer:_writePremakeSystem()
     local folder = zpm.env.getDataDirectory()
     local file = io.open(self.premakeSystemFile, "wb")
     file:write(("local CMD = \"%s\"\n"):format(folder) ..
-    ("local ZPM_DIR = \"%s\"\n"):format(zpm.env.getSrcDirectory()) ..
+    ("local ZPM_DIR = \"%s\"\n"):format("zpm") ..
     ("local ZPM_REPO = \"%s\"\n"):format(self.loader.config("install.zpm.repository")) ..
     ("local ZPM_BRANCH = \"%s\"\n"):format(self.loader.config("install.zpm.branch")) ..
     ("local REGISTRY_DIR = \"%s\"\n"):format(self.loader.config("install.registry.directory")) ..
