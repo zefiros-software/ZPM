@@ -38,7 +38,9 @@ newaction {
     trigger = "install",
     description = "Installs ZPM",
     execute = function()
-        local help = false
+        local help = false        
+        _MAIN_SCRIPT = "."
+
         if #_ARGS == 0 or _ARGS[1] == "package" then
         elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
             _installZPM()
@@ -59,6 +61,8 @@ newaction {
     description = "Updates ZPM",
     execute = function()
         local help = false
+        _MAIN_SCRIPT = "."
+
         if #_ARGS == 1 and _ARGS[1] == "self" then
             zpm.loader.install:update()
             zpm.loader.modules:update("*/*")    

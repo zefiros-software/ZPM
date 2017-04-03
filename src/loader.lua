@@ -47,22 +47,13 @@ function Loader:init()
     self.registries.isRoot = true
 
     self.manifests = Manifests(self, self.registries)
+
+    self.root = Package(self, {})
 end
 
 function Loader:fixMainScript()
 
-    if _ACTION == "self-update" or
-        _ACTION == "show-cache" or
-        _ACTION == "show-install" or
-        _ACTION == "install-module" or
-        _ACTION == "install-zpm" or
-        _ACTION == "install-package" or
-        _ACTION == "update-module" or
-        _ACTION == "update-modules" or
-        _ACTION == "update-bootstrap" or
-        _ACTION == "update-registry" or
-        _ACTION == "update-zpm" or
-        _OPTIONS["version"] then
+    if zpm.cli.showVersion() then
         -- disable main script
         _MAIN_SCRIPT = "."
 

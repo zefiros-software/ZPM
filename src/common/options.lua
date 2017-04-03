@@ -32,8 +32,3 @@ newoption {
     trigger = "allow-install",
     description = "Allows the usage of install scripts without confirmation"
 }
-
-newoption {
-    trigger = "allow-module",
-    description = "Allows the updating and installing of modules without confirmation"
-}

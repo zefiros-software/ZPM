@@ -78,12 +78,11 @@ function Manifest:_loadFile(file)
     local manifests = zpm.ser.loadFile(file, self.loader.python)
 
     for _, package in ipairs(manifests) do
-
-        local mod = bootstrap.getModule(package.name)
-        vendor, name = mod[1], mod[2]
-
-        local ok, validOrMessage = pcall(zpm.validate.manifest, package, name, vendor)
-        if ok and validOrMessage == true then
+    
+        local ok, validOrMessage = pcall(zpm.validate.manifest, package)
+        if ok and validOrMessage == true then        
+            local mod = bootstrap.getModule(package.name)
+            vendor, name = mod[1], mod[2]
             self:_savePackage(package.name, name, vendor, package)
         else
             warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.ser.prettify(zpm.json.encode(package), self.loader.python), validOrMessage)

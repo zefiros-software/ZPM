@@ -27,6 +27,8 @@ newaction {
     description = "Shows various ZPM settings",
     execute = function()
         local help = false
+        _MAIN_SCRIPT = "."
+
         if #_ARGS == 1 then
             if _ARGS[1] == "cache" then
                 print(zpm.env.getCacheDirectory())

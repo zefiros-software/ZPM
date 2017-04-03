@@ -38,6 +38,10 @@ function Packages:init(loader, settings, name, nameSingle)
     self.name = iif(name, name, "package")
     self.nameSingle = iif(nameSingle, nameSingle, "packages")
 
+    if _ACTION == self:getNameSingle() then
+        _MAIN_SCRIPT = "."
+    end
+
     newaction {
         trigger = self:getNameSingle(),
         description = ("Interacts with the ZPM %s"):format(self:getName()),
@@ -117,14 +121,17 @@ function Packages:install(vendor, name)
         for _, mod in ipairs(packages) do
             mod:install()
         end
+        return true
     end
     local no = function()
         warningf("You chose to abort the installation!")
+        return false
     end
     if #packages > 0 then
-        zpm.cli.askConfirmation(("Do you want to install these %s?"):format(self:getName()), install, no)
+        return zpm.cli.askConfirmation(("Do you want to install these %s?"):format(self:getName()), install, no)
     else
         warningf("No %s were found.", self:getName())
+        return false
     end
 end
 

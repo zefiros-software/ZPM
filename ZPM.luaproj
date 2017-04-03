@@ -40,6 +40,7 @@
     <Compile Include="src\cli\github.lua" />
     <Compile Include="src\cli\install.lua" />
     <Compile Include="src\cli\show.lua" />
+    <Compile Include="src\common\bootstrap.lua" />
     <Compile Include="src\common\env.lua" />
     <Compile Include="src\common\git.lua" />
     <Compile Include="src\common\github.lua" />

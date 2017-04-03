@@ -27,6 +27,13 @@ if not zpm then
     zpm._VERSION = "2.0.0"
 end
 
+for i=1, 100 do
+local time = os.clock()
+os.outputof("powershell \"echo f\"")
+print(os.clock() - time)
+end
+exit()
+
 dofile "extern/load.lua"
 dofile "src/load.lua"
 

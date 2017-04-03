@@ -29,6 +29,7 @@ newaction {
         local help = false
 
         zpm.loader.config.mayStore = true
+        _MAIN_SCRIPT = "."
 
         if #_ARGS > 1 then
             if _ARGS[1] == "set" then

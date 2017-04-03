@@ -39,7 +39,6 @@ function Manifests:load()
         if ok and validOrMessage == true then 
             
             self.loader[name] = self:_createPackages(name, ext)
-
             self.manifests[name] = Manifest(self.loader, name, ext)
 
             for _, dir in ipairs(self.registries:getDirectories()) do

@@ -24,7 +24,12 @@
 
 zpm.validate = {}
 
-function zpm.validate.manifest(entry, name, vendor)
+function zpm.validate.manifest(entry)
+
+    zpm.sassert(entry.name ~= nil, "Manifest name is empty!")
+    
+    local mod = bootstrap.getModule(entry.name)
+    vendor, name = mod[1], mod[2]    
 
     zpm.sassert(entry ~= nil, "Manifest entry is empty!")
 

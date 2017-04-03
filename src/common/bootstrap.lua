@@ -22,48 +22,8 @@
 -- @endcond
 --]]
 
-zpm.ser = { }
+premake.override(bootstrap, "moduleNotFound", function(base, modName)
 
-function zpm.ser.loadFile(file, python)
-    if not python then
-        python = zpm.loader.python
-    end
-    
-    local json = {}
-    if os.isfile(file) then
-        if zpm.ser.isYAML(file) then
-            -- the yaml2json call is rather slow :(
-            -- thus we cache the obtained json for a week
-            local temp = path.join(zpm.env.getTempDirectory(), file:sha1())
-            if os.isfile(temp) and os.stat(temp).mtime > os.stat(file).mtime then
-                json = zpm.util.readAll(temp)
-            else
-                json = python:yaml2json(file)
-                zpm.util.writeAll(temp, json)
-            end
-        else
-            json = zpm.util.readAll(file)
-        end
-        json = zpm.json.decode(json)
-    end    
-    return json
-end
-
-function zpm.ser.prettify(json, python)
-
-    if not python then
-        python = zpm.loader.python
-    end
-
-    return python:prettifyJSON(json)
-end
-
-function zpm.ser.isYAML(file)
-    
-    return file:endswith(".yml") or file:endswith(".yaml")
-end
-
-function zpm.ser.isJSON(file)
-    
-    return file:endswith(".json")
-end
+    warningf("Module '%s/%s' was not found.", modName[1], modName[2])
+    return zpm.loader.modules:install(modName[1], modName[2])    
+end )

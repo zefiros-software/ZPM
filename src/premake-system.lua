@@ -85,4 +85,6 @@ if not (_ACTION and (_ACTION:contains("update-") or _ACTION == "repair")) then
         zpm.onLoad()
         zpm.__isLoaded = true
     end
+else
+    _MAIN_SCRIPT = "."
 end
