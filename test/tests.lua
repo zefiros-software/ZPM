@@ -25,12 +25,10 @@
 Test = {} 
 
 -- Libraries
- u = require "extern.luaunit"
+u = require "extern.luaunit"
 require "extern.luacov"
 
 dofile "../zpm.lua"
-
--- Mocking
 
 -- Load environment
 dofile "action/test.lua"

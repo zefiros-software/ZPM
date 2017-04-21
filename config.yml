@@ -70,13 +70,7 @@ install:
         # Example:
         #   plugins:
         #       manifest: plugins.yml
-        assets:
-            manifest: assets.yml
-            name: asset
-        libraries:
-            buildFile: build.lua
-            manifest: libraries.yml
-            name: library
+        #       order: 100
         modules:
             class: Modules
             directory: modules
@@ -87,6 +81,17 @@ install:
             search: true
             show: true
             uninstall: true
+            order: 100
+            pull: false
+        libraries:
+            buildFile: build.lua
+            manifest: libraries.yml
+            name: library
+            order: 200
+        assets:
+            manifest: assets.yml
+            name: asset
+            order: 300
     extern:
         # When ZPM needs to download packages, we store it in this directory 
         directory: extern

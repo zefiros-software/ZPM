@@ -24,7 +24,6 @@
 
 require "class"
 
-zpm.json = require "lunajson"
 zpm.sandbox = require "sandbox"
 zpm.colors = require "ansicolors"
 

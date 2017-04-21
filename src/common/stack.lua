@@ -22,40 +22,25 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solver.lua"
+Stack = newclass "Stack"
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+function Stack:init()
+    self.size = 0
+    self.values = {}
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+function Stack:getSize()
+    
+    return self.size
+end
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+function Stack:put(v, p)
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
+    table.insert(self.values,{v, p})
+    self.size = self.size + 1
+end
 
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+function Stack:pop()
+
+    return unpack(table.remove(self.values))
+end

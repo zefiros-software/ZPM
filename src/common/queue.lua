@@ -22,40 +22,34 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solver.lua"
+Queue = newclass "Queue"
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+function Queue:init()
+    self.size = 0
+    self.values = {}
+    self.first = 0
+    self.last = -1
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+function Queue:getSize()
+    
+    return self.size
+end
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+function Queue:put(v, p)
+    self.values.last = self.values.last + 1
+    self.values[self.last] = value
+    self.size = self.size + 1
+end
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
-
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+function Queue:pop()
+    if self.first > self.last then
+        return nil
+    end
+    self.size = self.size - 1
+ 
+    local val = self[self.first]
+    self[self.first] = nil
+    self.first = self.first + 1
+    return val
+end

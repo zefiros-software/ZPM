@@ -24,7 +24,7 @@
 
 zpm.git = { }
 
-function zpm.git.pull(destination, url)
+function zpm.git.pull(destination, url, branch)
 
     local current = os.getcwd()
 
@@ -38,10 +38,16 @@ function zpm.git.pull(destination, url)
 
     local updated = false
 
+    local branchStr = "."
+    if branch then
+        branchStr = ("origin/%s"):format(branch)
+    end
+
+    os.executef("git checkout -q %s", branchStr)
+
     if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
 
-        os.execute("git checkout -q .")
-        os.execute("git reset --hard origin/HEAD")
+        --os.execute("git reset --hard origin/HEAD")
         os.execute("git submodule update --init --recursive -j 8")
 
         updated = true
@@ -52,20 +58,24 @@ function zpm.git.pull(destination, url)
     return updated
 end
 
-function zpm.git.clone(destination, url)
+function zpm.git.clone(destination, url, branch)
 
-    os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\"", url, destination )
+    local branchStr = ""
+    if branch then
+        branchStr = string.format(" -b %s ", branch)
+    end
+    os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\" %s", url, destination, branchStr )
 end
 
-function zpm.git.cloneOrPull(destination, url)
+function zpm.git.cloneOrPull(destination, url, branch)
 
 
     if os.isdir(destination) then
 
-        return zpm.git.pull(destination, url)
+        return zpm.git.pull(destination, url, branch)
     else
 
-        zpm.git.clone(destination, url)
+        zpm.git.clone(destination, url, branch)
     end
 end
 
@@ -142,4 +152,24 @@ function zpm.git.export(from, output, tag)
     zip.extract(temp, output)    
 
     os.remove(temp)
+end
+
+function zpm.git.branches(from)
+
+    local current = os.getcwd()
+
+    os.chdir(from)
+
+    local output = os.outputof("git branch -r")
+
+    os.chdir(current)
+
+    local branches = { }
+
+    for _, s in ipairs(output:explode("\n")) do
+        s = s:gsub("%w*%->.*", "")
+        table.insert(branches, s:match("origin/(.*)"))
+    end
+
+    return branches
 end

@@ -24,13 +24,14 @@
 
 Registry = newclass "Registry"
 
-function Registry:init(loader, directory, repository, mayCheck, mayLoadRegistries)
+function Registry:init(loader, directory, repository, branch, mayCheck, mayLoadRegistries)
 
     self.loader = loader
     self.directory = directory
     self.repository = repository
     self.mayCheck = mayCheck
     self.mayLoadRegistries = mayLoadRegistries
+    self.branch = branch
 
     self.registries = Registries(loader, mayCheck)
 end
@@ -49,7 +50,7 @@ function Registry:_update()
     if self:_mayUpdate() and self.repository then
 
         printf("%%{yellow}Hit: %s", self.repository)
-        zpm.git.cloneOrPull(self.directory, self.repository)
+        zpm.git.cloneOrPull(self.directory, self.repository, self.branch)
     end
 end
 
@@ -94,7 +95,7 @@ function Registry:_loadRegistriesFile()
     for _, reg in ipairs(localRegFiles) do
         if os.isfile(reg) then
 
-            return zpm.ser.loadFile(reg, self.loader.python)
+            return zpm.ser.loadFile(reg)
         end
     end
 

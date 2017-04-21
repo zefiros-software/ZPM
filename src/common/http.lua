@@ -27,24 +27,26 @@ Http = newclass "Http"
 function Http:init(loader)
 
     self.loader = loader
-    self.location = iif(os.is("windows"), path.join( zpm.env.getScriptPath(), "../../bin/curl.exe" ), "curl")
 end
 
 function Http:get(url, headers, extra)
 
     headers = iif(headers == nil, { }, headers)
-    extra = iif(extra == nil, "", extra)
-    local headerStr = ""
-    for header, value in pairs(headers) do
-        headerStr = headerStr ..(" -H \"%s: %s\""):format(header, value)
-    end
-    local response, code = os.outputoff("%s -s -L %s %s %s", self.location, headerStr, url, extra)
+    
+    local response, result, code = http.get(url, { 
+        headers = headers
+    })
+
     return response
 end
 
 function Http:download(url, outFile, headers)
-
-    return self:get(url, headers, ("--output %s"):format(outFile) )
+    
+    local response, code = http.download(url, outFile, { 
+        headers = headers
+    })
+   
+    return response
 end
 
 function Http:downloadFromArchive(url, pattern)

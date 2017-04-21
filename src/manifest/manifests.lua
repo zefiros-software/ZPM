@@ -46,9 +46,25 @@ function Manifests:load()
                 self.manifests[name]:load(dir)
             end      
         else
-            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.ser.prettify(zpm.json.encode(ext), self.loader.python), validOrMessage)
+            warningf("Failed to load manifest definition '%s':\n%s\n^~~~~~~~\n\n%s", name, zpm.json.encode(ext, {pretty=true}), validOrMessage)
         end
     end
+end
+
+function Manifests:getLoadOrder()
+
+    local result = {}
+    local dependencyTypes = zpm.util.toArray(self.loader.config("install.manifests"))
+    table.sort(dependencyTypes, function(t1, t2) 
+        return iif(t1[next(t1)].order ~= nil, t1[next(t1)].order, -1) > iif(t2[next(t2)].order ~= nil, t2[next(t2)].order, -1)
+    end)
+
+    for _, name in ipairs(dependencyTypes) do
+        if name[next(name)].order then
+            result = zpm.util.concat(result, next(name))
+        end
+    end
+    return result
 end
 
 function Manifests:__call(tpe, vendorPattern, namePattern, pred)

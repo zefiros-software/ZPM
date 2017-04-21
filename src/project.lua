@@ -22,40 +22,20 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solver.lua"
+Project = newclass "Project"
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+function Project:init(loader)
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+    self.loader = loader
+    self.root = Package(self, nil, {
+        repository = _MAIN_SCRIPT_DIR,
+        definition = _MAIN_SCRIPT_DIR,
+        isRoot = true
+    })
+    self.solver = Solver(self.loader, self.root)
+end
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+function Project:solve()
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
-
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+    self.solver:solve()
+end

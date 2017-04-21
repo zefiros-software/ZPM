@@ -28,9 +28,7 @@ function Loader:init()
 
     self:_preInit()
     
-    self.python = Python(self)
-
-    self.config = Config(self.python)
+    self.config = Config()
     self.config:load()    
 
     self.cacheTime = self.config("cache.temp.cacheTime")
@@ -48,30 +46,39 @@ function Loader:init()
 
     self.manifests = Manifests(self, self.registries)
 
-    self.root = Package(self, {})
+    self.project = Project(self)
+end
+
+function Loader:solve()
+
+    self.project:solve()
 end
 
 function Loader:fixMainScript()
 
     if zpm.cli.showVersion() then
         -- disable main script
-        _MAIN_SCRIPT = "."
+        zpm.util.disableMainScript()
 
-    elseif os.isfile(path.join(_MAIN_SCRIPT_DIR, "zpm.lua")) then
+    elseif os.isfile(path.join(_MAIN_SCRIPT_DIR, "zpm.lua")) and not zpm.util.isMainScriptDisabled() then
         _MAIN_SCRIPT = path.join(_MAIN_SCRIPT_DIR, "zpm.lua")
     end
 end
 
 function Loader:checkGitVersion()
 
-    local version, errorCode = os.outputof("git --version")
-    zpm.assert(version:contains("git version"), "Failed to detect git on PATH:\n %s", version)
+    local version = self.config("cache.git")
+    if not version then
 
-    mversion = version:match(".*(%d+%.%d+%.%d).*")
+        version = self:_readGitVersion()
+        self.config:set("cache.git", version, true)
+    end
 
-    if premake.checkVersion(mversion, ">=2.9.0") then
+    if premake.checkVersion(version, ">=2.9.0") then
         self.gitCheckPassed = true
-    else
+
+    -- retry without caching
+    elseif not premake.checkVersion(self:_readGitVersion(), ">=2.9.0") then
         warningf("Git version should be >=2.9.0, current is '%s'", mversion)
     end
 end
@@ -94,6 +101,14 @@ function Loader:initialiseFolders()
     end    
 end
 
+function Loader:_readGitVersion()
+
+    local mversion, errorCode = os.outputof("git --version")
+    zpm.assert(mversion:contains("git version"), "Failed to detect git on PATH:\n %s", version)
+
+    return mversion:match(".*(%d+%.%d+%.%d).*")
+end
+
 function Loader:_preInit()
 
     self:_initialiseCache()
@@ -102,7 +117,7 @@ function Loader:_preInit()
         -- allow module loading in the correct directory
         bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
     end    
-
+   
     if zpm.cli.profile() then
         ProFi = require("mindreframer/ProFi", "@head")
         ProFi:setHookCount(0)

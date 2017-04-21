@@ -27,12 +27,6 @@
     <Compile Include="extern\ansicolors.lua" />
     <Compile Include="extern\class.lua" />
     <Compile Include="extern\load.lua" />
-    <Compile Include="extern\lunajson.lua" />
-    <Compile Include="extern\lunajson\decoder.lua" />
-    <Compile Include="extern\lunajson\encoder.lua" />
-    <Compile Include="extern\lunajson\sax.lua" />
-    <Compile Include="extern\lunajson\_str_lib.lua" />
-    <Compile Include="extern\lunajson\_str_lib_lua53.lua" />
     <Compile Include="extern\sandbox.lua" />
     <Compile Include="extern\semver.lua" />
     <Compile Include="src\cli\cli.lua" />
@@ -47,7 +41,10 @@
     <Compile Include="src\common\http.lua" />
     <Compile Include="src\common\options.lua" />
     <Compile Include="src\common\premake.lua" />
+    <Compile Include="src\common\prioqueue.lua" />
+    <Compile Include="src\common\queue.lua" />
     <Compile Include="src\common\ser.lua" />
+    <Compile Include="src\common\stack.lua" />
     <Compile Include="src\common\util.lua" />
     <Compile Include="src\common\validate.lua" />
     <Compile Include="src\config.lua" />
@@ -61,9 +58,10 @@
     <Compile Include="src\modules.lua" />
     <Compile Include="src\packages.lua" />
     <Compile Include="src\premake-system.lua" />
-    <Compile Include="src\python.lua" />
+    <Compile Include="src\project.lua" />
     <Compile Include="src\registry\registries.lua" />
     <Compile Include="src\registry\registry.lua" />
+    <Compile Include="src\solver.lua" />
     <Compile Include="test\action\test.lua" />
     <Compile Include="test\extern\luacov.lua" />
     <Compile Include="test\extern\luacov\defaults.lua" />
@@ -89,7 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="extern\" />
-    <Folder Include="extern\lunajson\" />
     <Folder Include="src\" />
     <Folder Include="src\cli\" />
     <Folder Include="src\common\" />
@@ -107,8 +104,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="config.yml" />
-    <Content Include=".package.json" />
+    <Content Include=".package.yml" />
     <Content Include="test\extern\bin\luacov" />
+    <Content Include="test\files\conf.yml" />
+    <Content Include="test\files\conf2.yml" />
+    <Content Include="test\files\conf3.yml" />
     <Content Include="test\files\conf5.yml" />
     <Content Include="test\files\conf4.yml" />
   </ItemGroup>

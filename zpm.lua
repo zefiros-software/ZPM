@@ -27,13 +27,6 @@ if not zpm then
     zpm._VERSION = "2.0.0"
 end
 
-for i=1, 100 do
-local time = os.clock()
-os.outputof("powershell \"echo f\"")
-print(os.clock() - time)
-end
-exit()
-
 dofile "extern/load.lua"
 dofile "src/load.lua"
 
@@ -42,13 +35,12 @@ function zpm.onLoad()
     if not zpm._mayLoad() then
         return
     end
-
-    printf("Zefiros Package Manager '%s' - (c) Zefiros Software 2017", zpm._VERSION)
-
+    
     zpm.loader = Loader()
     zpm.loader.install:checkVersion()
     zpm.loader.registries:load()
     zpm.loader.manifests:load()
+    zpm.loader:solve()
 end
 
 function zpm._mayLoad()

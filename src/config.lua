@@ -24,9 +24,8 @@
 
 Config = newclass "Config"
 
-function Config:init(python)
+function Config:init()
 
-    self.python = iif(python ~= nil, python, Python())
     self.values = { }
     self.configNames = {"config.yaml", "config.yml", "config.json"}
     self.mayStore = false
@@ -53,8 +52,8 @@ end
 
 function Config:set(key, value, force)
 
-    local ok, json = pcall(zpm.json.decode, value)
-    if ok then
+    local ok, json = pcall(json.decode, value)
+    if ok and json then
         value = json
     end
 
@@ -72,7 +71,7 @@ end
 function Config:add(key, value)
 
     local ok, json = pcall(zpm.json.decode, value)
-    if ok then
+    if ok and json then
         value = json
     end
 
@@ -127,7 +126,7 @@ function Config:_store(keys, value, add, force)
     add = iif(add ~= nil, add, false)
     local config = { }
     if os.isfile(self.storeFile) then
-        local ok, json = pcall(zpm.json.decode, zpm.util.readAll(self.storeFile))
+        local ok, json = pcall(json.decode, zpm.util.readAll(self.storeFile))
         if ok then
             config = json
         end
@@ -143,7 +142,7 @@ function Config:_store(keys, value, add, force)
                 cursor[key] = value
             end
         end
-        zpm.util.writeAll(self.storeFile, zpm.ser.prettify(zpm.json.encode(config), self.python))
+        zpm.util.writeAll(self.storeFile, json.encode(config, {pretty=true}))
     end , true, true)
 end
 
@@ -153,7 +152,7 @@ function Config:_loadFile(file)
         return nil
     end
 
-    self:_loadJSON(zpm.ser.loadFile(file, self.python))
+    self:_loadJSON(zpm.ser.loadFile(file))
     table.insert(self.__loadedFiles, file)
 end
 
@@ -181,6 +180,11 @@ function Config:_findKey(tab, key, func, ensureTable, createKeys)
     local sep = key:explode("%.")
     local cursor = tab
     for i, key in ipairs(sep) do
+
+        if createKeys and not cursor[key] then
+            cursor[key] = { }
+        end
+
         if i == #sep then
             if ensureTable then
                 if not cursor[key] then
@@ -189,12 +193,8 @@ function Config:_findKey(tab, key, func, ensureTable, createKeys)
                     cursor[key] = { cursor[key] }
                 end
             end
-
+            
             return func(cursor, key)
-        end
-
-        if createKeys and not cursor[key] then
-            cursor[key] = { }
         end
 
         if cursor[key] then

@@ -57,7 +57,7 @@ end
 
 function Github:getReleases(organisation, repository, pattern)
     pattern = iif(pattern ~= nil, pattern, ".*")
-    local response = zpm.json.decode(self:getUrl("repos", organisation, repository, "releases"))
+    local response = json.decode(self:getUrl("repos", organisation, repository, "releases"))
 
     local releases = { }
     table.foreachi(response, function(value)

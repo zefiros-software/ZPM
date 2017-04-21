@@ -22,8 +22,12 @@
 -- @endcond
 --]]
 
-premake.override(bootstrap, "moduleNotFound", function(base, modName)
+if bootstrap then
 
-    warningf("Module '%s/%s' was not found.", modName[1], modName[2])
-    return zpm.loader.modules:install(modName[1], modName[2])    
-end )
+    premake.override(bootstrap, "moduleNotFound", function(base, modName)
+
+        warningf("Module '%s/%s' was not found.", modName[1], modName[2])
+        return zpm.loader.modules:install(modName[1], modName[2])    
+    end )
+
+end

@@ -26,19 +26,19 @@ zpm.cli = {}
 
 function zpm.cli.verbose()
 
-    return _OPTIONS["verbose"]
+    return _OPTIONS["verbose"] ~= nil
 end
 
 
 function zpm.cli.showVersion()
 
-    return _OPTIONS["version"]
+    return _OPTIONS["version"] ~= nil
 end
 
 
 function zpm.cli.showHelp()
 
-    return _OPTIONS["help"]
+    return _OPTIONS["help"] ~= nil
 end
 
 
@@ -60,18 +60,28 @@ newoption {
 
 function zpm.cli.update()
 
-    return _OPTIONS["update"]
+    return _OPTIONS["update"] ~= nil
 end
 
 function zpm.cli.profile()
 
-    return _OPTIONS["profile"] or _ACTION == "profile"
+    return _OPTIONS["profile"] ~= nil or _ACTION == "profile"
 end
 
 newoption {
     trigger = "profile",
     description = "Profiles the given commands"
 }
+
+if zpm.cli.profile() then
+
+    newaction {
+        trigger = "profile",
+        description = "Profiles"
+    }
+
+    zpm.util.disableMainScript()
+end
 
 function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
 

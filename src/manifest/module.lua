@@ -24,9 +24,9 @@
 
 Module = newclass("Module", Package)
 
-function Module:init(loader, settings)
+function Module:init(loader, manifest, settings)
 
-    self.super:init(loader, settings)
+    self.super:init(loader, manifest, settings)
 end
 
 function Module:install()

@@ -24,38 +24,18 @@
 
 zpm.ser = { }
 
-function zpm.ser.loadFile(file, python)
-    if not python then
-        python = zpm.loader.python
-    end
-    
-    local json = {}
+function zpm.ser.loadFile(file)    
+
+    local ljson, errorcode = {}
     if os.isfile(file) then
+        ljson = zpm.util.readAll(file)
         if zpm.ser.isYAML(file) then
-            -- the yaml2json call is rather slow :(
-            -- thus we cache the obtained json for a week
-            local temp = path.join(zpm.env.getTempDirectory(), file:sha1())
-            if os.isfile(temp) and os.stat(temp).mtime > os.stat(file).mtime then
-                json = zpm.util.readAll(temp)
-            else
-                json = python:yaml2json(file)
-                zpm.util.writeAll(temp, json)
-            end
+            ljson = yaml.decode(ljson)
         else
-            json = zpm.util.readAll(file)
+            ljson = json.decode(ljson)
         end
-        json = zpm.json.decode(json)
     end    
-    return json
-end
-
-function zpm.ser.prettify(json, python)
-
-    if not python then
-        python = zpm.loader.python
-    end
-
-    return python:prettifyJSON(json)
+    return ljson
 end
 
 function zpm.ser.isYAML(file)

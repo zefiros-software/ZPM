@@ -22,40 +22,42 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solver.lua"
+PriorityQueue = newclass "PriorityQueue"
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+function PriorityQueue:init()
+    self.size = 0
+    self.values = {}
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+function PriorityQueue:getSize()
+    
+    return self.size
+end
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+function PriorityQueue:put(v, p)
+    local q = self.values[p]
+    if not q then
+        q = {first = 1, last = 0}
+        self.values[p] = q
+    end
+    q.last = q.last + 1
+    q[q.last] = v
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
+    self.size = self.size + 1
+end
 
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+function PriorityQueue:pop()
+    for p, q in pairs(self.values) do
+        if q.first <= q.last then
+            local v = q[q.first]
+            q[q.first] = nil
+            q.first = q.first + 1
+
+            self.size = self.size - 1
+            return v, p
+        else
+
+            self.values[p] = nil
+        end
+    end
+end

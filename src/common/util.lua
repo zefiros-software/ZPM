@@ -107,6 +107,16 @@ end
 
 zpm.util = { }
 
+function zpm.util.disableMainScript()
+
+    _MAIN_SCRIPT = ""
+end
+
+function zpm.util.isMainScriptDisabled()
+
+    return _MAIN_SCRIPT == ""
+end
+
 function zpm.util.readAll(file)
 
     zpm.assert(os.isfile(file), "'%s' does not exist", file)
@@ -262,3 +272,15 @@ function zpm.util.mergeAppend(...)
 
 		  return result
 	end
+
+function zpm.util.toArray(t1)
+
+		  local result = {}
+    for name, ext in pairs(t1) do
+        local obj = {}
+        obj[name] = ext
+        table.insert(result, obj)
+    end
+
+    return result
+end

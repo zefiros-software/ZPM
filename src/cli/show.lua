@@ -27,7 +27,7 @@ newaction {
     description = "Shows various ZPM settings",
     execute = function()
         local help = false
-        _MAIN_SCRIPT = "."
+        zpm.util.disableMainScript()
 
         if #_ARGS == 1 then
             if _ARGS[1] == "cache" then

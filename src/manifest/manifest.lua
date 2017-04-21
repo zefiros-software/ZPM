@@ -32,6 +32,11 @@ function Manifest:init(loader, name, settings)
     self.packages = {}
 end
 
+function Manifest:mayPull()
+    
+    return iif(self.settings.pull ~= nil, self.settings.pull, true)
+end
+
 function Manifest:load(directory)
 
     for _, file in ipairs(self:_getFileNames()) do
@@ -49,7 +54,6 @@ end
 function Manifest:search(vendorPattern, namePattern, pred)
     
     pred = iif(pred ~= nil, pred, function(m) return true end)
-
     local results = {}
     for vendor, v in pairs(self.packages) do
 
@@ -75,7 +79,7 @@ end
 
 function Manifest:_loadFile(file)
     
-    local manifests = zpm.ser.loadFile(file, self.loader.python)
+    local manifests = zpm.ser.loadFile(file)
 
     for _, package in ipairs(manifests) do
     
@@ -85,7 +89,7 @@ function Manifest:_loadFile(file)
             vendor, name = mod[1], mod[2]
             self:_savePackage(package.name, name, vendor, package)
         else
-            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.ser.prettify(zpm.json.encode(package), self.loader.python), validOrMessage)
+            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.json.encode(package, {pretty=true}), validOrMessage)
         end
     end
 end
@@ -98,7 +102,7 @@ function Manifest:_savePackage(fullName, name, vendor, package)
 
     local factory = self:_getFactory()
 
-    self.packages[vendor][name] = factory(self.loader, {
+    self.packages[vendor][name] = factory(self.loader, self, {
         fullName = fullName,
         name = name,
         vendor = vendor, 

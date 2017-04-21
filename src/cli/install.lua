@@ -39,7 +39,7 @@ newaction {
     description = "Installs ZPM",
     execute = function()
         local help = false        
-        _MAIN_SCRIPT = "."
+        zpm.util.disableMainScript()
 
         if #_ARGS == 0 or _ARGS[1] == "package" then
         elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
@@ -61,12 +61,11 @@ newaction {
     description = "Updates ZPM",
     execute = function()
         local help = false
-        _MAIN_SCRIPT = "."
+        zpm.util.disableMainScript()
 
         if #_ARGS == 1 and _ARGS[1] == "self" then
             zpm.loader.install:update()
             zpm.loader.modules:update("*/*")    
-            zpm.loader.python:update()
         elseif #_ARGS == 1 and _ARGS[1] == "bootstrap" then
             premake.action.call("update-bootstrap")
         elseif #_ARGS == 1 and _ARGS[1] == "registry" then
@@ -75,8 +74,6 @@ newaction {
             premake.action.call("update-zpm")
         elseif #_ARGS == 1 and _ARGS[1] == "modules" then
             zpm.loader.modules:update("*/*")
-        elseif #_ARGS == 1 and _ARGS[1] == "python" then            
-            zpm.loader.python:update()
         else
             help = true
         end
@@ -87,7 +84,6 @@ newaction {
             " - bootstrap \tUpdates the bootstrap module loader\n" ..
             " - registry \tUpdates the ZPM library registry\n" ..
             " - zpm \t\tUpdates ZPM itself\n" ..
-            " - python \t\tUpdates the conda installation\n" ..
             " - modules \tUpdates the installed modules")
         end
     end

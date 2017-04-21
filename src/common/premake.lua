@@ -96,7 +96,7 @@ premake.override(premake.main, "processCommandLine", function()
 	end)
 
  premake.override(premake.main, "postAction", function(base)
-    
+
     if zpm.cli.profile() and ProFi then
         ProFi:stop()
         ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))

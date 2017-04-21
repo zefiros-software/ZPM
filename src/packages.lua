@@ -39,7 +39,7 @@ function Packages:init(loader, settings, name, nameSingle)
     self.nameSingle = iif(nameSingle, nameSingle, "packages")
 
     if _ACTION == self:getNameSingle() then
-        _MAIN_SCRIPT = "."
+        zpm.util.disableMainScript()
     end
 
     newaction {
@@ -199,6 +199,11 @@ function Packages:search(vendor, name)
     else
         noticef("No %s were found.", self:getName())
     end
+end
+
+function Packages:get(vendor, name)
+
+    return self.loader.manifests(self:getName(), vendor, name)[1]
 end
 
 function Packages:_search(vendor, name, action, pred)
