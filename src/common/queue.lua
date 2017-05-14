@@ -37,7 +37,7 @@ function Queue:getSize()
 end
 
 function Queue:put(v, p)
-    self.values.last = self.values.last + 1
+    self.last = self.last + 1
     self.values[self.last] = value
     self.size = self.size + 1
 end

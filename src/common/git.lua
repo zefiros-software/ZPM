@@ -29,25 +29,17 @@ function zpm.git.pull(destination, url, branch)
     local current = os.getcwd()
 
     os.chdir(destination)
-
-    if url then
-        os.executef("git remote set-url origin %s", url)
-    end
-
-    os.execute("git fetch origin --tags -q -j 8")
+    
+    os.executef("git fetch %s --tags -q -j 8", url)
 
     local updated = false
 
-    local branchStr = "."
     if branch then
-        branchStr = ("origin/%s"):format(branch)
+        os.executef("git checkout -q origin/%s", branch)
     end
-
-    os.executef("git checkout -q %s", branchStr)
-
+   
     if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
 
-        --os.execute("git reset --hard origin/HEAD")
         os.execute("git submodule update --init --recursive -j 8")
 
         updated = true
@@ -154,7 +146,7 @@ function zpm.git.export(from, output, tag)
     os.remove(temp)
 end
 
-function zpm.git.branches(from)
+function zpm.git.getBranches(from)
 
     local current = os.getcwd()
 
@@ -168,8 +160,9 @@ function zpm.git.branches(from)
 
     for _, s in ipairs(output:explode("\n")) do
         s = s:gsub("%w*%->.*", "")
-        table.insert(branches, s:match("origin/(.*)"))
+        table.insert(branches, {
+            tag = s:match("origin/(.*)%s*"):match("^%s*(.*%S)") or ""
+        })
     end
-
     return branches
 end

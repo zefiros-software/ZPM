@@ -23,11 +23,16 @@
 --]]
 
 Package = newclass "Package"
+
 Package:virtual("install")
 Package:virtual("update")
 Package:virtual("uninstall")
 Package:virtual("install")
 Package:virtual("isInstalled")
+Package:virtual("getRepository")
+Package:virtual("getDefinition")
+Package:virtual("pullRepository")
+Package:virtual("pullDefinition")
 
 function Package:init(loader, manifest, settings)
 
@@ -43,7 +48,20 @@ function Package:init(loader, manifest, settings)
     self.pulled = false
     self.loaded = false
 
-    self.versions = {}
+    self.versions = { }
+end
+
+function Package:getVersions(requirement)
+
+    local result = {}
+    for _, v in ipairs(self.versions) do
+        local version = iif(v.version ~= nil, v.version, v.tag)
+        if premake.checkVersion(version, requirement) then
+            table.insert(result, v)
+        end
+    end
+
+    return result
 end
 
 function Package:load()
@@ -52,11 +70,9 @@ function Package:load()
         return
     end
 
-    self:_pull()
+    self:pull()
 
     if self.definition ~= self.repository then
-
-        
 
     end
 
@@ -93,19 +109,21 @@ end
 
 function Package:findPackage(dir)
 
+    local package = { }
     if not self:isDefinitionRepo() then
 
-        for _, p in ipairs({"package.yml", ".package.yml"}) do
+        for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
 
-                return self:_processPackageFile(zpm.ser.loadFile(file))
+                package = self:_processPackageFile(zpm.ser.loadFile(file))
+                break
             end
         end
-
-        return {}
     end
+
+    return package
 end
 
 function Package:_processPackageFile(package)
@@ -118,35 +136,53 @@ function Package:_processPackageFile(package)
     return package
 end
 
-function Package:_pull()
+function Package:pullRepository()
 
-    if not self:isRepositoryRepo() or not self:_mayPull() then
-        return
-    end
-    
     zpm.git.cloneOrPull(self:getRepository(), self.repository)
 
-    if self.repository ~= self.definition then
-        zpm.git.cloneOrPull(self:getDefinition(), self.definition)
+end
+
+function Package:pullDefinition()
+
+    zpm.git.cloneOrPull(self:getDefinition(), self.definition)
+end
+
+function Package:pull()
+
+    if not self:isRepositoryRepo() then
+        return
     end
-    
+
+    if self:_mayPull() then
+
+        printf("- '%s' pulling '%s'", self.name, self.repository)
+        self:pullRepository()
+
+        if self.repository ~= self.definition then
+            printf("- Pulling defintion '%s'", self.definition)
+            self:pullDefinition()
+        end
+    end
+
+    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),zpm.git.getTags(self:getRepository()))
+
     self.pulled = true
 end
 
 function Package:_getRepositoryPkgDir()
 
-    return path.join(zpm.env.getPackageDirectory(), self.manifest.name, self.vendor, self.name, string.sha1(self.repository):sub(0,6))
+    return path.join(zpm.env.getPackageDirectory(), self.manifest.name, self.vendor, self.name, string.sha1(self.repository):sub(0, 6))
 end
 
 function Package:_getDefinitionPkgDir()
 
-    return path.join(zpm.env.getPackageDirectory(), self.manifest.name, self.vendor, self.name, string.sha1(self.definition):sub(0,6))
+    return path.join(zpm.env.getPackageDirectory(), self.manifest.name, self.vendor, self.name, string.sha1(self.definition):sub(0, 6))
 end
 
 function Package:_mayPull()
 
-    return self.manifest:mayPull() and ((not self.pulled and 
-                                           zpm.cli.update()) or
-                                           not os.isdir(self:getRepository()) or
-                                           not os.isdir(self:getDefinition()))
+    return self.manifest:mayPull() and
+            ((not self.pulled and zpm.cli.update()) or
+            not os.isdir(self:getRepository()) or
+            (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
 end

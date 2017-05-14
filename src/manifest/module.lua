@@ -29,6 +29,18 @@ function Module:init(loader, manifest, settings)
     self.super:init(loader, manifest, settings)
 end
 
+function Module:pullRepository()
+
+    selfM = Module:cast(self)
+    selfM:_update(selfM:getDirectory(), selfM:getRepository())
+end
+
+function Module:getRepository()
+
+    selfM = Module:cast(self)
+    return selfM:getHeadPath()
+end
+
 function Module:install()
 
     local headPath = self:getHeadPath()

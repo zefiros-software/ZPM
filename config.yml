@@ -82,7 +82,6 @@ install:
             show: true
             uninstall: true
             order: 100
-            pull: false
         libraries:
             buildFile: build.lua
             manifest: libraries.yml
