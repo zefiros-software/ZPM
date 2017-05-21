@@ -8,4 +8,5 @@ install:
     - "SET PATH=%PATH%;%PYTHON%;%PYTHON%\\Scripts;%ALLUSERSPROFILE%/zpm"
 test_script:
     - cd
+    - dir
     - python .\script\test-install.py
