@@ -1,5 +1,5 @@
 @echo off
-
+setlocal
 rmdir /s /q "%USERPROFILE%/zpm-cache" 2>NUL
 rmdir /s /q "%USERPROFILE%/zpm-install" 2>NUL
 
