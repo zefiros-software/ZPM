@@ -7,4 +7,5 @@ install:
     - .\script\install-zpm.bat 
     - "SET PATH=%PATH%;%PYTHON%;%PYTHON%\\Scripts;%ALLUSERSPROFILE%/zpm"
 test_script:
+    - cd
     - python .\script\test-install.py
