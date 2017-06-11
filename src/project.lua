@@ -27,7 +27,7 @@ Project = newclass "Project"
 function Project:init(loader)
 
     self.loader = loader
-    self.root = Package(self, nil, {
+    self.root = Package(loader, nil, {
         repository = _MAIN_SCRIPT_DIR,
         definition = _MAIN_SCRIPT_DIR,
         isRoot = true

@@ -51,6 +51,11 @@ function Package:init(loader, manifest, settings)
     self.versions = { }
 end
 
+function Package:__eq(package)
+    
+    return package.fullName == self.fullName
+end
+
 function Package:getVersions(requirement)
 
     local result = {}
@@ -107,18 +112,22 @@ function Package:isRepositoryRepo()
     return zpm.util.isGitUrl(self.repository)
 end
 
-function Package:findPackage(dir)
+function Package:findPackage(tag)
 
     local package = { }
     if not self:isDefinitionRepo() then
 
         for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
-            local file = path.join(self:getDefinition(), p)
-            if os.isfile(file) then
+            if not tag then
+                local file = path.join(self:getDefinition(), p)
+                if os.isfile(file) then
 
-                package = self:_processPackageFile(zpm.ser.loadFile(file))
-                break
+                    package = self:_processPackageFile(zpm.ser.loadFile(file))
+                    break
+                end
+            else
+                -- @todo implement package from tags
             end
         end
     end
@@ -131,6 +140,20 @@ function Package:_processPackageFile(package)
     if self.isRoot then
         package = table.merge(package, package.dev)
         package.dev = nil
+    end
+    
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+
+        local maybePrivate = self.loader.config({"install", "manifests", type, "allowPrivate"})
+        if not maybePrivate and package[type] then
+
+            if not package.public then
+                package.public = {}
+            end
+
+            package.public[type] = package[type]
+            package[type] = nil
+        end
     end
 
     return package

@@ -177,7 +177,12 @@ end
 function Config:_findKey(tab, key, func, ensureTable, createKeys)
 
     ensureTable = iif(ensureTable ~= nil, ensureTable, false)
-    local sep = key:explode("%.")
+
+    local sep = key
+    if type(key) ~= "table" then
+        sep = key:explode("%.")
+    end
+
     local cursor = tab
     for i, key in ipairs(sep) do
 

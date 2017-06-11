@@ -24,12 +24,11 @@
 
 Solution = newclass "Solution"
 
-function Solution:init(solver, root, parent, package)
+function Solution:init(solver, root, parent)
        
     self.solver = solver
     self.root = root
     self.parent = parent
-    self.package = package
 
     if not self.root then
         self.root = self
@@ -44,8 +43,26 @@ function Solution:init(solver, root, parent, package)
     self.openPublic = {}
 
     self.closedPublic = {}
+end
 
-    self:_load()
+function Solution:load(package)
+
+    for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
+    
+        if package[type] then
+            for _, d in ipairs(package[type]) do
+                local dep = self:_loadDependency(self.privateDependencies, d, type, self.solver.loader[type])
+                table.insert(self.openPrivate, dep)
+            end
+        end
+    
+        if package.public and package.public[type] then
+            for _, d in ipairs(package.public[type]) do
+                local dep = self:_loadDependency(self.publicDependencies, d, type, self.solver.loader[type])
+                table.insert(self.openPublic, dep)
+            end
+        end
+    end
 end
 
 function Solution:expandSolution(best, beam)
@@ -54,17 +71,22 @@ function Solution:expandSolution(best, beam)
 
     local l = self:_carthesian(versions, beam)
 
+    local solutions = {}
     for _, solved in ipairs(l) do
+    
+        local public = self:_extractPublic(solved)
+        local private = self:_extractPrivate(solved)        
 
-        local private = self:_extractPrivate(solved)
-        local public = self:_extractPublic()
-
+        local solution = Solution(self.solver, self.root, self)
         
-        print(table.tostring(private,1))
+        print(table.tostring(private,1))        
+        print(table.tostring(public,1))
+
+        table.insert(solutions, solution)
     end
 
     
-    return {}
+    return solutions
 end
 
 function Solution:_extractPublic(solution)
@@ -105,44 +127,53 @@ end
 
 function Solution:_enumerateVersions()
 
-    local versions = {}
+    local pubVersions = self:_enumeratePublicVersions()
+    if pubVersions then
+        return zpm.util.concat(self:_enumeratePrivateVersions(), pubVersions)
+    end
+
+    return nil
+end
+
+function Solution:_enumeratePublicVersions()
+
+    local pubVersions = {}
+    for _, d in ipairs(self.openPublic) do
+
+        for _, c in ipairs(self.closedPublic) do
+            if d.package == c.package then
+                if premake.checkVersion(c.version, d.versionRequirement) then
+                    table.insert(pubVersions, {c.version})
+                else
+                    return nil
+                end
+            end
+        end 
+
+        local vs = d.package:getVersions(d.versionRequirement)
+        if table.isempty(vs) then
+            return nil
+        else
+            table.insert(pubVersions, vs)
+        end
+    end
+
+    return pubVersions
+end
+
+function Solution:_enumeratePrivateVersions()
+
+    local privVersions = {}
     for _, d in ipairs(self.openPrivate) do
         local vs = d.package:getVersions(d.versionRequirement)
         if table.isempty(vs) then
             return {}
         else
-            table.insert(versions, vs)
+            table.insert(privVersions, vs)
         end
     end
-    for _, d in ipairs(self.openPublic) do
-        local vs = d.package:getVersions(d.versionRequirement)
-        if table.isempty(vs) then
-            return {}
-        else
-            table.insert(versions, vs)
-        end
-    end
-    return versions
-end
 
-function Solution:_load()
-
-    for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
-    
-        if self.package[type] then
-            for _, d in ipairs(self.package[type]) do
-                local dep = self:_loadDependency(self.privateDependencies, d, type, self.solver.loader[type])
-                table.insert(self.openPrivate, dep)
-            end
-        end
-    
-        if self.package.public and self.package.public[type] then
-            for _, d in ipairs(self.package.public[type]) do
-                local dep = self:_loadDependency(self.publicDependencies, d, type, self.solver.loader[type])
-                table.insert(self.openPublic, dep)
-            end
-        end
-    end
+    return privVersions
 end
 
 function Solution:_loadDependency(tab, d, type, loader)
@@ -272,8 +303,7 @@ end
 
 function Solver:solve()
 
-    local rootPackage = self:getPackage(self.root)
-    local rootSolution = Solution(self, nil, nil, rootPackage)
+    local rootSolution = self:getRootSolution(self.root)
     local stack = Stack()
     stack:put(rootSolution,rootSolution:getCost())
 
@@ -337,9 +367,14 @@ function Solver:_branchAndBound(container, b, best, beam)
     return b, best
 end
 
-function Solver:getPackage(package)
+function Solver:getRootSolution(package)
+
+    local rootPackage = nil
 
     if not package:isDefinitionRepo() then
-        return package:findPackage()
+        rootPackage = package:findPackage()
     end
+    local solution = Solution(self, nil, nil)
+    solution:load(rootPackage)
+    return solution
 end

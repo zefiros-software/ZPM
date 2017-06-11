@@ -85,6 +85,9 @@ install:
         libraries:
             buildFile: build.lua
             manifest: libraries.yml
+            # libraries may declare private packages that 
+            # are not exported to other packages
+            allowPrivate: true
             name: library
             order: 200
         assets:
