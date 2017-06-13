@@ -107,6 +107,15 @@ end
 
 zpm.util = { }
 
+function zpm.util.indexTable(tab, arr)
+
+    cursor = tab
+    for i=1,#arr do
+        cursor = cursor[arr[i]]
+    end
+    return cursor
+end
+
 function zpm.util.disableMainScript()
 
     _MAIN_SCRIPT = ""

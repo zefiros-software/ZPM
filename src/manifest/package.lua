@@ -22,6 +22,15 @@
 -- @endcond
 --]]
 
+zpm.package = {}
+
+function zpm.package.splitName(name)
+
+    local mod = bootstrap.getModule(name)
+    return mod[1], mod[2]
+end
+
+
 Package = newclass "Package"
 
 Package:virtual("install")
@@ -53,7 +62,12 @@ end
 
 function Package:__eq(package)
     
-    return package.fullName == self.fullName
+    return package:getHash() == self:getHash()
+end
+
+function Package:getHash()
+
+    return package.fullName
 end
 
 function Package:getVersions(requirement)
@@ -112,7 +126,7 @@ function Package:isRepositoryRepo()
     return zpm.util.isGitUrl(self.repository)
 end
 
-function Package:findPackage(tag)
+function Package:findPackageDefinition(tag)
 
     local package = { }
     if not self:isDefinitionRepo() then
@@ -130,6 +144,9 @@ function Package:findPackage(tag)
                 -- @todo implement package from tags
             end
         end
+    else
+
+        -- @todo implement
     end
 
     return package
@@ -141,17 +158,40 @@ function Package:_processPackageFile(package)
         package = table.merge(package, package.dev)
         package.dev = nil
     end
+
+    if not package.private then
+        package.private = {}
+    end
+
+    if not package.public then
+        package.public = {}
+    end    
     
+    -- add private modules as public that may not be private
     for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
 
         local maybePrivate = self.loader.config({"install", "manifests", type, "allowPrivate"})
         if not maybePrivate and package[type] then
 
-            if not package.public then
-                package.public = {}
+            if not package.public[type] then
+                package.public[type] = {}
+            end
+            
+            package.public[type] = zpm.util.concat(package.public[type], package[type])
+            package[type] = nil
+        end
+    end
+
+    -- remove private types from root and insert in .private
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+
+        if package[type] then
+
+            if not package.private[type] then
+                package.private[type] = {}
             end
 
-            package.public[type] = package[type]
+            package.private[type] = zpm.util.concat(package.private[type], package[type])
             package[type] = nil
         end
     end

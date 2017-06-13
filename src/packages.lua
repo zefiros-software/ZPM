@@ -50,7 +50,6 @@ function Packages:init(loader, settings, name, nameSingle)
         end
     }
 end
-
 function Packages:getName()
     
     return self.name

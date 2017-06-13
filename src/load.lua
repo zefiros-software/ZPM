@@ -29,6 +29,7 @@ dofile "packages.lua"
 dofile "modules.lua"
 dofile "libraries.lua"
 dofile "project.lua"
+dofile "solution.lua"
 dofile "solver.lua"
 
 dofile "registry/registries.lua"
