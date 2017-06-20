@@ -41,6 +41,12 @@ function Module:getRepository()
     return selfM:getHeadPath()
 end
 
+function Module:getDefinition()
+
+    selfM = Module:cast(self)
+    return selfM:getHeadPath()
+end
+
 function Module:install()
 
     local headPath = self:getHeadPath()

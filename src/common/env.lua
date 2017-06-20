@@ -36,7 +36,7 @@ function zpm.env.getCacheDirectory()
         return path.normalize(folder)
     end
 
-    if os.is("windows") then
+    if os.ishost("windows") then
         local temp = path.join(os.getenv("USERPROFILE"), "AppData/Local/Temp/")
         return path.normalize(path.join(temp, "zpm-cache"))
     else
@@ -63,7 +63,7 @@ function zpm.env.getDataDirectory()
         return path.normalize(folder)
     end
 
-    local osStr = os.get()
+    local osStr = os.host()
     if osStr == "windows" then
         return path.normalize(path.join(os.getenv("USERPROFILE"), "zpm"))
     elseif osStr == "linux" or osStr == "macosx" then

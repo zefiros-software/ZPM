@@ -42,5 +42,5 @@ end
 
 function Stack:pop()
     self.size = self.size - 1
-    return unpack(table.remove(self.values))
+    return table.unpack(table.remove(self.values))
 end

@@ -126,29 +126,32 @@ function Package:isRepositoryRepo()
     return zpm.util.isGitUrl(self.repository)
 end
 
+
+function Package:isDefinitionSeperate()
+
+    return self.definition ~= self.repository
+end
+
 function Package:findPackageDefinition(tag)
 
     local package = { }
-    if not self:isDefinitionRepo() then
+    if not tag or self:isDefinitionSeperate() then
 
         for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
-            if not tag then
-                local file = path.join(self:getDefinition(), p)
-                if os.isfile(file) then
+            local file = path.join(self:getDefinition(), p)
+            if os.isfile(file) then
 
-                    package = self:_processPackageFile(zpm.ser.loadFile(file))
-                    break
-                end
-            else
-                -- @todo implement package from tags
+                package = self:_processPackageFile(zpm.ser.loadFile(file))
+                break
             end
         end
     else
+        print(self:getDefinition())
+
 
         -- @todo implement
     end
-
     return package
 end
 

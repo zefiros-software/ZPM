@@ -173,7 +173,7 @@ end
 function Installer:_getPremakeVersions()
 
     if not self.__PremakeVersion then
-        self.__PremakeVersion = self.loader.github:getReleases("premake", "premake-core", string.format("premake-.*-%s.*", os.get()))
+        self.__PremakeVersion = self.loader.github:getReleases("premake", "premake-core", string.format("premake-.*-%s.*", os.host()))
     end
 
     return self.__PremakeVersion

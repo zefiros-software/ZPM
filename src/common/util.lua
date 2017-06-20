@@ -111,7 +111,11 @@ function zpm.util.indexTable(tab, arr)
 
     cursor = tab
     for i=1,#arr do
-        cursor = cursor[arr[i]]
+        if cursor then
+            cursor = cursor[arr[i]]
+        else
+            return nil
+        end
     end
     return cursor
 end
@@ -304,7 +308,7 @@ function zpm.util.zip(...)
         if type(t) == 'function' then ans[i] = t() else ans[i] = t[index] end
         if ans[i] == nil then return end
       end
-      return unpack(ans)
+      return table.unpack(ans)
     end
 end
 

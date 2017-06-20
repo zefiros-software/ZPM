@@ -36,9 +36,9 @@ function Queue:getSize()
     return self.size
 end
 
-function Queue:put(v, p)
+function Queue:put(v,p)
     self.last = self.last + 1
-    self.values[self.last] = value
+    self.values[self.last] = {v,p}
     self.size = self.size + 1
 end
 
@@ -48,8 +48,8 @@ function Queue:pop()
     end
     self.size = self.size - 1
  
-    local val = self[self.first]
-    self[self.first] = nil
+    local val = self.values[self.first]
+    self.values[self.first] = nil
     self.first = self.first + 1
-    return val
+    return table.unpack(val)
 end

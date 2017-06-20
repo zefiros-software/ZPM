@@ -37,7 +37,7 @@ function Solution:init(solver, tree, cursor, cursorPtr)
             public = {},
             private = {},
             open = {
-                public = {},
+                public = {{}},
                 private = {}
             },
             closed = {
@@ -51,50 +51,88 @@ function Solution:init(solver, tree, cursor, cursorPtr)
         self.tree = tree
     end
 
-    if not cursor then
-        self.cursor = self.tree
-    else
-        self.cursor = cursor
-    end
-
-    if not cursorPtr then
-        self.cursorPtr = {}
-    else
-        self.cursorPtr = cursorPtr
-    end
+    self.cursor = self.tree
+    self.cursorPtr = {}
 
     self.indices = nil
 end
 
 function Solution:isOpen()
 
-    return false
+    return self.indices ~= nil
 end
 
 function Solution:expand(best, beam)
-
-    local versions = self:_enumerateVersions()
-
-    local l = self:_carthesian(versions, beam)
-    print(table.tostring(l,2))
-    local solutions = {}
-    for _, solved in ipairs(l) do
-
-        local tree = self:_copyTree()
     
-        --local public = self:_extractPublicFromSolution(solved)
-        --local private = self:_extractPrivateFromSolution(solved)        
+    local solutions = {}
 
-        --local solution = Solution(self.solver, self.root, self)
+    while true do
         
-        --print(table.tostring(private,1))        
-        --print(table.tostring(public,1))
+        if not self:isOpen() then
+            self:nextCursor()
+            self:load()
+        end
 
-        table.insert(solutions, solution)
+        local versions = self:_enumerateVersions()
+
+        local l = self:_carthesian(table.deepcopy(versions), beam)
+        for _, solved in ipairs(l) do
+    
+            for i=1,#self.cursor.private do
+                self.cursor.private[i].tag = solved[i].tag
+                self.cursor.private[i].version = solved[i].version
+                self.cursor.private[i].hash = solved[i].hash
+            end
+    
+            for i=1,#self.cursor.public do
+                self.cursor.public[i].tag = solved[#self.cursor.private + i].tag
+                self.cursor.public[i].version = solved[#self.cursor.private + i].version
+                self.cursor.public[i].hash = solved[#self.cursor.private + i].hash
+            end
+
+            local tree = self:_copyTree()
+            local solution = Solution(self.solver, tree)
+        
+            solution.tree.open.public = table.deepcopy(self.tree.open.public)
+            solution.tree.open.private = table.deepcopy(self.tree.open.private)
+
+            solution.tree.closed.public = table.deepcopy(self.tree.closed.public)
+            solution.tree.closed.all = table.deepcopy(self.tree.closed.all)
+    
+            --local public = self:_extractPublicFromSolution(solved)
+            --local private = self:_extractPrivateFromSolution(solved)        
+
+            --local solution = Solution(self.solver, self.root, self)
+        
+            --print(table.tostring(private,1))        
+            --print(table.tostring(public,1))
+
+            table.insert(solutions, solution)
+        end
+
+        if #solutions ~= 0 or not self.cursorPtr then
+            return solutions
+        end
+    end
+end
+
+function Solution:nextCursor()
+
+    local ptr = nil
+    if #self.tree.open.public > 0 then
+        self.cursorPtr = table.remove(self.tree.open.public,1)
+        table.insert(self.tree.closed.public, self.cursorPtr)
+    elseif #self.tree.open.private > 0 then  
+        self.cursorPtr = table.remove(self.tree.open.private,1)
+        table.insert(self.tree.closed.private, self.cursorPtr)
+    else
+        self.cursorPtr = nil
     end
 
-    
-    return solutions
+    if self.cursorPtr then
+        self.cursor = zpm.util.indexTable(self.tree, self.cursorPtr)
+        self.indices = nil
+    end
 end
 
 function Solution:_copyTree()
@@ -171,7 +209,7 @@ function Solution:load()
             if not self.cursor.private then
                 self.cursor.private = {}
             end
-            local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private", type})
+            local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private"})
             for i, d in ipairs(self.cursor.definition.private[type]) do
                 self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type])
 
@@ -184,7 +222,7 @@ function Solution:load()
             if not self.cursor.private then
                 self.cursor.public = {}
             end
-            local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public", type})
+            local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
             for i, d in ipairs(self.cursor.definition.public[type]) do
                 self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type])
 
@@ -192,42 +230,6 @@ function Solution:load()
             end
         end
     end
-end
-
-function Solution:_extractPublicFromSolution(solution)
-
-    local public = {}
-    for i=1,#self.cursor.public do
-        local o = {
-            type = self.cursor.public[i].type,
-            name = self.cursor.public[i].name,
-            package = self.cursor.public[i].package,
-            version = solution[i + #self.cursor.private].version,
-            tag = solution[i + #self.cursor.private].tag,
-            hash = solution[i + #self.cursor.private].hash
-        }
-        table.insert(public, o)
-    end
-
-    return public
-end
-
-function Solution:_extractPrivateFromSolution(solution)
-
-    local private = {}
-    for i=1,#self.cursor.private do
-        local o = {
-            type = self.cursor.private[i].type,
-            name = self.cursor.private[i].name,
-            package = self.cursor.private[i].package,
-            version = solution[i].version,
-            tag = solution[i].tag,
-            hash = solution[i].hash
-        }
-        table.insert(private, o)
-    end
-
-    return private
 end
 
 function Solution:_loadDependency(cursor, d, type, loader)
@@ -263,6 +265,9 @@ function Solution:_enumeratePublicVersions()
     for _, d in ipairs(self.cursor.public) do
 
         for _, c in ipairs(self.tree.closed.public) do
+            --print(table.tostring(self.tree,5))
+            c = zpm.util.indexTable(self.tree, c)
+            print(table.tostring(c,1), c, "2")
             if d.package == c.package then
                 if premake.checkVersion(c.version, d.versionRequirement) then
                     table.insert(pubVersions, {c.version})
@@ -331,6 +336,8 @@ function Solution:_extractDependencies(dependencies, result)
             --package = d.package,
             versionRequirement = d.versionRequirement,
             version = d.version,
+            hash = d.hash,
+            tag = d.tag,
             public =  extract.public,
             private = extract.private
         }
@@ -339,6 +346,10 @@ function Solution:_extractDependencies(dependencies, result)
 end
 
 function Solution:_carthesian(lists, amount)
+
+    if #lists == 0 then
+        return {}
+    end
 
     if not self.indices or table.isempty(self.indices) then
         indices = {}

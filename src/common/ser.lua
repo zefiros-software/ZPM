@@ -30,7 +30,7 @@ function zpm.ser.loadFile(file)
     if os.isfile(file) then
         ljson = zpm.util.readAll(file)
         if zpm.ser.isYAML(file) then
-            ljson = yaml.decode(ljson)
+            ljson = yaml.decode(ljson, {load_nulls_as_nil = true})
         else
             ljson = json.decode(ljson)
         end

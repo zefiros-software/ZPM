@@ -36,7 +36,7 @@ function Solver:solve()
     local stack = Stack()
     stack:put(rootSolution,rootSolution:getCost())
 
-    local c, heuristic = self:_branchAndBound(stack, math.huge, nil, 5)
+    local c, heuristic = self:_branchAndBound(stack, math.huge, nil, 50)
     
     -- solve again given the previous upperbound
     --local queue = PriorityQueue()
@@ -66,30 +66,36 @@ function Solver:_branchAndBound(container, b, best, beam)
 
     local openSolutions = Queue()
     while container:getSize() > 0 or openSolutions:getSize() > 0 do
+
         local nextSolution, cost = container:pop()
         if cost < b then
+            print(nextSolution:isComplete(), #nextSolution.tree.open.public, #nextSolution.tree.open.private)
+            
+            local expanded = nextSolution:expand(b, beam)
+            print("Expanded:", #expanded)
+            if #expanded > 0 then
+                for _, n in ripairs(expanded) do
+                    local ncost = n:getCost()
+                    if ncost <= b then
+                        container:put(n, ncost)
+                    end
+                end
+            end
+
+            if nextSolution:isOpen() then
+                openSolutions:put(nextSolution, cost)
+            end
+
+            print(nextSolution:isComplete())
             if nextSolution:isComplete() then
                 b = cost
                 best = nextSolution
-            else
-                local expanded = nextSolution:expand(b, beam)
-                if #expanded > 0 then
-                    for _, n in ipairs(expanded) do
-                        local ncost = n:getCost()
-                        if ncost <= b then
-                            container:put(n, ncost)
-                        end
-                    end
-                end
-
-                if nextSolution:isOpen() then
-                    openSolutions:put(nextSolution)
-                end
             end
         end
 
         if container:getSize() == 0 and openSolutions:getSize() > 0 then
-            container:put(nextSolution)
+            local nextSolution, cost = openSolutions:pop()
+            container:put(nextSolution, cost)
         end
     end
 
@@ -99,6 +105,6 @@ end
 function Solver:getRootSolution(package)
 
     local solution = Solution(self, nil, nil)
-    solution:load()
+    --solution:load()
     return solution
 end

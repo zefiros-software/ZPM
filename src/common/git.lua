@@ -78,52 +78,54 @@ function zpm.git.getTags(destination)
     os.chdir(destination)
 
     local tagStr, errorCode = os.outputof("git show-ref --tags")
+
     local tags = { }
+    if tagStr then
+        for _, s in ipairs(tagStr:explode("\n")) do
 
-    for _, s in ipairs(tagStr:explode("\n")) do
+            if s:len() > 0 then
 
-        if s:len() > 0 then
-
-            local split = zpm.util.split(s, " ")
-            local ref, version = split[1], split[2]
-            version = version:match("[._-]*([%d+%.]+.*)")
-            if version and pcall(zpm.semver, version) then
-                table.insert(tags, {
-                    version = version,
-                    hash = ref,
-                    tag = s:match("refs/tags/(.*)")
-                } )
-            elseif version then
-
-                version = version:gsub("_", "%."):match("[._-]*([%d+%.]+.*)")
-
-                if pcall(zpm.semver, version) then
+                local split = zpm.util.split(s, " ")
+                local ref, version = split[1], split[2]
+                version = version:match("[._-]*([%d+%.]+.*)")
+                if version and pcall(zpm.semver, version) then
                     table.insert(tags, {
                         version = version,
                         hash = ref,
                         tag = s:match("refs/tags/(.*)")
                     } )
-                else
+                elseif version then
 
-                    local version, pattern = version:match("(%d+%.%d+%.%d+)%.?(.*)")
-                    if version and pattern then
-                        version = ("%s+b%s"):format(version, pattern)
-                        if pcall(zpm.semver, version) then
-                            table.insert(tags, {
-                                version = version,
-                                hash = ref,
-                                tag = s:match("refs/tags/(.*)")
-                            } )
+                    version = version:gsub("_", "%."):match("[._-]*([%d+%.]+.*)")
+
+                    if pcall(zpm.semver, version) then
+                        table.insert(tags, {
+                            version = version,
+                            hash = ref,
+                            tag = s:match("refs/tags/(.*)")
+                        } )
+                    else
+
+                        local version, pattern = version:match("(%d+%.%d+%.%d+)%.?(.*)")
+                        if version and pattern then
+                            version = ("%s+b%s"):format(version, pattern)
+                            if pcall(zpm.semver, version) then
+                                table.insert(tags, {
+                                    version = version,
+                                    hash = ref,
+                                    tag = s:match("refs/tags/(.*)")
+                                } )
+                            end
                         end
                     end
                 end
             end
         end
-    end
 
-    table.sort(tags, function(t1, t2)
-        return bootstrap.semver(t1.version) > bootstrap.semver(t2.version)
-    end )
+        table.sort(tags, function(t1, t2)
+            return bootstrap.semver(t1.version) > bootstrap.semver(t2.version)
+        end )
+    end
 
     os.chdir(current)
 
