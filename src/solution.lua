@@ -42,7 +42,7 @@ function Solution:init(solver, tree, cursor, cursorPtr)
             },
             closed = {
                 public = {},
-                private = {}
+                all = {}
             }
         }
 
@@ -92,12 +92,47 @@ function Solution:expand(best, beam)
 
             local tree = self:_copyTree()
             local solution = Solution(self.solver, tree)
-        
-            solution.tree.open.public = table.deepcopy(self.tree.open.public)
-            solution.tree.open.private = table.deepcopy(self.tree.open.private)
+    
+            for i=1,#self.cursor.private do
 
-            solution.tree.closed.public = table.deepcopy(self.tree.closed.public)
-            solution.tree.closed.all = table.deepcopy(self.tree.closed.all)
+                if not solution.tree.closed.all[self.cursor.private[i].type] then
+                    solution.tree.closed.all[self.cursor.private[i].type] = {}
+                end
+
+                if not solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()] then
+                    solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()] = {}
+                end
+
+                if not solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()][self.cursor.private[i].tag] then
+                    solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()][self.cursor.private[i].tag] = solved[i].cost
+                end
+            end
+    
+            for i=1,#self.cursor.public do
+                if not solution.tree.closed.all[self.cursor.public[i].type] then
+                    solution.tree.closed.all[self.cursor.public[i].type] = {}
+                end
+
+                if not solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] then
+                    solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] = {}
+                end
+
+                if not solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] then
+                    solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] = solved[i].cost
+                end
+
+                if not solution.tree.closed.public[self.cursor.public[i].type] then
+                    solution.tree.closed.public[self.cursor.public[i].type] = {}
+                end
+
+                if not solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] then
+                    solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] = {}
+                end
+
+                if not solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] then
+                    solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] = solved[i].cost
+                end
+            end
     
             --local public = self:_extractPublicFromSolution(solved)
             --local private = self:_extractPrivateFromSolution(solved)        
@@ -121,10 +156,8 @@ function Solution:nextCursor()
     local ptr = nil
     if #self.tree.open.public > 0 then
         self.cursorPtr = table.remove(self.tree.open.public,1)
-        table.insert(self.tree.closed.public, self.cursorPtr)
     elseif #self.tree.open.private > 0 then  
         self.cursorPtr = table.remove(self.tree.open.private,1)
-        table.insert(self.tree.closed.private, self.cursorPtr)
     else
         self.cursorPtr = nil
     end
@@ -139,10 +172,7 @@ function Solution:_copyTree()
 
     local root = self:_copyNode(self.tree)
     root.open = table.deepcopy(self.tree.open)
-    root.closed = {
-        public = {},
-        private = {}
-    }
+    root.closed = table.deepcopy(self.tree.closed)
 
     return root
 end
@@ -177,14 +207,7 @@ end
 
 function Solution:extract()
 
-    local result = {
-        public = {},
-        private = {}        
-    }
-    self:_extractDependencies(self.tree.private, result.private)
-    self:_extractDependencies(self.tree.public, result.public)
-
-    return result
+    return self:_extractNode(self.tree)
 end
 
 function Solution:isComplete()
@@ -194,7 +217,15 @@ end
 
 function Solution:getCost()
 
-    return 0
+    local cost = 0
+    for type, libs in pairs(self.tree.closed.all) do
+        for _, lib  in pairs(libs) do
+            for _, v in pairs(lib) do
+                cost = cost + v
+            end
+        end
+    end
+    return cost
 end
 
 function Solution:load()
@@ -263,11 +294,9 @@ function Solution:_enumeratePublicVersions()
 
     local pubVersions = {}
     for _, d in ipairs(self.cursor.public) do
-
+    
+        --print(table.tostring(self.tree.closed,10), "@")
         for _, c in ipairs(self.tree.closed.public) do
-            --print(table.tostring(self.tree,5))
-            c = zpm.util.indexTable(self.tree, c)
-            print(table.tostring(c,1), c, "2")
             if d.package == c.package then
                 if premake.checkVersion(c.version, d.versionRequirement) then
                     table.insert(pubVersions, {c.version})
@@ -312,6 +341,13 @@ function Solution:_extractNode(node)
     }
     self:_extractDependencies(node.private, result.private)
     self:_extractDependencies(node.public, result.public)
+
+    if table.isempty(result.public) then
+        result.public = nil
+    end
+    if table.isempty(result.private) then
+        result.private = nil
+    end
 
     return result
 end

@@ -24,13 +24,18 @@
 
 zpm.ser = { }
 
+function zpm.ser.loadYaml(ljson)    
+
+    return yaml.decode(ljson, {load_nulls_as_nil = true})
+end
+
 function zpm.ser.loadFile(file)    
 
     local ljson, errorcode = {}
     if os.isfile(file) then
         ljson = zpm.util.readAll(file)
         if zpm.ser.isYAML(file) then
-            ljson = yaml.decode(ljson, {load_nulls_as_nil = true})
+            ljson = zpm.ser.loadYaml(ljson)
         else
             ljson = json.decode(ljson)
         end

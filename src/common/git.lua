@@ -24,30 +24,34 @@
 
 zpm.git = { }
 
+function zpm.git.getHash(destination, tag)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+    
+    local hash = os.outputoff("git rev-parse %s", tag)
+
+    os.chdir(current)
+
+    return hash
+end
+
 function zpm.git.pull(destination, url, branch)
 
     local current = os.getcwd()
 
     os.chdir(destination)
     
-    os.executef("git fetch %s --tags -q -j 8", url)
-
-    local updated = false
-
+    os.executef("git fetch %s --tags --all -q -j 8", url)
+    
     if branch then
         os.executef("git checkout -q origin/%s", branch)
     end
    
-    if os.outputof("git log HEAD..origin/HEAD --oneline"):len() > 0 then
-
-        os.execute("git submodule update --init --recursive -j 8")
-
-        updated = true
-    end
+    os.execute("git submodule update --init --recursive -j 8")
 
     os.chdir(current)
-
-    return updated
 end
 
 function zpm.git.clone(destination, url, branch)
@@ -88,32 +92,38 @@ function zpm.git.getTags(destination)
                 local split = zpm.util.split(s, " ")
                 local ref, version = split[1], split[2]
                 version = version:match("[._-]*([%d+%.]+.*)")
-                if version and pcall(zpm.semver, version) then
+                local ok, semver = pcall(zpm.semver, version)
+                if version and ok then
                     table.insert(tags, {
                         version = version,
                         hash = ref,
-                        tag = s:match("refs/tags/(.*)")
+                        tag = s:match("refs/tags/(.*)"),
+                        semver = semver
                     } )
                 elseif version then
 
                     version = version:gsub("_", "%."):match("[._-]*([%d+%.]+.*)")
-
-                    if pcall(zpm.semver, version) then
+                    local ok, semver = pcall(zpm.semver, version)
+                    if version and ok then
                         table.insert(tags, {
                             version = version,
                             hash = ref,
-                            tag = s:match("refs/tags/(.*)")
+                            tag = s:match("refs/tags/(.*)"),
+                            semver = semver
                         } )
                     else
 
                         local version, pattern = version:match("(%d+%.%d+%.%d+)%.?(.*)")
                         if version and pattern then
                             version = ("%s+b%s"):format(version, pattern)
-                            if pcall(zpm.semver, version) then
+                            
+                            local ok, semver = pcall(zpm.semver, version)
+                            if ok then
                                 table.insert(tags, {
                                     version = version,
                                     hash = ref,
-                                    tag = s:match("refs/tags/(.*)")
+                                    tag = s:match("refs/tags/(.*)"),
+                                    semver = semver
                                 } )
                             end
                         end
@@ -162,9 +172,67 @@ function zpm.git.getBranches(from)
 
     for _, s in ipairs(output:explode("\n")) do
         s = s:gsub("%w*%->.*", "")
+        local tag = s:match("origin/(.*)%s*"):match("^%s*(.*%S)") or ""
         table.insert(branches, {
-            tag = s:match("origin/(.*)%s*"):match("^%s*(.*%S)") or ""
+            tag = tag,
+            hash = zpm.git.getHash(from, "origin/"..tag)
         })
     end
     return branches
+end
+
+function zpm.git.getCommitCount(from, first)
+
+    local current = os.getcwd()
+
+    os.chdir(from)
+
+    local output = os.outputoff("git rev-list %s --count", first)
+    os.chdir(current)
+
+    return tonumber(output)
+end
+
+function zpm.git.getCommitCountBetween(from, first, second)
+
+    local current = os.getcwd()
+
+    os.chdir(from)
+
+    local output = os.outputoff("git rev-list %s...%s --count", first, second)
+    os.chdir(current)
+
+    return tonumber(output)
+end
+
+function zpm.git.getCommitAheadBehind(from, first, second)
+
+    local current = os.getcwd()
+
+    os.chdir(from)
+
+    local output = os.outputoff("git rev-list %s...%s --count --left-right", first, second)
+    local behind, ahead = output:match("(%d+)%s*(%d+)")
+
+    os.chdir(current)
+
+    return tonumber(ahead), tonumber(behind)
+end
+
+
+function zpm.git.getFileContent(from, file, tag)
+
+    local current = os.getcwd()
+
+    os.chdir(from)
+
+    local output = os.outputoff("git show %s:%s", tag, file)
+    local contents = nil
+    if not string.startswith(output, "fatal:") then
+        contents = output
+    end
+
+    os.chdir(current)
+
+    return contents
 end

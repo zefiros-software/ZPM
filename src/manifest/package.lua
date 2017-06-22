@@ -31,6 +31,12 @@ function zpm.package.splitName(name)
 end
 
 
+function zpm.package.semverDist(v1, v2)
+
+    return (v1.major * 100000 + v1.minor * 1000 + v1.patch) -
+            (v2.major * 100000 + v2.minor * 1000 + v2.patch)
+end
+
 Package = newclass "Package"
 
 Package:virtual("install")
@@ -58,6 +64,8 @@ function Package:init(loader, manifest, settings)
     self.loaded = false
 
     self.versions = { }
+    self.newest = nil
+    self.oldest = nil
 end
 
 function Package:__eq(package)
@@ -67,7 +75,7 @@ end
 
 function Package:getHash()
 
-    return package.fullName
+    return self.fullName
 end
 
 function Package:getVersions(requirement)
@@ -76,11 +84,38 @@ function Package:getVersions(requirement)
     for _, v in ipairs(self.versions) do
         local version = iif(v.version ~= nil, v.version, v.tag)
         if premake.checkVersion(version, requirement) then
+            v.cost = self:getCost(v)
             table.insert(result, v)
         end
     end
 
     return result
+end
+
+function Package:getCost(v)
+
+    if self.newest then
+        if v.version then
+
+            return zpm.package.semverDist(self.newest.semver, v.semver)
+        else
+            local total = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
+            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.tag)
+            
+            local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
+            local distancePerCommit = math.min(totalDistance / total,1)
+            local guessedDistance = (behind - ahead) * distancePerCommit
+            return guessedDistance
+        end
+    else
+            local total = zpm.git.getCommitCount(self:getRepository(), "HEAD")
+            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), "HEAD", v.tag)
+            
+            local totalDistance = zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
+            local distancePerCommit = math.min(totalDistance / total,1)
+            local guessedDistance = (behind - ahead) * distancePerCommit
+            return guessedDistance
+    end
 end
 
 function Package:load()
@@ -147,10 +182,16 @@ function Package:findPackageDefinition(tag)
             end
         end
     else
-        print(self:getDefinition())
 
+        for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
-        -- @todo implement
+            local contents = zpm.git.getFileContent(self:getDefinition(), file, tag)
+            if contents then
+
+                package = self:_processPackageFile( zpm.ser.loadYaml(contents))
+                break
+            end
+        end
     end
     return package
 end
@@ -229,8 +270,10 @@ function Package:pull()
             self:pullDefinition()
         end
     end
-
-    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),zpm.git.getTags(self:getRepository()))
+    local tags = zpm.git.getTags(self:getRepository())
+    self.newest = tags[1]
+    self.oldest = tags[#tags]
+    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
 
     self.pulled = true
 end

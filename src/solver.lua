@@ -46,6 +46,7 @@ function Solver:solve()
     
     print(table.tostring(heuristic:extract(), 10))
 
+    os.writefile_ifnotequal(json.encode_pretty(heuristic:extract()), path.join(_WORKING_DIR,"zpm.lock"))
     --[[
     for _, deps in ipairs(self.loader.manifests:getLoadOrder()) do
     
@@ -68,11 +69,11 @@ function Solver:_branchAndBound(container, b, best, beam)
     while container:getSize() > 0 or openSolutions:getSize() > 0 do
 
         local nextSolution, cost = container:pop()
-        if cost < b then
-            print(nextSolution:isComplete(), #nextSolution.tree.open.public, #nextSolution.tree.open.private)
-            
+        --print(cost, "@@@@@@@@@@@@@")
+
+        --print(table.tostring(nextSolution.tree.closed,5))
+        if cost < b then            
             local expanded = nextSolution:expand(b, beam)
-            print("Expanded:", #expanded)
             if #expanded > 0 then
                 for _, n in ripairs(expanded) do
                     local ncost = n:getCost()
@@ -86,7 +87,6 @@ function Solver:_branchAndBound(container, b, best, beam)
                 openSolutions:put(nextSolution, cost)
             end
 
-            print(nextSolution:isComplete())
             if nextSolution:isComplete() then
                 b = cost
                 best = nextSolution
