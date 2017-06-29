@@ -27,9 +27,9 @@ Loader = newclass "Loader"
 function Loader:init()
 
     self:_preInit()
-    
+
     self.config = Config()
-    self.config:load()    
+    self.config:load()
 
     self.cacheTime = self.config("cache.temp.cacheTime")
 
@@ -77,28 +77,28 @@ function Loader:checkGitVersion()
     if premake.checkVersion(version, ">=2.9.0") then
         self.gitCheckPassed = true
 
-    -- retry without caching
+        -- retry without caching
     elseif not premake.checkVersion(self:_readGitVersion(), ">=2.9.0") then
         warningf("Git version should be >=2.9.0, current is '%s'", mversion)
     end
 end
 
 function Loader:initialiseFolders()
-    
+
     local binDir = zpm.env.getBinDirectory()
     if not os.isdir(binDir) then
         zpm.assert(os.mkdir(binDir), "The bin directory '%s' could not be made!", binDir)
     end
 
     if os.isdir(self.temp) and self:_mayClean() then
-         zpm.util.rmdir(self.temp)
+        zpm.util.rmdir(self.temp)
 
         if os.isdir(self.temp) then
             warningf("Failed to clean temporary directory '%s'", self.temp)
         else
             zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
         end
-    end    
+    end
 end
 
 function Loader:_readGitVersion()
@@ -116,8 +116,8 @@ function Loader:_preInit()
     if bootstrap then
         -- allow module loading in the correct directory
         bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
-    end    
-   
+    end
+
     if zpm.cli.profile() then
         ProFi = require("mindreframer/ProFi", "@head")
         ProFi:setHookCount(0)
@@ -131,10 +131,10 @@ function Loader:_initialiseCache()
 
     if not os.isdir(self.cache) then
         zpm.assert(os.mkdir(self.cache), "The cache directory '%s' could not be made!", self.cache)
-    end    
-    
+    end
+
     self.temp = zpm.env.getTempDirectory()
-    
+
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
     end
@@ -144,7 +144,7 @@ function Loader:_mayClean()
 
     if self.__cacheMayClean ~= nil then
         return self.__cacheMayClean
-    end    
+    end
 
     self.__cacheMayClean = false
     local checkTime = self.config("cache.temp.checkTime")

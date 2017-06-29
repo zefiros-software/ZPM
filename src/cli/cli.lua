@@ -41,6 +41,26 @@ function zpm.cli.showHelp()
     return _OPTIONS["help"] ~= nil
 end
 
+newoption {
+    trigger = "ignore-lock",
+    description = "Act as if there is no lock file available"
+}
+
+function zpm.cli.force()
+
+    return _OPTIONS["force"]
+end
+
+newoption {
+    trigger = "force",
+    description = "Force installation of already extracted dependencies"
+}
+
+function zpm.cli.ignoreLock()
+
+    return _OPTIONS["ignore-lock"]
+end
+
 
 newoption {
     trigger = "cached-only",

@@ -125,3 +125,56 @@ premake.override(premake.main, "processCommandLine", function()
     _MAIN_SCRIPT = path.getabsolute(_MAIN_SCRIPT)
     _MAIN_SCRIPT_DIR = path.getdirectory(_MAIN_SCRIPT)
 	end)
+
+ 
+premake.override(_G, "workspace", function(base, name)
+    if name and not zpm.meta.exporting then
+        zpm.meta.workspace = name
+    end
+    return base(name)
+end)
+
+premake.override(_G, "project", function(base, name)
+    if name and not zpm.meta.exporting then
+        zpm.meta.project = name
+        --print(name, debug.traceback())
+        
+        if not zpm.meta.building then
+            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
+        end
+    end
+    return base(name)
+end)
+
+premake.override(_G, "group", function(base, name)
+    if (name or name == "") and not zpm.meta.exporting  then
+        zpm.meta.group = name
+    end
+    return base(name)
+end)
+
+premake.override(_G, "filter", function(base, fltr)
+    if (fltr or fltr == "") and not zpm.meta.exporting  then
+        zpm.meta.filter = fltr
+    end
+    return base(fltr)
+end)
+
+premake.override(_G, "kind", function(base, knd)
+    if kind and not zpm.meta.exporting then
+        zpm.meta.kind = knd
+        if not zpm.meta.building then
+            zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "kind"}, knd)
+        end
+    end
+    return base(knd)
+end)
+
+premake.override(premake.main, "preBake", function(base)
+
+    noticef("Walking dependencies")
+
+    zpm.loader.project.builder:walkDependencies()
+
+    return base()
+end)

@@ -34,6 +34,7 @@ function Packages:init(loader, settings, name, nameSingle)
     self.mayUninstall = iif(settings.uninstall ~= nil, settings.uninstall, false)
     self.maySearch = iif(settings.search ~= nil, settings.search, true)
     self.mayShow = iif(settings.show ~= nil, settings.show, false)
+    self.extract = iif(settings.extract ~= nil, settings.extract, '{extern}/{name}')
 
     self.name = iif(name, name, "package")
     self.nameSingle = iif(nameSingle, nameSingle, "packages")
@@ -50,6 +51,16 @@ function Packages:init(loader, settings, name, nameSingle)
         end
     }
 end
+
+function Packages:getExtractDirectory()
+
+    if not self.extract then
+        return nil
+    end
+
+    return zpm.util.getRelativeOrAbsoluteDir(_MAIN_SCRIPT_DIR, self.extract:gsub('{name}', self.name):gsub('{extern}', self.loader.config("install.extern.directory")) )
+end
+
 function Packages:getName()
     
     return self.name

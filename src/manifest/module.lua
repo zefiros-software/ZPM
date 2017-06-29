@@ -93,13 +93,14 @@ end
 
 function Module:getDirectory()
 
-    return path.join(self.loader.modules:getDirectory(), self.fullName)
+    return path.join(self.manifest.manager:getDirectory(), self.fullName)
 end
 
 function Module:getVendorDirectory()
 
-    return path.join(self.loader.modules:getDirectory(), self.vendor)
+    return path.join(self.manifest.manager:getDirectory(), self.vendor)
 end
+
 
 function Module:getHeadPath()
     

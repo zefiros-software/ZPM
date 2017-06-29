@@ -24,6 +24,14 @@
 
 zpm.ser = { }
 
+function zpm.ser.loadMultiYaml(file)    
+
+    local ljson = zpm.util.readAll(file)
+    --print(ljson)
+    local a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z = yaml.decode(ljson, {load_nulls_as_nil = true})
+    return {a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
+end
+
 function zpm.ser.loadYaml(ljson)    
 
     return yaml.decode(ljson, {load_nulls_as_nil = true})

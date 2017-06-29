@@ -37,13 +37,25 @@ function zpm.git.getHash(destination, tag)
     return hash
 end
 
+function zpm.git.hasHash(destination, hash)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+    
+    local out, code = os.outputoff("git cat-file -e %s", hash)
+    os.chdir(current)
+
+    return code == 0
+end
+
 function zpm.git.pull(destination, url, branch)
 
     local current = os.getcwd()
 
     os.chdir(destination)
     
-    os.executef("git fetch %s --tags --all -q -j 8", url)
+    os.executef("git fetch %s --tags -q -j 8", url)
     
     if branch then
         os.executef("git checkout -q origin/%s", branch)
@@ -64,7 +76,6 @@ function zpm.git.clone(destination, url, branch)
 end
 
 function zpm.git.cloneOrPull(destination, url, branch)
-
 
     if os.isdir(destination) then
 
@@ -149,7 +160,7 @@ function zpm.git.export(from, output, tag)
 
     os.chdir(from)
 
-    os.executef("git archive --format=zip --output=\"%s\" %s", temp, tag.tag)
+    os.executef("git archive --format=zip --output=\"%s\" %s", temp, tag)
 
     os.chdir(current)
     

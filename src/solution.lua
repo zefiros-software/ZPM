@@ -45,8 +45,6 @@ function Solution:init(solver, tree, cursor, cursorPtr)
                 all = {}
             }
         }
-
-        --print(table.tostring(self.solver.root:findDefinition(),2))
     else
         self.tree = tree
     end
@@ -55,6 +53,92 @@ function Solution:init(solver, tree, cursor, cursorPtr)
     self.cursorPtr = {}
 
     self.indices = nil
+end
+
+function Solution:loadFromLock(lock)
+     
+    return self:_loadNodeFromLock(self.tree, self.tree, lock)
+end
+
+function Solution:_loadNodeFromLock(tree, node, lock)
+
+    if not lock then
+        return
+    end
+    
+    local dpkgs = {}
+    for _, access in ipairs({"public", "private"}) do
+        node[access] = {}
+        if lock[access] then
+            for type, pkgs in pairs(lock[access]) do
+                for _, pkg in pairs(pkgs) do
+
+                    local vendor, name = zpm.package.splitName(pkg.name)
+                    local package = self.solver.loader[type]:get(vendor, name)
+                    package:load(pkg.hash)
+
+                    local lnode = {                
+                        package = package,
+                        type = type,
+                        name = pkg.name,
+                        tag = pkg.tag,
+                        version = pkg.version,
+                        versionRequirement = pkg.versionRequirement,
+                        hash = pkg.hash
+                    }
+                    table.insert(node[access], lnode)
+                    zpm.util.insertTable(dpkgs, {access, type, pkg.name}, iif(pkg.version == nil, pkg.tag, pkg.version))
+
+                    if not self:_loadNodeFromLock(tree, lnode, pkg) then
+                        return false
+                    end
+
+                    local index = {type, package:getHash(), pkg.tag}
+                    local semver = nil
+                    if pkg.version then
+                        semver = zpm.semver(pkg.version)
+                    end
+                    zpm.util.setTable(self.tree.closed.all, index, package:getCost({
+                        tag = pkg.tag,
+                        version = pkg.version,
+                        semver = semver,
+                        hash = pkg.hash                    
+                    }))
+                end      
+            end
+        end
+    end
+
+    
+    for _, access in ipairs({"public", "private"}) do
+        -- check whether the lockfile version is a complete solution
+        local definition = node.package:findPackageDefinition(lock.hash)
+        if definition and definition[access] then
+            for ptype, pubs in pairs(definition[access]) do
+                for _, pub in ipairs(pubs) do
+                    if zpm.util.indexTable(dpkgs, {access, ptype, pub.name}) then  
+                        local vcheckFailed = false
+                        local lversion
+                        for _, version in ipairs(dpkgs[access][ptype][pub.name]) do
+                            lversion = version
+                            if pub.version and not premake.checkVersion(version, pub.version) then
+                                vcheckFailed = true
+                            end
+                        end
+
+                        if vcheckFailed then
+                            warningf("Package '%s' by '%s' locked on version '%s' does not match '%s'", pub.name, node.package.name, lversion, pub.version)
+                            return false
+                        end
+                    else
+                        warningf("Package '%s' required by '%s' missing in lockfile", pub.name, node.name)
+                        return false
+                    end
+                end
+            end
+        end
+    end
+    return true
 end
 
 function Solution:isOpen()
@@ -95,52 +179,27 @@ function Solution:expand(best, beam)
     
             for i=1,#self.cursor.private do
 
-                if not solution.tree.closed.all[self.cursor.private[i].type] then
-                    solution.tree.closed.all[self.cursor.private[i].type] = {}
-                end
+                local index = {
+                    self.cursor.private[i].type,
+                    self.cursor.private[i].package:getHash(),
+                    self.cursor.private[i].tag
+                }
 
-                if not solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()] then
-                    solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()] = {}
-                end
-
-                if not solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()][self.cursor.private[i].tag] then
-                    solution.tree.closed.all[self.cursor.private[i].type][self.cursor.private[i].package:getHash()][self.cursor.private[i].tag] = solved[i].cost
-                end
+                zpm.util.setTable(solution.tree.closed.all, index, solved[i].cost)
             end
     
             for i=1,#self.cursor.public do
-                if not solution.tree.closed.all[self.cursor.public[i].type] then
-                    solution.tree.closed.all[self.cursor.public[i].type] = {}
-                end
 
-                if not solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] then
-                    solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] = {}
-                end
+                local index = {
+                    self.cursor.public[i].type,
+                    self.cursor.public[i].package:getHash(),
+                    self.cursor.public[i].tag
+                }
+                zpm.util.setTable(solution.tree.closed.all, index, solved[#self.cursor.private + i].cost)
+                zpm.util.setTable(solution.tree.closed.public, index, solved[#self.cursor.private + i].cost)
 
-                if not solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] then
-                    solution.tree.closed.all[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] = solved[i].cost
-                end
-
-                if not solution.tree.closed.public[self.cursor.public[i].type] then
-                    solution.tree.closed.public[self.cursor.public[i].type] = {}
-                end
-
-                if not solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] then
-                    solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()] = {}
-                end
-
-                if not solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] then
-                    solution.tree.closed.public[self.cursor.public[i].type][self.cursor.public[i].package:getHash()][self.cursor.public[i].tag] = solved[i].cost
-                end
             end
     
-            --local public = self:_extractPublicFromSolution(solved)
-            --local private = self:_extractPrivateFromSolution(solved)        
-
-            --local solution = Solution(self.solver, self.root, self)
-        
-            --print(table.tostring(private,1))        
-            --print(table.tostring(public,1))
 
             table.insert(solutions, solution)
         end
@@ -200,14 +259,17 @@ function Solution:_copyNode(node)
         type = node.type,
         name = node.name,
         version = node.version,
+        versionRequirement = node.versionRequirement,
         tag = node.tag,
         hash = node.hash
     }
 end
 
-function Solution:extract()
-
-    return self:_extractNode(self.tree)
+function Solution:extract(isLock)
+    if isLock == nil then
+        isLock = isLock
+    end
+    return self:_extractNode(self.tree, isLock)
 end
 
 function Solution:isComplete()
@@ -333,14 +395,14 @@ function Solution:_enumeratePrivateVersions()
 end
 
 
-function Solution:_extractNode(node)
+function Solution:_extractNode(node, isLock)
 
     local result = {
         public = {},
         private = {}        
     }
-    self:_extractDependencies(node.private, result.private)
-    self:_extractDependencies(node.public, result.public)
+    self:_extractDependencies(node.private, result.private, isLock)
+    self:_extractDependencies(node.public, result.public, isLock)
 
     if table.isempty(result.public) then
         result.public = nil
@@ -352,7 +414,7 @@ function Solution:_extractNode(node)
     return result
 end
 
-function Solution:_extractDependencies(dependencies, result)
+function Solution:_extractDependencies(dependencies, result, isLock)
     if not dependencies then
         return
     end
@@ -366,10 +428,9 @@ function Solution:_extractDependencies(dependencies, result)
             c = result[d.type]
         end
         
-        local extract = self:_extractNode(d)
+        local extract = self:_extractNode(d, isLock)
         local t = {
             name = d.package.fullName,
-            --package = d.package,
             versionRequirement = d.versionRequirement,
             version = d.version,
             hash = d.hash,
@@ -377,6 +438,9 @@ function Solution:_extractDependencies(dependencies, result)
             public =  extract.public,
             private = extract.private
         }
+        if not isLock then
+            t.package = d.package
+        end
         table.insert(c, t)
     end
 end

@@ -73,7 +73,6 @@ install:
         #       order: 100
         modules:
             class: Modules
-            directory: modules
             install: true
             manifest: modules.yml
             name: module
@@ -81,6 +80,7 @@ install:
             search: true
             show: true
             uninstall: true
+            extract: false
             order: 100
         libraries:
             buildFile: build.lua
@@ -93,6 +93,7 @@ install:
         assets:
             manifest: assets.yml
             name: asset
+            extract: assets
             order: 300
     extern:
         # When ZPM needs to download packages, we store it in this directory 

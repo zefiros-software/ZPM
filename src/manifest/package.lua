@@ -73,6 +73,37 @@ function Package:__eq(package)
     return package:getHash() == self:getHash()
 end
 
+function Package:getExtractDirectory(dir, node)
+    
+    local version = iif(node.version == nil, node.tag, node.version)
+    return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(-4)))
+end
+
+function Package:needsExtraction(dir, node)
+    
+    if not os.isdir(self:getExtractDirectory(dir, node)) or zpm.cli.force() then
+        return true
+    end
+    return false
+end
+
+
+function Package:extract(dir, node)
+
+    local location = self:getExtractDirectory(dir, node)
+    local updated = false
+    if self:needsExtraction(location, node) then
+        if os.isdir(location) then
+            zpm.util.rmdir(location)
+        end
+        zpm.util.recurseMkdir(location)
+        noticef(" * Extracting %s to %s", self.manifest.manager.nameSingle, self:getExtractDirectory("", node))
+        zpm.git.export(self:getRepository(), location, node.hash)
+        updated = true
+    end
+    return location, updated
+end
+
 function Package:getHash()
 
     return self.fullName
@@ -118,17 +149,13 @@ function Package:getCost(v)
     end
 end
 
-function Package:load()
+function Package:load(hash)
 
     if self.loaded then
         return
     end
 
-    self:pull()
-
-    if self.definition ~= self.repository then
-
-    end
+    self:pull(hash)
 
     self.loaded = true
 end
@@ -172,7 +199,7 @@ function Package:findPackageDefinition(tag)
     local package = { }
     if not tag or self:isDefinitionSeperate() then
 
-        for _, p in ipairs( { "package.yml", ".package.yml" }) do
+        for _, p in ipairs( { "package.yml", ".package.yml", "package.yaml", ".package.yaml" }) do
 
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
@@ -183,12 +210,12 @@ function Package:findPackageDefinition(tag)
         end
     else
 
-        for _, p in ipairs( { "package.yml", ".package.yml" }) do
+        for _, p in ipairs( { "package.yml", ".package.yml", "package.yaml", ".package.yaml" }) do
 
-            local contents = zpm.git.getFileContent(self:getDefinition(), file, tag)
+            local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
             if contents then
 
-                package = self:_processPackageFile( zpm.ser.loadYaml(contents))
+                package = self:_processPackageFile(zpm.ser.loadYaml(contents))
                 break
             end
         end
@@ -196,7 +223,44 @@ function Package:findPackageDefinition(tag)
     return package
 end
 
+function Package:findPackageExport(tag) 
+
+    local export = nil
+    if self:isDefinitionSeperate() then
+        for _, p in ipairs( { "export.yml", ".export.yml", "export.yaml", ".export.yaml" }) do
+
+            local file = path.join(self:getDefinition(), p)
+            if os.isfile(file) then
+                builds = zpm.ser.loadMultiYaml(file)
+                for _, build in ipairs(builds) do
+
+                    if premake.checkVersion(tag, build.version) then
+                        export = build.export
+                        break
+                    end
+                end
+                break
+            end
+        end
+    else
+        for _, p in ipairs( { "export.lua", ".export.lua" }) do
+
+            local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+            if contents then
+
+                export = contents
+                break
+            end
+        end
+    end
+
+    return export
+end
+
 function Package:_processPackageFile(package)
+    if not package then
+        return {}
+    end
 
     if self.isRoot then
         package = table.merge(package, package.dev)
@@ -239,7 +303,7 @@ function Package:_processPackageFile(package)
             package[type] = nil
         end
     end
-
+   
     return package
 end
 
@@ -254,27 +318,36 @@ function Package:pullDefinition()
     zpm.git.cloneOrPull(self:getDefinition(), self.definition)
 end
 
-function Package:pull()
+function Package:pull(hash)
 
-    if not self:isRepositoryRepo() then
+    local hasHash = false
+    local repo = self:getRepository()
+    if hash and os.isdir(repo) then
+        hasHash = zpm.git.hasHash(repo, hash)
+    end
+
+    if not self:isRepositoryRepo() or (self.pulled and not needsUpdate) then
         return
     end
 
-    if self:_mayPull() then
+    if self:_mayPull() or not hasHash then
 
-        printf("- '%s' pulling '%s'", self.name, self.repository)
+        noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
 
         if self.repository ~= self.definition then
-            printf("- Pulling defintion '%s'", self.definition)
+            noticef("   with definition '%s'", self.definition)
             self:pullDefinition()
         end
-    end
-    local tags = zpm.git.getTags(self:getRepository())
-    self.newest = tags[1]
-    self.oldest = tags[#tags]
-    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
 
+    end
+    if zpm.cli.ignoreLock() or needsUpdate or self:_mayPull() then
+        local tags = zpm.git.getTags(self:getRepository())
+        self.newest = tags[1]
+        self.oldest = tags[#tags]
+        self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
+    end
+    
     self.pulled = true
 end
 

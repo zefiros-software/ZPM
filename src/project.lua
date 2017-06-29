@@ -33,9 +33,88 @@ function Project:init(loader)
         isRoot = true
     })
     self.solver = Solver(self.loader, self.root)
+    self.solution = nil
+    self.builder = nil
 end
 
 function Project:solve()
 
-    self.solver:solve()
+    local lock = nil
+    if self:hasLockFile() and not zpm.cli.ignoreLock() then
+        noticef("Detected a lock file")
+        lock = zpm.ser.loadFile(self:getLockFile())
+    end
+
+    local cost, solution = self.solver:solve(lock)
+
+    self.solution = solution:extract()
+    os.writefile_ifnotequal(json.encode_pretty(solution:extract(true)), self:getLockFile())
+
+    self:extract()
+
+    self.builder = Builder(self.loader, self.solution)
+end
+
+function Project:extract()
+
+    local stats = {
+        updated = 0
+    }
+    self:_extractNode(self.solution, "public", stats)
+    self:_extractNode(self.solution, "private", stats)
+
+    if stats.updated == 0 then
+        noticef("No changes in your dependencies!")
+    end
+end
+
+function Project:hasLockFile()
+
+    return os.isfile(self:getLockFile())
+end
+
+function Project:getLockFile()
+
+    return path.join(_WORKING_DIR, "zpm.lock")
+end
+
+function Project:_extractNode(node, access, printStats)
+
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+        local extractDir = self.loader[type]:getExtractDirectory()
+        if node[access] and node[access][type] and extractDir then
+            if not os.isdir(extractDir) then
+                zpm.util.recurseMkdir(extractDir)
+                noticef("Creating directory '%s'", extractDir)
+            end
+            local gitignore = path.join(extractDir, ".gitignore")
+            if not os.isfile(gitignore) then
+                zpm.util.writeAll(gitignore, "*")
+            end
+
+            for _, n in ipairs(node[access][type]) do
+                if n.package:needsExtraction(extractDir, n) then   
+                    if not printStats[type] then
+                        printStats[type] = true
+                        noticef("Extracting %s to '%s'", type, extractDir)
+                    end                  
+                    if n.package:extract(extractDir, n) then
+                        printStats.updated = printStats.updated + 1
+                    end
+                end
+                n.location = n.package:getExtractDirectory(extractDir, n)
+                local version = n.version
+                if not version then
+                    version = n.tag
+                end
+
+                if version then
+                    n.export = n.package:findPackageExport(version)
+                end
+                
+                self:_extractNode(n, "public", printStats)
+                self:_extractNode(n, "private", printStats)
+            end
+        end
+    end
 end

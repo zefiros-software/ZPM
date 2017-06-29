@@ -29,6 +29,9 @@
     <Compile Include="extern\load.lua" />
     <Compile Include="extern\sandbox.lua" />
     <Compile Include="extern\semver.lua" />
+    <Compile Include="src\api.lua" />
+    <Compile Include="src\api\libraries.lua" />
+    <Compile Include="src\builder.lua" />
     <Compile Include="src\cli\cli.lua" />
     <Compile Include="src\cli\config.lua" />
     <Compile Include="src\cli\github.lua" />
@@ -92,6 +95,7 @@
     <Folder Include="src\cli\" />
     <Folder Include="src\common\" />
     <Folder Include="src\manifest\" />
+    <Folder Include="src\api\" />
     <Folder Include="src\registry\" />
     <Folder Include="test\" />
     <Folder Include="test\action\" />

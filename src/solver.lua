@@ -30,41 +30,53 @@ function Solver:init(loader, root)
     self.root = root
 end
 
-function Solver:solve()
 
-    local rootSolution = self:getRootSolution(self.root)
-    local stack = Stack()
-    stack:put(rootSolution,rootSolution:getCost())
+function Solver:solve(lock)
 
-    local c, heuristic = self:_branchAndBound(stack, math.huge, nil, 50)
-    
-    -- solve again given the previous upperbound
-    --local queue = PriorityQueue()
-    --queue:put(rootSolution,rootSolution:getCost())
-    --local b, best = self:_branchAndBound(stack, c, heuristic)
-
-    
-    print(table.tostring(heuristic:extract(), 10))
-
-    os.writefile_ifnotequal(json.encode_pretty(heuristic:extract()), path.join(_WORKING_DIR,"zpm.lock"))
-    --[[
-    for _, deps in ipairs(self.loader.manifests:getLoadOrder()) do
-    
-        if rootPackage[deps] and self.loader[deps] then
-
-            for _, dep in pairs(rootPackage[deps]) do
-                local mod = bootstrap.getModule(dep.name)
-                local vendor, name = mod[1], mod[2]
-
-                local package = self.loader[deps]:get(vendor, name)
-                package:load()
-            end
+    local cost, heuristic = math.huge, nil
+    local hasInitial = false
+    if lock ~= nil then
+        heuristic = self:getRootSolution()
+        if heuristic:loadFromLock(lock) then
+            cost = heuristic:getCost()    
+            hasInitial = true
+        else
+            noticef("Current lockfile is invalid, generating a fresh one")
         end
-    end]]
+    end
+    if not hasInitial then
+        noticef("Finding an initial configuration")
+        -- do an initial DFS biased pass to get an upper bound
+        local rootSolution = self:getRootSolution()
+        local stack = Stack()
+        stack:put(rootSolution,rootSolution:getCost())
+        cost, heuristic = self:_branchAndBound(stack, math.huge, nil, 10, false, true)
+
+    end
+    
+    if zpm.cli.update() or not lock then
+    
+        noticef("Optimising dependencies")
+        -- use a BFS method to optimise
+        local queue = Queue()
+        local rootSolution = self:getRootSolution()
+        queue:put(rootSolution,rootSolution:getCost())
+        cost, heuristic = self:_branchAndBound(queue, cost, heuristic, 50)
+    end
+
+    return cost, heuristic
 end
 
-function Solver:_branchAndBound(container, b, best, beam)
+function Solver:_branchAndBound(container, b, best, beam, useCompleteSpace, returnFirst)
 
+    if useCompleteSpace == nil then
+        useCompleteSpace = true
+    end
+    if returnFirst == nil then
+        returnFirst = false
+    end
+
+    --local rejected = 0
     local openSolutions = Queue()
     while container:getSize() > 0 or openSolutions:getSize() > 0 do
 
@@ -90,21 +102,34 @@ function Solver:_branchAndBound(container, b, best, beam)
             if nextSolution:isComplete() then
                 b = cost
                 best = nextSolution
+
+                if returnFirst then
+                    break
+                end
             end
+        else
+            --print(cost, b)
+            --rejected = rejected + 1
         end
 
         if container:getSize() == 0 and openSolutions:getSize() > 0 then
-            local nextSolution, cost = openSolutions:pop()
-            container:put(nextSolution, cost)
+            if useCompleteSpace or not best:isComplete() then
+                local nextSolution, cost = openSolutions:pop()
+                container:put(nextSolution, cost)
+            else
+                -- we found a complete solution and only search our beam
+                -- not the complete space
+                break
+            end
         end
     end
+
+    --print(rejected)
 
     return b, best
 end
 
-function Solver:getRootSolution(package)
+function Solver:getRootSolution()
 
-    local solution = Solution(self, nil, nil)
-    --solution:load()
-    return solution
+    return Solution(self, nil, nil)
 end

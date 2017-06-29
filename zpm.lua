@@ -24,6 +24,13 @@
 
 if not zpm then
     zpm = {}
+    zpm.meta = {
+        workspace = "",
+        group = "",
+        project = "",
+        exporting = false,
+        buiding = false
+    }
     zpm._VERSION = "2.0.0"
 end
 

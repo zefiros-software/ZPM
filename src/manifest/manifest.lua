@@ -24,9 +24,10 @@
 
 Manifest = newclass "Manifest"
 
-function Manifest:init(loader, name, settings)
+function Manifest:init(loader, manager, name, settings)
 
     self.loader = loader
+    self.manager = manager
     self.name = name
     self.settings = settings
     self.packages = {}

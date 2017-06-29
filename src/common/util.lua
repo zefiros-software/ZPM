@@ -109,7 +109,7 @@ zpm.util = { }
 
 function zpm.util.indexTable(tab, arr)
 
-    cursor = tab
+    local cursor = tab
     for i=1,#arr do
         if cursor then
             cursor = cursor[arr[i]]
@@ -249,7 +249,7 @@ end
 
 function zpm.util.rmdir(folder)
 
-    if os.is("windows") then
+    if os.ishost("windows") then
         os.executef("del /f/s/q \"%s\" > NUL", folder)
         os.executef("rmdir /s/q \"%s\" > NUL", folder)
     else
@@ -298,6 +298,41 @@ function zpm.util.toArray(t1)
     return result
 end
 
+function zpm.util.setTable(tab, index, value)
+
+    local cursor = tab
+    for i=1,#index do
+        if cursor[index[i]] then
+            cursor = cursor[index[i]]
+        elseif i == #index then
+            cursor[index[i]] = value
+        else
+            cursor[index[i]] = {}
+            cursor = cursor[index[i]]
+        end
+    end
+    return cursor
+end
+
+function zpm.util.insertTable(tab, index, value)
+
+    local cursor = tab
+    for i=1,#index do
+        if cursor[index[i]] then
+            cursor = cursor[index[i]]
+        elseif i == #index then
+            if not cursor[index[i]] then
+                cursor[index[i]] = {}
+            end
+            table.insert(cursor[index[i]], value)
+        else
+            cursor[index[i]] = {}
+            cursor = cursor[index[i]]
+        end
+    end
+    return cursor
+end
+
 function zpm.util.zip(...)
   local arrays, ans = {...}, {}
   local index = 0
@@ -324,4 +359,27 @@ function zpm.util.shallowcopy(orig)
         copy = orig
     end
     return copy
+end
+
+function zpm.util.recurseMkdir(p)
+
+    local dir = iif(p:startswith("/"), "/", "")
+    for part in p:gmatch("[^/]+") do
+        dir = dir .. part
+
+        if part ~= "" and not path.isabsolute(part) and not os.isdir(dir) then
+            local ok, err = os.mkdir(dir)
+            if not ok then
+				            return nil, err
+            end
+        end
+
+        dir = dir .. "/"
+    end
+
+    return true
+end
+
+function zpm.util.trim(s)
+  return s:match'^%s*(.*%S)' or ''
 end
