@@ -172,9 +172,9 @@ end)
 
 premake.override(premake.main, "preBake", function(base)
 
-    noticef("Walking dependencies")
-
-    zpm.loader.project.builder:walkDependencies()
-
+    if zpm.loader then
+        noticef("Walking dependencies")
+        zpm.loader.project.builder:walkDependencies()
+    end
     return base()
 end)

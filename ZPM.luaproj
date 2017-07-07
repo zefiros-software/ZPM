@@ -30,7 +30,10 @@
     <Compile Include="extern\sandbox.lua" />
     <Compile Include="extern\semver.lua" />
     <Compile Include="src\api.lua" />
+    <Compile Include="src\api\common.lua" />
+    <Compile Include="src\api\extract.lua" />
     <Compile Include="src\api\libraries.lua" />
+    <Compile Include="src\settings.lua" />
     <Compile Include="src\builder.lua" />
     <Compile Include="src\cli\cli.lua" />
     <Compile Include="src\cli\config.lua" />

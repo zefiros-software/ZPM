@@ -74,12 +74,12 @@ function Loader:checkGitVersion()
         self.config:set("cache.git", version, true)
     end
 
-    if premake.checkVersion(version, ">=2.9.0") then
+    if premake.checkVersion(version, ">=2.13.0") then
         self.gitCheckPassed = true
 
         -- retry without caching
-    elseif not premake.checkVersion(self:_readGitVersion(), ">=2.9.0") then
-        warningf("Git version should be >=2.9.0, current is '%s'", mversion)
+    elseif not premake.checkVersion(self:_readGitVersion(), ">=2.13.0") then
+        warningf("Git version should be >=2.13.0, current is '%s'", mversion)
     end
 end
 

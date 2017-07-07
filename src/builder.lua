@@ -103,10 +103,9 @@ function Builder:build(package, type)
         local pkgs = zpm.util.indexTable(self.solution,{access, type})
         if pkgs then
             for _, pkg in ipairs(pkgs) do
-
                 if pkg.name == package and not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, package}) then
                     zpm.util.setTable(self.settings, {zpm.meta.workspace, type, package}, true)
-
+                    
                     if pkg.export then
                         local prevGroup = zpm.meta.group
                         local prevProject = zpm.meta.project
@@ -146,72 +145,7 @@ function Builder:build(package, type)
 end
 
 function Builder:getEnv(type, cursor)
+
     local cursor = iif(cursor == nil, self.cursor, cursor)
-    local env = self:_getDefaultEnv()
-
-    local tdefault = zpm.util.indexTable(zpm.api, {type, "default"})
-    if tdefault then
-        tdefault(env, cursor)
-    end
-
-    local export = zpm.util.indexTable(zpm.api, {type, "export"})
-    if export then
-        for name, func in pairs(export) do
-            env.zpm[name] = func(cursor)
-        end
-    end
-    
-    local global = zpm.util.indexTable(zpm.api, {type, "global"})
-    if global then
-        for name, func in pairs(global) do
-            env[name] = func(cursor)
-        end
-    end
-    return env
-end
-
-function Builder:_getDefaultEnv()
-    
-    return {
-        http = 
-        {
-            download = http.download,
-            escapeUrlParam = http.escapeUrlParam,
-            get = http.get,
-            post = http.post,
-            reportProgress = http.reportProgress
-        },
-        os =
-        {
-            is64bit = os.is64bit,
-            matchfiles = os.matchfiles,
-            matchdirs = os.matchdirs,
-            isdir = os.isdir,
-            isfile = os.isfile,
-            is = os.is,
-            host = os.host,
-            ishost = os.ishost,
-            target = os.target,
-            istarget = os.istarget,
-            getenv = os.getenv
-        },
-        path =
-        {
-            join = path.join,
-            normalize = path.normalize
-        },
-        zpm = {},
-        string = string,
-        table = table,
-        print = print,
-        _TARGET_OS = _TARGET_OS,
-        _ARGS = _ARGS,
-        _ACTION = _ACTION,
-        _OPTIONS = _OPTIONS,
-        _PREMAKE_DIR = _PREMAKE_DIR,
-        _MAIN_SCRIPT = _MAIN_SCRIPT,
-        _PREMAKE_VERSION = _PREMAKE_VERSION,
-        _PREMAKE_COMMAND = _PREMAKE_COMMAND,
-        _MAIN_SCRIPT_DIR = _MAIN_SCRIPT_DIR
-    }
+    return zpm.api.load(type, cursor)
 end

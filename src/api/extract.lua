@@ -22,47 +22,37 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solution.lua"
-dofile "solver.lua"
-dofile "builder.lua"
-dofile "api.lua"
+zpm.api.extract = {
+    export = {},
+    global = {}
+}
 
-dofile "api/common.lua"
-dofile "api/extract.lua"
-dofile "api/libraries.lua"
+function zpm.api.extract.default(env, package)
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+    env["os"]["execute"] = os.execute
+    env["os"]["executef"] = os.executef
+    env["os"]["output"] = os.output
+    env["os"]["outputf"] = os.outputf
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+function zpm.api.extract.export.extractdir(package)
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+    return function(targets, prefix)
+        prefix = prefix or "./"
 
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
+        if type(targets) ~= "table" then
+            targets = {targets}
+        end
+    
+        for i, target in ipairs(targets) do
+            local fromPath = path.join( package.package:getRepository(), target )
+            local targetPath = path.join( package.location, prefix, target )
 
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+            
+            noticef("   Copying '%s' to '%s'", target, path.join(prefix, target))
+            if os.ishost("windows") then
+                os.executef("robocopy %s %s /E /xd \".git\" /MT >nul", fromPath, targetPath)
+            end
+        end
+    end
+end

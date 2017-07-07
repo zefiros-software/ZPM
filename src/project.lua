@@ -93,6 +93,7 @@ function Project:_extractNode(node, access, printStats)
             end
 
             for _, n in ipairs(node[access][type]) do
+                n.location = n.package:getExtractDirectory(extractDir, n)
                 if n.package:needsExtraction(extractDir, n) then   
                     if not printStats[type] then
                         printStats[type] = true
@@ -102,7 +103,6 @@ function Project:_extractNode(node, access, printStats)
                         printStats.updated = printStats.updated + 1
                     end
                 end
-                n.location = n.package:getExtractDirectory(extractDir, n)
                 local version = n.version
                 if not version then
                     version = n.tag

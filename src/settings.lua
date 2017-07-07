@@ -22,47 +22,26 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "solution.lua"
-dofile "solver.lua"
-dofile "builder.lua"
-dofile "api.lua"
+zpm.settings = {
+    behaviour={}
+}
 
-dofile "api/common.lua"
-dofile "api/extract.lua"
-dofile "api/libraries.lua"
+function zpm.settings.behaviour.anyTrue(conflicts)
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+    for _, c in ipairs(conflicts) do
+        if c then
+            return true
+        end
+    end
+    return false
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
+function zpm.settings.behaviour.anyFalse(conflicts)
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
-
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
-
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+    for _, c in ipairs(conflicts) do
+        if not c then
+            return true
+        end
+    end
+    return false
+end

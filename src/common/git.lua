@@ -49,19 +49,60 @@ function zpm.git.hasHash(destination, hash)
     return code == 0
 end
 
-function zpm.git.pull(destination, url, branch)
+function zpm.git.hasSubmodules(destination)
 
     local current = os.getcwd()
 
     os.chdir(destination)
     
-    os.executef("git fetch %s --tags -q -j 8", url)
+    local out, code = os.outputoff("git ls-files --stage")
+
+    os.chdir(current)
+
+    -- 16000 resolves to a submodule
+    return out and out:contains("160000")
+end
+
+function zpm.git.checkout(destination, hash)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
+    local status, errorCode = os.outputof("git log -1 --format=\"%H\"")
+
+    if not status:contains(hash)then
+        os.executef("git checkout -q -f %s", hash)
+        os.execute("git submodule update --init --recursive -j 8 --recommend-shallow")
+    end
+
+    os.chdir(current)
+end
+
+function zpm.git.fetch(destination, url, branch)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+        
+    os.executef("git fetch -q --tags -j 8 --force --prune %s", url)
     
     if branch then
         os.executef("git checkout -q origin/%s", branch)
     end
    
-    os.execute("git submodule update --init --recursive -j 8")
+    os.execute("git submodule update --init --recursive -j 8 --recommend-shallow")
+
+    os.chdir(current)
+end
+
+function zpm.git.reset(destination)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
+    os.executef("git reset FETCH_HEAD --hard -q")
 
     os.chdir(current)
 end
@@ -73,13 +114,15 @@ function zpm.git.clone(destination, url, branch)
         branchStr = string.format(" -b %s ", branch)
     end
     os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\" %s", url, destination, branchStr )
+    os.executef( "git config core.ignoreStat true" )
+    os.executef( "git config core.fscache true" )
 end
 
 function zpm.git.cloneOrPull(destination, url, branch)
 
     if os.isdir(destination) then
 
-        return zpm.git.pull(destination, url, branch)
+        return zpm.git.fetch(destination, url, branch)
     else
 
         zpm.git.clone(destination, url, branch)
@@ -155,13 +198,34 @@ end
 
 function zpm.git.export(from, output, tag)
 
-    local temp = path.join(zpm.loader.temp, ("%s.zip"):format(string.sha1(from)))
+    zpm.git.archive(from, output, tag, "")
+    
     local current = os.getcwd()
 
     os.chdir(from)
 
-    os.executef("git archive --format=zip --output=\"%s\" %s", temp, tag)
+    -- also extract the submodules
+    local out, code = os.outputoff("git ls-tree -r %s", tag)
+    for _, s in ipairs(out:explode("\n")) do
+        -- 160000 is gitlink and thus submodule
+        if s:contains("160000") then
 
+            local mode, type, hash, link = s:match("(%d+)%s+(%w+)%s+(%w+)%s+(.+)")
+            zpm.git.archive(path.join(from, link), output, hash, link .. "/")
+        end
+    end
+
+    os.chdir(current)
+end
+
+function zpm.git.archive(from, output, tag, prefix)
+
+    local temp = path.join(zpm.loader.temp, ("%s.zip"):format(string.sha1(from .. prefix)))
+    local current = os.getcwd()
+    os.chdir(from)
+
+    os.executef("git archive --format=zip --prefix=\"%s\" --output=\"%s\" %s", prefix, temp, tag)
+    
     os.chdir(current)
     
     zip.extract(temp, output)    

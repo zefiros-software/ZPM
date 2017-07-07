@@ -87,18 +87,37 @@ function Package:needsExtraction(dir, node)
     return false
 end
 
-
 function Package:extract(dir, node)
 
     local location = self:getExtractDirectory(dir, node)
     local updated = false
     if self:needsExtraction(location, node) then
+
         if os.isdir(location) then
+            noticef(" * Cleaning existing '%s'", self:getExtractDirectory("", node))
             zpm.util.rmdir(location)
         end
         zpm.util.recurseMkdir(location)
         noticef(" * Extracting %s to %s", self.manifest.manager.nameSingle, self:getExtractDirectory("", node))
-        zpm.git.export(self:getRepository(), location, node.hash)
+        
+        local version = iif(node.version == nil, node.tag, node.version)
+        local extract = self:findPackageExtract(version)
+        if extract then
+            noticef("   Checking out directory, this may take a while...")
+            zpm.git.checkout(self:getRepository(), node.hash)
+            
+            local current = os.getcwd()
+            os.chdir(self:getRepository())
+            node.extractdir = 
+            zpm.sandbox.run(extract, { env = zpm.api.load("extract", node), quota = false })
+            os.chdir(current)
+        else
+            if zpm.git.hasSubmodules(self:getRepository()) then            
+                noticef("   We detected submodules, this may take a little longer")
+            end
+            zpm.git.export(self:getRepository(), location, node.hash)
+        end
+
         updated = true
     end
     return location, updated
@@ -204,7 +223,7 @@ function Package:findPackageDefinition(tag)
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
 
-                package = self:_processPackageFile(zpm.ser.loadFile(file))
+                package = self:_processPackageFile(zpm.ser.loadFile(file), tag)
                 break
             end
         end
@@ -215,7 +234,7 @@ function Package:findPackageDefinition(tag)
             local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
             if contents then
 
-                package = self:_processPackageFile(zpm.ser.loadYaml(contents))
+                package = self:_processPackageFile(zpm.ser.loadYaml(contents), tag)
                 break
             end
         end
@@ -225,31 +244,60 @@ end
 
 function Package:findPackageExport(tag) 
 
-    local export = nil
     if self:isDefinitionSeperate() then
-        for _, p in ipairs( { "export.yml", ".export.yml", "export.yaml", ".export.yaml" }) do
+        return self:_findExportSeperated(tag)
+    else
+        return self:_findExport(tag)
+    end
+    return export
+end
 
+function Package:_findExport(tag)
+
+    local export = nil
+    for _, p in ipairs( { "export.lua", ".export.lua" }) do
+        
+        local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+        if contents then
+
+            export = contents
+            break
+        end
+    end
+    return export
+end
+
+function Package:_findExportSeperated(tag)
+
+    local export = nil
+    for _, p in ipairs( { "export.yml", ".export.yml", "export.yaml", ".export.yaml" }) do
+
+        local file = path.join(self:getDefinition(), p)
+        if os.isfile(file) then
+            builds = zpm.ser.loadMultiYaml(file)
+            for _, build in ipairs(builds) do
+                if premake.checkVersion(tag, build.version) then
+                    if build.export then
+                        export = build.export
+                    elseif build.file then
+                        export = zpm.io.readfile(build.file)
+                    end
+                    break
+                end
+            end
+            break
+        end
+    end
+
+    if not export then
+        for _, p in ipairs( { "export.lua", ".export.lua" }) do
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
-                builds = zpm.ser.loadMultiYaml(file)
-                for _, build in ipairs(builds) do
-
-                    if premake.checkVersion(tag, build.version) then
-                        export = build.export
-                        break
-                    end
+                fexport = io.readfile(file)
+                if fexport then
+                    export = fexport
+                    break
                 end
-                break
-            end
-        end
-    else
-        for _, p in ipairs( { "export.lua", ".export.lua" }) do
-
-            local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
-            if contents then
-
-                export = contents
-                break
             end
         end
     end
@@ -257,7 +305,73 @@ function Package:findPackageExport(tag)
     return export
 end
 
-function Package:_processPackageFile(package)
+
+function Package:findPackageExtract(tag) 
+
+    if self:isDefinitionSeperate() then
+        return self:_findExtractSeperated(tag)
+    else
+        return self:_findExtract(tag)
+    end
+end
+
+function Package:_findExtract(tag)
+
+    local extract = nil
+    for _, p in ipairs( { "extract.lua", ".extract.lua" }) do
+        
+        local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+        if contents then
+
+            extract = contents
+            break
+        end
+    end
+
+    return extract
+end
+
+function Package:_findExtractSeperated(tag)
+
+    local extract = nil
+    for _, p in ipairs( { "extract.yml", ".extract.yml", "extract.yaml", ".extract.yaml" }) do
+
+        local file = path.join(self:getDefinition(), p)
+        if os.isfile(file) then
+            builds = zpm.ser.loadMultiYaml(file)
+            for _, build in ipairs(builds) do
+                
+                if premake.checkVersion(tag, build.version) then
+                    if build.extract then
+                        extract = build.extract
+                    elseif build.file then
+                        extract = io.readfile(build.file)
+                    end
+                    break
+                end
+            end
+            break
+        end
+    end
+
+    if not extract then
+        for _, p in ipairs( { "extract.lua", ".extract.lua" }) do
+            local file = path.join(self:getDefinition(), p)
+            if os.isfile(file) then
+                fextract = io.readfile(file)
+                if fextract then
+                    extract = fextract
+                    break
+                end
+            end
+        end
+    end
+
+    return extract
+end
+
+function Package:_processPackageFile(package, tag)
+
     if not package then
         return {}
     end
@@ -303,6 +417,9 @@ function Package:_processPackageFile(package)
             package[type] = nil
         end
     end
+
+    -- load setting definitions
+    self:_loadSettings(tag, package.settings)
    
     return package
 end
@@ -316,6 +433,7 @@ end
 function Package:pullDefinition()
 
     zpm.git.cloneOrPull(self:getDefinition(), self.definition)
+    zpm.git.reset(self:getDefinition())
 end
 
 function Package:pull(hash)
@@ -367,4 +485,13 @@ function Package:_mayPull()
             ((not self.pulled and zpm.cli.update()) or
             not os.isdir(self:getRepository()) or
             (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
+end
+
+function Package:_loadSettings(tag, settings)
+
+    self.loader.config:set({"settings","default",self.fullName, tag}, settings, true)
+    --print("$$$$$$$$$$$$$$$$$")
+    --print(table.tostring(self.loader.config({"settings","default"}),3))
+    --print("################")
+    --print(table.tostring(self.loader.config({"settings","default",self.fullName}),3))
 end

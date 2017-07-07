@@ -99,8 +99,6 @@ if zpm.cli.profile() then
         trigger = "profile",
         description = "Profiles"
     }
-
-    zpm.util.disableMainScript()
 end
 
 function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
