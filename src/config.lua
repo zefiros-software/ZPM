@@ -29,6 +29,7 @@ function Config:init()
     self.values = { }
     self.configNames = {"config.yaml", "config.yml", "config.json"}
     self.mayStore = false
+    self.mayPrint = false
     self.storeFile = path.join(zpm.env.getDataDirectory(), ".config.json")
     self.printf = printf
     
@@ -52,17 +53,15 @@ end
 
 function Config:set(key, value, force)
 
-    local ok, json = pcall(json.decode, value)
-    if ok and json then
-        value = json
+    local ok, ljson = pcall(json.decode, value)
+    if ok and ljson then
+        value = ljson
     end
 
     local cursor = self:__call(key, value, true)
     if cursor then
         self:_store(key, value, false, force)
-        if not force then
-            return self:print(key)
-        end
+        return self:print(key)
     else
         errorf("Failed to find the complete key '%s'.", key)
     end
@@ -70,9 +69,9 @@ end
 
 function Config:add(key, value)
 
-    local ok, json = pcall(zpm.json.decode, value)
-    if ok and json then
-        value = json
+    local ok, ljson = pcall(json.decode, value)
+    if ok and ljson then
+        value = ljson
     end
 
     local cursor = self:_findKey(self.values, key, function(cursor, key)
@@ -103,7 +102,10 @@ function Config:print(key)
         end
         str = string.format("\nValue '%s' is set to:\n%s", key, c)
     end )
-    self.printf(str)
+    
+    if self.mayPrint then
+        self.printf(str)
+    end
     return str
 end
 
@@ -126,9 +128,9 @@ function Config:_store(keys, value, add, force)
     add = iif(add ~= nil, add, false)
     local config = { }
     if os.isfile(self.storeFile) then
-        local ok, json = pcall(json.decode, zpm.util.readAll(self.storeFile))
+        local ok, ljson = pcall(json.decode, zpm.util.readAll(self.storeFile))
         if ok then
-            config = json
+            config = ljson
         end
     end
 

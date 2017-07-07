@@ -27,8 +27,9 @@ newaction {
     description = "Interacts with the ZPM configuration",
     execute = function()
         local help = false
-
+        
         zpm.loader.config.mayStore = true
+        zpm.loader.config.mayPrint = true
         zpm.util.disableMainScript()
 
         if #_ARGS > 1 then
