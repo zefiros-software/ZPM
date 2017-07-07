@@ -53,6 +53,7 @@ end
 
 function Config:set(key, value, force)
 
+    value = table.deepcopy(value)
     local ok, ljson = pcall(json.decode, value)
     if ok and ljson then
         value = ljson
@@ -69,6 +70,7 @@ end
 
 function Config:add(key, value)
 
+    value = table.deepcopy(value)
     local ok, ljson = pcall(json.decode, value)
     if ok and ljson then
         value = ljson
@@ -89,7 +91,7 @@ end
 
 function Config:get(key)
 
-    return self:__call(key)
+    return table.deepcopy(self:__call(key))
 end
 
 function Config:print(key)
@@ -127,7 +129,7 @@ function Config:_store(keys, value, add, force)
 
     add = iif(add ~= nil, add, false)
     local config = { }
-    if os.isfile(self.storeFile) then
+    if self.storeFile and os.isfile(self.storeFile) then
         local ok, ljson = pcall(json.decode, zpm.util.readAll(self.storeFile))
         if ok then
             config = ljson
@@ -144,8 +146,10 @@ function Config:_store(keys, value, add, force)
                 cursor[key] = value
             end
         end
-        zpm.util.writeAll(self.storeFile, json.encode(config, {pretty=true}))
-    end , true, true)
+        if self.storeFile then
+            zpm.util.writeAll(self.storeFile, json.encode(config, {pretty=true}))
+        end
+    end, true, true)
 end
 
 function Config:_loadFile(file)
@@ -163,9 +167,9 @@ function Config:_isYAML(file)
     return file:contains(".yml") or file:contains(".yaml")
 end
 
-function Config:_loadJSON(json)
+function Config:_loadJSON(ljson)
 
-    self.values = zpm.util.mergeAppend(self.values, json)
+    self.values = zpm.util.mergeAppend(self.values, ljson)
 end
 
 function Config:_loadOverideFile(directory)

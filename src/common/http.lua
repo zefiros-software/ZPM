@@ -30,11 +30,9 @@ function Http:init(loader)
 end
 
 function Http:get(url, headers, extra)
-
-    headers = iif(headers == nil, { }, headers)
     
     local response, result, code = http.get(url, { 
-        headers = headers
+        headers = self:_convertHeaders(headers)
     })
 
     return response
@@ -43,7 +41,7 @@ end
 function Http:download(url, outFile, headers)
     
     local response, code = http.download(url, outFile, { 
-        headers = headers
+        headers = self:_convertHeaders(headers)
     })
    
     return response
@@ -91,4 +89,20 @@ function Http:downloadFromTarGz(url, pattern)
     local dest = path.join(self.loader.temp, os.uuid())
     zpm.assert(os.mkdir(dest), "Failed to create temporary directory '%s'!", dest)
     return self:downloadFromTarGzTo(url, dest, pattern)
+end
+
+function Http:_convertHeaders(headers)
+
+    headers = iif(headers == nil, { }, headers)
+
+    if not zpm.util.isArray(t) then
+        local nheaders = {}
+        for k, v in pairs(headers) do
+            table.insert(nheaders, string.format("%s: %s", k, v))
+        end
+
+        return nheaders
+    end
+
+    return headers
 end

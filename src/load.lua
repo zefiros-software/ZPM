@@ -31,6 +31,7 @@ dofile "libraries.lua"
 dofile "project.lua"
 dofile "solution.lua"
 dofile "solver.lua"
+dofile "tree.lua"
 dofile "builder.lua"
 dofile "api.lua"
 

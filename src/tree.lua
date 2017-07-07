@@ -22,11 +22,12 @@
 -- @endcond
 --]]
 
-dofile "common/testGithub.lua"
-dofile "common/testUtil.lua"
-dofile "common/testHttp.lua"
-dofile "common/testEnv.lua"
+Tree = newclass "Tree"
 
-dofile "testLoader.lua"
-dofile "testConfig.lua"
---dofile "testInstall.lua"
+function Tree:init(loader, tree)
+
+    self.loader = loader
+    self.tree = tree
+
+    print(table.tostring(self.tree,5))
+end

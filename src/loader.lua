@@ -27,9 +27,12 @@ Loader = newclass "Loader"
 function Loader:init()
 
     self:_preInit()
-
+    
     self.config = Config()
     self.config:load()
+
+    self.settings = Config()
+    self.settings.storeFile = nil
 
     self.cacheTime = self.config("cache.temp.cacheTime")
 

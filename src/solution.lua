@@ -158,7 +158,7 @@ function Solution:expand(best, beam)
         end
 
         local versions = self:_enumerateVersions()
-
+        
         local l = self:_carthesian(table.deepcopy(versions), beam)
         for _, solved in ipairs(l) do
     
@@ -312,7 +312,7 @@ function Solution:load()
     
         if self.cursor.definition.public and self.cursor.definition.public[type] then
         
-            if not self.cursor.private then
+            if not self.cursor.public then
                 self.cursor.public = {}
             end
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
@@ -322,6 +322,12 @@ function Solution:load()
                 table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {i}))
             end
         end
+    end            
+    if not self.cursor.private then
+        self.cursor.private = {}
+    end
+    if not self.cursor.public then
+        self.cursor.public = {}
     end
 end
 
@@ -359,6 +365,7 @@ function Solution:_enumeratePublicVersions()
     
         --print(table.tostring(self.tree.closed,10), "@")
         for _, c in ipairs(self.tree.closed.public) do
+            c = zpm.util.indexTable(self.tree, c)
             if d.package == c.package then
                 if premake.checkVersion(c.version, d.versionRequirement) then
                     table.insert(pubVersions, {c.version})
@@ -415,6 +422,7 @@ function Solution:_extractNode(node, isLock)
 end
 
 function Solution:_extractDependencies(dependencies, result, isLock)
+
     if not dependencies then
         return
     end

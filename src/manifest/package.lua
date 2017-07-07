@@ -222,7 +222,6 @@ function Package:findPackageDefinition(tag)
 
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
-
                 package = self:_processPackageFile(zpm.ser.loadFile(file), tag)
                 break
             end
@@ -448,7 +447,7 @@ function Package:pull(hash)
         return
     end
 
-    if self:_mayPull() or not hasHash then
+    if self:_mayPull() or (hash and not hasHash) then
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
@@ -459,12 +458,10 @@ function Package:pull(hash)
         end
 
     end
-    if zpm.cli.ignoreLock() or needsUpdate or self:_mayPull() then
-        local tags = zpm.git.getTags(self:getRepository())
-        self.newest = tags[1]
-        self.oldest = tags[#tags]
-        self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
-    end
+    local tags = zpm.git.getTags(self:getRepository())
+    self.newest = tags[1]
+    self.oldest = tags[#tags]
+    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
     
     self.pulled = true
 end
@@ -482,16 +479,15 @@ end
 function Package:_mayPull()
 
     return self.manifest:mayPull() and
-            ((not self.pulled and zpm.cli.update()) or
+            ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or
             not os.isdir(self:getRepository()) or
             (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
 end
 
 function Package:_loadSettings(tag, settings)
-
-    self.loader.config:set({"settings","default",self.fullName, tag}, settings, true)
-    --print("$$$$$$$$$$$$$$$$$")
-    --print(table.tostring(self.loader.config({"settings","default"}),3))
-    --print("################")
-    --print(table.tostring(self.loader.config({"settings","default",self.fullName}),3))
+    
+    if self.fullName and tag then
+        settings = iif(settings == nil, {}, settings)
+        self.loader.settings:set({self.fullName, tag}, settings, true)
+    end
 end

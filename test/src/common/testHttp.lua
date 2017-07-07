@@ -83,7 +83,7 @@ end
 
 function Test:testHttp_downloadFromTarGzTo()   
  
-    if not os.is("windows") then
+    if not os.ishost("windows") then
         local loader = Loader()
         local downloaded = loader.http:downloadFromTarGzTo("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz", "./", "premake5")
     
@@ -111,7 +111,7 @@ end
 
 function Test:testHttp_downloadFromTarGz()   
  
-    if not os.is("windows") then
+    if not os.ishost("windows") then
         local loader = Loader()
         local downloaded = loader.http:downloadFromTarGz("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     
@@ -137,7 +137,7 @@ end
 
 function Test:testHttp_downloadFromArchive2()   
  
-    if not os.is("windows") then
+    if not os.ishost("windows") then
         local loader = Loader()
         local downloaded = loader.http:downloadFromArchive("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-linux.tar.gz")
     

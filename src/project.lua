@@ -79,7 +79,7 @@ function Project:getLockFile()
 end
 
 function Project:_extractNode(node, access, printStats)
-
+    
     for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
         local extractDir = self.loader[type]:getExtractDirectory()
         if node[access] and node[access][type] and extractDir then
