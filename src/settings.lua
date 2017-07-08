@@ -23,10 +23,10 @@
 --]]
 
 zpm.settings = {
-    behaviour={}
+    reduce={}
 }
 
-function zpm.settings.behaviour.anyTrue(conflicts)
+function zpm.settings.reduce.anyTrue(conflicts)
 
     for _, c in ipairs(conflicts) do
         if c then
@@ -36,7 +36,7 @@ function zpm.settings.behaviour.anyTrue(conflicts)
     return false
 end
 
-function zpm.settings.behaviour.anyFalse(conflicts)
+function zpm.settings.reduce.anyFalse(conflicts)
 
     for _, c in ipairs(conflicts) do
         if not c then

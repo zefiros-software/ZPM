@@ -50,9 +50,47 @@ function Project:solve()
     self.solution = solution:extract()
     os.writefile_ifnotequal(json.encode_pretty(solution:extract(true)), self:getLockFile())
 
+    self:bake()
     self:extract()
 
     self.builder = Builder(self.loader, self.solution)
+end
+
+function Project:bake()
+
+    self.solution:iterateAccessibilityDFS(function(access, type, node)
+
+        if node.name and node.settings then
+            for setting, value in pairs(node.settings) do
+                if self.loader.settings({type, node.name, node.hash, setting}) then
+                    self.loader.settings:add({type, node.name, node.hash, setting, "values"}, value)
+                end
+            end
+        end
+
+
+        --self.loader.settings:add({node.name, node.hash, "values"})
+        --[[
+        for _, access in ipairs({"public", "private"}) do
+        
+            for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+                local pkgs = zpm.util.indexTable(node,{access, type})
+                if pkgs then            
+                    table.sort(pkgs, function(a,b) return a.name < b.name end)
+                    for _, pkg in ipairs(pkgs) do
+                        --print(access, type, pkg.name, "$$$$$$$$$$$")
+                        --print(table.tostring(node.definition,3))
+                        local settings = zpm.util.indexTable(node, {access, type, pkg.name, "settings"})
+                        self.loader.settings:add({pkg.name, pkg.hash, "values"}, settings)
+                    end
+                end
+            end
+        end
+        --]]
+
+        return true
+    end, true)
+    --print(table.tostring(self.loader.settings.values,6), "@")
 end
 
 function Project:extract()
@@ -60,8 +98,44 @@ function Project:extract()
     local stats = {
         updated = 0
     }
-    self:_extractNode(self.solution, "public", stats)
-    self:_extractNode(self.solution, "private", stats)
+    
+    self.solution:iterateAccessibilityDFS(function(access, type, node)
+    
+        local extractDir = self.loader[type]:getExtractDirectory()
+        if extractDir then
+            if not os.isdir(extractDir) then
+                zpm.util.recurseMkdir(extractDir)
+                noticef("Creating directory '%s'", extractDir)
+            end
+            local gitignore = path.join(extractDir, ".gitignore")
+            if not os.isfile(gitignore) then
+                zpm.util.writeAll(gitignore, "*")
+            end    
+
+            node.location = node.package:getExtractDirectory(extractDir, node)
+            if node.package:needsExtraction(extractDir, node) then   
+                if not stats[type] then
+                    stats[type] = true
+                    noticef("Extracting %s to '%s'", type, extractDir)
+                end                  
+                if node.package:extract(extractDir, node) then
+                    stats.updated = stats.updated + 1
+                end
+            end
+            local version = node.version
+            if not version then
+                version = node.tag
+            end
+
+            if version then
+                node.export = node.package:findPackageExport(version)
+            end
+
+            return true
+        end
+
+        return false
+    end)
 
     if stats.updated == 0 then
         noticef("No changes in your dependencies!")
@@ -76,45 +150,4 @@ end
 function Project:getLockFile()
 
     return path.join(_WORKING_DIR, "zpm.lock")
-end
-
-function Project:_extractNode(node, access, printStats)
-    
-    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
-        local extractDir = self.loader[type]:getExtractDirectory()
-        if node[access] and node[access][type] and extractDir then
-            if not os.isdir(extractDir) then
-                zpm.util.recurseMkdir(extractDir)
-                noticef("Creating directory '%s'", extractDir)
-            end
-            local gitignore = path.join(extractDir, ".gitignore")
-            if not os.isfile(gitignore) then
-                zpm.util.writeAll(gitignore, "*")
-            end
-
-            for _, n in ipairs(node[access][type]) do
-                n.location = n.package:getExtractDirectory(extractDir, n)
-                if n.package:needsExtraction(extractDir, n) then   
-                    if not printStats[type] then
-                        printStats[type] = true
-                        noticef("Extracting %s to '%s'", type, extractDir)
-                    end                  
-                    if n.package:extract(extractDir, n) then
-                        printStats.updated = printStats.updated + 1
-                    end
-                end
-                local version = n.version
-                if not version then
-                    version = n.tag
-                end
-
-                if version then
-                    n.export = n.package:findPackageExport(version)
-                end
-                
-                self:_extractNode(n, "public", printStats)
-                self:_extractNode(n, "private", printStats)
-            end
-        end
-    end
 end

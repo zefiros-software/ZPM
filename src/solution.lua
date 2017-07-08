@@ -65,7 +65,8 @@ function Solution:_loadNodeFromLock(tree, node, lock)
     if not lock then
         return
     end
-    
+
+    node.definition = node.package:findPackageDefinition(lock.hash)    
     local dpkgs = {}
     for _, access in ipairs({"public", "private"}) do
         node[access] = {}
@@ -112,10 +113,9 @@ function Solution:_loadNodeFromLock(tree, node, lock)
     
     for _, access in ipairs({"public", "private"}) do
         -- check whether the lockfile version is a complete solution
-        local definition = node.package:findPackageDefinition(lock.hash)
-        if definition and definition[access] then
-            for ptype, pubs in pairs(definition[access]) do
-                for _, pub in ipairs(pubs) do
+        if node.definition and node.definition[access] then
+            for ptype, pubs in pairs(node.definition[access]) do
+                for i, pub in ipairs(pubs) do
                     if zpm.util.indexTable(dpkgs, {access, ptype, pub.name}) then  
                         local vcheckFailed = false
                         local lversion
@@ -123,6 +123,13 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                             lversion = version
                             if pub.version and not premake.checkVersion(version, pub.version) then
                                 vcheckFailed = true
+                            else
+
+                                for _, upkg in ipairs(node[access]) do
+                                    if upkg.type == ptype and upkg.name == pub.name then
+                                        upkg.settings = pub.settings
+                                    end
+                                end
                             end
                         end
 
@@ -138,6 +145,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
             end
         end
     end
+
     return true
 end
 
@@ -251,13 +259,14 @@ function Solution:_copyNode(node)
             table.insert(private, self:_copyNode(n))
         end
     end
-
+    
     return {
         package = node.package,
         public = public,
         private = private,
         type = node.type,
         name = node.name,
+        settings = node.settings,
         version = node.version,
         versionRequirement = node.versionRequirement,
         tag = node.tag,
@@ -266,10 +275,11 @@ function Solution:_copyNode(node)
 end
 
 function Solution:extract(isLock)
-    if isLock == nil then
-        isLock = isLock
+
+    if isLock then
+        return self:_extractNode(self.tree, isLock)
     end
-    return self:_extractNode(self.tree, isLock)
+    return Tree(self.solver.loader, self:_extractNode(self.tree, isLock))
 end
 
 function Solution:isComplete()
@@ -338,6 +348,7 @@ function Solution:_loadDependency(cursor, d, type, loader)
         name = d.name,
         versionRequirement = d.version,
         package = loader:get(vendor, name),
+        settings = d.settings,
         type = type
     }
 
@@ -406,7 +417,14 @@ function Solution:_extractNode(node, isLock)
 
     local result = {
         public = {},
-        private = {}        
+        private = {},
+        
+        name = node.package.fullName,
+        versionRequirement = node.versionRequirement,
+        version = node.version,
+        hash = node.hash,
+        settings = node.settings,
+        tag = node.tag 
     }
     self:_extractDependencies(node.private, result.private, isLock)
     self:_extractDependencies(node.public, result.public, isLock)
@@ -437,19 +455,10 @@ function Solution:_extractDependencies(dependencies, result, isLock)
         end
         
         local extract = self:_extractNode(d, isLock)
-        local t = {
-            name = d.package.fullName,
-            versionRequirement = d.versionRequirement,
-            version = d.version,
-            hash = d.hash,
-            tag = d.tag,
-            public =  extract.public,
-            private = extract.private
-        }
         if not isLock then
-            t.package = d.package
+            extract.package = d.package
         end
-        table.insert(c, t)
+        table.insert(c, extract)
     end
 end
 

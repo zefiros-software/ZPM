@@ -56,3 +56,8 @@ function zpm.api.extract.export.extractdir(package)
         end
     end
 end
+
+function zpm.api.extract.export.setting(package)
+
+    return zpm.setting
+end

@@ -28,6 +28,61 @@ function Tree:init(loader, tree)
 
     self.loader = loader
     self.tree = tree
+end
 
-    print(table.tostring(self.tree,5))
+
+function Tree:iterateAccessibilityDFS(nodFunc, useRoot)
+
+    useRoot = iif(useRoot == nil, false, useRoot)
+    self:_walkAccessibilityDFS(self.tree, "public", nodFunc)
+    self:_walkAccessibilityDFS(self.tree, "private", nodFunc)
+
+    if useRoot then
+        nodFunc("public", self.tree.type, self.tree)
+    end
+end
+
+function Tree:iterateDFS(nodFunc, useRoot)
+
+    useRoot = iif(useRoot == nil, false, useRoot)
+    self:_walkDependencyDFS(self.tree, nodFunc)
+
+    if useRoot then
+        nodFunc(self.tree)
+    end
+end
+
+function Tree:_walkDependencyDFS(cursor, nodFunc)
+
+    for _, access in ipairs({"private", "public"}) do
+        for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+            local pkgs = zpm.util.indexTable(cursor,{access, type})
+            if pkgs then            
+                table.sort(pkgs, function(a,b) return a.name < b.name end)
+                for _, pkg in ipairs(pkgs) do
+                    self:_walkDependencyDFS(pkg, nodFunc)
+                end
+            end
+        end
+    end
+
+    nodFunc(cursor)
+end
+
+function Tree:_walkAccessibilityDFS(node, access, nodFunc)
+    
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+        if node[access] and node[access][type] then        
+        
+            table.sort(node[access][type], function(a,b) return a.name < b.name end)
+            for _, n in ipairs(node[access][type]) do
+
+                if nodFunc(access, type, n) then
+                            
+                    self:_walkAccessibilityDFS(n, "public", func)
+                    self:_walkAccessibilityDFS(n, "private", func)
+                end
+            end
+        end
+    end
 end

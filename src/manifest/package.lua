@@ -108,8 +108,12 @@ function Package:extract(dir, node)
             
             local current = os.getcwd()
             os.chdir(self:getRepository())
-            node.extractdir = 
+
+            self.loader.project.cursor = node
+
             zpm.sandbox.run(extract, { env = zpm.api.load("extract", node), quota = false })
+
+            self.loader.project.cursor = nil
             os.chdir(current)
         else
             if zpm.git.hasSubmodules(self:getRepository()) then            
@@ -488,6 +492,6 @@ function Package:_loadSettings(tag, settings)
     
     if self.fullName and tag then
         settings = iif(settings == nil, {}, settings)
-        self.loader.settings:set({self.fullName, tag}, settings, true)
+        self.loader.settings:set({self.manifest.name, self.fullName, tag}, settings, true)
     end
 end

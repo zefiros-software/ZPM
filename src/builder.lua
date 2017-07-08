@@ -28,60 +28,61 @@ function Builder:init(loader, solution)
 
     self.loader = loader
     self.solution = solution
-    self.cursor = self.solution
+    self.cursor = self.solution.tree
     self.settings = {}
 end
 
 function Builder:walkDependencies()
     
     zpm.meta.exporting = true
-    self:_walkDependency(self.solution)
-end
 
-function Builder:_walkDependency(cursor)
+    self.solution:iterateDFS(function(node)    
 
-    for _, access in ipairs({"private", "public"}) do
-        for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
-            local pkgs = zpm.util.indexTable(cursor,{access, type})
-            if pkgs then
-                for _, pkg in ipairs(pkgs) do
-                    self:_walkDependency(pkg)
-                end
-            end
-        end
-    end
-
-    filter {}
-    if cursor.projects then
-        for name, proj in pairs(cursor.projects) do
-            if proj.workspaces then
-                for _, wrkspace in ipairs(proj.workspaces) do
+        if node.projects then
+            for name, proj in pairs(node.projects) do
+                if proj.workspaces then
+            
+                    for _, wrkspace in ipairs(proj.workspaces) do
            
-                    workspace(wrkspace)
-                    project(name)
+                        filter {}
+                        workspace(wrkspace)
+                        project(name)
                 
-                    if proj.uses then
-                        for uname, uproj in pairs(proj.uses) do     
-                            if uproj.package then
-                                if uproj.package.projects then
-                                    for iproj, ipackage in pairs(uproj.package.projects) do
-                                        self:_importPackage(iproj, ipackage)
+                        if proj.uses then
+                    
+                            local useNames = table.keys(proj.uses)
+                            -- sort for deterministic anwsers
+                            table.sort(useNames)
+
+                            for _, uname in ipairs(useNames) do
+                                uproj = proj.uses[uname]    
+                                if uproj.package then
+                                    if uproj.package.projects then
+                                
+                                        local iprojs = table.keys(uproj.package.projects)
+                                        -- sort for deterministic anwsers
+                                        table.sort(iprojs)
+                                        for _, iproj in ipairs(iprojs) do
+                                            self:_importPackage(iproj, uproj.package.projects[iproj])
+                                        end
                                     end
-                                end
-                            else
-                                if cursor.aliases and cursor.aliases[uname] then
-                                    local iproj = cursor.aliases[uname]
-                                    if cursor and cursor.projects and cursor.projects[iproj] then
-                                        self:_importPackage(iproj, cursor.projects[iproj])
+                                else
+                                    if node.aliases and node.aliases[uname] then
+                                        local iproj = node.aliases[uname]
+                                        if node.projects and node.projects[iproj] then
+                                            self:_importPackage(iproj, node.projects[iproj])
+                                        end
                                     end
                                 end
                             end
                         end
                     end
-                end
+                end    
             end
         end
-    end
+    end)
+    
+    zpm.meta.exporting = false
 end
 
 function Builder:_importPackage(name, package)
@@ -100,7 +101,7 @@ function Builder:build(package, type)
     local prev = self.cursor
     local found = nil
     for _, access in ipairs({"private", "public"}) do
-        local pkgs = zpm.util.indexTable(self.solution,{access, type})
+        local pkgs = zpm.util.indexTable(self.cursor,{access, type})
         if pkgs then
             for _, pkg in ipairs(pkgs) do
                 if pkg.name == package and not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, package}) then
@@ -116,6 +117,7 @@ function Builder:build(package, type)
                         
                         zpm.meta.package = pkg
 
+                        self.loader.project.cursor = pkg
                         self.cursor = pkg
                         self.cursor.bindir = path.join(extractDir, "@bin")
                         self.cursor.objdir = path.join(extractDir, "@obj", pkg.name, pkg.hash)

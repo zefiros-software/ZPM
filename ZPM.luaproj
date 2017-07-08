@@ -69,6 +69,7 @@
     <Compile Include="src\registry\registry.lua" />
     <Compile Include="src\solution.lua" />
     <Compile Include="src\solver.lua" />
+    <Compile Include="src\tree.lua" />
     <Compile Include="test\action\test.lua" />
     <Compile Include="test\extern\luacov.lua" />
     <Compile Include="test\extern\luacov\defaults.lua" />

@@ -119,6 +119,11 @@ function zpm.api.libraries.export.uses(package)
     return zpm.uses
 end
 
+function zpm.api.libraries.export.setting(package)
+
+    return zpm.setting
+end
+
 function zpm.api.libraries.export.export(package)
 
     return zpm.export
