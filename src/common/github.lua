@@ -57,6 +57,7 @@ end
 
 function Github:getReleases(organisation, repository, pattern, options)
     pattern = iif(pattern ~= nil, pattern, ".*")
+    options = iif(options ~= nil, options, {})
     local response = json.decode(self:getUrl("repos", organisation, repository, "releases"))
 
     local releases = { }
