@@ -38,7 +38,7 @@ end
 
 function Test:testLoader_fixMainScriptZpmlua()
 
-    _MAIN_SCRIPT = ""
+    _MAIN_SCRIPT = "premake5.lua"
 
     local zpmFile = path.join(_MAIN_SCRIPT_DIR, "zpm.lua")
     local f = io.open(zpmFile, "w")
@@ -54,6 +54,24 @@ function Test:testLoader_fixMainScriptZpmlua()
     _MAIN_SCRIPT = ""
 end
 
+function Test:testLoader_fixMainScriptDisabledZpmlua()
+
+    _MAIN_SCRIPT = ""
+
+    local zpmFile = path.join(_MAIN_SCRIPT_DIR, "zpm.lua")
+    local f = io.open(zpmFile, "w")
+    f:write("")
+    f:close()
+
+    local ld = Loader:new()
+
+    u.assertEquals(_MAIN_SCRIPT, "")
+
+    os.remove(zpmFile)
+
+    _MAIN_SCRIPT = ""
+end
+
 function Test:testLoader_fixMainScriptZpmlua2()
 
     _ACTION = "self-update"
@@ -61,7 +79,7 @@ function Test:testLoader_fixMainScriptZpmlua2()
 
     local ld = Loader:new()
 
-    u.assertEquals(_MAIN_SCRIPT, ".")
+    u.assertEquals(_MAIN_SCRIPT, "")
 
     _ACTION = ""
 end
