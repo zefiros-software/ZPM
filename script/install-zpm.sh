@@ -20,7 +20,7 @@ else
 fi
 
 curl -L -o premake5.tar.gz $premakeURL
-tar xzf premake5.tar.gz
+tar -xvzf premake5.tar.gz
 chmod a+x premake5
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor

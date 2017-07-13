@@ -34,7 +34,7 @@ end
 function zpm.package.semverDist(v1, v2)
 
     return (v1.major * 100000 + v1.minor * 1000 + v1.patch) -
-            (v2.major * 100000 + v2.minor * 1000 + v2.patch)
+           (v2.major * 100000 + v2.minor * 1000 + v2.patch)
 end
 
 Package = newclass "Package"
