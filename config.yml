@@ -60,6 +60,14 @@ install:
         # can be switched to a more unstable branch to 
         # get new features early
         branch: features/refactor
+    premake:
+        vendor: Zefiros-Software
+        name: premake-core
+        release:
+            match: 
+                - zpm
+                - dev
+            except: []
     manifests:
         # These key value defines what kind of packages 
         # may be loaded withing ZPM. To add new package

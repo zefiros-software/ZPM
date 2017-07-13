@@ -173,7 +173,9 @@ end
 function Installer:_getPremakeVersions()
 
     if not self.__PremakeVersion then
-        self.__PremakeVersion = self.loader.github:getReleases("premake", "premake-core", string.format("premake-.*-%s.*", os.host()))
+        local vendor = self.loader.config("install.premake.vendor")
+        local name = self.loader.config("install.premake.name")
+        self.__PremakeVersion = self.loader.github:getReleases(vendor, name, ("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
     end
 
     return self.__PremakeVersion

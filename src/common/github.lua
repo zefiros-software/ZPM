@@ -55,7 +55,7 @@ function Github:getUrl(prefix, organisation, repository, resource)
     return self:get(url)
 end
 
-function Github:getReleases(organisation, repository, pattern)
+function Github:getReleases(organisation, repository, pattern, options)
     pattern = iif(pattern ~= nil, pattern, ".*")
     local response = json.decode(self:getUrl("repos", organisation, repository, "releases"))
 
@@ -63,7 +63,17 @@ function Github:getReleases(organisation, repository, pattern)
     table.foreachi(response, function(value)
 
         local ok, vers = pcall(_getAssetsVersion, value["tag_name"])
-        if ok then
+        
+        local matches = true
+        table.foreachi(options["match"], function(match)
+            matches = matches and value["tag_name"]:match(match)
+        end)
+        local except = true
+        table.foreachi(options["except"], function(except)
+            except = except and not value["tag_name"]:match(except)
+        end)
+
+        if ok and (options and matches and except) then
 
             local assetTab = { }
             table.foreachi(value["assets"], function(asset)
