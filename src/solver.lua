@@ -45,13 +45,12 @@ function Solver:solve(lock)
         end
     end
     if not hasInitial then
-        noticef("Finding an initial configuration")
         -- do an initial DFS biased pass to get an upper bound
         local rootSolution = self:getRootSolution()
+
         local stack = Stack()
         stack:put(rootSolution,rootSolution:getCost())
         cost, heuristic = self:_branchAndBound(stack, math.huge, nil, 10, false, true)
-
     end
     
     if zpm.cli.update() or not lock then

@@ -169,7 +169,7 @@ function Test:testConfig_Set4()
     
     conf:set({"foo", "bar", "foo2"}, { bar2 = 2 }, true)
     conf:set({"foo", "bar", "foo3"}, { bar3 = 3 }, true)
-    print(table.tostring(conf("foo")))
+
     u.assertEquals(conf("foo"), { bar = { foo2 = { bar2 = 2 }, foo3= {bar3= 3} } })
     u.assertEquals(conf("foo.bar.foo2.bar2"), 2)
     u.assertEquals(conf("foo.bar.foo3.bar3"), 3)

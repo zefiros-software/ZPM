@@ -221,6 +221,19 @@ function zpm.util.isAlphaNumeric(str)
     return str == str:gsub("[^[%w-_]]*", "")
 end
 
+function zpm.util.reverse(tbl)
+
+	local len = #tbl
+	local ret = {}
+
+	for i = len, 1, -1 do
+		ret[ len - i + 1 ] = tbl[ i ]
+	end
+
+	return ret
+
+end
+
 function zpm.util.concat(t1, t2)
     if type(t1) ~= "table" then
         t1 = {t1}

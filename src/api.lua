@@ -61,18 +61,18 @@ function zpm.setting(setting)
     
     local cursor = zpm.loader.project.cursor
     local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.hash, setting})
-    print(setting, zpm.util.tostring(tab), "@")  
-    if not tab.values then
+    local values = zpm.util.reverse(tab.values)
+    if not values then
         return tab.default
     end
 
     if tab.reduce then
         if zpm.settings.reduce[tab.reduce] then
-            zpm.settings.reduce[tab.reduce](tab.values)
+            zpm.settings.reduce[tab.reduce](values)
         else
             -- @todo
         end
     end
 
-    return tab.values
+    return values
 end

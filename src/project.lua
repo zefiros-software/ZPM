@@ -48,8 +48,8 @@ function Project:solve()
     local cost, solution = self.solver:solve(lock)
 
     self.solution = solution:extract()
-    os.writefile_ifnotequal(json.encode_pretty(solution:extract(true)), self:getLockFile())
 
+    self:_writeLock(solution)
     self:bake()
     self:extract()
 
@@ -150,4 +150,12 @@ end
 function Project:getLockFile()
 
     return path.join(_WORKING_DIR, "zpm.lock")
+end
+
+function Project:_writeLock(solution)
+
+    local lock = solution:extract(true)
+    if #lock > 0 then
+        os.writefile_ifnotequal(json.encode_pretty(), self:getLockFile())
+    end
 end
