@@ -129,7 +129,7 @@ function Installer:_installNewVersion(asset)
 
     zpm.assert(file, "Failed to download '%s'!", asset.url)
 
-    local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.is("windows"), "zpm.exe", "zpm"))
+    local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpm.exe", "zpm"))
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
     end
@@ -184,7 +184,7 @@ end
 
 function Installer:_installInPath()
 
-    if os.is("windows") then
+    if os.ishost("windows") then
     
         local cPath = os.getenv( "PATH" )
         local dir = zpm.env.getBinDirectory()
@@ -202,7 +202,7 @@ function Installer:_installInPath()
             os.executef( "@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir )
         end
     
-    elseif os.is("linux") or os.is("macosx") then
+    elseif os.hostis("linux") or os.hostis("macosx") then
     
         self:_exportPath()
     
@@ -213,7 +213,7 @@ end
 
 function Installer:_exportPath()
 
-    local prof = path.join( os.getenv("HOME"), iif(os.is("macosx"), ".bash_profile", ".bashrc") )
+    local prof = path.join( os.getenv("HOME"), iif(os.hostis("macosx"), ".bash_profile", ".bashrc") )
     local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
 
     if os.isfile( prof ) then
