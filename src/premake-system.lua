@@ -23,9 +23,9 @@ local function _updateRepo(destination, url, name, branch)
     else
         printf(" - Creating '%s'", name)
         if branch then
-            os.executef("git clone -v -b %s --recurse --progress \"%s\" \"%s\"", branch, url, destination)
+            os.executef("git clone -v -b %s --recurse --depth 1 --progress \"%s\" \"%s\"", branch, url, destination)
         else
-            os.executef("git clone -v --recurse --progress \"%s\" \"%s\"", url, destination)
+            os.executef("git clone -v --recurse --depth 1 --progress \"%s\" \"%s\"", url, destination)
         end
     end
 end
