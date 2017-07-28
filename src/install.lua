@@ -202,7 +202,7 @@ function Installer:_installInPath()
             os.executef( "@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir )
         end
     
-    elseif os.hostis("linux") or os.hostis("macosx") then
+    elseif os.ishost("linux") or os.ishost("macosx") then
     
         self:_exportPath()
     
