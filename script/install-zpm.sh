@@ -37,8 +37,4 @@ cd $root
 
 rm -rf $install_dir
 
-if [[ "$OS" == "Darwin" ]]; then
-    source ~/.profile
-else
-    source ~/.profile
-fi
+source ~/.profile

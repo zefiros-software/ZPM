@@ -198,9 +198,7 @@ function Config:_findKey(tab, key, func, ensureTable, createKeys)
 
         if i == #sep then
             if ensureTable then
-                if not cursor[key] then
-                    cursor[key] = { }
-                elseif type(cursor[key]) ~= "table" then
+                if type(cursor[key]) ~= "table" then
                     cursor[key] = { cursor[key] }
                 end
             end

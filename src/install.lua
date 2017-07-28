@@ -208,14 +208,14 @@ function Installer:_installInPath()
         self:_exportPath()
 
     else
-        zpm.assert(false, "Current platform '%s' not supported!", os.get())
+        zpm.assert(false, "Current platform '%s' not supported!", os.host())
     end
 end
 
 function Installer:_exportPath()
 
     local prof = path.join(os.getenv("HOME"), ".profile")
-    local line =("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
+    local line =("export PATH=\"$PATH:%s\""):format(zpm.env.getBinDirectory())
 
     if not os.isfile(prof) then
         warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file did not exist!\nWe created the file instead.", line, prof)
