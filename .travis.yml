@@ -23,6 +23,7 @@ matrix:
 install:
     - . script/install-zpm.sh
     - ls /home/travis/.zpm/bin
+    - echo $PATH
 script:
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
