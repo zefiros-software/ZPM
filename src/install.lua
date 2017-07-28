@@ -134,7 +134,7 @@ function Installer:_installNewVersion(asset)
         zpm.util.hideProtectedFile(globalCmd)
     end
     
-    printf("Installed in '%s' in directory '%s'", globalCmd, zpm.env.getBinDirectory())
+    printf("Installed in '%s'", globalCmd)
 
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
