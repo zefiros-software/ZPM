@@ -109,4 +109,4 @@ install:
     package:
         # The package definition resided in this definition
         fileName: package.yml
-settings: {}
+configuration: {}

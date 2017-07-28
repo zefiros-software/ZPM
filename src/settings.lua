@@ -45,3 +45,21 @@ function zpm.settings.reduce.anyFalse(conflicts)
     end
     return false
 end
+
+function zpm.settings.reduce.allTrue(conflicts)
+    
+    local all = true
+    for _, c in ipairs(conflicts) do
+        all = all and c
+    end
+    return all
+end
+
+function zpm.settings.reduce.allFalse(conflicts)
+
+    local all = true
+    for _, c in ipairs(conflicts) do
+        all = all and not c
+    end
+    return all
+end

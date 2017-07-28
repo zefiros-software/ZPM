@@ -429,13 +429,12 @@ end
 
 function Package:pullRepository()
 
-    zpm.git.cloneOrPull(self:getRepository(), self.repository)
-
+    zpm.git.cloneOrFetch(self:getRepository(), self.repository)
 end
 
 function Package:pullDefinition()
 
-    zpm.git.cloneOrPull(self:getDefinition(), self.definition)
+    zpm.git.cloneOrFetch(self:getDefinition(), self.definition)
     zpm.git.reset(self:getDefinition())
 end
 

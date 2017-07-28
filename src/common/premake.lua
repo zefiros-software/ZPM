@@ -172,7 +172,7 @@ end)
 
 premake.override(premake.main, "preBake", function(base)
 
-    if zpm.loader then
+    if zpm.loader and not zpm.util.isMainScriptDisabled() then
         noticef("Walking dependencies")
         zpm.loader.project.builder:walkDependencies()
     end

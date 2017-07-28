@@ -76,3 +76,8 @@ function zpm.setting(setting)
 
     return values
 end
+
+function zpm.configuration(setting)
+    
+    return zpm.loader.config(setting)
+end

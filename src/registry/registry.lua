@@ -50,7 +50,8 @@ function Registry:_update()
     if self:_mayUpdate() and self.repository then
 
         printf("%%{yellow}Hit: %s", self.repository)
-        zpm.git.cloneOrPull(self.directory, self.repository, self.branch)
+        zpm.git.cloneOrFetch(self.directory, self.repository, self.branch)
+        zpm.git.checkout(self.directory, "HEAD")
     end
 end
 

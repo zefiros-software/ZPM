@@ -33,7 +33,7 @@ end
 
 function Solver:solve(lock)
 
-    local cost, heuristic = math.huge, nil
+    local cost, heuristic, succeeded = math.huge, nil, false
     local hasInitial = false
     if lock ~= nil then
         heuristic = self:getRootSolution()
@@ -50,20 +50,20 @@ function Solver:solve(lock)
 
         local stack = Stack()
         stack:put(rootSolution,rootSolution:getCost())
-        cost, heuristic = self:_branchAndBound(stack, math.huge, nil, 10, false, true)
+        cost, heuristic, succeeded = self:_branchAndBound(stack, math.huge, nil, 10, false, true)
     end
     
-    if zpm.cli.update() or not lock then
+    if (zpm.cli.update() or not lock) and (succeeded or hasInitial) then
     
         noticef("Optimising dependencies")
         -- use a BFS method to optimise
         local queue = Queue()
         local rootSolution = self:getRootSolution()
         queue:put(rootSolution,rootSolution:getCost())
-        cost, heuristic = self:_branchAndBound(queue, cost, heuristic, 50)
+        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 50)
     end
 
-    return cost, heuristic
+    return cost, heuristic, succeeded
 end
 
 function Solver:_branchAndBound(container, b, best, beam, useCompleteSpace, returnFirst)
@@ -124,8 +124,7 @@ function Solver:_branchAndBound(container, b, best, beam, useCompleteSpace, retu
     end
 
     --print(rejected)
-
-    return b, best
+    return b, best, (best and best:isComplete())
 end
 
 function Solver:getRootSolution()

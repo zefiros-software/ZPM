@@ -53,6 +53,7 @@ function Solution:init(solver, tree, cursor, cursorPtr)
     self.cursorPtr = {}
 
     self.indices = nil
+    self.failed = false
 end
 
 function Solution:loadFromLock(lock)
@@ -162,7 +163,9 @@ function Solution:expand(best, beam)
         
         if not self:isOpen() then
             self:nextCursor()
-            self:load()
+            if not self:load() then
+                return {}
+            end
         end
 
         local versions = self:_enumerateVersions()
@@ -284,7 +287,7 @@ end
 
 function Solution:isComplete()
 
-    return (#self.tree.open.public + #self.tree.open.private) == 0
+    return (#self.tree.open.public + #self.tree.open.private) == 0 and not self.failed
 end
 
 function Solution:getCost()
@@ -314,7 +317,10 @@ function Solution:load()
             end
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private"})
             for i, d in ipairs(self.cursor.definition.private[type]) do
-                self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type])
+                if not self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type]) then
+                    self.failed = true
+                    return
+                end
 
                 table.insert(self.tree.open.private, zpm.util.concat(table.deepcopy(ptr), {i}))
             end
@@ -327,7 +333,10 @@ function Solution:load()
             end
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
             for i, d in ipairs(self.cursor.definition.public[type]) do
-                self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type])
+                if not self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type]) then
+                    self.failed = true
+                    return
+                end
 
                 table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {i}))
             end
@@ -339,6 +348,8 @@ function Solution:load()
     if not self.cursor.public then
         self.cursor.public = {}
     end
+
+    return true
 end
 
 function Solution:_loadDependency(cursor, d, type, loader)
@@ -352,11 +363,17 @@ function Solution:_loadDependency(cursor, d, type, loader)
         type = type
     }
 
-    dependency.package:load()
+    if dependency.package then
 
-    table.insert(cursor, dependency)
+        dependency.package:load()
 
-    return dependency
+        table.insert(cursor, dependency)
+
+        return dependency        
+    end
+
+    warningf("Package '%s/%s' does not exist", vendor, name)
+    return nil
 end
 
 function Solution:_enumerateVersions()

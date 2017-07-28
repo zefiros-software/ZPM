@@ -47,13 +47,17 @@ function Project:solve()
 
     local cost, solution = self.solver:solve(lock)
 
-    self.solution = solution:extract()
+    if solution then
+        self.solution = solution:extract()
 
-    self:_writeLock(solution)
-    self:bake()
-    self:extract()
+        self:_writeLock(solution)
+        self:bake()
+        self:extract()
 
-    self.builder = Builder(self.loader, self.solution)
+        self.builder = Builder(self.loader, self.solution)
+    else
+        errorf("Failed to find a configuration satisfying all constraints!")
+    end
 end
 
 function Project:bake()

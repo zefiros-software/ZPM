@@ -63,6 +63,22 @@ function zpm.git.hasSubmodules(destination)
     return out and out:contains("160000")
 end
 
+function zpm.git.setOrigin(destination, url)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
+    local status, errorCode = os.outputof("git remote get-url origin")
+
+    if not status:contains(url)then
+        os.executef("git remote add origin %s", url)
+        os.execute("git branch --set-upstream-to origin/master")
+    end
+
+    os.chdir(current)
+end
+
 function zpm.git.checkout(destination, hash)
 
     local current = os.getcwd()
@@ -81,17 +97,30 @@ end
 
 function zpm.git.fetch(destination, url, branch)
 
+    zpm.git.setOrigin(destination, url)
+
     local current = os.getcwd()
 
     os.chdir(destination)
         
-    os.executef("git fetch -q --tags -j 8 --force --prune %s", url)
+    os.executef("git fetch -q --all -j 8 --force --prune")
     
     if branch then
         os.executef("git checkout -q origin/%s", branch)
     end
    
     os.execute("git submodule update --init --recursive -j 8 --recommend-shallow")
+
+    os.chdir(current)
+end
+
+function zpm.git.pull(destination)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+        
+    os.executef("git pull")
 
     os.chdir(current)
 end
@@ -114,11 +143,20 @@ function zpm.git.clone(destination, url, branch)
         branchStr = string.format(" -b %s ", branch)
     end
     os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\" %s", url, destination, branchStr )
+    
+    
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
     os.executef( "git config core.ignoreStat true" )
     os.executef( "git config core.fscache true" )
+
+    os.chdir(current)
 end
 
-function zpm.git.cloneOrPull(destination, url, branch)
+function zpm.git.cloneOrFetch(destination, url, branch)
 
     if os.isdir(destination) then
 

@@ -50,6 +50,9 @@ zpm.api.common = {
         join = path.join,
         normalize = path.normalize
     },
+    noticef = noticef,
+    warningf = warningf,
+    errorf = errorf,
     zpm = {},
     string = string,
     table = table,

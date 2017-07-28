@@ -54,7 +54,9 @@ end
 
 function Loader:solve()
 
-    self.project:solve()
+    if not zpm.util.isMainScriptDisabled() then
+        self.project:solve()
+    end
 end
 
 function Loader:fixMainScript()
