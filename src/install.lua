@@ -214,7 +214,7 @@ end
 
 function Installer:_exportPath()
 
-    local prof = path.join(os.getenv("HOME"), ".bashrc")
+    local prof = path.join(os.getenv("HOME"), ".profile ")
     local line =("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
 
     if not os.isfile(prof) then

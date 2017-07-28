@@ -24,7 +24,7 @@ install:
     - . script/install-zpm.sh
     - ls /home/travis/.zpm/bin
     - echo $PATH
-    - cat $HOME/.bashrc
+    - cat $HOME/.profile
 script:
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
