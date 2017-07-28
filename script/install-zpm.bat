@@ -18,7 +18,7 @@ echo Finished downloading premake...
 
 powershell -command "Expand-Archive premake5.zip -DestinationPath ."
 
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b features/refactor
 echo Finished cloning ZPM...
 
 if defined GH_TOKEN (

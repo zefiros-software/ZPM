@@ -19,11 +19,11 @@ else
     premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha11.1-dev/premake-linux.tar.gz"
 fi
 
-curl -L -o premake5.tar.gz $premakeURL
-tar -xvzf premake5.tar.gz
+curl -L -s -o premake5.tar.gz $premakeURL
+tar -xzf premake5.tar.gz
 chmod a+x premake5
 
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 -b features/refactor
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b features/refactor
 
 ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua | xargs) 
 
