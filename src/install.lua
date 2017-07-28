@@ -213,7 +213,7 @@ end
 
 function Installer:_exportPath()
 
-    local prof = path.join( os.getenv("HOME"), iif(os.hostis("macosx"), ".bash_profile", ".bashrc") )
+    local prof = path.join( os.getenv("HOME"), iif(os.ishost("macosx"), ".bash_profile", ".bashrc") )
     local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
 
     if os.isfile( prof ) then
