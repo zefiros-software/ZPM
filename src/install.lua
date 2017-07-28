@@ -42,7 +42,7 @@ function Installer:install()
         premake.action.call("update-zpm")
         premake.action.call("update-registry")
     end
-        
+
     self:_installPremake()
     self:_installInPath()
 end
@@ -133,7 +133,7 @@ function Installer:_installNewVersion(asset)
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
     end
-    
+
     printf("Installed in '%s'", globalCmd)
 
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
@@ -156,13 +156,14 @@ function Installer:_getLatestPremake()
         else
             self.__latestPremake = self:_getPremakeVersions()[1]
             -- cache the value for a day
-            self.loader.config:set("cache", { 
-                premake = { 
+            self.loader.config:set("cache", {
+                premake =
+                {
                     checkTime = os.time(),
                     version = tostring(self.__latestPremake.version),
                     assets = self.__latestPremake.assets
-                } 
-            }, true)
+                }
+            } , true)
         end
 
     end
@@ -175,7 +176,7 @@ function Installer:_getPremakeVersions()
     if not self.__PremakeVersion then
         local vendor = self.loader.config("install.premake.vendor")
         local name = self.loader.config("install.premake.name")
-        self.__PremakeVersion = self.loader.github:getReleases(vendor, name, ("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
+        self.__PremakeVersion = self.loader.github:getReleases(vendor, name,("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
     end
 
     return self.__PremakeVersion
@@ -185,49 +186,48 @@ end
 function Installer:_installInPath()
 
     if os.ishost("windows") then
-    
-        local cPath = os.getenv( "PATH" )
+
+        local cPath = os.getenv("PATH")
         local dir = zpm.env.getBinDirectory()
-        if not string.contains( cPath, dir ) then
-            printf( "- Installing zpm in path" )
+        if not string.contains(cPath, dir) then
+            printf("- Installing zpm in path")
 
-            local cmd = path.join( self.loader.temp, "path.ps1" )
+            local cmd = path.join(self.loader.temp, "path.ps1")
 
-            zpm.util.writeAll(cmd,[[
-                $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
-                $path = $key.GetValue('Path',$null,'DoNotExpandEnvironmentNames')
-                $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
-                $key.Dispose()
-            ]])            
-            os.executef( "@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir )
+            zpm.util.writeAll(cmd, [[
+                            $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
+                            $path = $key.GetValue('Path',$null,'DoNotExpandEnvironmentNames')
+                            $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
+                            $key.Dispose()
+                        ]])
+            os.executef("@powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && SET PATH=\"%%PATH%%;%s\"", cmd, dir)
         end
-    
+
     elseif os.ishost("linux") or os.ishost("macosx") then
-    
+
         self:_exportPath()
-    
+
     else
-        zpm.assert( false, "Current platform '%s' not supported!", os.get() )
+        zpm.assert(false, "Current platform '%s' not supported!", os.get())
     end
 end
 
 function Installer:_exportPath()
 
-    local prof = path.join( os.getenv("HOME"), iif(os.ishost("macosx"), ".bash_profile", ".bashrc") )
-    local line = ("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
+    local prof = path.join(os.getenv("HOME"), ".bashrc")
+    local line =("export PATH=\"%s:$PATH\""):format(zpm.env.getBinDirectory())
 
-    if os.isfile( prof ) then
-                            
-        local profStr = zpm.util.readAll(prof)
-        if not profStr:contains(line) then
-            local f = assert(io.open(prof, "a"))
-            f:write("\n"..line)
-            f:close()
-        end                
-    else
-        warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file does not exist!", line, prof)
+    if not os.isfile(prof) then
+        warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file did not exist!\nWe created the file instead.", line, prof)
+    end
+
+    local profStr = zpm.util.readAll(prof)
+    if not profStr:contains(line) then
+        local f = assert(io.open(prof, "a"))
+        f:write("\n" .. line)
+        f:close()
     end
 
     printf("%%{yellow bright}We have added ZPM installation path in your '%s' file, however if this does not work\n%%{yellow bright}you have to add " ..
-           "'%s' manually in your shell profile.", prof, line)
+    "'%s' manually in your shell profile.", prof, line)
 end
