@@ -21,8 +21,8 @@ matrix:
           osx_image: xcode9
           language: generic
 install:
-    - ls /home/travis/.zpm/bin
     - . script/install-zpm.sh
+    - ls /home/travis/.zpm/bin
 script:
     - zpm test --file=test/tests.lua --systemscript=- --scripts=./
 after_success:
