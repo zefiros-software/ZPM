@@ -61,6 +61,13 @@ function zpm.setting(setting)
     
     local cursor = zpm.loader.project.cursor
     local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.hash, setting})
+
+    if not tab then
+        warningf("Setting '%s' does not exist on package '%s'", setting, zpm.loader.project.cursor.name)
+
+        return nil
+    end
+
     local values = zpm.util.reverse(tab.values)
     if not values then
         return tab.default

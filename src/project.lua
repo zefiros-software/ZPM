@@ -54,12 +54,12 @@ function Project:solve()
 
         self:_writeLock()
 
-        self:_printDiff(table.deepcopy(lock), table.deepcopy(iif(self.lock, self.lock, {})))
-
         self:bake()
         self:extract()
 
         self.builder = Builder(self.loader, self.solution)
+
+        self:_printDiff(table.deepcopy(iif(lock, lock, {})), table.deepcopy(iif(self.lock, self.lock, {})))
     else
         errorf("Failed to find a configuration satisfying all constraints!")
     end
@@ -146,9 +146,9 @@ function Project:extract()
         return false
     end)
 
-    if stats.updated == 0 then
-        noticef("No changes in your dependencies!")
-    end
+    --if stats.updated == 0 then
+        --noticef("No changes in your dependencies!")
+    --end
 end
 
 function Project:hasLockFile()

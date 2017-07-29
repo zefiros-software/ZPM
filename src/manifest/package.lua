@@ -452,12 +452,12 @@ function Package:pull(hash)
         return
     end
 
-    if self:_mayPull() or(hash and not hasHash) then
+    if self:_mayPull() or (hash and not hasHash) then
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
 
-        if self.repository ~= self.definition then
+        if self.repository ~= self.definition and not os.isdir(self.definition) then
             noticef("   with definition '%s'", self.definition)
             self:pullDefinition()
         end
@@ -492,9 +492,8 @@ end
 
 function Package:_mayPull()
 
-    return self.manifest:mayPull() and
-    ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or
-    not os.isdir(self:getRepository()) or
+    return self.manifest:mayPull() and 
+    ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or not os.isdir(self:getRepository()) or
     (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
 end
 

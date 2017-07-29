@@ -79,6 +79,9 @@ function Solution:_loadNodeFromLock(tree, node, lock)
 
                     local vendor, name = zpm.package.splitName(pkg.name)
                     local package = self.solver.loader[type]:get(vendor, name)
+                    
+                    package.definition = pkg.definition
+                    package.repository = pkg.repository
 
                     package:load(pkg.hash)
 
@@ -299,10 +302,12 @@ end
 function Solution:getCost()
 
     local cost = 0
+    -- count each library included as cost the cost of a major version too
+    -- such that we also try to minimise the amount of libraries (HEAD is 0 cost)
     for type, libs in pairs(self.tree.closed.all) do
         for _, lib  in pairs(libs) do
             for _, v in pairs(lib) do
-                cost = cost + v
+                cost = cost + v + zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
             end
         end
     end
@@ -310,7 +315,6 @@ function Solution:getCost()
 end
 
 function Solution:load()
-
 
     self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.tag)
 
@@ -449,6 +453,8 @@ function Solution:_extractNode(node, isLock)
         private = {},
         
         name = node.package.fullName,
+        definition = node.package.definition,
+        repository = node.package.repository,
         versionRequirement = node.versionRequirement,
         version = node.version,
         hash = node.hash,

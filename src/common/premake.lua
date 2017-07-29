@@ -137,7 +137,6 @@ end)
 premake.override(_G, "project", function(base, name)
     if name and not zpm.meta.exporting then
         zpm.meta.project = name
-        --print(name, debug.traceback())
         
         if not zpm.meta.building then
             zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
@@ -173,7 +172,7 @@ end)
 premake.override(premake.main, "preBake", function(base)
 
     if zpm.loader and not zpm.util.isMainScriptDisabled() then
-        noticef("Walking dependencies")
+
         zpm.loader.project.builder:walkDependencies()
     end
     return base()

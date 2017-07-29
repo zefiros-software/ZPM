@@ -55,7 +55,6 @@ function Solver:solve(lock)
     
     if (zpm.cli.update() or not lock) and (succeeded or hasInitial) then
     
-        noticef("Optimising dependencies")
         -- use a BFS method to optimise
         local queue = Queue()
         local rootSolution = self:getRootSolution()
