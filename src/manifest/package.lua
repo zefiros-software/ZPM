@@ -22,7 +22,7 @@
 -- @endcond
 --]]
 
-zpm.package = {}
+zpm.package = { }
 
 function zpm.package.splitName(name)
 
@@ -33,8 +33,8 @@ end
 
 function zpm.package.semverDist(v1, v2)
 
-    return (v1.major * 100000 + v1.minor * 1000 + v1.patch) -
-           (v2.major * 100000 + v2.minor * 1000 + v2.patch)
+    return(v1.major * 100000 + v1.minor * 1000 + v1.patch) -
+    (v2.major * 100000 + v2.minor * 1000 + v2.patch)
 end
 
 Package = newclass "Package"
@@ -63,24 +63,26 @@ function Package:init(loader, manifest, settings)
     self.pulled = false
     self.loaded = false
 
+    self.costTranslation = 0
+
     self.versions = { }
     self.newest = nil
     self.oldest = nil
 end
 
 function Package:__eq(package)
-    
+
     return package:getHash() == self:getHash()
 end
 
 function Package:getExtractDirectory(dir, node)
-    
+
     local version = iif(node.version == nil, node.tag, node.version)
     return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(-4)))
 end
 
 function Package:needsExtraction(dir, node)
-    
+
     if not os.isdir(self:getExtractDirectory(dir, node)) or zpm.cli.force() then
         return true
     end
@@ -99,13 +101,13 @@ function Package:extract(dir, node)
         end
         zpm.util.recurseMkdir(location)
         noticef(" * Extracting %s to %s", self.manifest.manager.nameSingle, self:getExtractDirectory("", node))
-        
+
         local version = iif(node.version == nil, node.tag, node.version)
         local extract = self:findPackageExtract(version)
         if extract then
             noticef("   Checking out directory, this may take a while...")
             zpm.git.checkout(self:getRepository(), node.hash)
-            
+
             local current = os.getcwd()
             os.chdir(self:getRepository())
 
@@ -116,7 +118,7 @@ function Package:extract(dir, node)
             self.loader.project.cursor = nil
             os.chdir(current)
         else
-            if zpm.git.hasSubmodules(self:getRepository()) then            
+            if zpm.git.hasSubmodules(self:getRepository()) then
                 noticef("   We detected submodules, this may take a little longer")
             end
             zpm.git.export(self:getRepository(), location, node.hash)
@@ -134,7 +136,7 @@ end
 
 function Package:getVersions(requirement)
 
-    local result = {}
+    local result = { }
     for _, v in ipairs(self.versions) do
         local version = iif(v.version ~= nil, v.version, v.tag)
         if premake.checkVersion(version, requirement) then
@@ -151,24 +153,24 @@ function Package:getCost(v)
     if self.newest then
         if v.version then
 
-            return zpm.package.semverDist(self.newest.semver, v.semver)
+            return zpm.package.semverDist(self.newest.semver, v.semver) + self.costTranslation
         else
             local total = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
-            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.tag)
+            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
             
             local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
-            local distancePerCommit = math.min(totalDistance / total,1)
-            local guessedDistance = (behind - ahead) * distancePerCommit
-            return guessedDistance
+            local distancePerCommit = math.min(totalDistance / total, 1)
+            local guessedDistance =(behind - ahead) * distancePerCommit
+            return guessedDistance + self.costTranslation
         end
     else
-            local total = zpm.git.getCommitCount(self:getRepository(), "HEAD")
-            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), "HEAD", v.tag)
-            
-            local totalDistance = zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
-            local distancePerCommit = math.min(totalDistance / total,1)
-            local guessedDistance = (behind - ahead) * distancePerCommit
-            return guessedDistance
+        local total = zpm.git.getCommitCount(self:getRepository(), "HEAD")
+        local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), "HEAD", v.hash)
+
+        local totalDistance = zpm.package.semverDist(zpm.semver(1, 0, 0), zpm.semver(0, 0, 0))
+        local distancePerCommit = math.min(totalDistance / total, 1)
+        local guessedDistance =(behind - ahead) * distancePerCommit
+        return guessedDistance + self.costTranslation
     end
 end
 
@@ -189,7 +191,7 @@ function Package:getRepository()
         return self:_getRepositoryPkgDir()
     end
 
-    return self.repository
+    return zpm.util.getRelativeOrAbsoluteDir(_MAIN_SCRIPT_DIR, self.repository)
 end
 
 function Package:getDefinition()
@@ -198,7 +200,7 @@ function Package:getDefinition()
         return self:_getDefinitionPkgDir()
     end
 
-    return self.definition
+    return zpm.util.getRelativeOrAbsoluteDir(_MAIN_SCRIPT_DIR, self.definition)
 end
 
 function Package:isDefinitionRepo()
@@ -245,7 +247,7 @@ function Package:findPackageDefinition(tag)
     return package
 end
 
-function Package:findPackageExport(tag) 
+function Package:findPackageExport(tag)
 
     if self:isDefinitionSeperate() then
         return self:_findExportSeperated(tag)
@@ -259,7 +261,7 @@ function Package:_findExport(tag)
 
     local export = nil
     for _, p in ipairs( { "export.lua", ".export.lua" }) do
-        
+
         local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
         if contents then
 
@@ -309,7 +311,7 @@ function Package:_findExportSeperated(tag)
 end
 
 
-function Package:findPackageExtract(tag) 
+function Package:findPackageExtract(tag)
 
     if self:isDefinitionSeperate() then
         return self:_findExtractSeperated(tag)
@@ -322,7 +324,7 @@ function Package:_findExtract(tag)
 
     local extract = nil
     for _, p in ipairs( { "extract.lua", ".extract.lua" }) do
-        
+
         local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
         if contents then
 
@@ -343,7 +345,7 @@ function Package:_findExtractSeperated(tag)
         if os.isfile(file) then
             builds = zpm.ser.loadMultiYaml(file)
             for _, build in ipairs(builds) do
-                
+
                 if premake.checkVersion(tag, build.version) then
                     if build.extract then
                         extract = build.extract
@@ -376,7 +378,7 @@ end
 function Package:_processPackageFile(package, tag)
 
     if not package then
-        return {}
+        return { }
     end
 
     if self.isRoot then
@@ -385,23 +387,23 @@ function Package:_processPackageFile(package, tag)
     end
 
     if not package.private then
-        package.private = {}
+        package.private = { }
     end
 
     if not package.public then
-        package.public = {}
-    end    
-    
+        package.public = { }
+    end
+
     -- add private modules as public that may not be private
     for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
 
-        local maybePrivate = self.loader.config({"install", "manifests", type, "allowPrivate"})
+        local maybePrivate = self.loader.config( { "install", "manifests", type, "allowPrivate" })
         if not maybePrivate and package[type] then
 
             if not package.public[type] then
-                package.public[type] = {}
+                package.public[type] = { }
             end
-            
+
             package.public[type] = zpm.util.concat(package.public[type], package[type])
             package[type] = nil
         end
@@ -413,7 +415,7 @@ function Package:_processPackageFile(package, tag)
         if package[type] then
 
             if not package.private[type] then
-                package.private[type] = {}
+                package.private[type] = { }
             end
 
             package.private[type] = zpm.util.concat(package.private[type], package[type])
@@ -423,7 +425,7 @@ function Package:_processPackageFile(package, tag)
 
     -- load setting definitions
     self:_loadSettings(tag, package.settings)
-   
+
     return package
 end
 
@@ -446,11 +448,11 @@ function Package:pull(hash)
         hasHash = zpm.git.hasHash(repo, hash)
     end
 
-    if not self:isRepositoryRepo() or (self.pulled and not needsUpdate) then
+    if not self:isRepositoryRepo() or(self.pulled and not needsUpdate) then
         return
     end
 
-    if self:_mayPull() or (hash and not hasHash) then
+    if self:_mayPull() or(hash and not hasHash) then
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
@@ -464,8 +466,17 @@ function Package:pull(hash)
     local tags = zpm.git.getTags(self:getRepository())
     self.newest = tags[1]
     self.oldest = tags[#tags]
-    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()),tags)
-    
+    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()), tags)
+
+    -- make sure all cost function values are positive
+    for _, v in ipairs(self.versions) do
+        local c = self:getCost(v)
+        if c < self.costTranslation then
+            self.costTranslation = c
+        end
+    end
+    self.costTranslation = math.abs(self.costTranslation)
+
     self.pulled = true
 end
 
@@ -482,15 +493,15 @@ end
 function Package:_mayPull()
 
     return self.manifest:mayPull() and
-            ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or
-            not os.isdir(self:getRepository()) or
-            (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
+    ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or
+    not os.isdir(self:getRepository()) or
+    (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
 end
 
 function Package:_loadSettings(tag, settings)
-    
+
     if self.fullName and tag then
-        settings = iif(settings == nil, {}, settings)
-        self.loader.settings:set({self.manifest.name, self.fullName, tag}, settings, true)
+        settings = iif(settings == nil, { }, settings)
+        self.loader.settings:set( { self.manifest.name, self.fullName, tag }, settings, true)
     end
 end

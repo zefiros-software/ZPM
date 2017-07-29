@@ -43,7 +43,8 @@ function Solution:init(solver, tree, cursor, cursorPtr)
             closed = {
                 public = {},
                 all = {}
-            }
+            },
+            isRoot = true
         }
     else
         self.tree = tree
@@ -54,6 +55,7 @@ function Solution:init(solver, tree, cursor, cursorPtr)
 
     self.indices = nil
     self.failed = false
+    self.isRoot = false
 end
 
 function Solution:loadFromLock(lock)
@@ -77,6 +79,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
 
                     local vendor, name = zpm.package.splitName(pkg.name)
                     local package = self.solver.loader[type]:get(vendor, name)
+
                     package:load(pkg.hash)
 
                     local lnode = {                
@@ -139,7 +142,11 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                             return false
                         end
                     else
-                        warningf("Package '%s' required by '%s' missing in lockfile", pub.name, node.name)
+                        if node.isRoot then
+                            warningf("Package '%s' missing in lockfile", pub.name)
+                        else
+                            warningf("Package '%s' required by '%s' missing in lockfile", pub.name, node.name)
+                        end
                         return false
                     end
                 end
@@ -160,7 +167,6 @@ function Solution:expand(best, beam)
     local solutions = {}
 
     while true do
-        
         if not self:isOpen() then
             self:nextCursor()
             if not self:load() then
@@ -362,6 +368,12 @@ function Solution:_loadDependency(cursor, d, type, loader)
         settings = d.settings,
         type = type
     }
+
+    if self.isRoot then
+        if d.definition then
+            dependency.package.definition = d.definition
+        end
+    end
 
     if dependency.package then
 

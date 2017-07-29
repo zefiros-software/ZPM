@@ -129,5 +129,7 @@ end
 
 function Solver:getRootSolution()
 
-    return Solution(self, nil, nil)
+    local solution = Solution(self, nil, nil)
+    solution.isRoot = true
+    return solution
 end

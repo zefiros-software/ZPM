@@ -79,8 +79,8 @@ function Tree:_walkAccessibilityDFS(node, access, nodFunc)
 
                 if nodFunc(access, type, n) then
                             
-                    self:_walkAccessibilityDFS(n, "public", func)
-                    self:_walkAccessibilityDFS(n, "private", func)
+                    self:_walkAccessibilityDFS(n, "public", nodFunc)
+                    self:_walkAccessibilityDFS(n, "private", nodFunc)
                 end
             end
         end

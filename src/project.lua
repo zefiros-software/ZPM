@@ -34,6 +34,7 @@ function Project:init(loader)
     })
     self.solver = Solver(self.loader, self.root)
     self.solution = nil
+    self.lock = nil
     self.builder = nil
 end
 
@@ -49,8 +50,12 @@ function Project:solve()
 
     if solution then
         self.solution = solution:extract()
+        self.lock = solution:extract(true)
 
-        self:_writeLock(solution)
+        self:_writeLock()
+
+        self:_printDiff(table.deepcopy(lock), table.deepcopy(iif(self.lock, self.lock, {})))
+
         self:bake()
         self:extract()
 
@@ -156,10 +161,65 @@ function Project:getLockFile()
     return path.join(_WORKING_DIR, "zpm.lock")
 end
 
-function Project:_writeLock(solution)
+function Project:_writeLock()
 
-    local lock = solution:extract(true)
-    if #lock > 0 then
-        os.writefile_ifnotequal(json.encode_pretty(), self:getLockFile())
+    if not table.isempty(self.lock) then
+        os.writefile_ifnotequal(json.encode_pretty(self.lock), self:getLockFile())
+    end
+end
+
+function Project:_printDiff(lock, solution, depth)
+    depth = iif(depth, depth, 0)
+    local dstr = string.rep("      ", depth)
+
+    local foundPkgs = {}
+    for _, access in ipairs({"public", "private"}) do
+        if solution[access] then
+            for type, packages in pairs(solution[access]) do
+            
+                for _, pkg in ipairs(packages) do
+                    local oldPackages = zpm.util.indexTable(lock, {access, type})
+                    local found = nil
+                    local index = nil
+                    if oldPackages then
+                        for i, old in pairs(oldPackages) do
+                            if pkg.name == old.name then
+                                found = old
+                                index = i
+                                table.insert(foundPkgs, pkg.name)
+                                break
+                            end
+                        end
+                    end
+
+                    if found then
+                        if found.hash == pkg.hash then
+                            printf("%%{yellow bright}%s\\_ %s (%s@%s)", dstr, pkg.name, pkg.tag, pkg.hash:sub(0,5) )
+                        else
+                            printf("%%{yellow green}%s\\_ %s (%s@%s) => (%s@%s)", dstr, found.name, found.tag, found.hash:sub(0,5), pkg.tag, pkg.hash:sub(0,5) )
+                        end
+
+                        self:_printDiff(table.deepcopy(found), table.deepcopy(pkg), depth + 1)
+
+                        lock[access][type][index] = nil
+                    else
+                        printf("%%{green bright}%s\\_ %s (%s@%s) Added", dstr, pkg.name, pkg.tag, pkg.hash:sub(0,5) )        
+                         
+                        self:_printDiff({}, table.deepcopy(pkg), depth + 1)               
+                    end
+                end
+            end
+        end
+    end
+
+    for _, access in ipairs({"public", "private"}) do
+        if lock[access] then
+            for type, packages in pairs(lock[access]) do
+                for _, pkg in ipairs(packages) do
+
+                    printf("%%{red bright}%s\\_ %s (%s@%s) Removed", dstr, pkg.name, pkg.tag, pkg.hash:sub(0,5) )                  
+                end
+            end
+        end
     end
 end

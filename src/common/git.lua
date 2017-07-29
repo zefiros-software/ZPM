@@ -131,7 +131,7 @@ function zpm.git.reset(destination)
 
     os.chdir(destination)
 
-    os.executef("git reset FETCH_HEAD --hard -q")
+    os.executef("git reset -q --hard origin/HEAD")
 
     os.chdir(current)
 end
