@@ -124,6 +124,11 @@ function zpm.api.libraries.export.setting(package)
     return zpm.setting
 end
 
+function zpm.api.libraries.export.configuration(package)
+
+    return zpm.configuration
+end
+
 function zpm.api.libraries.export.export(package)
 
     return zpm.export

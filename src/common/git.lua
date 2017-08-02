@@ -321,7 +321,6 @@ end
 function zpm.git.getCommitAheadBehind(from, first, second)
 
     local current = os.getcwd()
-
     os.chdir(from)
 
     local output = os.outputoff("git rev-list %s...%s --count --left-right", first, second)

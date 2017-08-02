@@ -157,7 +157,7 @@ function Package:getCost(v)
         else
             local total = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
             local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
-            
+
             local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
             local distancePerCommit = math.min(totalDistance / total, 1)
             local guessedDistance =(behind - ahead) * distancePerCommit
@@ -452,7 +452,7 @@ function Package:pull(hash)
         return
     end
 
-    if self:_mayPull() or (hash and not hasHash) then
+    if self:_mayPull() or(hash and not hasHash) then
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
@@ -492,7 +492,7 @@ end
 
 function Package:_mayPull()
 
-    return self.manifest:mayPull() and 
+    return self.manifest:mayPull() and
     ((not self.pulled and zpm.cli.update() and not zpm.cli.cachedOnly()) or not os.isdir(self:getRepository()) or
     (self.repository ~= self.definition and not os.isdir(self:getDefinition())))
 end
@@ -500,7 +500,16 @@ end
 function Package:_loadSettings(tag, settings)
 
     if self.fullName and tag then
-        settings = iif(settings == nil, { }, settings)
-        self.loader.settings:set( { self.manifest.name, self.fullName, tag }, settings, true)
+        if settings then
+            for name, setting in pairs(settings) do
+                if type(setting) ~= "table" then
+                    setting = {default = setting}
+                end
+                self.loader.settings:set( { self.manifest.name, self.fullName, tag, name }, {
+                    default = setting.default,
+                    reduce = setting.reduce
+                }, true)
+            end
+        end
     end
 end

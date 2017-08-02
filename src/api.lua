@@ -68,10 +68,13 @@ function zpm.setting(setting)
         return nil
     end
 
-    local values = zpm.util.reverse(tab.values)
+    print(table.tostring(zpm.loader.settings.values,5))
+
+    local values = tab.values
     if not values then
         return tab.default
     end
+    values = zpm.util.reverse(values)
 
     if tab.reduce then
         if zpm.settings.reduce[tab.reduce] then
@@ -84,7 +87,9 @@ function zpm.setting(setting)
     return values
 end
 
-function zpm.configuration(setting)
+function zpm.configuration(setting, default)
     
-    return zpm.loader.config(setting)
+    local config = zpm.loader.config({"configuration", setting})
+    
+    return iif(config, config, default)
 end

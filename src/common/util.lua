@@ -223,15 +223,14 @@ end
 
 function zpm.util.reverse(tbl)
 
-	local len = #tbl
-	local ret = {}
+    local len = #tbl
+    local ret = {}
 
-	for i = len, 1, -1 do
-		ret[ len - i + 1 ] = tbl[ i ]
-	end
+    for i = len, 1, -1 do
+        ret[ len - i + 1 ] = tbl[ i ]
+    end
 
-	return ret
-
+    return ret
 end
 
 function zpm.util.concat(t1, t2)
