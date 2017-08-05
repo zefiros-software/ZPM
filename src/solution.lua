@@ -44,6 +44,8 @@ function Solution:init(solver, tree, cursor, cursorPtr)
                 public = {},
                 all = {}
             },
+            optionals = {
+            },
             isRoot = true
         }
     else
@@ -91,6 +93,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                         name = pkg.name,
                         tag = pkg.tag,
                         version = pkg.version,
+                        optionals = pkg.optionals,
                         versionRequirement = pkg.versionRequirement,
                         hash = pkg.hash
                     }
@@ -123,34 +126,36 @@ function Solution:_loadNodeFromLock(tree, node, lock)
         if node.definition and node.definition[access] then
             for ptype, pubs in pairs(node.definition[access]) do
                 for i, pub in ipairs(pubs) do
+                    if not pub.optional then
                     if zpm.util.indexTable(dpkgs, {access, ptype, pub.name}) then  
-                        local vcheckFailed = false
-                        local lversion
-                        for _, version in ipairs(dpkgs[access][ptype][pub.name]) do
-                            lversion = version
-                            if pub.version and not premake.checkVersion(version, pub.version) then
-                                vcheckFailed = true
-                            else
+                            local vcheckFailed = false
+                            local lversion
+                            for _, version in ipairs(dpkgs[access][ptype][pub.name]) do
+                                lversion = version
+                                if pub.version and not premake.checkVersion(version, pub.version) then
+                                    vcheckFailed = true
+                                else
 
-                                for _, upkg in ipairs(node[access]) do
-                                    if upkg.type == ptype and upkg.name == pub.name then
-                                        upkg.settings = pub.settings
+                                    for _, upkg in ipairs(node[access]) do
+                                        if upkg.type == ptype and upkg.name == pub.name then
+                                            upkg.settings = pub.settings
+                                        end
                                     end
                                 end
                             end
-                        end
 
-                        if vcheckFailed then
-                            warningf("Package '%s' by '%s' locked on version '%s' does not match '%s'", pub.name, node.package.name, lversion, pub.version)
+                            if vcheckFailed then
+                                warningf("Package '%s' by '%s' locked on version '%s' does not match '%s'", pub.name, node.package.name, lversion, pub.version)
+                                return false
+                            end
+                        else
+                            if node.isRoot then
+                                warningf("Package '%s' missing in lockfile", pub.name)
+                            else
+                                warningf("Package '%s' required by '%s' missing in lockfile", pub.name, node.name)
+                            end
                             return false
                         end
-                    else
-                        if node.isRoot then
-                            warningf("Package '%s' missing in lockfile", pub.name)
-                        else
-                            warningf("Package '%s' required by '%s' missing in lockfile", pub.name, node.name)
-                        end
-                        return false
                     end
                 end
             end
@@ -280,6 +285,7 @@ function Solution:_copyNode(node)
         name = node.name,
         settings = node.settings,
         version = node.version,
+        optionals = table.deepcopy(optionals),
         versionRequirement = node.versionRequirement,
         tag = node.tag,
         hash = node.hash
@@ -316,15 +322,22 @@ end
 
 function Solution:load()
 
-    self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.tag)
+    self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.tag)       
+
+    if not self.cursor.private then
+        self.cursor.private = {}
+    end
+    if not self.cursor.public then
+        self.cursor.public = {}
+    end
+    if not self.cursor.optionals then
+        self.cursor.optionals = {}
+    end
 
     for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
 
         if self.cursor.definition.private and self.cursor.definition.private[type] then
             
-            if not self.cursor.private then
-                self.cursor.private = {}
-            end
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private"})
             for i, d in ipairs(self.cursor.definition.private[type]) do
                 if not self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type]) then
@@ -338,27 +351,26 @@ function Solution:load()
     
         if self.cursor.definition.public and self.cursor.definition.public[type] then
         
-            if not self.cursor.public then
-                self.cursor.public = {}
-            end
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
             for i, d in ipairs(self.cursor.definition.public[type]) do
-                if not self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type]) then
-                    self.failed = true
-                    return
-                end
+            
+                if not d.optional then
+                    if not self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type]) then
+                        self.failed = true
+                        return
+                    end
 
-                table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {i}))
+                    table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {i}))
+                else
+                    zpm.util.insertTable(self.cursor.optionals, {type}, {
+                        name = d.name,
+                        versionRequirements = d.version
+                    })
+                end
             end
         end
-    end            
-    if not self.cursor.private then
-        self.cursor.private = {}
-    end
-    if not self.cursor.public then
-        self.cursor.public = {}
-    end
-
+    end     
+    
     return true
 end
 
@@ -457,6 +469,7 @@ function Solution:_extractNode(node, isLock)
         repository = node.package.repository,
         versionRequirement = node.versionRequirement,
         version = node.version,
+        optionals = node.optionals,
         hash = node.hash,
         settings = node.settings,
         tag = node.tag 
