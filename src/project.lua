@@ -28,8 +28,8 @@ function Project:init(loader)
 
     self.loader = loader
     self.root = Package(loader, nil, {
-        repository = _MAIN_SCRIPT_DIR,
-        definition = _MAIN_SCRIPT_DIR,
+        repository = "./",
+        definition = "./",
         isRoot = true
     })
     self.solver = Solver(self.loader, self.root)
@@ -109,6 +109,9 @@ function Project:extract()
     }
     
     self.solution:iterateAccessibilityDFS(function(access, type, node)
+        if node.optional then
+            return false
+        end
     
         local extractDir = self.loader[type]:getExtractDirectory()
         if extractDir then
@@ -191,6 +194,8 @@ function Project:_printDiff(lock, solution, depth)
                             end
                         end
                     end
+
+                    pkg.hash = iif(pkg.hash, pkg.hash, "")
 
                     if found then
                         if found.hash == pkg.hash then
