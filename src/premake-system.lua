@@ -86,5 +86,7 @@ if not (_ACTION and (_ACTION:contains("update-") or _ACTION == "repair")) then
         zpm.__isLoaded = true
     end
 else
-    zpm.util.disableMainScript()
+    if zpm then
+        zpm.util.disableMainScript()
+    end
 end

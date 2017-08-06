@@ -32,11 +32,22 @@ function zpm.uses(libraries)
 
     for _, library in ipairs(libraries) do
     
-        local package = zpm.loader.project.builder:build(library, "libraries")
-        zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
-            package = package
-        } )
+        if zpm.has(library) then
+            local package = zpm.loader.project.builder:build(library, "libraries")
+            zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
+                package = package
+            } )
+        else
+            --@todo add warning
+        end
     end
+end
+
+function zpm.has(libraries)
+
+    table.tostring(zpm.loader.project.builder.cursor)
+
+    return true
 end
 
 function zpm.export(commands)
