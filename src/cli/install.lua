@@ -39,7 +39,6 @@ newaction {
     description = "Installs ZPM",
     execute = function()
         local help = false        
-        zpm.util.disableMainScript()
 
         if #_ARGS == 0 or _ARGS[1] == "package" then
         elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
@@ -61,7 +60,6 @@ newaction {
     description = "Updates ZPM",
     execute = function()
         local help = false
-        zpm.util.disableMainScript()
 
         if #_ARGS == 1 and _ARGS[1] == "self" then
             zpm.loader.install:update()
@@ -88,3 +86,7 @@ newaction {
         end
     end
 }
+
+if _ACTION == "install" or _ACTION == "update" then
+    zpm.util.disableMainScript()
+end

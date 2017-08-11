@@ -210,7 +210,11 @@ function Solution:expand(best, beam)
                     self.cursor.private[i].tag
                 }
 
-                zpm.util.setTable(solution.tree.closed.all, index, solved[i].cost)
+                zpm.util.setTable(solution.tree.closed.all, index, {
+                    cost = solved[i].cost,
+                    package = self.cursor.private[i].package,
+                    version = iif(self.cursor.private[i].version, self.cursor.private[i].version, self.cursor.private[i].tag)
+                })
             end
     
             for i=1,#self.cursor.public do
@@ -220,8 +224,13 @@ function Solution:expand(best, beam)
                     self.cursor.public[i].package:getHash(),
                     self.cursor.public[i].tag
                 }
-                zpm.util.setTable(solution.tree.closed.all, index, solved[#self.cursor.private + i].cost)
-                zpm.util.setTable(solution.tree.closed.public, index, solved[#self.cursor.private + i].cost)
+                local package = {
+                    cost = solved[i].cost,
+                    package = self.cursor.public[i].package,
+                    version = iif(self.cursor.public[i].version, self.cursor.public[i].version, self.cursor.public[i].tag)
+                }
+                zpm.util.setTable(solution.tree.closed.all, index, package)
+                zpm.util.setTable(solution.tree.closed.public, index, package)
 
             end
     
@@ -256,7 +265,24 @@ function Solution:_copyTree()
 
     local root = self:_copyNode(self.tree)
     root.open = table.deepcopy(self.tree.open)
-    root.closed = table.deepcopy(self.tree.closed)
+    root.closed = {
+        public = {},
+        all = {}
+    }
+    
+    for _, access in ipairs({"public", "all"}) do
+        for type, pkgs in pairs(self.tree.closed[access]) do
+            for hash, versions in pairs(pkgs) do
+                for version, pkg in pairs(versions) do
+                    zpm.util.setTable(root.closed, {access, type, hash, version},{
+                        cost = pkg.cost,
+                        version = pkg.version,
+                        package = pkg.package 
+                    })
+                end
+            end
+        end
+    end
 
     return root
 end
@@ -313,7 +339,7 @@ function Solution:getCost()
     for type, libs in pairs(self.tree.closed.all) do
         for _, lib  in pairs(libs) do
             for _, v in pairs(lib) do
-                cost = cost + v + zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
+                cost = cost + v.cost + zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
             end
         end
     end
@@ -474,6 +500,11 @@ function Solution:_extractNode(node, isLock)
         settings = node.settings,
         tag = node.tag 
     }
+
+    if not isLock then
+        result.closed = node.closed
+    end
+    
     self:_extractDependencies(node.private, result.private, isLock)
     self:_extractDependencies(node.public, result.public, isLock)
 

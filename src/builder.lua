@@ -143,6 +143,32 @@ function Builder:build(package, type)
     end
     self.cursor = prev
 
+    print("@@@")
+
+
+    if not found then
+
+        if self.cursor.optionals and self.cursor.optionals[type] then
+            for _, pkg in ipairs(self.cursor.optionals[type]) do
+                if pkg.name == package then
+
+                    local public = self.solution.tree.closed.public
+                    --print(table.tostring(public,3))
+
+                    if public[type] and public[type][package] then
+                        for version, dep in pairs(public[type][package]) do
+                            if premake.checkVersion(dep.version, pkg.versionRequirements) then
+                                print(table.tostring(dep
+                                ))
+                            end
+                        end  
+                    end
+                end
+            end
+        end
+    end
+    --print(package, found)
+
     return found
 end
 

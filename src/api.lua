@@ -31,23 +31,45 @@ function zpm.uses(libraries)
     end
 
     for _, library in ipairs(libraries) do
-    
-        if zpm.has(library) then
-            local package = zpm.loader.project.builder:build(library, "libraries")
-            zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
-                package = package
-            } )
-        else
-            --@todo add warning
-        end
+
+        local package = zpm.loader.project.builder:build(library, "libraries")
+        zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
+            package = package
+        } )
     end
 end
 
-function zpm.has(libraries)
+function zpm.has(library)
 
-    table.tostring(zpm.loader.project.builder.cursor)
+    for _, access in ipairs({"public", "private"}) do
+        if zpm.loader.project.builder.cursor[access] and zpm.loader.project.builder.cursor[access]["libraries"] then
+            for _, pkg in ipairs(zpm.loader.project.builder.cursor[access]["libraries"]) do
+                if pkg.name == library then
+                    return true
+                end
+            end
+        end
+    end
 
-    return true
+    -- check if it has an optional matching library
+    if zpm.loader.project.builder.cursor.optionals and zpm.loader.project.builder.cursor.optionals["libraries"] then
+        for _, pkg in ipairs(zpm.loader.project.builder.cursor.optionals["libraries"]) do
+            if pkg.name == library then
+
+                local public = zpm.loader.project.builder.solution.tree.closed.public
+
+                if public["libraries"] and public["libraries"][library] then
+                    for version, _ in pairs(public["libraries"][library]) do
+                        if premake.checkVersion(version, pkg.versionRequirements) then
+                            return true
+                        end
+                    end  
+                end
+            end
+        end
+    end
+
+    return false
 end
 
 function zpm.export(commands)
