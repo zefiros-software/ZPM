@@ -51,24 +51,6 @@ function zpm.has(library)
         end
     end
 
-    -- check if it has an optional matching library
-    if zpm.loader.project.builder.cursor.optionals and zpm.loader.project.builder.cursor.optionals["libraries"] then
-        for _, pkg in ipairs(zpm.loader.project.builder.cursor.optionals["libraries"]) do
-            if pkg.name == library then
-
-                local public = zpm.loader.project.builder.solution.tree.closed.public
-
-                if public["libraries"] and public["libraries"][library] then
-                    for version, _ in pairs(public["libraries"][library]) do
-                        if premake.checkVersion(version, pkg.versionRequirements) then
-                            return true
-                        end
-                    end  
-                end
-            end
-        end
-    end
-
     return false
 end
 

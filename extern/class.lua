@@ -19,7 +19,7 @@ setmetatable(metaObj, {__mode = "k"})
 -- return a shallow copy of table t
 
 local function duplicate(t)
-  t2 = {}
+  local t2 = {}
   for k,v in pairs(t) do t2[k] = v end
   return t2
 end

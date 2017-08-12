@@ -279,7 +279,7 @@ function Package:_findExportSeperated(tag)
 
         local file = path.join(self:getDefinition(), p)
         if os.isfile(file) then
-            builds = zpm.ser.loadMultiYaml(file)
+            local builds = zpm.ser.loadMultiYaml(file)
             for _, build in ipairs(builds) do
                 if premake.checkVersion(tag, build.version) then
                     if build.export then
@@ -298,7 +298,7 @@ function Package:_findExportSeperated(tag)
         for _, p in ipairs( { "export.lua", ".export.lua" }) do
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
-                fexport = io.readfile(file)
+                local fexport = io.readfile(file)
                 if fexport then
                     export = fexport
                     break
@@ -343,7 +343,7 @@ function Package:_findExtractSeperated(tag)
 
         local file = path.join(self:getDefinition(), p)
         if os.isfile(file) then
-            builds = zpm.ser.loadMultiYaml(file)
+            local builds = zpm.ser.loadMultiYaml(file)
             for _, build in ipairs(builds) do
 
                 if premake.checkVersion(tag, build.version) then
@@ -363,7 +363,7 @@ function Package:_findExtractSeperated(tag)
         for _, p in ipairs( { "extract.lua", ".extract.lua" }) do
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
-                fextract = io.readfile(file)
+                local fextract = io.readfile(file)
                 if fextract then
                     extract = fextract
                     break

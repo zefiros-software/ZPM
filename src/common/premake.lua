@@ -69,7 +69,7 @@ premake.override(premake.main, "processCommandLine", function()
 
     -- Validate the command-line arguments. This has to happen after the
     -- script has run to allow for project-specific options
-    ok, err = premake.option.validate(_OPTIONS)
+    local ok, err = premake.option.validate(_OPTIONS)
     if not ok then
         printf("Error: %s", err)
         os.exit(1)

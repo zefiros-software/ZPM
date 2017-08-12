@@ -52,7 +52,7 @@ function Tree:iterateDFS(nodFunc, useRoot)
     end
 end
 
-function Tree:_walkDependencyDFS(cursor, nodFunc)
+function Tree:_walkDependencyDFS(cursor, nodFunc, ntype)
 
     for _, access in ipairs({"private", "public"}) do
         for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
@@ -60,13 +60,13 @@ function Tree:_walkDependencyDFS(cursor, nodFunc)
             if pkgs then            
                 table.sort(pkgs, function(a,b) return a.name < b.name end)
                 for _, pkg in ipairs(pkgs) do
-                    self:_walkDependencyDFS(pkg, nodFunc)
+                    self:_walkDependencyDFS(pkg, nodFunc, type)
                 end
             end
         end
     end
 
-    nodFunc(cursor)
+    nodFunc(cursor, ntype)
 end
 
 function Tree:_walkAccessibilityDFS(node, access, nodFunc)

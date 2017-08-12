@@ -252,11 +252,11 @@ function zpm.util.patternMatch(str, pattern)
 end
 
 function zpm.util.split(s, delimiter)
-    result = {};
+    local result = {}
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
+        table.insert(result, match)
     end
-    return result;
+    return result
 end
 
 function zpm.util.rmdir(folder)

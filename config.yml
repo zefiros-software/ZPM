@@ -96,6 +96,7 @@ install:
             # libraries may declare private packages that 
             # are not exported to other packages
             allowPrivate: true
+            lazyLoading: true
             name: library
             order: 200
         assets:

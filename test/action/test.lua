@@ -30,7 +30,7 @@ newaction {
 	description = "Run the automated test suite",
 	
 	execute = function ()
-		lu = u.LuaUnit.new()
+		local lu = u.LuaUnit.new()
 		os.exit( lu:runSuite( "--verbose" ) )
 	end
 	

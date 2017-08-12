@@ -33,10 +33,18 @@ function Builder:init(loader, solution)
 end
 
 function Builder:walkDependencies()
+
+
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+        local lazyLoading = self.loader.config({"install", "manifests", type, "lazyLoading"})
+        if self:isEager(type) then
+            self:_eagerLoad(type)
+        end
+    end
     
     zpm.meta.exporting = true
 
-    self.solution:iterateDFS(function(node)    
+    self.solution:iterateDFS(function(node, type)
 
         if node.projects then
             for name, proj in pairs(node.projects) do
@@ -55,7 +63,7 @@ function Builder:walkDependencies()
                             table.sort(useNames)
 
                             for _, uname in ipairs(useNames) do
-                                uproj = proj.uses[uname]    
+                                local uproj = proj.uses[uname]
                                 if uproj.package then
                                     if uproj.package.projects then
                                 
@@ -83,16 +91,6 @@ function Builder:walkDependencies()
     end)
     
     zpm.meta.exporting = false
-end
-
-function Builder:_importPackage(name, package)
-           
-    if package.kind == "StaticLib" then
-        links(name)
-    end
-    if package.exportFunction then
-        package.exportFunction()
-    end
 end
 
 function Builder:build(package, type)
@@ -143,37 +141,32 @@ function Builder:build(package, type)
     end
     self.cursor = prev
 
-    print("@@@")
-
-
-    if not found then
-
-        if self.cursor.optionals and self.cursor.optionals[type] then
-            for _, pkg in ipairs(self.cursor.optionals[type]) do
-                if pkg.name == package then
-
-                    local public = self.solution.tree.closed.public
-                    --print(table.tostring(public,3))
-
-                    if public[type] and public[type][package] then
-                        for version, dep in pairs(public[type][package]) do
-                            if premake.checkVersion(dep.version, pkg.versionRequirements) then
-                                print(table.tostring(dep
-                                ))
-                            end
-                        end  
-                    end
-                end
-            end
-        end
-    end
-    --print(package, found)
-
     return found
 end
+
+function Builder:isEager(type)
+
+    local lazyLoading = self.loader.config({"install", "manifests", type, "lazyLoading"})
+    return lazyLoading ~= nil and not lazyLoading
+end
+
+function Builder:_eagerLoad(type)
+
+end
+
 
 function Builder:getEnv(type, cursor)
 
     local cursor = iif(cursor == nil, self.cursor, cursor)
     return zpm.api.load(type, cursor)
+end
+
+function Builder:_importPackage(name, package)
+           
+    if package.kind == "StaticLib" then
+        links(name)
+    end
+    if package.exportFunction then
+        package.exportFunction()
+    end
 end

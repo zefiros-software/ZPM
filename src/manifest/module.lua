@@ -31,19 +31,19 @@ end
 
 function Module:pullRepository()
 
-    selfM = Module:cast(self)
+    local selfM = Module:cast(self)
     selfM:_update(selfM:getDirectory(), selfM:getRepository())
 end
 
 function Module:getRepository()
 
-    selfM = Module:cast(self)
+    local selfM = Module:cast(self)
     return selfM:getHeadPath()
 end
 
 function Module:getDefinition()
 
-    selfM = Module:cast(self)
+    local selfM = Module:cast(self)
     return selfM:getHeadPath()
 end
 

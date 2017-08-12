@@ -109,12 +109,29 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                     if pkg.version then
                         semver = zpm.semver(pkg.version)
                     end
-                    zpm.util.setTable(self.tree.closed.all, index, package:getCost({
-                        tag = pkg.tag,
-                        version = pkg.version,
-                        semver = semver,
-                        hash = pkg.hash                    
-                    }))
+                    zpm.util.setTable(self.tree.closed.all, index, {
+                        cost = package:getCost({
+                            tag = pkg.tag,
+                            version = pkg.version,
+                            semver = semver,
+                            hash = pkg.hash                    
+                        }),
+                        package = package,
+                        version = iif(pkg.version, pkg.version, pkg.tag)
+                    })
+
+                    if access == "public" then
+                        zpm.util.setTable(self.tree.closed.public,  {type, package:getHash()}, {
+                            cost = package:getCost({
+                                tag = pkg.tag,
+                                version = pkg.version,
+                                semver = semver,
+                                hash = pkg.hash                    
+                            }),
+                            package = package,
+                            version = iif(pkg.version, pkg.version, pkg.tag)
+                        })
+                    end
                 end      
             end
         end
@@ -230,7 +247,7 @@ function Solution:expand(best, beam)
                     version = iif(self.cursor.public[i].version, self.cursor.public[i].version, self.cursor.public[i].tag)
                 }
                 zpm.util.setTable(solution.tree.closed.all, index, package)
-                zpm.util.setTable(solution.tree.closed.public, index, package)
+                zpm.util.setTable(solution.tree.closed.public, {self.cursor.public[i].type, self.cursor.public[i].package:getHash()}, package)
 
             end
     
@@ -273,11 +290,20 @@ function Solution:_copyTree()
     for _, access in ipairs({"public", "all"}) do
         for type, pkgs in pairs(self.tree.closed[access]) do
             for hash, versions in pairs(pkgs) do
-                for version, pkg in pairs(versions) do
-                    zpm.util.setTable(root.closed, {access, type, hash, version},{
-                        cost = pkg.cost,
-                        version = pkg.version,
-                        package = pkg.package 
+                
+                if access == "all" then
+                    for version, pkg in pairs(versions) do
+                        zpm.util.setTable(root.closed, {access, type, hash, version},{
+                            cost = pkg.cost,
+                            version = pkg.version,
+                            package = pkg.package 
+                        })
+                    end
+                else
+                    zpm.util.setTable(root.closed, {access, type, hash},{
+                        cost = versions.cost,
+                        version = versions.version,
+                        package = versions.package 
                     })
                 end
             end
@@ -488,8 +514,7 @@ function Solution:_extractNode(node, isLock)
 
     local result = {
         public = {},
-        private = {},
-        
+        private = {},        
         name = node.package.fullName,
         definition = node.package.definition,
         repository = node.package.repository,
@@ -499,12 +524,12 @@ function Solution:_extractNode(node, isLock)
         hash = node.hash,
         settings = node.settings,
         tag = node.tag 
-    }
-
+    }    
+    
     if not isLock then
         result.closed = node.closed
     end
-    
+        
     self:_extractDependencies(node.private, result.private, isLock)
     self:_extractDependencies(node.public, result.public, isLock)
 
@@ -547,8 +572,8 @@ function Solution:_carthesian(lists, amount)
         return {}
     end
 
+    local indices = {}
     if not self.indices or table.isempty(self.indices) then
-        indices = {}
         for i=1,#lists do 
             table.insert(indices, 1)
         end        

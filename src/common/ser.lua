@@ -39,7 +39,7 @@ end
 
 function zpm.ser.loadFile(file)    
 
-    local ljson, errorcode = {}
+    local ljson = {}
     if os.isfile(file) then
         ljson = zpm.util.readAll(file)
         if zpm.ser.isYAML(file) then

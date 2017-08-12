@@ -36,17 +36,17 @@ function Project:init(loader)
     self.solution = nil
     self.lock = nil
     self.builder = nil
+    self.oldLock = nil
 end
 
 function Project:solve()
 
-    local lock = nil
     if self:hasLockFile() and not zpm.cli.ignoreLock() then
         noticef("Detected a lock file")
-        lock = zpm.ser.loadFile(self:getLockFile())
+        self.oldLock = zpm.ser.loadFile(self:getLockFile())
     end
 
-    local cost, solution = self.solver:solve(lock)
+    local cost, solution = self.solver:solve(self.oldLock)
 
     if solution then
         self.solution = solution:extract()
@@ -59,14 +59,51 @@ function Project:solve()
 
         self.builder = Builder(self.loader, self.solution)
 
-        self:_printDiff(table.deepcopy(iif(lock, lock, {})), table.deepcopy(iif(self.lock, self.lock, {})))
+        self:printDiff()
     else
         errorf("Failed to find a configuration satisfying all constraints!")
     end
 end
 
+function Project:printDiff()
+
+    self:_printDiff(table.deepcopy(iif(self.oldLock, self.oldLock, {})), table.deepcopy(iif(self.lock, self.lock, {})))
+end
+
 function Project:bake()
 
+    -- store all node information in the closed public table
+    self.solution:iterateAccessibilityDFS(function(access, type, node)
+        
+        if access == "public" then
+            self.solution.tree.closed.public[type][node.name].node = node
+        end
+        return true
+    end)
+
+    -- inject the node in the dependencies
+    self.solution:iterateAccessibilityDFS(function(access, type, node)
+        
+        if node.optionals then
+            for type, pkgs in pairs(node.optionals) do
+                for _, pkg in ipairs(pkgs) do
+                    if zpm.util.indexTable(self.solution.tree.closed.public, {type,pkg.name}) then
+                        if not node.public then
+                            node.public = {}
+                        end
+                        if not node.public[type] then
+                            node.public[type] = {}
+                        end
+                        table.insert(node.public[type], self.solution.tree.closed.public[type][pkg.name].node)
+                        pkg.exists = true
+                    end
+                end
+            end
+        end
+        return true
+    end)
+
+    -- Load the settings from each node
     self.solution:iterateAccessibilityDFS(function(access, type, node)
 
         if node.name and node.settings then
@@ -77,29 +114,8 @@ function Project:bake()
             end
         end
 
-
-        --self.loader.settings:add({node.name, node.hash, "values"})
-        --[[
-        for _, access in ipairs({"public", "private"}) do
-        
-            for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
-                local pkgs = zpm.util.indexTable(node,{access, type})
-                if pkgs then            
-                    table.sort(pkgs, function(a,b) return a.name < b.name end)
-                    for _, pkg in ipairs(pkgs) do
-                        --print(access, type, pkg.name, "$$$$$$$$$$$")
-                        --print(table.tostring(node.definition,3))
-                        local settings = zpm.util.indexTable(node, {access, type, pkg.name, "settings"})
-                        self.loader.settings:add({pkg.name, pkg.hash, "values"}, settings)
-                    end
-                end
-            end
-        end
-        --]]
-
         return true
     end, true)
-    --print(table.tostring(self.loader.settings.values,6), "@")
 end
 
 function Project:extract()
@@ -109,9 +125,6 @@ function Project:extract()
     }
     
     self.solution:iterateAccessibilityDFS(function(access, type, node)
-        if node.optional then
-            return false
-        end
     
         local extractDir = self.loader[type]:getExtractDirectory()
         if extractDir then
@@ -142,7 +155,7 @@ function Project:extract()
             if version then
                 node.export = node.package:findPackageExport(version)
             end
-
+            
             return true
         end
 
@@ -166,6 +179,7 @@ end
 
 function Project:_writeLock()
 
+    print(table.tostring(self.lock.closed, 3))
     if not table.isempty(self.lock) then
         os.writefile_ifnotequal(json.encode_pretty(self.lock), self:getLockFile())
     end
