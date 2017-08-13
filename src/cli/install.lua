@@ -34,26 +34,26 @@ local function _installZPM()
     zpm.loader.install:install()
 end
 
-newaction {
-    trigger = "install",
-    description = "Installs ZPM",
-    execute = function()
-        local help = false        
+if zpm.env.getBinDirectory() ~= _PREMAKE_DIR then
+    newaction {
+        trigger = "install",
+        description = "Installs packages",
+        execute = function()
+            local help = false        
+        
+            if (#_ARGS == 1 and _ARGS[1] == "zpm") then
+                _installZPM()
+            else
+                help = true
+            end
 
-        if #_ARGS == 0 or _ARGS[1] == "package" then
-        elseif #_ARGS == 1 or _ARGS[1] == "zpm" then
-            _installZPM()
-        else
-            help = true
+            if help or zpm.cli.showHelp() then
+                printf("%%{yellow}Show action must be one of the following commands:\n" ..
+                " - zpm  \t\tInstalls ZPM")
+            end
         end
-
-        if help or zpm.cli.showHelp() then
-            printf("%%{yellow}Show action must be one of the following commands:\n" ..
-            " - package (default)\tSets the key on a specified value\n" ..
-            " - zpm  \t\tInstalls ZPM")
-        end
-    end
-}
+    }
+end
 
 newaction {
     trigger = "update",
