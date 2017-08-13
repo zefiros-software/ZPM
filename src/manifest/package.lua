@@ -78,7 +78,7 @@ end
 function Package:getExtractDirectory(dir, node)
 
     local version = iif(node.version == nil, node.tag, node.version)
-    return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(-4)))
+    return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(0,5)))
 end
 
 function Package:needsExtraction(dir, node)

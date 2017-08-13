@@ -118,7 +118,7 @@ function Registries:_newRegistry(dir, repo, branch, mayLoadRegistries)
     zpm.assert(not repo or zpm.util.isGitUrl(repo), "Registry '%s' is not a git url!", repo)
 
     if not dir then
-        dir = path.join(self:_getDirectory(), string.sha1(repo):sub(-5))
+        dir = path.join(self:_getDirectory(), string.sha1(repo):sub(0,5))
     end
     
     return Registry(self.loader, dir, repo, branch, self:_mayCheck(), isRoot)

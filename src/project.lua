@@ -179,7 +179,6 @@ end
 
 function Project:_writeLock()
 
-    print(table.tostring(self.lock.closed, 3))
     if not table.isempty(self.lock) then
         os.writefile_ifnotequal(json.encode_pretty(self.lock), self:getLockFile())
     end
@@ -230,7 +229,7 @@ function Project:_printDiff(lock, solution, depth)
             end
         end
     end
-
+    
     for _, access in ipairs({"public", "private"}) do
         if lock[access] then
             for type, packages in pairs(lock[access]) do

@@ -150,7 +150,8 @@ function zpm.git.clone(destination, url, branch)
 
     os.chdir(destination)
 
-    os.executef( "git config core.ignoreStat true" )
+    --os.executef( "git config core.ignoreStat true" )
+    
     os.executef( "git config core.fscache true" )
 
     os.chdir(current)

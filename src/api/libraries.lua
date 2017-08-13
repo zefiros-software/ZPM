@@ -97,14 +97,14 @@ function zpm.api.libraries.global.project(package)
 
     return function(name)
         local version = iif(package.version == nil, package.tag, package.version)
-        local alias = string.format("%s-%s-%s", name, version, string.sha1(package.name):sub(-4))
+        local alias = string.format("%s-%s-%s", name, version, string.sha1(package.name):sub(0,5))
         project(alias)
         filename(name)
         zpm.util.setTable(package, {"aliases", name}, alias)
 
         location(path.join(package.location, ".zpm" ))
-        targetdir(package.bindir)
-        objdir(package.objdir)
+        targetdir(path.join(package.bindir, name))
+        objdir(path.join(package.objdir, name))
         warnings "Off"
     end
 end

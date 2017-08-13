@@ -36,16 +36,6 @@ dofile "tree.lua"
 dofile "builder.lua"
 dofile "api.lua"
 
-dofile "api/common.lua"
-dofile "api/extract.lua"
-dofile "api/libraries.lua"
-
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
-
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
-
 dofile "common/validate.lua"
 dofile "common/prioqueue.lua"
 dofile "common/stack.lua"
@@ -59,6 +49,17 @@ dofile "common/bootstrap.lua"
 dofile "common/github.lua"
 dofile "common/http.lua"
 dofile "common/util.lua"
+
+
+dofile "api/common.lua"
+dofile "api/extract.lua"
+dofile "api/libraries.lua"
+
+dofile "registry/registries.lua"
+dofile "registry/registry.lua"
+
+dofile "manifest/package.lua"
+dofile "manifest/module.lua"
 
 dofile "cli/cli.lua"
 dofile "cli/config.lua"

@@ -118,7 +118,7 @@ function Builder:build(package, type)
                         self.loader.project.cursor = pkg
                         self.cursor = pkg
                         self.cursor.bindir = path.join(extractDir, "@bin")
-                        self.cursor.objdir = path.join(extractDir, "@obj", pkg.name, pkg.hash)
+                        self.cursor.objdir = path.join(extractDir, "@obj", pkg.name, pkg.hash:sub(0,5))
                         
                         found = self.cursor
 

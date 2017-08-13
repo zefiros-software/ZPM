@@ -24,7 +24,7 @@ matrix:
       osx_image: xcode8
       language: generic
       before_install:
-        - brew unlink git
+        - brewN unlink git
         - brew install git
     - os: osx
       osx_image: xcode9

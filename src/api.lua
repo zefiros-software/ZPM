@@ -55,6 +55,7 @@ function zpm.has(library)
 end
 
 function zpm.export(commands)
+
     local cursor = zpm.loader.project.builder.cursor
     local index = {"projects", zpm.meta.project, "exportFunction"}
     local parent = zpm.util.indexTable(zpm.loader.project.builder.cursor, index)
