@@ -2,6 +2,6 @@ platform:
   - Win32
 build: off
 install:
-    - .\script\install-zpm.bat
+  - .\script\install-zpm.bat
 test_script:
-    - test.bat
+  - test.bat

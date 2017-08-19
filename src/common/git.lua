@@ -71,7 +71,10 @@ function zpm.git.setOrigin(destination, url)
 
     local status, errorCode = os.outputof("git remote get-url origin")
 
-    if not status:contains(url)then
+    if not status:contains(url) and zpm.util.hasGitUrl(url) then
+        os.executef("git remote set-url origin %s", url)
+        os.execute("git branch --set-upstream-to origin/master")
+    elseif not status:contains(url) then
         os.executef("git remote add origin %s", url)
         os.execute("git branch --set-upstream-to origin/master")
     end

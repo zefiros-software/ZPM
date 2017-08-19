@@ -122,8 +122,11 @@ function Builder:build(package, type)
                         
                         found = self.cursor
 
-                        zpm.sandbox.run(pkg.export, { env = self:getEnv(type), quota = false })
-                        
+                        -- @todo: check if this is not too annoying
+                        if pkg.package:isTrusted() then
+                            zpm.sandbox.run(pkg.export, { env = self:getEnv(type), quota = false })
+                        end
+
                         zpm.meta.building = true
                         filter(prevFilter)
                         project(prevProject)

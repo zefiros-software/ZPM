@@ -70,6 +70,47 @@ function Package:init(loader, manifest, settings)
     self.oldest = nil
 end
 
+function Package:isTrusted(ask)
+
+    ask = iif(ask == nil, true, ask)
+    local index = {"trustStore", self.vendor, self.name}
+    local trustStore = self.loader.config(index)
+    if not trustStore then
+        trustStore = {}
+    end
+    local trusted = false
+    local changed = false
+    if (not table.contains(trustStore, self.repository) and zpm.util.hasUrl(self.repository)) and (not table.contains(trustStore, self.definition) and zpm.util.hasUrl(self.definition)) then
+
+        if self.definition ~= self.repository then
+            if zpm.util.hasUrl(self.definition) then
+                zpm.cli.askTrustStoreConfirmation(("Package '%s' wants to execute code from '%s' and '%s',\ndo you trust this repository?"):format(self.fullName, self.repository, self.definition), function()
+                    table.insert(trustStore, self.repository)
+                    table.insert(trustStore, self.definition)
+                    changed = true
+                end, function()
+                    warningf("Package repositories are not trusted!")
+                end)
+            end
+        else
+            zpm.cli.askTrustStoreConfirmation(("Package '%s' wants to execute code from '%s',\ndo you trust this repository?"):format(self.fullName, self.repository), function()
+                table.insert(trustStore, self.repository)
+                changed = true
+            end, function()
+                warningf("Package repository is not trusted!")
+            end)
+        end
+    else
+        trusted = true
+    end
+
+    if changed then
+        self.loader.config:set(index, trustStore, true)
+    end
+
+    return trustStore
+end
+
 function Package:__eq(package)
 
     return package:getHash() == self:getHash()
@@ -113,7 +154,9 @@ function Package:extract(dir, node)
 
             self.loader.project.cursor = node
 
-            zpm.sandbox.run(extract, { env = zpm.api.load("extract", node), quota = false })
+            if self:isTrusted() then
+                zpm.sandbox.run(extract, { env = zpm.api.load("extract", node), quota = false })
+            end
 
             self.loader.project.cursor = nil
             os.chdir(current)

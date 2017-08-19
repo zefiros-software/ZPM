@@ -41,6 +41,10 @@ function zpm.cli.showHelp()
     return _OPTIONS["help"] ~= nil
 end
 
+if zpm.cli.showHelp() then
+    zpm.util.disableMainScript()
+end
+
 newoption {
     trigger = "ignore-lock",
     description = "Act as if there is no lock file available"
@@ -100,6 +104,31 @@ if zpm.cli.profile() then
         description = "Profiles"
     }
 end
+
+newoption {
+    trigger = "always-trust",
+    description = "Allow trust execution of new repository code"
+}
+
+function zpm.cli.askTrustStoreConfirmation(question, yesFunc, noFunc)
+
+    interactf("%s Use '--always-trust' to always accept (Y [enter]/n)?", question)
+    local answer = _OPTIONS["allow-module"] or io.read()
+    if answer == "Y" or
+        answer == "y" or
+        answer == "" or
+        _OPTIONS["allow-trust"] then
+        return yesFunc()
+    else
+        return noFunc()
+    end
+
+end
+
+newoption {
+    trigger = "allow-module",
+    description = "Allow modules to install"
+}
 
 function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
 

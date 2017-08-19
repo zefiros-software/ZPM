@@ -90,7 +90,7 @@ function Manifest:_loadFile(file)
             local vendor, name = mod[1], mod[2]
             self:_savePackage(package.name, name, vendor, package)
         else
-            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, zpm.json.encode(package, {pretty=true}), validOrMessage)
+            warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, json.encode_pretty(package), validOrMessage)
         end
     end
 end

@@ -104,7 +104,6 @@ function Config:print(key)
         end
         str = string.format("\nValue '%s' is set to:\n%s", key, c)
     end )
-    
     if self.mayPrint then
         self.printf(str)
     end
@@ -147,7 +146,7 @@ function Config:_store(keys, value, add, force)
             end
         end
         if self.storeFile then
-            zpm.util.writeAll(self.storeFile, json.encode(config, {pretty=true}))
+            zpm.util.writeAll(self.storeFile, json.encode_pretty(config))
         end
     end, true, true)
 end
