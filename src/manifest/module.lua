@@ -29,6 +29,13 @@ function Module:init(loader, manifest, settings)
     self.super:init(loader, manifest, settings)
 end
 
+function Module:onLoad(version, tag)
+
+    if self:isTrusted() then
+        require(self.fullName, tag)
+    end
+end
+
 function Module:pullRepository()
 
     local selfM = Module:cast(self)
@@ -48,37 +55,40 @@ function Module:getDefinition()
 end
 
 function Module:install()
+    local selfM = Module:cast(self)
 
-    local headPath = self:getHeadPath()
-    local modPath = self:getDirectory()
+    local headPath = selfM:getHeadPath()
+    local modPath = selfM:getDirectory()
     if not os.isdir(headPath) then
-        noticef("- Installing module '%s'", self.fullName)
-        self:_update(modPath, headPath)
+        noticef("- Installing module '%s'", selfM.fullName)
+        selfM:_update(modPath, headPath)
     else
-        noticef("- Module '%s' is already installed!", self.fullName)
+        noticef("- Module '%s' is already installed!", selfM.fullName)
     end
 end
 
 function Module:update()
+    local selfM = Module:cast(self)
 
-    local headPath = self:getHeadPath()
-    local modPath = self:getDirectory()
+    local headPath = selfM:getHeadPath()
+    local modPath = selfM:getDirectory()
     if os.isdir(headPath) then
-        noticef("- Updating module '%s'", self.fullName)
-        self:_update(modPath, headPath)
+        noticef("- Updating module '%s'", selfM.fullName)
+        selfM:_update(modPath, headPath)
     else
-        warningf("- Module '%s' is not installed!", self.fullName)
+        warningf("- Module '%s' is not installed!", selfM.fullName)
     end
 end
 
 function Module:uninstall()
+    local selfM = Module:cast(self)
 
-    local modPath = self:getDirectory()
+    local modPath = selfM:getDirectory()
     if os.isdir(modPath) then
-        noticef("- Uninstalling module '%s'", self.fullName)
+        noticef("- Uninstalling module '%s'", selfM.fullName)
         zpm.util.rmdir(modPath)
 
-        local vendorPath = self:getVendorDirectory()
+        local vendorPath = selfM:getVendorDirectory()
         local matches = os.matchdirs(vendorPath)
         if #matches == 1 and matches[1] == vendorPath then
             zpm.util.rmdir(vendorPath)
@@ -87,32 +97,37 @@ function Module:uninstall()
 end
 
 function Module:isInstalled()
+    local selfM = Module:cast(self)
 
-    return os.isdir(self:getDirectory())
+    return os.isdir(selfM:getDirectory())
 end
 
 function Module:getDirectory()
+    local selfM = Module:cast(self)
 
-    return path.join(self.manifest.manager:getDirectory(), self.fullName)
+    return path.join(selfM.manifest.manager:getDirectory(), selfM.fullName)
 end
 
 function Module:getVendorDirectory()
+    local selfM = Module:cast(self)
 
-    return path.join(self.manifest.manager:getDirectory(), self.vendor)
+    return path.join(selfM.manifest.manager:getDirectory(), selfM.vendor)
 end
 
 
 function Module:getHeadPath()
+    local selfM = Module:cast(self)
     
-    return path.join(self:getDirectory(), "head")
+    return path.join(selfM:getDirectory(), "head")
 end
 
 function Module:_update(modPath, modPath)
+    local selfM = Module:cast(self)
 
-    local modPath = self:getDirectory()
+    local modPath = selfM:getDirectory()
     local headPath = path.join(modPath, "head")
 
-    zpm.git.cloneOrFetch(headPath, self.repository)
+    zpm.git.cloneOrFetch(headPath, selfM.repository)
     local tags = zpm.git.getTags(headPath)
     for _, tag in ipairs(tags) do
 

@@ -29,7 +29,8 @@ if not zpm then
         group = "",
         project = "",
         exporting = false,
-        buiding = false
+        buiding = false,
+        package = nil
     }
     zpm._VERSION = "2.0.0"
 end

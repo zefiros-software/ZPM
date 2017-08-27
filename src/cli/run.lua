@@ -22,51 +22,33 @@
 -- @endcond
 --]]
 
-dofile "loader.lua"
-dofile "config.lua"
-dofile "install.lua"
-dofile "packages.lua"
-dofile "modules.lua"
-dofile "libraries.lua"
-dofile "project.lua"
-dofile "settings.lua"
-dofile "solution.lua"
-dofile "solver.lua"
-dofile "tree.lua"
-dofile "builder.lua"
-dofile "api.lua"
+newaction {
+    trigger = "run",
+    description = "Run module and package cli command",
+    execute = function()
+        local help = false
 
-dofile "common/validate.lua"
-dofile "common/prioqueue.lua"
-dofile "common/stack.lua"
-dofile "common/queue.lua"
-dofile "common/env.lua"
-dofile "common/ser.lua"
-dofile "common/options.lua"
-dofile "common/git.lua"
-dofile "common/premake.lua"
-dofile "common/bootstrap.lua"
-dofile "common/github.lua"
-dofile "common/http.lua"
-dofile "common/util.lua"
+        if #_ARGS == 1 then
+            if _ARGS[1] == "cache" then
+            else
+                help = true
+            end
+        else
+            help = true
+        end
 
+        if help or zpm.cli.showHelp() then
+            printf("%%{yellow}Run action must be one of the following commands:\n" ..
+            " - ")
+        end
+    end
+}
 
-dofile "api/common.lua"
-dofile "api/extract.lua"
-dofile "api/libraries.lua"
+function zpm.cli.run()
 
-dofile "registry/registries.lua"
-dofile "registry/registry.lua"
+    return _ACTION == "run"
+end
 
-dofile "manifest/package.lua"
-dofile "manifest/module.lua"
-
-dofile "cli/cli.lua"
-dofile "cli/config.lua"
-dofile "cli/run.lua"
-dofile "cli/show.lua"
-dofile "cli/install.lua"
-dofile "cli/github.lua"
-
-dofile "manifest/manifest.lua"
-dofile "manifest/manifests.lua"
+if _ACTION == "run" then
+    zpm.util.disableMainScript()
+end

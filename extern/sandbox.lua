@@ -159,7 +159,7 @@ function sandbox.protect(f, options)
       sethook(timeout, "", quota)
     end
 
-    string.rep = nil
+    --string.rep = nil
 
     local ok, result = pcall(f, ...)
 

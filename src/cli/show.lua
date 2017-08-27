@@ -27,13 +27,14 @@ newaction {
     description = "Shows various ZPM settings",
     execute = function()
         local help = false
-        zpm.util.disableMainScript()
 
         if #_ARGS == 1 then
             if _ARGS[1] == "cache" then
                 print(zpm.env.getCacheDirectory())
             elseif _ARGS[1] == "install" then
                 print(zpm.env.getDataDirectory())
+            elseif _ARGS[1] == "tools" then
+                print(zpm.env.getToolsDirectory())
             else
                 help = true
             end
@@ -43,8 +44,9 @@ newaction {
 
         if help or zpm.cli.showHelp() then
             printf("%%{yellow}Show action must be one of the following commands:\n" ..
-            " - cache \tSets the key on a specified value\n" ..
-            " - install \tAdds a value to the array on the given key")
+            " - cache \tShows the cache directory\n" ..
+            " - install \tShows the installation directory\n" ..
+            " - tools \tShows the tools directory")
         end
     end
 }
@@ -52,4 +54,8 @@ newaction {
 function zpm.cli.show()
 
     return _ACTION == "show"
+end
+
+if _ACTION == "show" then
+    zpm.util.disableMainScript()
 end

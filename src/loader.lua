@@ -54,7 +54,9 @@ end
 
 function Loader:solve()
 
-    if not zpm.util.isMainScriptDisabled() and not zpm.cli.showHelp() then
+    if not zpm.util.isMainScriptDisabled() 
+       and not zpm.cli.showHelp() 
+       and not zpm.cli.run() then
         self.project:solve()
     end
 end
@@ -142,6 +144,12 @@ function Loader:_initialiseCache()
 
     if not os.isdir(self.temp) then
         zpm.assert(os.mkdir(self.temp), "The temp directory '%s' could not be made!", self.temp)
+    end
+
+    self.tools = zpm.env.getToolsDirectory()
+
+    if not os.isdir(self.tools) then
+        zpm.assert(os.mkdir(self.tools), "The tools directory '%s' could not be made!", self.temp)
     end
 end
 

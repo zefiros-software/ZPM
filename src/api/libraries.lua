@@ -105,7 +105,14 @@ function zpm.api.libraries.global.project(package)
         location(path.join(package.location, ".zpm" ))
         targetdir(path.join(package.bindir, name))
         objdir(path.join(package.objdir, name))
+    
         warnings "Off"
+
+        -- make sure we can actually 'compile' header only libraries
+        -- (lame I know)
+        dummyFile = path.join(package.location, ".zpm/dummy.cpp")
+        os.writefile_ifnotequal(("void Dummy%s(){  return; }"):format(string.sha1(dummyFile)), dummyFile)
+        files(dummyFile)
     end
 end
 

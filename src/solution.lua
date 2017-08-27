@@ -192,6 +192,7 @@ function Solution:expand(best, beam)
     local solutions = {}
 
     while true do
+
         if not self:isOpen() then
             self:nextCursor()
             if not self:load() then
@@ -264,10 +265,14 @@ end
 function Solution:nextCursor()
 
     local ptr = nil
-    if #self.tree.open.public > 0 then
-        self.cursorPtr = table.remove(self.tree.open.public,1)
-    elseif #self.tree.open.private > 0 then  
-        self.cursorPtr = table.remove(self.tree.open.private,1)
+    if #table.keys(self.tree.open.public) > 0 then
+        local i, ptr = next(self.tree.open.public)
+        self.cursorPtr = ptr
+        self.tree.open.public[i] = nil
+    elseif #table.keys(self.tree.open.private) > 0 then  
+        local i, ptr = next(self.tree.open.private)
+        self.cursorPtr = ptr
+        self.tree.open.private[i] = nil
     else
         self.cursorPtr = nil
     end
@@ -319,12 +324,12 @@ function Solution:_copyNode(node)
     local private = {}
     
     if node.public then
-        for _, n in ipairs(node.public) do
+        for _, n in pairs(node.public) do
             table.insert(public, self:_copyNode(n))
         end
     end
     if node.private then 
-        for _, n in ipairs(node.private) do
+        for _, n in pairs(node.private) do
             table.insert(private, self:_copyNode(n))
         end
     end
@@ -354,7 +359,7 @@ end
 
 function Solution:isComplete()
 
-    return (#self.tree.open.public + #self.tree.open.private) == 0 and not self.failed
+    return (#table.keys(self.tree.open.public) + #table.keys(self.tree.open.private)) == 0 and not self.failed
 end
 
 function Solution:getCost()
@@ -375,7 +380,7 @@ end
 function Solution:load()
 
     self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.tag)       
-
+    
     if not self.cursor.private then
         self.cursor.private = {}
     end
@@ -385,34 +390,35 @@ function Solution:load()
     if not self.cursor.optionals then
         self.cursor.optionals = {}
     end
-
+    
     for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
 
         if self.cursor.definition.private and self.cursor.definition.private[type] then
-            
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private"})
-            for i, d in ipairs(self.cursor.definition.private[type]) do
-                if not self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type]) then
+            for _, d in pairs(self.cursor.definition.private[type]) do
+                local dep, idx = self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type])
+                if not dep then
                     self.failed = true
                     return
                 end
 
-                table.insert(self.tree.open.private, zpm.util.concat(table.deepcopy(ptr), {i}))
+                table.insert(self.tree.open.private, zpm.util.concat(table.deepcopy(ptr), {idx}))
             end
         end
     
         if self.cursor.definition.public and self.cursor.definition.public[type] then
         
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
-            for i, d in ipairs(self.cursor.definition.public[type]) do
+            for _, d in pairs(self.cursor.definition.public[type]) do
             
                 if not d.optional then
-                    if not self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type]) then
+                    local dep, idx = self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type])
+                    if not dep then
                         self.failed = true
                         return
                     end
 
-                    table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {i}))
+                    table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {idx}))
                 else
                     zpm.util.insertTable(self.cursor.optionals, {type}, {
                         name = d.name,
@@ -421,7 +427,10 @@ function Solution:load()
                 end
             end
         end
-    end     
+    end    
+
+    --print(self.cursor.name)
+    --print(self:isComplete(), self:isOpen())
     
     return true
 end
@@ -447,9 +456,10 @@ function Solution:_loadDependency(cursor, d, type, loader)
 
         dependency.package:load()
 
-        table.insert(cursor, dependency)
+        local idx = #cursor + 1
+        cursor[idx] = dependency
 
-        return dependency        
+        return dependency, idx
     end
 
     warningf("Package '%s/%s' does not exist", vendor, name)
@@ -469,10 +479,10 @@ end
 function Solution:_enumeratePublicVersions()
 
     local pubVersions = {}
-    for _, d in ipairs(self.cursor.public) do
+    for _, d in pairs(self.cursor.public) do
     
         --print(table.tostring(self.tree.closed,10), "@")
-        for _, c in ipairs(self.tree.closed.public) do
+        for _, c in pairs(self.tree.closed.public) do
             c = zpm.util.indexTable(self.tree, c)
             if d.package == c.package then
                 if premake.checkVersion(c.version, d.versionRequirement) then
@@ -497,7 +507,7 @@ end
 function Solution:_enumeratePrivateVersions()
 
     local privVersions = {}
-    for _, d in ipairs(self.cursor.private) do
+    for _, d in pairs(self.cursor.private) do
         local vs = d.package:getVersions(d.versionRequirement)
         if table.isempty(vs) then
             return {}
@@ -549,7 +559,7 @@ function Solution:_extractDependencies(dependencies, result, isLock)
         return
     end
 
-    for _, d in ipairs(dependencies) do
+    for _, d in pairs(dependencies) do
         local c = result
         if d.type then
             if not result[d.type] then

@@ -30,7 +30,6 @@ newaction {
         
         zpm.loader.config.mayStore = true
         zpm.loader.config.mayPrint = true
-        zpm.util.disableMainScript()
 
         if #_ARGS > 1 then
             if _ARGS[1] == "set" then
@@ -60,3 +59,7 @@ newaction {
         end
     end
 }
+
+if _ACTION == "config" then
+    zpm.util.disableMainScript()
+end

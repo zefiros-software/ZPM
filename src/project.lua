@@ -116,6 +116,16 @@ function Project:bake()
 
         return true
     end, true)
+    
+    -- load the modules
+    self.solution:iterateAccessibilityDFS(function(access, type, node)
+
+        if node.package then
+            node.package:onLoad(node.version, node.tag)
+        end
+
+        return true
+    end, true)
 end
 
 function Project:extract()
@@ -191,6 +201,7 @@ function Project:_printDiff(lock, solution, depth)
     local foundPkgs = {}
     for _, access in ipairs({"public", "private"}) do
         if solution[access] then
+            local printedTypes = {}
             for type, packages in pairs(solution[access]) do
             
                 for _, pkg in ipairs(packages) do
@@ -210,11 +221,16 @@ function Project:_printDiff(lock, solution, depth)
 
                     pkg.hash = iif(pkg.hash, pkg.hash, "")
 
+                    if not printedTypes[type] then
+                        printf("%%{blue bright}%s%s - %s:", dstr, iif(access=="private", "X", "O"), string.capitalized(type))
+                        printedTypes[type] = true
+                    end
+
                     if found then
                         if found.hash == pkg.hash then
                             printf("%%{yellow bright}%s\\_ %s (%s@%s)", dstr, pkg.name, pkg.tag, pkg.hash:sub(0,5) )
                         else
-                            printf("%%{yellow green}%s\\_ %s (%s@%s) => (%s@%s)", dstr, found.name, found.tag, found.hash:sub(0,5), pkg.tag, pkg.hash:sub(0,5) )
+                            printf("%%{green bright}%s\\_ %s (%s@%s) => (%s@%s)", dstr, found.name, found.tag, found.hash:sub(0,5), pkg.tag, pkg.hash:sub(0,5) )
                         end
 
                         self:_printDiff(table.deepcopy(found), table.deepcopy(pkg), depth + 1)

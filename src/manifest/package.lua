@@ -49,6 +49,11 @@ Package:virtual("getDefinition")
 Package:virtual("pullRepository")
 Package:virtual("pullDefinition")
 
+Package:virtual("onInstall")
+Package:virtual("onUninstall")
+Package:virtual("onUpdate")
+Package:virtual("onLoad")
+
 function Package:init(loader, manifest, settings)
 
     self.manifest = manifest
@@ -68,6 +73,23 @@ function Package:init(loader, manifest, settings)
     self.versions = { }
     self.newest = nil
     self.oldest = nil
+end
+
+
+function Package:onInstall(version, tag)
+    -- @todo: add this hook
+end
+
+function Package:onUninstall(version, tag)
+    -- @todo: add this hook
+end
+
+function Package:onUpdate(oldVersion, newVersion, oldTag, newTag)
+    -- @todo: add this hook
+end
+
+function Package:onLoad(version, tag)
+    -- @todo: add this hook
 end
 
 function Package:isTrusted(ask)
@@ -97,7 +119,7 @@ function Package:isTrusted(ask)
                 table.insert(trustStore, self.repository)
                 changed = true
             end, function()
-                warningf("Package repository is not trusted!")
+                warningf("Package repository is not trusted, and execution is skipped!")
             end)
         end
     else
@@ -424,8 +446,16 @@ function Package:_processPackageFile(package, tag)
         return { }
     end
 
-    if self.isRoot then
-        package = table.merge(package, package.dev)
+    if self.isRoot and package.dev then
+        for type, pkgs in pairs(package.dev) do
+            if not package[type] then
+                package[type] = {}
+            end
+
+            for _, pkg in ipairs(pkgs) do
+                table.insert(package[type], pkg)
+            end
+        end
         package.dev = nil
     end
 

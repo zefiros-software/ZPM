@@ -51,6 +51,11 @@ function zpm.env.getPackageDirectory()
     return path.join(zpm.env.getCacheDirectory(), "pkg")
 end
 
+function zpm.env.getToolsDirectory()
+
+    return path.join(zpm.env.getCacheDirectory(), "tools")
+end
+
 function zpm.env.getTempDirectory()
 
     return path.join(zpm.env.getCacheDirectory(), "temp")

@@ -30,6 +30,11 @@ function Builder:init(loader, solution)
     self.solution = solution
     self.cursor = self.solution.tree
     self.settings = {}
+
+    -- provide missing information
+    -- which is not in our solution yet
+    self.cursor.location = _WORKING_DIR
+    zpm.meta.package = self.cursor
 end
 
 function Builder:walkDependencies()
@@ -143,6 +148,7 @@ function Builder:build(package, type)
         end
     end
     self.cursor = prev
+    zpm.meta.package = self.cursor
 
     return found
 end

@@ -27,6 +27,14 @@ function os.outputoff(...)
     return os.outputof(string.format(...))
 end
 
+-- we do not want the premake module downloader please
+-- our own stuff works better :)
+premake.override(premake, "downloadModule", function(base)
+
+    return false
+end )
+
+
 premake.override(os, "execute", function(base, exec)
 
     if _OPTIONS["verbose"] then
