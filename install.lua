@@ -379,7 +379,7 @@ function zpm.install.setup( checkLatest )
         
         local premakeFile = path.join( folder, premakeCmd )
 
-        if not os.isfile( premakeFile ) and asset.version >= zpm.semver(zpm.install.minReqVersion:match(">=?(.*)")) and asset.version <= zpm.semver("5.0.0-alpha12") then
+        if not os.isfile( premakeFile ) and asset.version >= zpm.semver(zpm.install.minReqVersion:match(">=?(.*)")) and asset.version < zpm.semver("5.0.0-alpha12") then
     
             printf( "- Installing premake version '%s'", tostring( asset.version ) )
             local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
