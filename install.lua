@@ -422,7 +422,8 @@ function zpm.install.getLatestPremakeVersion()
     local checkFile = path.join( zpm.cache, "PREMAKE-CHECK" )
     -- check once a day
     local old = zpm.util.readAll(checkFile)
-    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 60 * 24) and old and zpm.semver(_PREMAKE_VERSION) == zpm.semver(old)  then
+    local versionCheck = pcall(zpm.semver, old)
+    if os.isfile(checkFile) and os.difftime(os.time(), os.stat(checkFile).mtime) < (60 * 60 * 24) and versionCheck and zpm.semver(_PREMAKE_VERSION) == versionCheck  then
         return true, nil
     end
     
