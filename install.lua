@@ -420,6 +420,10 @@ end
 function zpm.install.getLatestPremakeVersion()
     
     local checkFile = path.join( zpm.cache, "PREMAKE-CHECK" )
+    if not os.isfile(checkFile) then
+        return true, nil
+    end
+
     -- check once a day
     local old = zpm.util.readAll(checkFile)
     local versionCheck = pcall(zpm.semver, old)
