@@ -379,7 +379,7 @@ function zpm.install.setup( checkLatest )
         
         local premakeFile = path.join( folder, premakeCmd )
 
-        if not os.isfile( premakeFile ) and asset.version >= zpm.semver(zpm.install.minReqVersion:match(">=?(.*)")) and asset.version <= zpm.semver(zpm.install.maxReqVersion:match("<5.0.0-alpha12")) then
+        if not os.isfile( premakeFile ) and asset.version >= zpm.semver(zpm.install.minReqVersion:match(">=?(.*)")) and asset.version <= zpm.semver("<5.0.0-alpha12") then
     
             printf( "- Installing premake version '%s'", tostring( asset.version ) )
             local file = zpm.util.downloadFromArchive( asset.url, "premake*" )[1]
@@ -425,7 +425,7 @@ function zpm.install.getLatestPremakeVersion()
         return true, nil
     end
     
-    local pattern = string.format( "premake-.*-%s.*", os.get() )
+    local pattern = string.format( "premake-5.0.0-alpha11-%s.*", os.get() )
     local ok, latest, version = pcall( zpm.GitHub.latestAssetMatch, "premake", "premake-core", pattern )   
     
     if ok then
