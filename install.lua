@@ -437,7 +437,8 @@ function zpm.install.getLatestPremakeVersion()
     return ok, latest, version
 end
 
-zpm.install.updatedPremake = false
+-- disable premake updater
+zpm.install.updatedPremake = true
 function zpm.install.updatePremake( checkOnly, verbose )
     if zpm.install.updatedPremake then
         return nil
