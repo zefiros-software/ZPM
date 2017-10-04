@@ -49,7 +49,14 @@ function Builder:walkDependencies()
     
     zpm.meta.exporting = true
 
-    self.solution:iterateDFS(function(node, type)
+    local taggedWorkspaces = {}
+    self.solution:iterateDFS(function(node, type, parent, index)
+    
+        if node.name and node.tag and zpm.util.indexTable(taggedWorkspaces, {node.name, node.tag}) then
+            return
+        end
+
+        zpm.util.setTable(taggedWorkspaces, {node.name, node.tag}, true)
 
         if node.projects then
             for name, proj in pairs(node.projects) do
@@ -85,6 +92,24 @@ function Builder:walkDependencies()
                                         if node.projects and node.projects[iproj] then
                                             self:_importPackage(iproj, node.projects[iproj])
                                         end
+                                    else
+                                        local wasOptional = false
+                                        if node.optionals and node.optionals["libraries"] then
+                                            for _, lib in ipairs(node.optionals["libraries"]) do
+                                                if lib.name == uname then
+                                                    wasOptional = true
+                                                    break
+                                                end
+                                            end
+                                        end
+
+                                        if not wasOptional then
+                                            if node.fullName then
+                                                warningf("%s is trying to use '%s' which is unknown to its definition.", node.fullName, uname)
+                                            else   
+                                                warningf("Trying to use '%s' which is unknown to its definition.", uname)
+                                            end
+                                        end
                                     end
                                 end
                             end
@@ -107,37 +132,9 @@ function Builder:build(package, type)
         local pkgs = zpm.util.indexTable(self.cursor,{access, type})
         if pkgs then
             for _, pkg in ipairs(pkgs) do
-                if pkg.name == package and not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, package}) then
-                    zpm.util.setTable(self.settings, {zpm.meta.workspace, type, package}, true)
-                    
-                    if pkg.export then
-                        local prevGroup = zpm.meta.group
-                        local prevProject = zpm.meta.project
-                        local prevFilter = zpm.meta.filter
-
-                        filter {}
-                        group(("Extern/%s"):format(pkg.name))
-                        
-                        zpm.meta.package = pkg
-
-                        self.loader.project.cursor = pkg
-                        self.cursor = pkg
-                        self.cursor.bindir = path.join(extractDir, "@bin")
-                        self.cursor.objdir = path.join(extractDir, "@obj", pkg.name, pkg.hash:sub(0,5))
-                        
-                        found = self.cursor
-
-                        -- @todo: check if this is not too annoying
-                        if pkg.package:isTrusted() then
-                            zpm.sandbox.run(pkg.export, { env = self:getEnv(type), quota = false })
-                        end
-
-                        zpm.meta.building = true
-                        filter(prevFilter)
-                        project(prevProject)
-                        group(prevGroup)
-                        zpm.meta.building = false
-
+                if pkg.name == package then          
+                    found = self:buildPackage(pkg, package, type)
+                    if found then
                         break
                     end
                 end
@@ -147,8 +144,55 @@ function Builder:build(package, type)
             break
         end
     end
+
+    -- now search in the global package lists
+    if not found then
+        local node = self.solution.tree.closed.public[type][package]
+        if node then
+            found = self:buildPackage(node.node, package, type)
+        end
+    end
+
     self.cursor = prev
     zpm.meta.package = self.cursor
+    return found
+end
+
+function Builder:buildPackage(package, name, type)
+
+    local found = nil
+    if not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, name}) then
+        zpm.util.setTable(self.settings, {zpm.meta.workspace, type, name}, true)
+
+        if package.export then
+            local prevGroup = zpm.meta.group
+            local prevProject = zpm.meta.project
+            local prevFilter = zpm.meta.filter
+
+            filter {}
+            group(("Extern/%s"):format(package.name))
+                        
+            zpm.meta.package = package
+
+            self.loader.project.cursor = package
+            self.cursor = package
+            self.cursor.bindir = path.join(extractDir, "@bin")
+            self.cursor.objdir = path.join(extractDir, "@obj", package.name, package.hash:sub(0,5))
+                        
+            found = self.cursor
+
+            -- @todo: check if this is not too annoying
+            if package.package:isTrusted() then
+                zpm.sandbox.run(package.export, { env = self:getEnv(type), quota = false })
+            end
+
+            zpm.meta.building = true
+            filter(prevFilter)
+            project(prevProject)
+            group(prevGroup)
+            zpm.meta.building = false
+        end
+    end
 
     return found
 end
@@ -175,7 +219,10 @@ function Builder:_importPackage(name, package)
     if package.kind == "StaticLib" then
         links(name)
     end
-    if package.exportFunction then
-        package.exportFunction()
+    if package.exportFunctions then
+
+        for _, func in ipairs(package.exportFunctions) do
+            func()
+        end
     end
 end

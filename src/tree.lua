@@ -28,6 +28,49 @@ function Tree:init(loader, tree)
 
     self.loader = loader
     self.tree = tree
+    
+    -- store all node information in the closed public table
+    self:iterateAccessibilityDFS(function(access, type, node)
+
+        if access == "public" then
+            self.tree.closed.public[type][node.name].node = node
+        end
+        return true
+    end)
+    
+    -- prepare nodes
+    self:iterateAccessibilityDFS(function(access, type, node)
+
+        node.optionalIndices = {}
+        return true
+    end, true)
+
+    -- inject the node in the dependencies
+    self:iterateAccessibilityDFS(function(access, type, node)
+        
+        if node.optionals then
+            for type, pkgs in pairs(node.optionals) do
+                for _, pkg in ipairs(pkgs) do
+                    local closed = zpm.util.indexTable(self.tree.closed.public, {type,pkg.name}) 
+                    if closed and premake.checkVersion(closed.version, pkg.versionRequirement) then
+                        if not node.public then
+                            node.public = {}
+                        end
+                        if not node.public[type] then
+                            node.public[type] = {}
+                        end
+                        local ix = #node.public[type] + 1
+                        node.public[type][ix] = self.tree.closed.public[type][pkg.name].node
+                        zpm.util.setTable(node.optionalIndices, {type, ix}, true)
+                        pkg.exists = true
+                        
+                        return false
+                    end
+                end
+            end
+        end
+        return true
+    end)
 end
 
 
@@ -52,21 +95,21 @@ function Tree:iterateDFS(nodFunc, useRoot)
     end
 end
 
-function Tree:_walkDependencyDFS(cursor, nodFunc, ntype)
+function Tree:_walkDependencyDFS(cursor, nodFunc, ntype, parent, index)
 
     for _, access in ipairs({"private", "public"}) do
         for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
             local pkgs = zpm.util.indexTable(cursor,{access, type})
             if pkgs then            
                 table.sort(pkgs, function(a,b) return a.name < b.name end)
-                for _, pkg in ipairs(pkgs) do
-                    self:_walkDependencyDFS(pkg, nodFunc, type)
+                for i, pkg in ipairs(pkgs) do
+                    self:_walkDependencyDFS(pkg, nodFunc, type, cursor, i)
                 end
             end
         end
     end
 
-    nodFunc(cursor, ntype)
+    nodFunc(cursor, ntype, parent, index)
 end
 
 function Tree:_walkAccessibilityDFS(node, access, nodFunc)
@@ -75,9 +118,9 @@ function Tree:_walkAccessibilityDFS(node, access, nodFunc)
         if node[access] and node[access][type] then        
         
             table.sort(node[access][type], function(a,b) return a.name < b.name end)
-            for _, n in ipairs(node[access][type]) do
+            for i, n in ipairs(node[access][type]) do
 
-                if nodFunc(access, type, n) then
+                if nodFunc(access, type, n, node, i) then
                             
                     self:_walkAccessibilityDFS(n, "public", nodFunc)
                     self:_walkAccessibilityDFS(n, "private", nodFunc)

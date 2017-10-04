@@ -50,7 +50,7 @@ function Solver:solve(lock)
 
         local stack = Stack()
         stack:put(rootSolution,rootSolution:getCost())
-        cost, heuristic, succeeded = self:_branchAndBound(stack, math.huge, nil, 10, false, true)
+        cost, heuristic, succeeded = self:_branchAndBound(stack, math.huge, nil, 5, false, true)
     end
     
     if (zpm.cli.update() or not lock) and (succeeded or hasInitial) then
@@ -59,7 +59,7 @@ function Solver:solve(lock)
         local queue = Queue()
         local rootSolution = self:getRootSolution()
         queue:put(rootSolution,rootSolution:getCost())
-        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 50)
+        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 5)
     end
 
     return cost, heuristic, succeeded
@@ -85,7 +85,7 @@ function Solver:_branchAndBound(container, b, best, beam, useCompleteSpace, retu
         if cost < b then            
             local expanded = nextSolution:expand(b, beam)
             if #expanded > 0 then
-                for _, n in ripairs(expanded) do
+                for _, n in ipairs(expanded) do
                     local ncost = n:getCost()
                     if ncost <= b then
                         container:put(n, ncost)

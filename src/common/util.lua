@@ -30,6 +30,15 @@ function warningf(...)
     print(zpm.colors("%{magenta bright}" .. string.format(...)), zpm.colors("%{reset}"))
 end
  
+local warnOnceCache = {}
+function warningOncef(...)
+    local str = string.format(...)
+    if not warnOnceCache[str] then
+        warnOnceCache[str] = true
+        print(zpm.colors("%{magenta bright}" .. str), zpm.colors("%{reset}"))
+    end
+end
+ 
 function interactf(...)
     print(zpm.colors("%{cyan bright}" .. string.format(...)), zpm.colors("%{reset}"))
 end
@@ -314,10 +323,10 @@ function zpm.util.setTable(tab, index, value)
 
     local cursor = tab
     for i=1,#index do
-        if cursor[index[i]] then
-            cursor = cursor[index[i]]
-        elseif i == #index then
+        if i == #index then
             cursor[index[i]] = value
+        elseif cursor[index[i]] then
+            cursor = cursor[index[i]]
         else
             cursor[index[i]] = {}
             cursor = cursor[index[i]]
@@ -330,13 +339,13 @@ function zpm.util.insertTable(tab, index, value)
 
     local cursor = tab
     for i=1,#index do
-        if cursor[index[i]] then
-            cursor = cursor[index[i]]
-        elseif i == #index then
+        if i == #index then        
             if not cursor[index[i]] then
                 cursor[index[i]] = {}
             end
             table.insert(cursor[index[i]], value)
+        elseif cursor[index[i]] then
+            cursor = cursor[index[i]]
         else
             cursor[index[i]] = {}
             cursor = cursor[index[i]]

@@ -245,7 +245,6 @@ function zpm.git.export(from, output, tag)
     local current = os.getcwd()
 
     os.chdir(from)
-
     -- also extract the submodules
     local out, code = os.outputoff("git ls-tree -r %s", tag)
     for _, s in ipairs(out:explode("\n")) do
@@ -265,9 +264,9 @@ function zpm.git.archive(from, output, tag, prefix)
     local temp = path.join(zpm.loader.temp, ("%s.zip"):format(string.sha1(from .. prefix)))
     local current = os.getcwd()
     os.chdir(from)
-
-    os.executef("git archive --format=zip --prefix=\"%s\" --output=\"%s\" %s", prefix, temp, tag)
     
+    os.executef("git archive --format=zip --prefix=\"%s\" --output=\"%s\" %s", prefix, temp, tag)
+        
     os.chdir(current)
     
     zip.extract(temp, output)    
@@ -326,7 +325,6 @@ function zpm.git.getCommitAheadBehind(from, first, second)
 
     local current = os.getcwd()
     os.chdir(from)
-
     local output = os.outputoff("git rev-list %s...%s --count --left-right", first, second)
     local behind, ahead = output:match("(%d+)%s*(%d+)")
 

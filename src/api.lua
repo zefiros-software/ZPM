@@ -26,12 +26,13 @@ zpm.api = {}
 
 function zpm.uses(libraries)
 
+    
     if type(libraries) ~= "table" then
         libraries = {libraries}
     end
 
     for _, library in ipairs(libraries) do
-
+    
         local package = zpm.loader.project.builder:build(library, "libraries")
         zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
             package = package
@@ -57,35 +58,35 @@ end
 function zpm.export(commands)
 
     local cursor = zpm.loader.project.builder.cursor
-    local index = {"projects", zpm.meta.project, "exportFunction"}
-    local parent = zpm.util.indexTable(zpm.loader.project.builder.cursor, index)
+    local index = {"projects", zpm.meta.project, "exportFunctions"}
 
     local func = function()
-        if parent then
-            parent()
-        end
 
         zpm.sandbox.run(commands, {env = zpm.loader.project.builder:getEnv("libraries", cursor)})  
     end
 
-    zpm.util.setTable(zpm.loader.project.builder.cursor, index, func)    
-
+    zpm.util.insertTable(zpm.loader.project.builder.cursor, index, func)    
+    
+    local fltr = table.deepcopy(zpm.meta.filter)
+    filter {}
+    
     zpm.sandbox.run(commands, {env = zpm.loader.project.builder:getEnv("libraries")})  
+        
+    filter(fltr)
 end
 
 function zpm.setting(setting)
     
     local cursor = zpm.loader.project.cursor
-    local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.hash, setting})
+    
+    local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.tag, setting})
 
     if not tab then
         warningf("Setting '%s' does not exist on package '%s'", setting, zpm.loader.project.cursor.name)
 
         return nil
     end
-
-    print(table.tostring(zpm.loader.settings.values,5))
-
+    
     local values = tab.values
     if not values then
         return tab.default

@@ -47,7 +47,6 @@ function Project:solve()
     end
 
     local cost, solution = self.solver:solve(self.oldLock)
-
     if solution then
         self.solution = solution:extract()
         self.lock = solution:extract(true)
@@ -72,44 +71,17 @@ end
 
 function Project:bake()
 
-    -- store all node information in the closed public table
-    self.solution:iterateAccessibilityDFS(function(access, type, node)
-        
-        if access == "public" then
-            self.solution.tree.closed.public[type][node.name].node = node
-        end
-        return true
-    end)
-
-    -- inject the node in the dependencies
-    self.solution:iterateAccessibilityDFS(function(access, type, node)
-        
-        if node.optionals then
-            for type, pkgs in pairs(node.optionals) do
-                for _, pkg in ipairs(pkgs) do
-                    if zpm.util.indexTable(self.solution.tree.closed.public, {type,pkg.name}) then
-                        if not node.public then
-                            node.public = {}
-                        end
-                        if not node.public[type] then
-                            node.public[type] = {}
-                        end
-                        table.insert(node.public[type], self.solution.tree.closed.public[type][pkg.name].node)
-                        pkg.exists = true
-                    end
-                end
-            end
-        end
-        return true
-    end)
-
     -- Load the settings from each node
-    self.solution:iterateAccessibilityDFS(function(access, type, node)
+    self.solution:iterateAccessibilityDFS(function(access, type, node, parent, index)
+
+        if parent and parent.optionalIndices[parent] then
+            return false
+        end
 
         if node.name and node.settings then
             for setting, value in pairs(node.settings) do
-                if self.loader.settings({type, node.name, node.hash, setting}) then
-                    self.loader.settings:add({type, node.name, node.hash, setting, "values"}, value)
+                if self.loader.settings({type, node.name, node.tag, setting}) then
+                    self.loader.settings:add({type, node.name, node.tag, setting, "values"}, value)
                 end
             end
         end
@@ -135,20 +107,20 @@ function Project:extract()
     }
     
     self.solution:iterateAccessibilityDFS(function(access, type, node)
-    
         local extractDir = self.loader[type]:getExtractDirectory()
-        if extractDir then
-            if not os.isdir(extractDir) then
-                zpm.util.recurseMkdir(extractDir)
-                noticef("Creating directory '%s'", extractDir)
-            end
-            local gitignore = path.join(extractDir, ".gitignore")
-            if not os.isfile(gitignore) then
-                zpm.util.writeAll(gitignore, "*")
-            end    
-
+        if extractDir then   
             node.location = node.package:getExtractDirectory(extractDir, node)
             if node.package:needsExtraction(extractDir, node) then   
+            
+                if not os.isdir(extractDir) then
+                    zpm.util.recurseMkdir(extractDir)
+                    noticef("Creating directory '%s'", extractDir)
+                end
+                local gitignore = path.join(extractDir, ".gitignore")
+                if not os.isfile(gitignore) then
+                    zpm.util.writeAll(gitignore, "*")
+                end 
+
                 if not stats[type] then
                     stats[type] = true
                     noticef("Extracting %s to '%s'", type, extractDir)
@@ -157,19 +129,18 @@ function Project:extract()
                     stats.updated = stats.updated + 1
                 end
             end
-            local version = node.version
-            if not version then
-                version = node.tag
-            end
-
-            if version then
-                node.export = node.package:findPackageExport(version)
-            end
-            
-            return true
         end
 
-        return false
+        local version = node.version
+        if not version then
+            version = node.tag
+        end
+
+        if version then
+            node.export = node.package:findPackageExport(version)
+        end
+            
+        return true
     end)
 
     --if stats.updated == 0 then

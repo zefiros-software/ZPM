@@ -109,6 +109,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                     if pkg.version then
                         semver = zpm.semver(pkg.version)
                     end
+
                     zpm.util.setTable(self.tree.closed.all, index, {
                         cost = package:getCost({
                             tag = pkg.tag,
@@ -143,8 +144,9 @@ function Solution:_loadNodeFromLock(tree, node, lock)
         if node.definition and node.definition[access] then
             for ptype, pubs in pairs(node.definition[access]) do
                 for i, pub in ipairs(pubs) do
+
                     if not pub.optional then
-                    if zpm.util.indexTable(dpkgs, {access, ptype, pub.name}) then  
+                        if zpm.util.indexTable(dpkgs, {access, ptype, pub.name}) then  
                             local vcheckFailed = false
                             local lversion
                             for _, version in ipairs(dpkgs[access][ptype][pub.name]) do
@@ -201,8 +203,13 @@ function Solution:expand(best, beam)
         end
 
         local versions = self:_enumerateVersions()
-        
+        -- when no versions are valid we skip this expension round
+        if not versions then
+            break
+        end
+
         local l = self:_carthesian(table.deepcopy(versions), beam)
+
         for _, solved in ipairs(l) do
     
             for i=1,#self.cursor.private do
@@ -260,6 +267,8 @@ function Solution:expand(best, beam)
             return solutions
         end
     end
+
+    return solutions
 end
 
 function Solution:nextCursor()
@@ -342,7 +351,7 @@ function Solution:_copyNode(node)
         name = node.name,
         settings = node.settings,
         version = node.version,
-        optionals = table.deepcopy(optionals),
+        optionals = table.deepcopy(node.optionals),
         versionRequirement = node.versionRequirement,
         tag = node.tag,
         hash = node.hash
@@ -367,6 +376,7 @@ function Solution:getCost()
     local cost = 0
     -- count each library included as cost the cost of a major version too
     -- such that we also try to minimise the amount of libraries (HEAD is 0 cost)
+
     for type, libs in pairs(self.tree.closed.all) do
         for _, lib  in pairs(libs) do
             for _, v in pairs(lib) do
@@ -386,9 +396,6 @@ function Solution:load()
     end
     if not self.cursor.public then
         self.cursor.public = {}
-    end
-    if not self.cursor.optionals then
-        self.cursor.optionals = {}
     end
     
     for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
@@ -411,7 +418,9 @@ function Solution:load()
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
             for _, d in pairs(self.cursor.definition.public[type]) do
             
+
                 if not d.optional then
+                
                     local dep, idx = self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type])
                     if not dep then
                         self.failed = true
@@ -420,9 +429,12 @@ function Solution:load()
 
                     table.insert(self.tree.open.public, zpm.util.concat(table.deepcopy(ptr), {idx}))
                 else
+                    if not self.cursor.optionals then
+                        self.cursor.optionals = {}
+                    end
                     zpm.util.insertTable(self.cursor.optionals, {type}, {
                         name = d.name,
-                        versionRequirements = d.version
+                        versionRequirement = d.version
                     })
                 end
             end
@@ -447,6 +459,20 @@ function Solution:_loadDependency(cursor, d, type, loader)
     }
 
     if self.isRoot then
+    
+        if d.repository then
+            dependency.package.repository = d.repository
+
+            -- repository is now also the definition path when it is a directory, unless given otherwise
+            if os.isdir(d.repository) then
+                dependency.package.definition = d.repository
+
+                -- define as if the directory were @head
+                if not d.version then
+                    --dependency.versionRequirement = "@head"
+                end
+            end
+        end
         if d.definition then
             dependency.package.definition = d.definition
         end
@@ -470,7 +496,10 @@ function Solution:_enumerateVersions()
 
     local pubVersions = self:_enumeratePublicVersions()
     if pubVersions then
-        return zpm.util.concat(self:_enumeratePrivateVersions(), pubVersions)
+        local privVersions = self:_enumeratePrivateVersions()
+        if privVersions then
+            return zpm.util.concat(privVersions, pubVersions)
+        end
     end
 
     return nil
@@ -481,11 +510,10 @@ function Solution:_enumeratePublicVersions()
     local pubVersions = {}
     for _, d in pairs(self.cursor.public) do
     
-        --print(table.tostring(self.tree.closed,10), "@")
         for _, c in pairs(self.tree.closed.public) do
             c = zpm.util.indexTable(self.tree, c)
             if d.package == c.package then
-                if premake.checkVersion(c.version, d.versionRequirement) then
+                if c.path or premake.checkVersion(c.version, d.versionRequirement) then
                     table.insert(pubVersions, {c.version})
                 else
                     return nil
@@ -495,12 +523,13 @@ function Solution:_enumeratePublicVersions()
 
         local vs = d.package:getVersions(d.versionRequirement)
         if table.isempty(vs) then
+            warningOncef("Package '%s' has no release that matches '%s'", d.package.fullName, d.versionRequirement)
             return nil
         else
             table.insert(pubVersions, vs)
         end
     end
-
+    
     return pubVersions
 end
 
@@ -510,12 +539,13 @@ function Solution:_enumeratePrivateVersions()
     for _, d in pairs(self.cursor.private) do
         local vs = d.package:getVersions(d.versionRequirement)
         if table.isempty(vs) then
-            return {}
+            warningOncef("Package '%s' has no release that matches '%s'", d.package.fullName, d.versionRequirement)
+            return nil
         else
             table.insert(privVersions, vs)
         end
     end
-
+    
     return privVersions
 end
 
@@ -530,7 +560,7 @@ function Solution:_extractNode(node, isLock)
         repository = node.package.repository,
         versionRequirement = node.versionRequirement,
         version = node.version,
-        optionals = node.optionals,
+        optionals = table.deepcopy(node.optionals),
         hash = node.hash,
         settings = node.settings,
         tag = node.tag 
@@ -549,6 +579,8 @@ function Solution:_extractNode(node, isLock)
     if table.isempty(result.private) then
         result.private = nil
     end
+
+    --print(table.tostring(node), "\n")
 
     return result
 end
@@ -578,7 +610,7 @@ end
 
 function Solution:_carthesian(lists, amount)
 
-    if #lists == 0 then
+    if not lists or #lists == 0 then
         return {}
     end
 

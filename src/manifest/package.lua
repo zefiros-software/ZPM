@@ -70,6 +70,7 @@ function Package:init(loader, manifest, settings)
 
     self.costTranslation = 0
 
+    self.costCache = {}
     self.versions = { }
     self.newest = nil
     self.oldest = nil
@@ -90,6 +91,11 @@ end
 
 function Package:onLoad(version, tag)
     -- @todo: add this hook
+end
+
+function Package:isGitRepo()
+    
+    return not os.isdir(self.repository)
 end
 
 function Package:isTrusted(ask)
@@ -140,8 +146,12 @@ end
 
 function Package:getExtractDirectory(dir, node)
 
-    local version = iif(node.version == nil, node.tag, node.version)
-    return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(0,5)))
+    if self:isGitRepo() then
+        local version = iif(node.version == nil, node.tag, node.version)
+        return path.join(dir, self.fullName, string.format("%s-%s", version, node.hash:sub(0,5)))
+    else
+        return self.repository
+    end
 end
 
 function Package:needsExtraction(dir, node)
@@ -168,8 +178,11 @@ function Package:extract(dir, node)
         local version = iif(node.version == nil, node.tag, node.version)
         local extract = self:findPackageExtract(version)
         if extract then
-            noticef("   Checking out directory, this may take a while...")
-            zpm.git.checkout(self:getRepository(), node.hash)
+
+            if self:isGitRepo() then
+                noticef("   Checking out directory, this may take a while...")
+                zpm.git.checkout(self:getRepository(), node.hash)
+            end
 
             local current = os.getcwd()
             os.chdir(self:getRepository())
@@ -183,10 +196,13 @@ function Package:extract(dir, node)
             self.loader.project.cursor = nil
             os.chdir(current)
         else
-            if zpm.git.hasSubmodules(self:getRepository()) then
-                noticef("   We detected submodules, this may take a little longer")
+        
+            if self:isGitRepo() then
+                if zpm.git.hasSubmodules(self:getRepository()) then
+                    noticef("   We detected submodules, this may take a little longer")
+                end
+                zpm.git.export(self:getRepository(), location, node.hash)
             end
-            zpm.git.export(self:getRepository(), location, node.hash)
         end
 
         updated = true
@@ -202,11 +218,21 @@ end
 function Package:getVersions(requirement)
 
     local result = { }
-    for _, v in ipairs(self.versions) do
-        local version = iif(v.version ~= nil, v.version, v.tag)
-        if premake.checkVersion(version, requirement) then
-            v.cost = self:getCost(v)
-            table.insert(result, v)
+
+    --print(self:isGitRepo(), self.name, requirement)
+    if not self:isGitRepo() then
+        table.insert(result, {
+            hash = "LOCAL",
+            tag = "DIR",
+            cost = 0
+        })
+    else
+        for _, v in ipairs(self.versions) do
+            local version = iif(v.version ~= nil, v.version, v.tag)
+            if premake.checkVersion(version, requirement) then
+                v.cost = self:getCost(v)
+                table.insert(result, v)
+            end
         end
     end
 
@@ -215,28 +241,45 @@ end
 
 function Package:getCost(v)
 
+    if self.costCache[v.hash] then
+        return self.costCache[v.hash]
+    end
+
+    if not self:isGitRepo() then
+
+        return 0
+    end
+
     if self.newest then
         if v.version then
 
             return zpm.package.semverDist(self.newest.semver, v.semver) + self.costTranslation
         else
-            local total = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
+            if not self.totalCommits then
+                self.totalCommits = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
+            end
             local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
 
             local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
-            local distancePerCommit = math.min(totalDistance / total, 1)
+            local distancePerCommit = math.min(totalDistance / self.totalCommits, 1)
             local guessedDistance =(behind - ahead) * distancePerCommit
-            return guessedDistance + self.costTranslation
+
+            self.costCache[v.hash] = guessedDistance + self.costTranslation
         end
     else
-        local total = zpm.git.getCommitCount(self:getRepository(), "HEAD")
+    
+        if not self.totalCommits then
+            self.totalCommits = zpm.git.getCommitCount(self:getRepository(), "HEAD")
+        end
         local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), "HEAD", v.hash)
 
         local totalDistance = zpm.package.semverDist(zpm.semver(1, 0, 0), zpm.semver(0, 0, 0))
-        local distancePerCommit = math.min(totalDistance / total, 1)
+        local distancePerCommit = math.min(totalDistance / self.totalCommits, 1)
         local guessedDistance =(behind - ahead) * distancePerCommit
-        return guessedDistance + self.costTranslation
+        self.costCache[v.hash] = guessedDistance + self.costTranslation
     end
+
+    return self.costCache[v.hash]
 end
 
 function Package:load(hash)
@@ -261,6 +304,7 @@ end
 
 function Package:getDefinition()
 
+    
     if self:isDefinitionRepo() then
         return self:_getDefinitionPkgDir()
     end
@@ -287,7 +331,7 @@ end
 function Package:findPackageDefinition(tag)
 
     local package = { }
-    if not tag or self:isDefinitionSeperate() then
+    if not tag or self:isDefinitionSeperate() or not self:isDefinitionRepo() then
 
         for _, p in ipairs( { "package.yml", ".package.yml", "package.yaml", ".package.yaml" }) do
 
@@ -313,8 +357,8 @@ function Package:findPackageDefinition(tag)
 end
 
 function Package:findPackageExport(tag)
-
-    if self:isDefinitionSeperate() then
+    
+    if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
         return self:_findExportSeperated(tag)
     else
         return self:_findExport(tag)
@@ -378,7 +422,7 @@ end
 
 function Package:findPackageExtract(tag)
 
-    if self:isDefinitionSeperate() then
+    if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
         return self:_findExtractSeperated(tag)
     else
         return self:_findExtract(tag)
@@ -446,6 +490,14 @@ function Package:_processPackageFile(package, tag)
         return { }
     end
 
+    if not package.private then
+        package.private = { }
+    end
+
+    if not package.public then
+        package.public = { }
+    end
+
     if self.isRoot and package.dev then
         for type, pkgs in pairs(package.dev) do
             if not package[type] then
@@ -457,14 +509,6 @@ function Package:_processPackageFile(package, tag)
             end
         end
         package.dev = nil
-    end
-
-    if not package.private then
-        package.private = { }
-    end
-
-    if not package.public then
-        package.public = { }
     end
 
     -- add private modules as public that may not be private
@@ -521,11 +565,11 @@ function Package:pull(hash)
         hasHash = zpm.git.hasHash(repo, hash)
     end
 
-    if not self:isRepositoryRepo() or(self.pulled and not needsUpdate) then
+    if not self:isRepositoryRepo() or (self.pulled and not needsUpdate) then
         return
     end
 
-    if self:_mayPull() or(hash and not hasHash) then
+    if self:_mayPull() or (hash and not hasHash) then
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
