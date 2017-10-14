@@ -329,7 +329,7 @@ function Package:isDefinitionSeperate()
     return self.definition ~= self.repository
 end
 
-function Package:findPackageDefinition(tag)
+function Package:findPackageDefinition(hash, tag)
 
     local package = { }
     if not tag or self:isDefinitionSeperate() or not self:isDefinitionRepo() then
@@ -338,7 +338,7 @@ function Package:findPackageDefinition(tag)
 
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
-                package = self:_processPackageFile(zpm.ser.loadFile(file), tag)
+                package = self:_processPackageFile(zpm.ser.loadFile(file), hash, tag)
                 break
             end
         end
@@ -349,7 +349,7 @@ function Package:findPackageDefinition(tag)
             local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
             if contents then
 
-                package = self:_processPackageFile(zpm.ser.loadYaml(contents), tag)
+                package = self:_processPackageFile(zpm.ser.loadYaml(contents), hash, tag)
                 break
             end
         end
@@ -485,7 +485,7 @@ function Package:_findExtractSeperated(tag)
     return extract
 end
 
-function Package:_processPackageFile(package, tag)
+function Package:_processPackageFile(package, hash, tag)
 
     if not package then
         return { }
@@ -660,6 +660,7 @@ function Package:_loadSettings(tag, settings)
                     default = setting.default,
                     reduce = setting.reduce
                 }, true)
+                print(table.tostring(self.loader.settings( { self.manifest.name, self.fullName, tag, name })))
             end
         end
     end

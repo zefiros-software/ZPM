@@ -71,7 +71,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
         return
     end
 
-    node.definition = node.package:findPackageDefinition(lock.hash)    
+    node.definition = node.package:findPackageDefinition(lock.hash, lock.tag)    
     local dpkgs = {}
     for _, access in ipairs({"public", "private"}) do
         node[access] = {}
@@ -390,7 +390,7 @@ end
 
 function Solution:load()
 
-    self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.tag)       
+    self.cursor.definition = self.cursor.package:findPackageDefinition(self.cursor.hash, self.cursor.tag)       
     
     if not self.cursor.private then
         self.cursor.private = {}
