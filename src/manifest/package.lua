@@ -660,7 +660,6 @@ function Package:_loadSettings(tag, settings)
                     default = setting.default,
                     reduce = setting.reduce
                 }, true)
-                print(table.tostring(self.loader.settings( { self.manifest.name, self.fullName, tag, name })))
             end
         end
     end
