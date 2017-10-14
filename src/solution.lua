@@ -103,7 +103,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                     if not self:_loadNodeFromLock(tree, lnode, pkg) then
                         return false
                     end
-
+                    
                     local index = {type, package:getHash(), pkg.tag}
                     local semver = nil
                     if pkg.version then
@@ -351,6 +351,7 @@ function Solution:_copyNode(node)
         name = node.name,
         settings = node.settings,
         version = node.version,
+        definition = node.definition,
         optionals = table.deepcopy(node.optionals),
         versionRequirement = node.versionRequirement,
         tag = node.tag,
@@ -563,6 +564,7 @@ function Solution:_extractNode(node, isLock)
         optionals = table.deepcopy(node.optionals),
         hash = node.hash,
         settings = node.settings,
+        meta = node.definition,
         tag = node.tag 
     }    
     

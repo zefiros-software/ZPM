@@ -90,14 +90,17 @@ function Project:bake()
     end, true)
     
     -- load the modules
-    self.solution:iterateAccessibilityDFS(function(access, type, node)
+    
+    for _, gtype in ipairs(self.loader.manifests:getLoadOrder()) do
+        self.solution:iterateAccessibilityDFS(function(access, type, node)
+        
+            if gtype == type and node.package then
+                node.package:onLoad(node.version, node.tag)
+            end
 
-        if node.package then
-            node.package:onLoad(node.version, node.tag)
-        end
-
-        return true
-    end, true)
+            return true
+        end, true)
+    end
 end
 
 function Project:extract()

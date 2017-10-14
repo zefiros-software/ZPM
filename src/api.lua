@@ -26,18 +26,23 @@ zpm.api = {}
 
 function zpm.uses(libraries)
 
-    
+    local found = true
     if type(libraries) ~= "table" then
         libraries = {libraries}
     end
 
     for _, library in ipairs(libraries) do
     
-        local package = zpm.loader.project.builder:build(library, "libraries")
+        local package, access = zpm.loader.project.builder:build(library, "libraries")
+        --print(zpm.meta.project, library, package, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
         zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "uses", library}, {
             package = package
         } )
+
+        found = found and package
     end
+
+    return found
 end
 
 function zpm.has(library)
@@ -52,7 +57,7 @@ function zpm.has(library)
         end
     end
 
-    return false
+    return zpm.loader.project.builder.solution.tree.closed.public["libraries"][library]
 end
 
 function zpm.export(commands)
@@ -62,6 +67,7 @@ function zpm.export(commands)
 
     local func = function()
 
+        --print(commands)
         zpm.sandbox.run(commands, {env = zpm.loader.project.builder:getEnv("libraries", cursor)})  
     end
 

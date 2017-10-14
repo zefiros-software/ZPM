@@ -166,6 +166,7 @@ function Package:extract(dir, node)
 
     local location = self:getExtractDirectory(dir, node)
     local updated = false
+
     if self:needsExtraction(location, node) then
 
         if os.isdir(location) then
@@ -498,32 +499,50 @@ function Package:_processPackageFile(package, tag)
         package.public = { }
     end
 
-    if self.isRoot and package.dev then
-        for type, pkgs in pairs(package.dev) do
-            if not package[type] then
-                package[type] = {}
+    local mergeDefinition = function(package, dev)
+        
+        if not dev then
+            return
+        end
+
+        if not package then
+            package = dev
+        else
+
+            for type, pkgs in pairs(dev) do
+                for _, pkg in ipairs(pkgs) do
+                    if not package[type] then
+                        package[type] = {}
+                    end
+
+                    local found = nil
+                    local idx = 0
+                    for i, fpkg in ipairs(package[type]) do
+                        if fpkg.name == pkg.name then
+                            found = fpkg
+                            idx = i
+                            break
+                        end
+                    end
+
+                    if not found then
+                        table.insert(package[type], pkg)
+                    else
+                        package[type][idx] = table.merge(found, pkg)
+                    end
+                end
             end
 
-            for _, pkg in ipairs(pkgs) do
-                table.insert(package[type], pkg)
-            end
         end
-        package.dev = nil
+        return package
     end
+    
 
-    -- add private modules as public that may not be private
-    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
-
-        local maybePrivate = self.loader.config( { "install", "manifests", type, "allowPrivate" })
-        if not maybePrivate and package[type] then
-
-            if not package.public[type] then
-                package.public[type] = { }
-            end
-
-            package.public[type] = zpm.util.concat(package.public[type], package[type])
-            package[type] = nil
-        end
+    if self.isRoot and package.dev then
+        mergeDefinition(package, package.dev)
+        mergeDefinition(package.public, package.dev.public)
+        mergeDefinition(package.private, package.dev.private)
+        package.dev = nil
     end
 
     -- remove private types from root and insert in .private
@@ -540,6 +559,21 @@ function Package:_processPackageFile(package, tag)
         end
     end
 
+    -- add private modules as public that may not be private
+    for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
+
+        local maybePrivate = self.loader.config( { "install", "manifests", type, "allowPrivate" })
+        if not maybePrivate and package[type] then
+
+            if not package.public[type] then
+                package.public[type] = { }
+            end
+
+            package.public[type] = zpm.util.concat(package.public[type], package[type])
+            package[type] = nil
+        end
+    end
+    
     -- load setting definitions
     self:_loadSettings(tag, package.settings)
 

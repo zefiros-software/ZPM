@@ -56,7 +56,7 @@ function Manifests:getLoadOrder()
     local result = {}
     local dependencyTypes = zpm.util.toArray(self.loader.config("install.manifests"))
     table.sort(dependencyTypes, function(t1, t2) 
-        return iif(t1[next(t1)].order ~= nil, t1[next(t1)].order, -1) > iif(t2[next(t2)].order ~= nil, t2[next(t2)].order, -1)
+        return iif(t1[next(t1)].order ~= nil, t1[next(t1)].order, -1) < iif(t2[next(t2)].order ~= nil, t2[next(t2)].order, -1)
     end)
 
     for _, name in ipairs(dependencyTypes) do

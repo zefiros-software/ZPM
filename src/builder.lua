@@ -52,64 +52,58 @@ function Builder:walkDependencies()
     local taggedWorkspaces = {}
     self.solution:iterateDFS(function(node, type, parent, index)
     
-        if node.name and node.tag and zpm.util.indexTable(taggedWorkspaces, {node.name, node.tag}) then
+        local index = {node.name, node.tag}
+        if node.name and node.tag and zpm.util.indexTable(taggedWorkspaces, index) then
             return
         end
 
-        zpm.util.setTable(taggedWorkspaces, {node.name, node.tag}, true)
+        zpm.util.setTable(taggedWorkspaces, index, true)
 
+        
         if node.projects then
             for name, proj in pairs(node.projects) do
                 if proj.workspaces then
             
-                    for _, wrkspace in ipairs(proj.workspaces) do
-           
+                    local workspaces = table.deepcopy(proj.workspaces)
+                    table.sort(workspaces)
+
+                    
+                    for _, wrkspace in ipairs(workspaces) do
                         filter {}
                         workspace(wrkspace)
                         project(name)
                 
-                        if proj.uses then
-                    
+                       self:_importUses(proj.uses, proj, node, name, wrkspace, parent)
+                    end
+                end    
+            end
+        end
+    end, true)
+
+    self.solution:iterateDFS(function(node)
+        if node.projects then
+            for name, proj in pairs(node.projects) do
+                if proj.workspaces then
+            
+                    local workspaces = table.deepcopy(proj.workspaces)
+                    table.sort(workspaces)
+                    for _, wrkspace in ipairs(workspaces) do
+                        filter {}
+                        workspace(wrkspace)
+                        project(name)
+
+                        
+                        if proj.uses then                    
                             local useNames = table.keys(proj.uses)
-                            -- sort for deterministic anwsers
                             table.sort(useNames)
 
                             for _, uname in ipairs(useNames) do
-                                local uproj = proj.uses[uname]
-                                if uproj.package then
-                                    if uproj.package.projects then
-                                
-                                        local iprojs = table.keys(uproj.package.projects)
-                                        -- sort for deterministic anwsers
-                                        table.sort(iprojs)
-                                        for _, iproj in ipairs(iprojs) do
-                                            self:_importPackage(iproj, uproj.package.projects[iproj])
-                                        end
-                                    end
-                                else
-                                    if node.aliases and node.aliases[uname] then
-                                        local iproj = node.aliases[uname]
-                                        if node.projects and node.projects[iproj] then
-                                            self:_importPackage(iproj, node.projects[iproj])
-                                        end
-                                    else
-                                        local wasOptional = false
-                                        if node.optionals and node.optionals["libraries"] then
-                                            for _, lib in ipairs(node.optionals["libraries"]) do
-                                                if lib.name == uname then
-                                                    wasOptional = true
-                                                    break
-                                                end
-                                            end
-                                        end
 
-                                        if not wasOptional then
-                                            if node.fullName then
-                                                warningf("%s is trying to use '%s' which is unknown to its definition.", node.fullName, uname)
-                                            else   
-                                                warningf("Trying to use '%s' which is unknown to its definition.", uname)
-                                            end
-                                        end
+                                local index = {"publicExportFunctions", wrkspace, uname}
+                                local exports = zpm.util.indexTable(node, index)
+                                if exports then
+                                    for _, func in ipairs(exports) do
+                                        func()
                                     end
                                 end
                             end
@@ -118,9 +112,71 @@ function Builder:walkDependencies()
                 end    
             end
         end
-    end)
+    end, true)
     
     zpm.meta.exporting = false
+end
+
+function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
+
+    if uses then
+                    
+        local useNames = table.keys(uses)
+        -- sort for deterministic anwsers
+        table.sort(useNames)
+
+        for _, uname in ipairs(useNames) do
+
+            local setParentExport = function(func)
+                if parent then
+                    local index = {"publicExportFunctions", wrkspace, node.name}
+                    zpm.util.insertTable(parent, index, func)
+                end
+            end
+        
+            local uproj = uses[uname]
+            --print(wrkspace, name, uname, uproj.package)
+            if uproj.package then
+                if uproj.package.projects then
+                                
+                    local iprojs = table.keys(uproj.package.projects)
+                    -- sort for deterministic anwsers
+                    table.sort(iprojs)
+                    for _, iproj in ipairs(iprojs) do
+                    
+                        local func = self:_importPackage(iproj, uproj.package.projects[iproj])
+                        setParentExport(func)
+                    end
+                end
+            else
+                if node.aliases and node.aliases[uname] then
+                    local iproj = node.aliases[uname]
+                    if node.projects and node.projects[iproj] then
+                        local func = self:_importPackage(iproj, node.projects[iproj])
+                        setParentExport(func)
+                    end
+                else
+                    local wasOptional = false
+                    if node.optionals and node.optionals["libraries"] then
+                        for _, lib in ipairs(node.optionals["libraries"]) do
+                            if lib.name == uname then
+                                wasOptional = true
+                                break
+                            end
+                        end
+                    end
+
+                    if not wasOptional then
+                        if node.fullName then
+                            warningf("%s is trying to use '%s' which is unknown to its definition.", node.fullName, uname)
+                        else   
+                            warningf("Trying to use '%s' which is unknown to its definition.", uname)
+                        end
+                    end
+                end
+            end
+        end
+    end
 end
 
 function Builder:build(package, type)
@@ -128,6 +184,7 @@ function Builder:build(package, type)
     local extractDir = self.loader[type]:getExtractDirectory()
     local prev = self.cursor
     local found = nil
+    local faccess = nil
     for _, access in ipairs({"private", "public"}) do
         local pkgs = zpm.util.indexTable(self.cursor,{access, type})
         if pkgs then
@@ -135,6 +192,7 @@ function Builder:build(package, type)
                 if pkg.name == package then          
                     found = self:buildPackage(pkg, package, type)
                     if found then
+                        faccess = access
                         break
                     end
                 end
@@ -150,48 +208,46 @@ function Builder:build(package, type)
         local node = self.solution.tree.closed.public[type][package]
         if node then
             found = self:buildPackage(node.node, package, type)
+            faccess = "public"
         end
     end
 
     self.cursor = prev
     zpm.meta.package = self.cursor
-    return found
+    return found, faccess
 end
 
 function Builder:buildPackage(package, name, type)
 
-    local found = nil
+    local found = package
+    --print(zpm.meta.workspace, package, "@")
     if not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, name}) then
         zpm.util.setTable(self.settings, {zpm.meta.workspace, type, name}, true)
 
-        if package.export then
-            local prevGroup = zpm.meta.group
-            local prevProject = zpm.meta.project
-            local prevFilter = zpm.meta.filter
+        local prevGroup = zpm.meta.group
+        local prevProject = zpm.meta.project
+        local prevFilter = zpm.meta.filter
 
-            filter {}
-            group(("Extern/%s"):format(package.name))
+        filter {}
+        group(("Extern/%s"):format(package.name))
                         
-            zpm.meta.package = package
-
-            self.loader.project.cursor = package
-            self.cursor = package
-            self.cursor.bindir = path.join(extractDir, "@bin")
-            self.cursor.objdir = path.join(extractDir, "@obj", package.name, package.hash:sub(0,5))
-                        
-            found = self.cursor
-
-            -- @todo: check if this is not too annoying
-            if package.package:isTrusted() then
-                zpm.sandbox.run(package.export, { env = self:getEnv(type), quota = false })
-            end
-
-            zpm.meta.building = true
-            filter(prevFilter)
-            project(prevProject)
-            group(prevGroup)
-            zpm.meta.building = false
+        zpm.meta.package = package
+            
+        self.loader.project.cursor = package
+        self.cursor = package
+        self.cursor.bindir = path.join(extractDir, "@bin")
+        self.cursor.objdir = path.join(extractDir, "@obj", package.name, package.hash:sub(0,5))
+                   
+        -- @todo: check if this is not too annoying
+        if package.export and package.package:isTrusted() then
+            zpm.sandbox.run(package.export, { env = self:getEnv(type), quota = false })
         end
+
+        zpm.meta.building = true
+        filter(prevFilter)
+        project(prevProject)
+        group(prevGroup)
+        zpm.meta.building = false
     end
 
     return found
@@ -216,13 +272,25 @@ end
 
 function Builder:_importPackage(name, package)
            
-    if package.kind == "StaticLib" then
-        links(name)
-    end
-    if package.exportFunctions then
+    local pname = name
+    local kind = package.kind
+    local funcs = table.deepcopy(package.exportFunctions)
+    if funcs then
 
-        for _, func in ipairs(package.exportFunctions) do
-            func()
+        local export = function()
+            if kind == "StaticLib" then
+                links(pname)
+            end
+
+            for _, func in ipairs(funcs) do
+                filter {}
+                func()
+            end
         end
+
+        export()
+        return export
     end
+
+    return function() end
 end
