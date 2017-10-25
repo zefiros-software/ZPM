@@ -91,7 +91,7 @@ function Installer:_writePremakeSystem()
 end
 
 function Installer:_getCurrentVersion()
-    return zpm.semver(_PREMAKE_VERSION)
+    return zpm.semver(self.loader.config("cache.version"))
 end
 
 function Installer:_updatePremake()
@@ -102,7 +102,7 @@ function Installer:_updatePremake()
     if self:_getCurrentVersion() < latest.version then
         printf("%%{green bright} - Updating premake version from '%s' to '%s'", _PREMAKE_VERSION, tostring(latest.version))
 
-        self:_installNewVersion(latest.assets[1])
+        self:_installNewVersion(latest.assets[1], tostring(latest.version))
 
         return true
     end
@@ -119,10 +119,10 @@ function Installer:_installPremake()
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
 
-    self:_installNewVersion(latest.assets[1])
+    self:_installNewVersion(latest.assets[1], tostring(latest.version))
 end
 
-function Installer:_installNewVersion(asset)
+function Installer:_installNewVersion(asset, version)
 
     -- first try to download the new file
     local file = self.loader.http:downloadFromArchive(asset.url, "premake*")[1]
@@ -138,6 +138,9 @@ function Installer:_installNewVersion(asset)
 
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
+
+    print(asset.version)
+    self.loader.config:set("cache.version", version, true)
 end
 
 function Installer:_getLatestPremake()
@@ -156,14 +159,11 @@ function Installer:_getLatestPremake()
         else
             self.__latestPremake = self:_getPremakeVersions()[1]
             -- cache the value for a day
-            self.loader.config:set("cache", {
-                premake =
-                {
-                    checkTime = os.time(),
-                    version = tostring(self.__latestPremake.version),
-                    assets = self.__latestPremake.assets
-                }
-            } , true)
+            self.loader.config:set("cache.premake", {
+                checkTime = os.time(),
+                version = tostring(self.__latestPremake.version),
+                assets = self.__latestPremake.assets
+            }, true)
         end
 
     end

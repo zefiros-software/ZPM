@@ -51,7 +51,7 @@ function Registry:_update()
 
         printf("%%{yellow}Hit: %s", self.repository)
         zpm.git.cloneOrFetch(self.directory, self.repository, self.branch)
-        zpm.git.checkout(self.directory, "HEAD")
+        zpm.git.checkout(self.directory, "origin/HEAD")
     end
 end
 

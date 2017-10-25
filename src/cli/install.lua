@@ -63,7 +63,7 @@ newaction {
 
         if #_ARGS == 1 and _ARGS[1] == "self" then
             zpm.loader.install:update()
-            zpm.loader.modules:update("*/*")    
+            --zpm.loader.modules:update("*/*")    
         elseif #_ARGS == 1 and _ARGS[1] == "bootstrap" then
             premake.action.call("update-bootstrap")
         elseif #_ARGS == 1 and _ARGS[1] == "registry" then
@@ -78,7 +78,7 @@ newaction {
 
         if help or zpm.cli.showHelp() then
             printf("%%{yellow}Show action must be one of the following commands:\n" ..
-            " - self \tUpdates everything underneath\n" ..
+            " - self \tUpdates everything except modules\n" ..
             " - bootstrap \tUpdates the bootstrap module loader\n" ..
             " - registry \tUpdates the ZPM library registry\n" ..
             " - zpm \t\tUpdates ZPM itself\n" ..
