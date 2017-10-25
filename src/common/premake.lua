@@ -30,7 +30,7 @@ end
 premake.override(os, "execute", function(base, exec)
 
     if _OPTIONS["verbose"] then
-        print(exec)
+        print(os.getcwd() .. "\t" .. exec)
     end
     base(exec)
 end )

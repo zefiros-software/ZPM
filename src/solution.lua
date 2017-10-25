@@ -71,7 +71,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
         return
     end
 
-    node.definition = node.package:findPackageDefinition(lock.hash, lock.tag)    
+    node.definition = node.package:findPackageDefinition(lock.hash, lock.tag, node)    
     local dpkgs = {}
     for _, access in ipairs({"public", "private"}) do
         node[access] = {}
@@ -110,25 +110,25 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                         semver = zpm.semver(pkg.version)
                     end
 
-                    zpm.util.setTable(self.tree.closed.all, index, {
+                    local cost = 0
+                    if zpm.cli.update() then
                         cost = package:getCost({
                             tag = pkg.tag,
                             version = pkg.version,
                             semver = semver,
                             hash = pkg.hash                    
-                        }),
+                        })
+                    end
+
+                    zpm.util.setTable(self.tree.closed.all, index, {
+                        cost = cost,
                         package = package,
                         version = iif(pkg.version, pkg.version, pkg.tag)
                     })
 
                     if access == "public" then
                         zpm.util.setTable(self.tree.closed.public,  {type, package:getHash()}, {
-                            cost = package:getCost({
-                                tag = pkg.tag,
-                                version = pkg.version,
-                                semver = semver,
-                                hash = pkg.hash                    
-                            }),
+                            cost = cost,
                             package = package,
                             version = iif(pkg.version, pkg.version, pkg.tag)
                         })

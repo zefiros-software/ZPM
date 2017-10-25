@@ -251,6 +251,8 @@ function Package:getCost(v)
         return 0
     end
 
+    self:_loadTags()
+
     if self.newest then
         if v.version then
 
@@ -329,38 +331,54 @@ function Package:isDefinitionSeperate()
     return self.definition ~= self.repository
 end
 
-function Package:findPackageDefinition(hash, tag)
+function Package:findPackageDefinition(hash, tag, extractedNode)
 
-    local package = { }
-    if not tag or self:isDefinitionSeperate() or not self:isDefinitionRepo() then
+    local checkPath = function(obj, dir, hash, tag)        
+        local pkg = {}
+        for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
-        for _, p in ipairs( { "package.yml", ".package.yml", "package.yaml", ".package.yaml" }) do
-
-            local file = path.join(self:getDefinition(), p)
+            local file = path.join(dir, p)
             if os.isfile(file) then
-                package = self:_processPackageFile(zpm.ser.loadFile(file), hash, tag)
+                pkg = obj:_processPackageFile(zpm.ser.loadFile(file), hash, tag)
                 break
             end
         end
+        return pkg
+    end
+    
+    local pkg = { }
+    if extractedNode and not extractedNode.isRoot then
+        local dir = ""
+        if self.manifest then
+            dir = self.loader[self.manifest.name]:getExtractDirectory()
+        end
+        pkg = checkPath(self, self:getExtractDirectory(dir, extractedNode), hash, tag)
+        if not table.isempty(pkg) then
+            return pkg
+        end
+    end
+
+    if not tag or self:isDefinitionSeperate() or not self:isDefinitionRepo() then
+
+        pkg = checkPath(self, self:getDefinition(), hash, tag)
     else
 
-        for _, p in ipairs( { "package.yml", ".package.yml", "package.yaml", ".package.yaml" }) do
+        for _, p in ipairs( { "package.yml", ".package.yml"}) do
 
             local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
             if contents then
-
-                package = self:_processPackageFile(zpm.ser.loadYaml(contents), hash, tag)
+                pkg = self:_processPackageFile(zpm.ser.loadYaml(contents), hash, tag)
                 break
             end
         end
     end
-    return package
+    return pkg
 end
 
 function Package:findPackageExport(tag)
     
     if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
-        return self:_findExportSeperated(tag)
+        return self:_findExportSeperated(self:getDefinition(), tag)
     else
         return self:_findExport(tag)
     end
@@ -382,12 +400,12 @@ function Package:_findExport(tag)
     return export
 end
 
-function Package:_findExportSeperated(tag)
+function Package:_findExportSeperated(dir, tag)
 
     local export = nil
-    for _, p in ipairs( { "export.yml", ".export.yml", "export.yaml", ".export.yaml" }) do
+    for _, p in ipairs( { "export.yml", ".export.yml"}) do
 
-        local file = path.join(self:getDefinition(), p)
+        local file = path.join(dir, p)
         if os.isfile(file) then
             local builds = zpm.ser.loadMultiYaml(file)
             for _, build in ipairs(builds) do
@@ -406,7 +424,7 @@ function Package:_findExportSeperated(tag)
 
     if not export then
         for _, p in ipairs( { "export.lua", ".export.lua" }) do
-            local file = path.join(self:getDefinition(), p)
+            local file = path.join(dir, p)
             if os.isfile(file) then
                 local fexport = io.readfile(file)
                 if fexport then
@@ -449,7 +467,7 @@ end
 function Package:_findExtractSeperated(tag)
 
     local extract = nil
-    for _, p in ipairs( { "extract.yml", ".extract.yml", "extract.yaml", ".extract.yaml" }) do
+    for _, p in ipairs( { "extract.yml", ".extract.yml"}) do
 
         local file = path.join(self:getDefinition(), p)
         if os.isfile(file) then
@@ -614,6 +632,17 @@ function Package:pull(hash)
         end
 
     end
+
+    self.pulled = true
+end
+
+function Package:_loadTags()
+
+    if self._loadedTags then
+        return
+    end
+    self._loadedTags = true
+
     local tags = zpm.git.getTags(self:getRepository())
     self.newest = tags[1]
     self.oldest = tags[#tags]
@@ -627,8 +656,6 @@ function Package:pull(hash)
         end
     end
     self.costTranslation = math.abs(self.costTranslation)
-
-    self.pulled = true
 end
 
 function Package:_getRepositoryPkgDir()
