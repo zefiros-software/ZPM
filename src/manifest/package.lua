@@ -220,6 +220,8 @@ function Package:getVersions(requirement)
 
     local result = { }
 
+    self:_loadTags()
+
     --print(self:isGitRepo(), self.name, requirement)
     if not self:isGitRepo() then
         table.insert(result, {
@@ -556,6 +558,12 @@ function Package:_processPackageFile(package, hash, tag)
     end
     
 
+    if self.isRoot and package.development then
+        mergeDefinition(package, package.development)
+        mergeDefinition(package.public, package.development.public)
+        mergeDefinition(package.private, package.development.private)
+        package.development = nil
+    end    
     if self.isRoot and package.dev then
         mergeDefinition(package, package.dev)
         mergeDefinition(package.public, package.dev.public)
