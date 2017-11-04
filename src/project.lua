@@ -140,7 +140,7 @@ function Project:extract()
         end
 
         if version then
-            node.export = node.package:findPackageExport(version)
+            node.export = node.package:findPackageExport(version, node.hash)
         end
             
         return true

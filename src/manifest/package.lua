@@ -377,27 +377,28 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
     return pkg
 end
 
-function Package:findPackageExport(tag)
+function Package:findPackageExport(tag, hash)
     
     if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
         return self:_findExportSeperated(self:getDefinition(), tag)
     else
-        return self:_findExport(tag)
+        return self:_findExport(hash)
     end
     return export
 end
 
-function Package:_findExport(tag)
+function Package:_findExport(hash)
 
     local export = nil
     for _, p in ipairs( { "export.lua", ".export.lua" }) do
 
-        local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+        local contents = zpm.git.getFileContent(self:getDefinition(), p, hash)
         if contents then
 
             export = contents
             break
         end
+        --print(self:getDefinition(), p, hash)
     end
     return export
 end
@@ -652,9 +653,12 @@ function Package:_loadTags()
     self._loadedTags = true
 
     local tags = zpm.git.getTags(self:getRepository())
+
     self.newest = tags[1]
     self.oldest = tags[#tags]
     self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()), tags)
+
+    --print(self.name, table.tostring(self.versions, 2))
 
     -- make sure all cost function values are positive
     for _, v in ipairs(self.versions) do

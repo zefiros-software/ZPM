@@ -220,7 +220,7 @@ end
 function Builder:buildPackage(package, name, type)
 
     local found = package
-    --print(zpm.meta.workspace, package, "@")
+    --print(zpm.meta.workspace, table.tostring(package.name), zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, name}), "@")
     if not zpm.util.indexTable(self.settings, {zpm.meta.workspace, type, name}) then
         zpm.util.setTable(self.settings, {zpm.meta.workspace, type, name}, true)
 
@@ -241,6 +241,8 @@ function Builder:buildPackage(package, name, type)
         -- @todo: check if this is not too annoying
         if package.export and package.package:isTrusted() then
             zpm.sandbox.run(package.export, { env = self:getEnv(type), quota = false })
+        else
+            warningOncef("Package '%s' has no export defined, please check if has a correct .export.lua", package.name)
         end
 
         zpm.meta.building = true
