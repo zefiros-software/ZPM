@@ -564,12 +564,12 @@ function Solution:_extractNode(node, isLock)
         optionals = table.deepcopy(node.optionals),
         hash = node.hash,
         settings = node.settings,
-        meta = node.definition,
         tag = node.tag 
     }    
     
     if not isLock then
         result.closed = node.closed
+        node.meta = node.definition
     end
         
     self:_extractDependencies(node.private, result.private, isLock)

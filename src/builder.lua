@@ -204,7 +204,7 @@ function Builder:build(package, type)
     end
 
     -- now search in the global package lists
-    if not found then
+    if not found and self.solution.tree.closed.public[type] and self.solution.tree.closed.public[type][package] then
         local node = self.solution.tree.closed.public[type][package]
         if node then
             found = self:buildPackage(node.node, package, type)

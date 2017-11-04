@@ -112,7 +112,10 @@ function zpm.git.fetch(destination, url, branch)
         os.executef("git checkout -q origin/%s", branch)
     end
    
-    os.execute("git submodule update --init --recursive -j 8 --recommend-shallow")
+    output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+    if output and output:len() > 0 then
+        os.execute("git submodule update --init --recursive -j 32 --recommend-shallow")
+    end
 
     os.chdir(current)
 end
@@ -134,7 +137,14 @@ function zpm.git.reset(destination)
 
     os.chdir(destination)
 
-    os.executef("git reset -q --hard origin/HEAD")
+    branches = os.outputof("git branch -r")
+    if branches:contains("origin/HEAD") then
+        if os.outputof("git rev-parse HEAD") ~= os.outputof("git rev-parse origin/HEAD") then
+            os.executef("git reset -q --hard origin/HEAD")
+        end
+    else
+        os.executef("git reset -q --hard")
+    end
 
     os.chdir(current)
 end
