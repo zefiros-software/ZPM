@@ -35,6 +35,14 @@ premake.override(os, "execute", function(base, exec)
     base(exec)
 end )
 
+premake.override(os, "outputof", function(base, exec)
+
+    if _OPTIONS["verbose"] then
+        print(os.getcwd() .. "\t" .. exec)
+    end
+    return base(exec)
+end )
+
 -- Unfortunately premake normalises most paths,
 -- which results in some links like http:// to be 
 -- reduced to http:/ which of course is incorrect
@@ -97,9 +105,15 @@ premake.override(premake.main, "processCommandLine", function()
 
  premake.override(premake.main, "postAction", function(base)
 
-    if zpm.cli.profile() and ProFi then
-        ProFi:stop()
-        ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))
+    if zpm.cli.profile() then
+    
+        if profiler then
+            profiler:stop()
+            profiler:report(io.open(path.join(_MAIN_SCRIPT_DIR, "profile.txt"), 'w'))
+        elseif ProFi then
+            ProFi:stop()
+            ProFi:writeReport(path.join(_MAIN_SCRIPT_DIR, "profile.txt"))
+        end
     end
 
     base()

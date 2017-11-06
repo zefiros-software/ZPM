@@ -74,6 +74,8 @@ function Package:init(loader, manifest, settings)
     self.versions = { }
     self.newest = nil
     self.oldest = nil
+
+    self._definitionCache = {}
 end
 
 
@@ -230,7 +232,14 @@ function Package:getVersions(requirement)
             cost = 0
         })
     else
-        for _, v in ipairs(self.versions) do
+        for _, v in ipairs(self.tags) do
+            local version = iif(v.version ~= nil, v.version, v.tag)
+            if premake.checkVersion(version, requirement) then
+                v.cost = self:getCost(v)
+                table.insert(result, v)
+            end
+        end
+        for _, v in ipairs(self.branches) do
             local version = iif(v.version ~= nil, v.version, v.tag)
             if premake.checkVersion(version, requirement) then
                 v.cost = self:getCost(v)
@@ -335,7 +344,13 @@ end
 
 function Package:findPackageDefinition(hash, tag, extractedNode)
 
-    local checkPath = function(obj, dir, hash, tag)        
+    local checkPath = function(obj, dir, hash, tag)      
+
+        local found = zpm.util.indexTable(obj._definitionCache, {dir})
+        if found and not table.isempty(found) then
+            return found
+        end
+          
         local pkg = {}
         for _, p in ipairs( { "package.yml", ".package.yml" }) do
 
@@ -345,15 +360,20 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
                 break
             end
         end
+        if not table.isempty(pkg) then
+            zpm.util.setTable(obj._definitionCache, {dir}, pkg)
+        end
         return pkg
     end
     
     local pkg = { }
     if extractedNode and not extractedNode.isRoot then
+
         local dir = ""
         if self.manifest then
             dir = self.loader[self.manifest.name]:getExtractDirectory()
         end
+
         pkg = checkPath(self, self:getExtractDirectory(dir, extractedNode), hash, tag)
         if not table.isempty(pkg) then
             return pkg
@@ -363,17 +383,23 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
     if not tag or self:isDefinitionSeperate() or not self:isDefinitionRepo() then
 
         pkg = checkPath(self, self:getDefinition(), hash, tag)
-    else
+    else    
+        local found = zpm.util.indexTable(self._definitionCache, {hash})
+        if found and not table.isempty(found) then
+            return found
+        end
 
         for _, p in ipairs( { "package.yml", ".package.yml"}) do
 
-            local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+            local contents = zpm.git.getFileContent(self:getDefinition(), p, hash)
             if contents then
                 pkg = self:_processPackageFile(zpm.ser.loadYaml(contents), hash, tag)
+                zpm.util.setTable(self._definitionCache, {hash}, pkg)
                 break
             end
         end
     end
+
     return pkg
 end
 
@@ -656,9 +682,9 @@ function Package:_loadTags()
 
     self.newest = tags[1]
     self.oldest = tags[#tags]
-    self.versions = zpm.util.concat(zpm.git.getBranches(self:getRepository()), tags)
-
-    --print(self.name, table.tostring(self.versions, 2))
+    self.branches = zpm.git.getBranches(self:getRepository())
+    self.tags = tags
+    self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
 
     -- make sure all cost function values are positive
     for _, v in ipairs(self.versions) do

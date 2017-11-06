@@ -200,7 +200,7 @@ function obj_inst_stuff.init(inst,...) end
 obj_inst_stuff.__index = obj_inst_stuff
 obj_inst_stuff.__newindex = obj_newitem
 function obj_inst_stuff.class() return Object end
-function obj_inst_stuff.__tostring(inst) return ("a "..inst:class():name()) end
+--function obj_inst_stuff.__tostring(inst) return ("a "..inst:class():name()) end
 
 local obj_class_stuff = { static = obj_inst_stuff, made = classMade, new = newInstance,
 	subclass = subclass, cast = secureCast, trycast = tryCast }

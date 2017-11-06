@@ -27,6 +27,9 @@ require "class"
 zpm.sandbox = require "sandbox"
 zpm.colors = require "ansicolors"
 
+
+dofile "pepperfish_profiler.lua"
+
 if bootstrap and bootstrap.semver then
     zpm.semver = bootstrap.semver
 else

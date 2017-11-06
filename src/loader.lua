@@ -130,10 +130,16 @@ function Loader:_preInit()
         bootstrap.directories = zpm.util.concat( { path.join(self.cache, "modules") }, bootstrap.directories)
     end
 
-    if zpm.cli.profile() then
-        ProFi = require("mindreframer/ProFi", "@head")
-        ProFi:setHookCount(0)
-        ProFi:start()
+    local prof = zpm.cli.profile()
+    if prof then
+        if prof == "pepper_fish" then
+            profiler = newProfiler("time", 1000)
+            profiler:start()
+        else
+            ProFi = require("mindreframer/ProFi", "@head")
+            ProFi:setHookCount(0)
+            ProFi:start()
+        end
     end
 end
 

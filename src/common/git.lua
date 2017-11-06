@@ -106,15 +106,19 @@ function zpm.git.fetch(destination, url, branch)
 
     os.chdir(destination)
         
-    os.executef("git fetch -q --all -j 8 --force --prune")
+    local updateOutput = os.outputof("git remote -v update --prune")
     
     if branch then
         os.executef("git checkout -q origin/%s", branch)
     end
-   
-    output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
-    if output and output:len() > 0 then
-        os.execute("git submodule update --init --recursive -j 32 --recommend-shallow")
+
+    -- only update submodules if the root repository was updated, otherwise
+    -- this update operation was already done
+    if (updateOutput:contains("[new branch]") or updateOutput:contains("..")) or branch then   
+        output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+        if output and output:len() > 0 then
+            os.execute("git submodule update --init --recursive -j 32 --recommend-shallow")
+        end
     end
 
     os.chdir(current)
@@ -345,7 +349,7 @@ end
 
 
 function zpm.git.getFileContent(from, file, tag)
-
+    
     local current = os.getcwd()
 
     os.chdir(from)

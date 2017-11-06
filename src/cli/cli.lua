@@ -89,12 +89,21 @@ end
 
 function zpm.cli.profile()
 
-    return _OPTIONS["profile"] ~= nil or _ACTION == "profile"
+    if (_OPTIONS["profile"] ~= nil or _ACTION == "profile") then
+        return _OPTIONS["profile"]
+    end
+    return false
 end
 
 newoption {
     trigger = "profile",
-    description = "Profiles the given commands"
+    description = "Profiles the given commands",
+    value = "pepper_fish",
+    default = "pepper_fish",
+    allowed = {
+        {"pepper_fish", "the default profiler"},
+        {"ProFi", ""}
+    }
 }
 
 if zpm.cli.profile() then
