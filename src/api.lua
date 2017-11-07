@@ -86,7 +86,7 @@ end
 
 function zpm.setting(setting)
     
-    local cursor = iif(zpm.loader.project.from, zpm.loader.project.from, zpm.loader.project.builder.cursor)
+    local cursor = iif(zpm.loader.project.from, zpm.loader.project.from, zpm.loader.project.cursor)
     
     local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.tag, setting})
 
