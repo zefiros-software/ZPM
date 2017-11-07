@@ -185,9 +185,9 @@ function sandbox.protect(f, options)
                       "    " .. iif(lines[line + 1], lines[line + 1], "") .. "\n"
             end
 
-            errorf("Failed to execute lua:\n%s\n%s", str, result)
+            errorf("Failed to execute lua:\n%s\n%s\n%s", str, result, debug.traceback())
         else
-            error(result) 
+            errorf("%s\n%s", result, debug.traceback()) 
         end
     end
     return result

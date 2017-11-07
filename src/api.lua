@@ -67,8 +67,11 @@ function zpm.export(commands)
 
     local func = function()
 
+        zpm.loader.project.from = cursor
         --print(commands)
         zpm.sandbox.run(commands, {env = zpm.loader.project.builder:getEnv("libraries", cursor)})  
+
+        zpm.loader.project.from = nil
     end
 
     zpm.util.insertTable(zpm.loader.project.builder.cursor, index, func)    
@@ -83,7 +86,7 @@ end
 
 function zpm.setting(setting)
     
-    local cursor = zpm.loader.project.cursor
+    local cursor = iif(zpm.loader.project.from, zpm.loader.project.from, zpm.loader.project.builder.cursor)
     
     local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.tag, setting})
 
