@@ -184,7 +184,10 @@ function Package:extract(dir, node)
 
             if self:isGitRepo() then
                 noticef("   Checking out directory, this may take a while...")
-                zpm.git.checkout(self:getRepository(), node.hash)
+                
+                zpm.git.checkout(self:getRepository(), node.hash, function()
+                    zpm.git.clean(self:getRepository())
+                end)
             end
 
             local current = os.getcwd()

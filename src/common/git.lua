@@ -82,7 +82,7 @@ function zpm.git.setOrigin(destination, url)
     os.chdir(current)
 end
 
-function zpm.git.checkout(destination, hash)
+function zpm.git.checkout(destination, hash, callback)
 
     local current = os.getcwd()
 
@@ -91,8 +91,11 @@ function zpm.git.checkout(destination, hash)
     local status, errorCode = os.outputof("git log -1 --format=\"%H\"")
 
     if not status:contains(hash)then
+        if callback then
+            callback()
+        end
         os.executef("git checkout -q -f %s", hash)
-        os.execute("git submodule update --init --recursive -j 8 --recommend-shallow")
+        os.execute("git submodule update --init --recursive -j 8 --recommend-shallow --force")
     end
 
     os.chdir(current)
@@ -115,9 +118,9 @@ function zpm.git.fetch(destination, url, branch)
     -- only update submodules if the root repository was updated, otherwise
     -- this update operation was already done
     if (updateOutput:contains("[new branch]") or updateOutput:contains("..")) or branch then   
-        output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+        local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
         if output and output:len() > 0 then
-            os.execute("git submodule update --init --recursive -j 32 --recommend-shallow")
+            os.execute("git submodule update --init --recursive -j 8 --recommend-shallow --force")
         end
     end
 
@@ -149,6 +152,29 @@ function zpm.git.reset(destination)
     else
         os.executef("git reset -q --hard")
     end
+
+    -- also reset the submodules
+    local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+    if output and output:len() > 0 then
+        os.execute("git submodule --quiet foreach --recursive git reset --hard -q")
+    end
+
+    os.chdir(current)
+end
+
+function zpm.git.clean(destination)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+
+    os.executef("git clean -xfdf")    
+    
+    -- also reset the submodules
+    --local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+    --if output and output:len() > 0 then
+    --    os.execute("git submodule --quit foreach --recursive git clean -xfd")
+    --end
 
     os.chdir(current)
 end
