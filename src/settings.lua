@@ -26,6 +26,16 @@ zpm.settings = {
     reduce={}
 }
 
+function zpm.settings.reduce.first(conflicts)
+
+    return conflicts[1]
+end
+
+function zpm.settings.reduce.last(conflicts)
+
+    return conflicts[#conflicts]
+end
+
 function zpm.settings.reduce.anyTrue(conflicts)
 
     for _, c in ipairs(conflicts) do
@@ -33,7 +43,7 @@ function zpm.settings.reduce.anyTrue(conflicts)
             return true
         end
     end
-    return false
+    return false 
 end
 
 function zpm.settings.reduce.anyFalse(conflicts)

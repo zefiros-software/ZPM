@@ -171,11 +171,14 @@ end
 function Project:_printDiff(lock, solution, depth)
     depth = iif(depth, depth, 0)
     local dstr = string.rep("      ", depth)
-
+    
+    local printedTypes = {
+        public = {},
+        private = {}
+    }
     local foundPkgs = {}
     for _, access in ipairs({"public", "private"}) do
         if solution[access] then
-            local printedTypes = {}
             for type, packages in pairs(solution[access]) do
             
                 for _, pkg in ipairs(packages) do
@@ -195,9 +198,9 @@ function Project:_printDiff(lock, solution, depth)
 
                     pkg.hash = iif(pkg.hash, pkg.hash, "")
 
-                    if not printedTypes[type] then
+                    if not printedTypes[access][type] then
                         printf("%%{blue bright}%s%s - %s:", dstr, iif(access=="private", "X", "O"), string.capitalized(type))
-                        printedTypes[type] = true
+                        printedTypes[access][type] = true
                     end
 
                     if found then
@@ -224,6 +227,11 @@ function Project:_printDiff(lock, solution, depth)
         if lock[access] then
             for type, packages in pairs(lock[access]) do
                 for _, pkg in ipairs(packages) do
+
+                    if not printedTypes[access][type] then
+                        printf("%%{blue bright}%s%s - %s:", dstr, iif(access=="private", "X", "O"), string.capitalized(type))
+                        printedTypes[access][type] = true
+                    end
 
                     printf("%%{red bright}%s\\_ %s (%s@%s) Removed", dstr, pkg.name, pkg.tag, pkg.hash:sub(0,5) )                  
                 end

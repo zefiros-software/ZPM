@@ -135,7 +135,11 @@ end
 
 -- Public interface: sandbox.protect
 function sandbox.protect(f, options)
-  if type(f) == 'string' then f = assert(load(f)) end
+  local funcStr = nil
+  if type(f) == 'string' then 
+    funcStr = f
+    f = assert(load(f)) 
+  end
 
   options = options or {}
 
@@ -165,7 +169,27 @@ function sandbox.protect(f, options)
 
     cleanup()
 
-    if not ok then error(result) end
+    if not ok then 
+        if funcStr then
+
+            local line = result:gmatch("%]:(%d*):")()
+            local str = funcStr
+            if line then
+                local lines = {}
+                for line in funcStr:gmatch("([^\n]*)\n?") do
+                    table.insert(lines, line)
+                end
+                line = tonumber(line)
+                str = "    " .. iif(lines[line - 1], lines[line - 1], "") .. "\n" ..
+                      ">>> " .. iif(lines[line    ], lines[line    ], "") .. "\n" ..
+                      "    " .. iif(lines[line + 1], lines[line + 1], "") .. "\n"
+            end
+
+            errorf("Failed to execute lua:\n%s\n%s", str, result)
+        else
+            error(result) 
+        end
+    end
     return result
   end
 end
