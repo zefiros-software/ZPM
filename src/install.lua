@@ -60,9 +60,11 @@ end
 
 function Installer:checkVersion()
 
-    local latest = self:_getLatestPremake()
-    if self:_getCurrentVersion() < latest.version then
-        printf("%%{green bright}A new premake version '%s' is available!\nPlease run 'zpm self-update'", tostring(latest.version))
+    if not zpm.util.isMainScriptDisabled() then
+        local latest = self:_getLatestPremake()
+        if self:_getCurrentVersion() < latest.version then
+            printf("%%{green bright}A new premake version '%s' is available!\nPlease run 'zpm self-update'", tostring(latest.version))
+        end
     end
 end
 
