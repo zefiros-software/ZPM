@@ -135,7 +135,7 @@ function Loader:_preInit()
         if prof == "pepper_fish" then
             profiler = newProfiler("time", 1000)
             profiler:start()
-        else
+        elseif prof == "ProFi" then
             ProFi = require("mindreframer/ProFi", "@head")
             ProFi:setHookCount(0)
             ProFi:start()
