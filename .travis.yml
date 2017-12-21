@@ -12,26 +12,26 @@ matrix:
       osx_image: xcode6.4
       language: generic
       before_install:
-        - brew unlink git
-        - brew install git
+        - brew update
+        - brew outdated git || brew upgrade git
     - os: osx
       osx_image: xcode7.3
       language: generic
       before_install:
-        - brew unlink git
-        - brew install git
+        - brew update
+        - brew outdated git || brew upgrade git
     - os: osx
       osx_image: xcode8
       language: generic
       before_install:
-        - brewN unlink git
-        - brew install git
+        - brew update
+        - brew outdated git || brew upgrade git
     - os: osx
       osx_image: xcode9
       language: generic
       before_install:
-        - brew unlink git
-        - brew install git
+        - brew update
+        - brew outdated git || brew upgrade git
 install:
   - . script/install-zpm.sh
 script:
