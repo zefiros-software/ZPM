@@ -32,9 +32,9 @@ git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b
 ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua | xargs) 
 
 if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install zpm
+    ./premake5 --file=zpm/zpm.lua install zpm --verbose
 else
-    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install zpm
+    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install zpm --verbose
 fi
 
 cd $root
