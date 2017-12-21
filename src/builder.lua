@@ -235,8 +235,8 @@ function Builder:buildPackage(package, name, type)
             
         self.loader.project.cursor = package
         self.cursor = package
-        self.cursor.bindir = path.join(extractDir, "@bin")
-        self.cursor.objdir = path.join(extractDir, "@obj", package.name, package.hash:sub(0,5))
+        self.cursor.bindir = path.join(extractDir, ".bin")
+        self.cursor.objdir = path.join(extractDir, ".obj", package.name, package.hash:sub(0,5))
                    
         -- @todo: check if this is not too annoying
         if package.export and package.package:isTrusted() then

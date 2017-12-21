@@ -49,6 +49,10 @@ newoption {
     trigger = "ignore-lock",
     description = "Act as if there is no lock file available"
 }
+newoption {
+    trigger = "skip-lock",
+    description = "Alias for --ignore-lock"
+}
 
 function zpm.cli.force()
 
@@ -62,7 +66,7 @@ newoption {
 
 function zpm.cli.ignoreLock()
 
-    return _OPTIONS["ignore-lock"]
+    return _OPTIONS["ignore-lock"] or _OPTIONS["skip-lock"]
 end
 
 

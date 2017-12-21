@@ -199,10 +199,12 @@ function Installer:_installInPath()
             zpm.util.writeAll(cmd, [[
                             $key = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey('Environment', $true)
                             $path = $key.GetValue('Path',$null,'DoNotExpandEnvironmentNames')
-                            $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
+                            if( $PATH -notlike "*]] .. dir .. [[*" ){
+                                $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
+                            }
                             $key.Dispose()
                         ]])
-            os.executef("powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && set PATH=\"%%PATH%%;%s\"", cmd, dir)
+            os.executef("powershell -NoProfile -ExecutionPolicy ByPass -Command \"%s\" && set PATH=%%PATH%%;%s", cmd, dir)
         end
 
     elseif os.ishost("linux") or os.ishost("macosx") then
