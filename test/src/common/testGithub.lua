@@ -36,9 +36,9 @@ function Test:testGithub_getReleases()
     u.assertTrue(results[2].version == zpm.semver(5, 0, 0, "alpha11"))
     u.assertTrue(results[3].version == zpm.semver(5, 0, 0, "alpha10"))
 
-    u.assertTrue(results[1].assets[1].name:contains("premake-5.0.0-alpha11"))
-    u.assertTrue(results[2].assets[2].name:contains("premake-5.0.0-alpha10"))
-    u.assertTrue(results[3].assets[3].name:contains("premake-5.0.0-alpha9"))
+    u.assertTrue(results[1].assets[1].name:contains("premake-5.0.0-alpha12"))
+    u.assertTrue(results[2].assets[2].name:contains("premake-5.0.0-alpha11"))
+    u.assertTrue(results[3].assets[3].name:contains("premake-5.0.0-alpha10"))
 
     for _, release in ipairs(results) do
         u.assertNotNil(release.version)
