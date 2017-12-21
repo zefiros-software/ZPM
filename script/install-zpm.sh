@@ -13,10 +13,10 @@ rm -f premake5.tar.gz || true
 
 if [[ "$OS" == "Darwin" ]]; then
 
-    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.1-dev/premake-macosx.tar.gz"
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-macosx.tar.gz"
 else
 
-    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.1-dev/premake-linux.tar.gz"
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-linux.tar.gz"
 fi
 
 curl -L -s -o premake5.tar.gz $premakeURL
