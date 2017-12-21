@@ -47,7 +47,7 @@ function Http:download(url, outFile, headers)
     return response
 end
 
-function Http:downloadFromArchive(url, pattern)
+function Http:downloadFromArchive(url, pattern, iszip)
 
     if url:contains(".zip") then
         return self:downloadFromZip(url, pattern)
@@ -57,24 +57,33 @@ end
 
 function Http:downloadFromZipTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil, "*", pattern)
+    pattern = iif(pattern == nil and not pattern == false, "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".zip")
 
     self:download(url, zipFile)
     zip.extract(zipFile, destination)
     
-    return os.matchfiles(path.join(destination, pattern))
+    if pattern then
+        return os.matchfiles(path.join(destination, pattern))
+    else
+        return destination
+    end
 end
 
 function Http:downloadFromTarGzTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil, "*", pattern)
+    pattern = iif(pattern == nil and not pattern == false, "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".tar.gz")
 
     self:download(url, zipFile)
 
     os.executef("tar xzf %s -C %s", zipFile, destination)
-    return os.matchfiles(path.join(destination, pattern))
+    
+    if pattern then
+        return os.matchfiles(path.join(destination, pattern))
+    else
+        return destination
+    end
 end
 
 function Http:downloadFromZip(url, pattern)

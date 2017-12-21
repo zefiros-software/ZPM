@@ -61,7 +61,7 @@ end
 function Installer:checkVersion()
 
     if not zpm.util.isMainScriptDisabled() then
-        local latest = self:_getLatestPremake()
+        local latest, needsCompilation = self:_getLatestPremake()
         if self:_getCurrentVersion() < latest.version then
             printf("%%{green bright}A new premake version '%s' is available!\nPlease run 'zpm self-update'", tostring(latest.version))
         end
@@ -98,13 +98,17 @@ end
 
 function Installer:_updatePremake()
 
-    local latest = self:_getLatestPremake()
-    zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
+    local latest, needsCompilation = self:_getLatestPremake()
+    zpm.assert(#latest.assets == 1 or needsCompilation, "Found more than one matching premake versions to download!")
 
-    if self:_getCurrentVersion() < latest.version then
-        printf("%%{green bright} - Updating premake version from '%s' to '%s'", _PREMAKE_VERSION, tostring(latest.version))
+    if true or self:_getCurrentVersion() < latest.version then
+        printf("%%{green bright} - Updating premake version from '%s' to '%s'", tostring(self:_getCurrentVersion()), tostring(latest.version))
 
-        self:_installNewVersion(latest.assets[1], tostring(latest.version))
+        if needsCompilation then
+            self:_compileNewVersion(latest.zip, tostring(latest.version))
+        else
+            self:_installNewVersion(latest.assets[1], tostring(latest.version))
+        end
 
         return true
     end
@@ -114,10 +118,10 @@ end
 
 function Installer:_installPremake()
 
-    local latest = self:_getLatestPremake()
+    local latest, needsCompilation = self:_getLatestPremake()
 
-    zpm.assert(#latest.assets > 0, "Found no matching premake versions to download!")
-    zpm.assert(#latest.assets == 1, "Found more than one matching premake versions to download!")
+    zpm.assert(#latest.assets > 0 or needsCompilation, "Found no matching premake versions to download!")
+    zpm.assert(#latest.assets == 1 or needsCompilation, "Found more than one matching premake versions to download!")
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
 
@@ -141,12 +145,41 @@ function Installer:_installNewVersion(asset, version)
     zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
 
-    print(asset.version)
+    self.loader.config:set("cache.version", version, true)
+end
+
+function Installer:_compileNewVersion(zip, version)
+
+    -- first try to download the new file
+    local destination = self.loader.http:downloadFromZip(zip, false)
+
+    local current = os.getcwd()
+
+    os.chdir(destination)
+    
+    os.executef("make -f Bootstrap.mak %s", os.host())
+    os.execute("make -C build/bootstrap -j config=debug")
+   
+    file = path.join(destination, "bin/release/premake5")
+
+    os.chdir(current)
+
+    local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpm.exe", "zpm"))
+    if os.isfile(globalCmd) then
+        zpm.util.hideProtectedFile(globalCmd)
+    end
+
+    printf("Installed in '%s'", globalCmd)
+
+    zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
+    zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
+
     self.loader.config:set("cache.version", version, true)
 end
 
 function Installer:_getLatestPremake()
 
+    local versions, needsCompilation = false
     if not self.__latestPremake then
 
         -- check once a day
@@ -158,30 +191,40 @@ function Installer:_getLatestPremake()
                 assets = cache.assets,
                 isCached = true
             }
+            needsCompilation = cache.needsCompilation
         else
-            self.__latestPremake = self:_getPremakeVersions()[1]
+            versions, needsCompilation = self:_getPremakeVersions()
+            self.__latestPremake = versions[1]
             -- cache the value for a day
             self.loader.config:set("cache.premake", {
                 checkTime = os.time(),
                 version = tostring(self.__latestPremake.version),
-                assets = self.__latestPremake.assets
+                assets = self.__latestPremake.assets,
+                needsCompilation = needsCompilation
             }, true)
         end
 
     end
 
-    return self.__latestPremake
+    return self.__latestPremake, needsCompilation
 end
 
 function Installer:_getPremakeVersions()
 
+    local needsCompilation = false
     if not self.__PremakeVersion then
         local vendor = self.loader.config("install.premake.vendor")
         local name = self.loader.config("install.premake.name")
-        self.__PremakeVersion = self.loader.github:getReleases(vendor, name,("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
-    end
 
-    return self.__PremakeVersion
+        if os.ishost("windows") then
+            self.__PremakeVersion = self.loader.github:getReleases(vendor, name,("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
+        else
+            self.__PremakeVersion = self.loader.github:getReleases(vendor, name, nil, self.loader.config("install.premake.release"))
+            needsCompilation = true
+        end        
+    end
+    
+    return self.__PremakeVersion, needsCompilation
 
 end
 

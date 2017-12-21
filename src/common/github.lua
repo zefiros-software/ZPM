@@ -88,7 +88,8 @@ function Github:getReleases(organisation, repository, pattern, options)
 
             table.insert(releases, {
                 version = vers,
-                assets = assetTab
+                assets = assetTab,
+                zip = value["zipball_url"]
             } )
         end
     end )
