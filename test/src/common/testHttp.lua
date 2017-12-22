@@ -102,8 +102,6 @@ function Test:testHttp_downloadFromZip()
     local loader = Loader()
     local downloaded = loader.http:downloadFromZip("https://github.com/premake/premake-core/releases/download/v5.0.0.alpha4/premake-5.0.0.alpha4-windows.zip")
     
-    print(table.tostring(downloaded))
-
     u.assertEquals(#downloaded,1)
     u.assertStrContains(downloaded[1],"premake5.exe")
     u.assertTrue(os.isfile(downloaded[1]))    

@@ -163,7 +163,6 @@ function Installer:_compileNewVersion(zip, version)
     subdir = os.matchdirs("*")[1]
     os.chdir(subdir)
 
-    os.executef("ls -l")
     os.executef("make -f Bootstrap.mak %s", os.host())
     os.execute("make -C build/bootstrap -j config=debug")
    
@@ -196,7 +195,8 @@ function Installer:_getLatestPremake()
             self.__latestPremake = {
                 version = zpm.semver(cache.version),
                 assets = cache.assets,
-                isCached = true
+                isCached = true,
+                zip = cache.zip
             }
             needsCompilation = cache.needsCompilation
         else
@@ -207,6 +207,7 @@ function Installer:_getLatestPremake()
                 checkTime = os.time(),
                 version = tostring(self.__latestPremake.version),
                 assets = self.__latestPremake.assets,
+                zip = self.__latestPremake.zip,
                 needsCompilation = needsCompilation
             }, true)
         end

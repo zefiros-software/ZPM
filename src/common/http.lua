@@ -57,7 +57,7 @@ end
 
 function Http:downloadFromZipTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil and not pattern == false, "*", pattern)
+    pattern = iif(pattern == nil and not pattern == false and type(pattern) == "boolean", "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".zip")
 
     self:download(url, zipFile)
@@ -72,7 +72,7 @@ end
 
 function Http:downloadFromTarGzTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil and not pattern == false, "*", pattern)
+    pattern = iif(pattern == nil and not pattern == false and type(pattern) == "boolean", "*", pattern)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".tar.gz")
 
     self:download(url, zipFile)
