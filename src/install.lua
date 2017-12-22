@@ -167,7 +167,7 @@ function Installer:_compileNewVersion(zip, version)
     os.executef("make -f Bootstrap.mak %s", os.host())
     os.execute("make -C build/bootstrap -j config=debug")
    
-    file = path.join(destination, "bin/release/premake5")
+    file = path.join(destination, subdir, "bin/release/premake5")
 
     os.chdir(current)
 
