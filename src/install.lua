@@ -163,7 +163,12 @@ function Installer:_compileNewVersion(zip, version)
     subdir = os.matchdirs("*")[1]
     os.chdir(subdir)
 
-    os.executef("make -f Bootstrap.mak %s", os.host())
+    host = os.host()
+    if host == "macosx" then
+        host = "osx"
+    end
+
+    os.executef("make -f Bootstrap.mak %s", host)
     os.execute("make -C build/bootstrap -j config=debug")
    
     file = path.join(destination, subdir, "bin/release/premake5")
