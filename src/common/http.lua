@@ -49,7 +49,7 @@ end
 
 function Http:downloadFromArchive(url, pattern, iszip)
 
-    if url:contains(".zip") then
+    if url:contains(".zip") or iszip then
         return self:downloadFromZip(url, pattern)
     end
     return self:downloadFromTarGz(url, pattern)
