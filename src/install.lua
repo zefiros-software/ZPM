@@ -160,6 +160,9 @@ function Installer:_compileNewVersion(zip, version)
 
     os.chdir(destination)
     
+    subdir = os.matchdirs("*")[1]
+    os.chdir(subdir)
+
     os.executef("ls -l")
     os.executef("make -f Bootstrap.mak %s", os.host())
     os.execute("make -C build/bootstrap -j config=debug")
