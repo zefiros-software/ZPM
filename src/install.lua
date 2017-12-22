@@ -124,8 +124,11 @@ function Installer:_installPremake()
     zpm.assert(#latest.assets == 1 or needsCompilation, "Found more than one matching premake versions to download!")
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
-
-    self:_installNewVersion(latest.assets[1], tostring(latest.version))
+    if needsCompilation then
+        self:_compileNewVersion(latest.zip, tostring(latest.version))
+    else
+        self:_installNewVersion(latest.assets[1], tostring(latest.version))
+    end
 end
 
 function Installer:_installNewVersion(asset, version)
