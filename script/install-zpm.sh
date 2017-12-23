@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo $TRAVIS
+echo $(-z "$TRAVIS")
 if  [[ -z "$TRAVIS" ]]; then
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         sudo add-apt-repository ppa:git-core/ppa -y
