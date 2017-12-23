@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if  [[ -v $TRAVIS ]]; then
+if  [[ -v TRAVIS ]]; then
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         sudo add-apt-repository ppa:git-core/ppa -y
         sudo apt-get install git -y
