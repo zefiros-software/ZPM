@@ -21,9 +21,9 @@ curl -L -s -o premake5.tar.gz $premakeURL
 tar -xzf premake5.tar.gz
 chmod a+x premake5
 
-./premake5 --version
+./premake5 --version > /dev/null
 
-if [ $? -eq 0 ]; then
+if [ $? -ne 0 ]; then
     # compile premake5
     git clone https://github.com/Zefiros-Software/premake-core.git
     cd premake-core
