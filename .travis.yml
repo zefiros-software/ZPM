@@ -9,6 +9,12 @@ matrix:
       dist: precise
     # Use generic language for osx
     - os: osx
+      osx_image: xcode6.4
+      language: generic
+      before_install:
+        - brew update
+        - brew outdated git || brew upgrade git
+    - os: osx
       osx_image: xcode7.3
       language: generic
       before_install:
