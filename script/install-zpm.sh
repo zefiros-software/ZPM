@@ -9,23 +9,39 @@ rm -rf $install_dir || true
 mkdir -p $install_dir
 cd $install_dir
 
-# compile premake5
-git clone https://github.com/Zefiros-Software/premake-core.git
-cd premake-core
-
-
+rm -f premake5.tar.gz || true
 if [[ "$OS" == "Darwin" ]]; then
-    make -f Bootstrap.mak osx
-else    
-    make -f Bootstrap.mak linux
+
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-macosx.tar.gz"
+else
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-linux.tar.gz"
 fi
 
-make -C build/bootstrap -j config=debug
-cd ../
-mv premake-core/bin/release/premake5 premake5
-
-# continue installation
+curl -L -s -o premake5.tar.gz $premakeURL
+tar -xzf premake5.tar.gz
 chmod a+x premake5
+
+premake5 --version
+
+if [ $? -eq 0 ]; then
+    # compile premake5
+    cd premake-core
+    git clone https://github.com/Zefiros-Software/premake-core.git
+
+    if [[ "$OS" == "Darwin" ]]; then
+        make -f Bootstrap.mak osx
+    else    
+        make -f Bootstrap.mak linux
+    fi
+
+    make -C build/bootstrap -j config=debug
+    cd ../
+    mv premake-core/bin/release/premake5 premake5
+
+    # continue installation
+    chmod a+x premake5
+fi
+
 
 git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b features/refactor
 
