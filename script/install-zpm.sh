@@ -25,8 +25,8 @@ chmod a+x premake5
 
 if [ $? -eq 0 ]; then
     # compile premake5
-    cd premake-core
     git clone https://github.com/Zefiros-Software/premake-core.git
+    cd premake-core
 
     if [[ "$OS" == "Darwin" ]]; then
         make -f Bootstrap.mak osx
