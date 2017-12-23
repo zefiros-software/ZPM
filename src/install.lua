@@ -141,7 +141,7 @@ function Installer:_emplaceNewVersion(latest, allowCompilation)
     local file = self:_installNewVersion(latest.assets[1], tostring(latest.version))
 
     local result, errorCode = os.outputoff("%s --version", file)
-
+    print(result, errorCode)
     if errorCode ~= 0 and allowCompilation then
         warningf("Failed to load downloaded binary, compiling premake from source now.")
         file = self:_installNewVersion(latest.assets[1], tostring(latest.version))
