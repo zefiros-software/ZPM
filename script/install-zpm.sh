@@ -1,4 +1,16 @@
 #!/bin/bash
+
+if  [[ -z $TRAVIS ]]; then
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        sudo add-apt-repository ppa:git-core/ppa -y
+        sudo apt-get install git -y
+    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        brew update
+        brew outdated git || brew upgrade git
+    fi
+fi
+
+
 install_dir=~/.zpm_install/
 
 root=$(pwd)
