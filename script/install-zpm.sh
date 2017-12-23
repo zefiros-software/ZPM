@@ -21,7 +21,7 @@ curl -L -s -o premake5.tar.gz $premakeURL
 tar -xzf premake5.tar.gz
 chmod a+x premake5
 
-premake5 --version
+./premake5 --version
 
 if [ $? -eq 0 ]; then
     # compile premake5
