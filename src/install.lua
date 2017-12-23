@@ -144,7 +144,7 @@ function Installer:_emplaceNewVersion(latest, allowCompilation)
     print(result, errorCode)
     if errorCode ~= 0 and allowCompilation then
         warningf("Failed to load downloaded binary, compiling premake from source now.")
-        file = self:_installNewVersion(latest.assets[1], tostring(latest.version))
+        file = self:_compileNewVersion(latest.zip, tostring(latest.version))
     end
     
     local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpm.exe", "zpm"))
