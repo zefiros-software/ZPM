@@ -228,10 +228,8 @@ function Installer:_getPremakeVersions()
         local vendor = self.loader.config("install.premake.vendor")
         local name = self.loader.config("install.premake.name")
 
-        if os.ishost("windows") then
-            self.__PremakeVersion = self.loader.github:getReleases(vendor, name,("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
-        else
-            self.__PremakeVersion = self.loader.github:getReleases(vendor, name, nil, self.loader.config("install.premake.release"))
+        self.__PremakeVersion = self.loader.github:getReleases(vendor, name,("premake-.*%s.*"):format(os.host()), self.loader.config("install.premake.release"))
+        if not os.ishost("windows") then
             allowCompilation = true
         end        
     end
