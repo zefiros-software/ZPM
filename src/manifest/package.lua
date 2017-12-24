@@ -594,12 +594,6 @@ function Package:_processPackageFile(package, hash, tag)
         mergeDefinition(package.private, package.development.private)
         package.development = nil
     end    
-    if self.isRoot and package.dev then
-        mergeDefinition(package, package.dev)
-        mergeDefinition(package.public, package.dev.public)
-        mergeDefinition(package.private, package.dev.private)
-        package.dev = nil
-    end
 
     -- remove private types from root and insert in .private
     for _, type in ipairs(self.loader.manifests:getLoadOrder()) do
