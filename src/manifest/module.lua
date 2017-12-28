@@ -138,7 +138,7 @@ function Module:_update(modPath, modPath)
             noticef(" - Installing version '%s'", tag.version)
             
             assert(os.mkdir(verPath))
-            zpm.git.export(headPath, verPath, tag)
+            zpm.git.export(headPath, verPath, tag.hash)
         end
     end
 end
