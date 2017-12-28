@@ -102,7 +102,7 @@ function Installer:_updatePremake()
     local latest, allowCompilation = self:_getLatestPremake()
     zpm.assert(#latest.assets == 1 or allowCompilation, "Found more than one matching premake versions to download!")
 
-    if true or self:_getCurrentVersion() < latest.version then
+    if self:_getCurrentVersion() < latest.version then
         printf("%%{green bright} - Updating premake version from '%s' to '%s'", tostring(self:_getCurrentVersion()), tostring(latest.version))
 
         self:_emplaceNewVersion(latest, allowCompilation)
