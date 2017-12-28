@@ -116,14 +116,14 @@ end
 
 function Installer:_installPremake()
 
-    local latest, allowCompilation = self:_getLatestPremake()
-
+    local latest, allowCompilation = self:_getLatestPremake() 
+ 
     zpm.assert(#latest.assets > 0 or allowCompilation, "Found no matching premake versions to download!")
     zpm.assert(#latest.assets == 1 or allowCompilation, "Found more than one matching premake versions to download!")
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
 
-    self:_emplaceNewVersion(latest, allowCompilation)
+    self:_emplaceNewVersion(latest, false, {_PREMAKE_COMMAND})
 end
 
 function Installer:_installNewVersion(asset, version)
@@ -136,15 +136,17 @@ function Installer:_installNewVersion(asset, version)
     return files
 end
 
-function Installer:_emplaceNewVersion(latest, allowCompilation)
+function Installer:_emplaceNewVersion(latest, allowCompilation, files)
 
-    -- try the downloaded binary first
-    local files = self:_installNewVersion(latest.assets[1], tostring(latest.version))
+    if not files then
+        -- try the downloaded binary first
+        files = self:_installNewVersion(latest.assets[1], tostring(latest.version))
 
-    local result, errorCode = os.outputoff("%s --version", file)
-    if errorCode ~= 0 and allowCompilation then
-        warningf("Failed to load downloaded binary, compiling premake from source now.")
-        file = self:_compileNewVersion(latest.zip, tostring(latest.version))
+        local result, errorCode = os.outputoff("%s --version", file)
+        if errorCode ~= 0 and allowCompilation then
+            warningf("Failed to load downloaded binary, compiling premake from source now.")
+            file = self:_compileNewVersion(latest.zip, tostring(latest.version))
+        end
     end
     
     local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpm.exe", "zpm"))
