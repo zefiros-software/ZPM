@@ -137,11 +137,11 @@ newoption {
 function zpm.cli.askTrustStoreConfirmation(question, yesFunc, noFunc)
 
     interactf("%s Use '--always-trust' to always accept (Y [enter]/n)?", question)
-    local answer = _OPTIONS["allow-module"] or io.read()
+    local answer = not zpm.cli.n() and (zpm.cli.y() or zpm.cli.noInteractive() or _OPTIONS["allow-trust"] or io.read())
     if answer == "Y" or
         answer == "y" or
         answer == "" or
-        _OPTIONS["allow-trust"] then
+        answer == true then
         return yesFunc()
     else
         return noFunc()
@@ -157,11 +157,11 @@ newoption {
 function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
 
     interactf("%s, use '--allow-module' to always accept (Y [enter]/n)?", question)
-    local answer = _OPTIONS["allow-module"] or io.read()
+    local answer = not zpm.cli.n() and (zpm.cli.y() or zpm.cli.noInteractive() or _OPTIONS["allow-module"] or io.read())
     if answer == "Y" or
         answer == "y" or
         answer == "" or
-        _OPTIONS["allow-module"] then
+        answer == true then
         return yesFunc()
     else
         return noFunc()
