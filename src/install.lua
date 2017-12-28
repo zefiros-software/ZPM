@@ -128,17 +128,17 @@ end
 function Installer:_installNewVersion(asset, version)
 
     -- first try to download the new file
-    local file = self.loader.http:downloadFromArchive(asset.url, "premake*")[1]
+    local files = self.loader.http:downloadFromArchive(asset.url, "premake*")
 
-    zpm.assert(file, "Failed to download '%s'!", asset.url)
-
-    return file
+    zpm.assert(files, "Failed to download '%s'!", asset.url)
+    
+    return files
 end
 
 function Installer:_emplaceNewVersion(latest, allowCompilation)
 
     -- try the downloaded binary first
-    local file = self:_installNewVersion(latest.assets[1], tostring(latest.version))
+    local files = self:_installNewVersion(latest.assets[1], tostring(latest.version))
 
     local result, errorCode = os.outputoff("%s --version", file)
     if errorCode ~= 0 and allowCompilation then
@@ -147,14 +147,30 @@ function Installer:_emplaceNewVersion(latest, allowCompilation)
     end
     
     local globalCmd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpm.exe", "zpm"))
+    local globalCmdd = path.join(zpm.env.getBinDirectory(), iif(os.ishost("windows"), "zpmd.exe", "zpmd"))
     if os.isfile(globalCmd) then
         zpm.util.hideProtectedFile(globalCmd)
+    end    
+    if os.isfile(globalCmdd) then
+        zpm.util.hideProtectedFile(globalCmdd)
     end
 
     printf("Installed in '%s'", globalCmd)
 
-    zpm.assert(os.rename(file, globalCmd), "Failed to install premake '%s'!", file)
-    zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", file)
+    local normal = files[1]
+    local zpmd = files[2]
+    if normal:contains("premake5d") then
+        normal = files[2]
+        zpmd = files[1]
+    end
+
+    zpm.assert(os.rename(normal, globalCmd), "Failed to install premake '%s'!", normal)
+    zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", normal)
+
+    if zpmd then
+        zpm.assert(os.rename(zpmd, globalCmdd), "Failed to install premake '%s'!", zpmd)
+        zpm.assert(os.isfile(globalCmdd), "Failed to install premake '%s'!", zpmd)
+    end
 
     self.loader.config:set("cache.version", version, true)
 end
@@ -183,7 +199,7 @@ function Installer:_compileNewVersion(zip, version)
 
     os.chdir(current)
 
-    return file
+    return {file}
 end
 
 function Installer:_getLatestPremake()
