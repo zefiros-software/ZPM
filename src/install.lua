@@ -123,7 +123,13 @@ function Installer:_installPremake()
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
 
-    self:_emplaceNewVersion(latest, false, {_PREMAKE_COMMAND})
+    if zpm.cli.noInteractive() then
+
+        self:_emplaceNewVersion(latest, allowCompilation)
+    else
+
+        self:_emplaceNewVersion(latest, false, {_PREMAKE_COMMAND})
+    end
 end
 
 function Installer:_installNewVersion(asset, version)
