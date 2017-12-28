@@ -41,6 +41,16 @@ function zpm.cli.showHelp()
     return _OPTIONS["help"] ~= nil
 end
 
+function zpm.cli.ci()
+
+    return _OPTIONS["ci"]
+end
+
+newoption {
+    trigger = "ci",
+    description = "Mark this as an CI build"
+}
+
 if zpm.cli.showHelp() then
     zpm.util.disableMainScript()
 end
@@ -166,7 +176,7 @@ newoption {
 
 function zpm.cli.y()
 
-    return _OPTIONS["y"]
+    return _OPTIONS["y"] or zpm.cli.ci()
 end
 
 newoption {
@@ -186,7 +196,7 @@ newoption {
 
 function zpm.cli.noInteractive()
 
-    return _OPTIONS["no-interactive"]
+    return _OPTIONS["no-interactive"] or zpm.cli.ci()
 end
 
 function zpm.cli.askConfirmation(question, yesFunc, noFunc, pred)
