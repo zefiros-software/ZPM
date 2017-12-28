@@ -188,10 +188,10 @@ function Installer:_compileNewVersion(zip, version)
 
     os.chdir(destination)
     
-    subdir = os.matchdirs("*")[1]
+    local subdir = os.matchdirs("*")[1]
     os.chdir(subdir)
 
-    host = os.host()
+    local host = os.host()
     if host == "macosx" then
         host = "osx"
     end
@@ -199,7 +199,7 @@ function Installer:_compileNewVersion(zip, version)
     os.executef("make -f Bootstrap.mak %s", host)
     os.execute("make -C build/bootstrap -j config=debug")
    
-    file = path.join(destination, subdir, "bin/release/premake5")
+    local file = path.join(destination, subdir, "bin/release/premake5")
 
     os.chdir(current)
 
