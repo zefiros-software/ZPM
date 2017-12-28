@@ -152,7 +152,7 @@ function Installer:_emplaceNewVersion(latest, allowCompilation, files)
         local result, errorCode = os.outputoff("%s --version", file)
         if errorCode ~= 0 and allowCompilation then
             warningf("Failed to load downloaded binary, compiling premake from source now.")
-            file = self:_compileNewVersion(latest.zip, tostring(latest.version))
+            files = self:_compileNewVersion(latest.zip, tostring(latest.version))
         end
     end
     
@@ -173,6 +173,7 @@ function Installer:_emplaceNewVersion(latest, allowCompilation, files)
         normal = files[2]
         zpmd = files[1]
     end
+
 
     zpm.assert(os.rename(normal, globalCmd), "Failed to install premake '%s'!", normal)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", normal)
