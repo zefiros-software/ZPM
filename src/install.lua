@@ -164,6 +164,8 @@ function Installer:_emplaceNewVersion(latest, allowCompilation)
         zpmd = files[1]
     end
 
+    print(normal, zpmd)
+
     zpm.assert(os.rename(normal, globalCmd), "Failed to install premake '%s'!", normal)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", normal)
 
@@ -174,6 +176,7 @@ function Installer:_emplaceNewVersion(latest, allowCompilation)
 
     self.loader.config:set("cache.version", version, true)
 end
+
 
 function Installer:_compileNewVersion(zip, version)
 
