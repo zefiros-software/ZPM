@@ -123,6 +123,7 @@ function Installer:_installPremake()
 
     printf("%%{green bright}- Installing premake version '%s'", tostring(latest.version))
 
+    print(zpm.cli.noInteractive() , "@@@@@@@@@@@@")
     if zpm.cli.noInteractive() then
 
         self:_emplaceNewVersion(latest, allowCompilation)
