@@ -63,6 +63,7 @@ function Installer:checkVersion()
     if not zpm.util.isMainScriptDisabled() then
         local latest, allowCompilation = self:_getLatestPremake()
 
+        print(self.loader.config("cache.version"), latest.version)
         if self:_getCurrentVersion() < latest.version then
             printf("%%{green bright}A new premake version '%s' is available!\nPlease run 'zpm self-update'", tostring(latest.version))
         end
