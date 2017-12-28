@@ -43,7 +43,6 @@ end
 
 function zpm.cli.ci()
 
-    print(_OPTIONS["ci"], os.getenv("TRAVIS"), os.getenv("APPVEYOR"), os.getenv("CI"))
     return _OPTIONS["ci"] or os.getenv("TRAVIS") or os.getenv("APPVEYOR") or os.getenv("CI")
 end
 
