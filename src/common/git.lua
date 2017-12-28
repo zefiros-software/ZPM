@@ -358,7 +358,7 @@ function zpm.git.getCommitCountBetween(from, first, second)
     local output = os.outputoff("git rev-list %s...%s --count", first, second)
     os.chdir(current)
 
-    return tonumber(output)
+    return tonumber(output) + iif(first ~= second, 2, 1)
 end
 
 function zpm.git.getCommitAheadBehind(from, first, second)

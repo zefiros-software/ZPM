@@ -280,7 +280,7 @@ function Package:getCost(v)
             local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
             local distancePerCommit = math.min(totalDistance / self.totalCommits, 1)
             local guessedDistance =(behind - ahead) * distancePerCommit
-
+            
             self.costCache[v.hash] = guessedDistance + self.costTranslation
         end
     else
@@ -690,6 +690,7 @@ function Package:_loadTags()
             self.costTranslation = c
         end
     end
+
     self.costTranslation = math.abs(self.costTranslation)
 end
 
