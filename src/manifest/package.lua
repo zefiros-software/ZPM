@@ -250,7 +250,7 @@ function Package:getVersions(requirement)
             end
         end
     end
-
+    
     return result
 end
 

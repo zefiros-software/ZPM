@@ -42,7 +42,9 @@ end
 function Project:solve()
 
     if self:hasLockFile() and not zpm.cli.ignoreLock() then
-        noticef("Detected a lock file")
+        if not zpm.cli.run() then
+            noticef("Detected a lock file")
+        end
         self.oldLock = zpm.ser.loadFile(self:getLockFile())
     end
 
@@ -57,8 +59,10 @@ function Project:solve()
         self:extract()
 
         self.builder = Builder(self.loader, self.solution)
-
-        self:printDiff()
+        
+        if not zpm.cli.run() then
+            self:printDiff()
+        end
     else
         errorf("Failed to find a configuration satisfying all constraints!")
     end
@@ -95,7 +99,7 @@ function Project:bake()
         self.solution:iterateAccessibilityDFS(function(access, type, node)
         
             if gtype == type and node.package then
-                node.package:onLoad(node.version, node.tag)
+                node.package:onLoad(node.version, node.tag, node.version)
             end
 
             return true

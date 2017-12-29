@@ -29,10 +29,10 @@ function Module:init(loader, manifest, settings)
     self.super:init(loader, manifest, settings)
 end
 
-function Module:onLoad(version, tag)
+function Module:onLoad(version, tag, version)
 
     if self:isTrusted() then
-        require(self.fullName, tag)
+        require(self.fullName, iif(version, version, tag))
     end
 end
 

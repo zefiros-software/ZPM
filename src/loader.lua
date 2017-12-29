@@ -54,9 +54,9 @@ end
 
 function Loader:solve()
 
-    if not zpm.util.isMainScriptDisabled() 
-       and not zpm.cli.showHelp() 
-       and not zpm.cli.run() then
+    if (not zpm.util.isMainScriptDisabled() 
+       and not zpm.cli.showHelp()) 
+       or zpm.cli.run() then
         self.project:solve()
     end
 end

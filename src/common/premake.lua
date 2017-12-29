@@ -70,7 +70,7 @@ premake.override(premake.main, "processCommandLine", function()
         os.exit(0)
     end
 
-    if (_OPTIONS["help"]) then
+    if (_OPTIONS["help"] and _ACTION ~= "run") then
         premake.showhelp()
         os.exit(1)
     end
