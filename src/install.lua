@@ -139,11 +139,9 @@ function Installer:_installNewVersion(asset, version)
 
     zpm.assert(files, "Failed to download '%s'!", asset.url)
 
-    local normal = files[1]
-    local zpmd = files[2]
-    if normal:contains("premake5d") then
-        normal = files[2]
-        zpmd = files[1]
+    if files[1]:contains("premake5d") then
+        files[1] = files[2]
+        files[2] = files[1]
     end
     
     return files
@@ -172,7 +170,8 @@ function Installer:_emplaceNewVersion(latest, allowCompilation, files)
     end
 
     printf("Installed in '%s'", globalCmd)
-
+    local normal = files[1]
+    local zpmd = files[2]
     zpm.assert(os.rename(normal, globalCmd), "Failed to install premake '%s'!", normal)
     zpm.assert(os.isfile(globalCmd), "Failed to install premake '%s'!", normal)
 
