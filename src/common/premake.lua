@@ -27,6 +27,13 @@ function os.outputoff(...)
     return os.outputof(string.format(...))
 end
 
+function os.fexecutef(...)
+    local result = os.executef(...)
+    if result ~= 0 then
+        errorf("Failed to execute command!")
+    end
+end
+
 premake.override(os, "execute", function(base, exec)
 
     if _OPTIONS["verbose"] then
