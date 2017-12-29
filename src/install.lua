@@ -206,11 +206,14 @@ function Installer:_compileNewVersion(zip, version)
     os.executef("make -f Bootstrap.mak %s", host)
     os.execute("make -C build/bootstrap -j config=debug")
    
-    local file = path.join(destination, subdir, "bin/release/premake5")
+    local files = {
+        path.join(destination, subdir, "bin/release/premake5"),
+        path.join(destination, subdir, "bin/debug/premake5")
+    }
 
     os.chdir(current)
 
-    return {file}
+    return file
 end
 
 function Installer:_getLatestPremake()
