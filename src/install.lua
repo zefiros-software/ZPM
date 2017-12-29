@@ -213,7 +213,7 @@ function Installer:_compileNewVersion(zip, version)
 
     os.chdir(current)
 
-    return file
+    return files
 end
 
 function Installer:_getLatestPremake()
