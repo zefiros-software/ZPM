@@ -28,9 +28,8 @@ function os.outputoff(...)
 end
 
 function os.fexecutef(...)
-    local result = os.executef(...)
-    print(result, "@@@@@@@@@@@")
-    if result ~= 0 then
+    local result, f, code = os.executef(...)
+    if code ~= 0 then
         errorf("Failed to execute command!")
     end
 end
