@@ -215,6 +215,21 @@ function zpm.git.cloneOrFetch(destination, url, branch)
     end
 end
 
+function zpm.git.cloneOrPull(destination, url, branch)
+
+    if os.isdir(destination) then
+
+        zpm.git.pull(destination)
+
+        return true
+    else
+
+        zpm.git.clone(destination, url, branch)
+
+        return true
+    end
+end
+
 function zpm.git.getTags(destination)
 
     local current = os.getcwd()

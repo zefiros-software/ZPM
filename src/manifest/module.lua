@@ -127,8 +127,8 @@ function Module:_update(modPath, modPath)
     local modPath = selfM:getDirectory()
     local headPath = path.join(modPath, "head")
 
-    zpm.git.cloneOrFetch(headPath, selfM.repository)
-    zpm.git.reset(headPath)
+    zpm.git.cloneOrPull(headPath, selfM.repository)
+
     local tags = zpm.git.getTags(headPath)
     for _, tag in ipairs(tags) do
 
