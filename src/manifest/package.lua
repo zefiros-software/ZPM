@@ -80,7 +80,7 @@ end
 
 
 function Package:onInstall(version, tag)
-    -- @todo: add this hook
+    
 end
 
 function Package:onUninstall(version, tag)

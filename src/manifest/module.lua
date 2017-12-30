@@ -29,7 +29,7 @@ function Module:init(loader, manifest, settings)
     self.super:init(loader, manifest, settings)
 end
 
-function Module:onLoad(version, tag, version)
+function Module:onLoad(version, tag)
 
     if self:isTrusted() then
         require(self.fullName, iif(version, version, tag))
@@ -128,6 +128,7 @@ function Module:_update(modPath, modPath)
     local headPath = path.join(modPath, "head")
 
     zpm.git.cloneOrFetch(headPath, selfM.repository)
+    zpm.git.reset(headPath)
     local tags = zpm.git.getTags(headPath)
     for _, tag in ipairs(tags) do
 

@@ -204,10 +204,14 @@ function zpm.git.cloneOrFetch(destination, url, branch)
 
     if os.isdir(destination) then
 
-        return zpm.git.fetch(destination, url, branch)
+        zpm.git.fetch(destination, url, branch)
+
+        return true
     else
 
         zpm.git.clone(destination, url, branch)
+
+        return true
     end
 end
 

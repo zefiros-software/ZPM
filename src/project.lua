@@ -99,7 +99,7 @@ function Project:bake()
         self.solution:iterateAccessibilityDFS(function(access, type, node)
         
             if gtype == type and node.package then
-                node.package:onLoad(node.version, node.tag, node.version)
+                node.package:onLoad(node.version, node.tag)
             end
 
             return true
@@ -131,7 +131,8 @@ function Project:extract()
                 if not stats[type] then
                     stats[type] = true
                     noticef("Extracting %s to '%s'", type, extractDir)
-                end                  
+                end                         
+
                 if node.package:extract(extractDir, node) then
                     stats.updated = stats.updated + 1
                 end
