@@ -29,6 +29,7 @@ end
 
 function os.fexecutef(...)
     local result, f, code = os.executef(...)
+    print(result, f, code, "@@@@@@@@@@@")
     if code ~= 0 then
         errorf("Failed to execute command!")
     end
