@@ -51,9 +51,9 @@ function zpm.api.extract.export.extractdir(package)
             
             noticef("   Copying '%s' to '%s'", target, path.join(prefix, target))
             if os.ishost("windows") then
-                os.executef("robocopy \"%s\" \"%s\" * /E /xd \".git\" /MT /J /FFT /XO > nul", fromPath, targetPath)
+                os.outputoff("robocopy \"%s\" \"%s\" * /E /xd \".git\" /MT /J /FFT /XO", fromPath, targetPath)
             else
-                errorf("Directory extraction not yet implemented")
+                os.outputoff("rsync -r --exclude=\"%s/.git\" \"%s/*\" \"%s\"", fromPath, fromPath, targetPath)
             end
         end
     end
