@@ -138,7 +138,6 @@ function zpm.cli.askTrustStoreConfirmation(question, yesFunc, noFunc)
 
     interactf("%s Use '--always-trust' to always accept (Y [enter]/n)?", question)
     local answer = not zpm.cli.n() and (zpm.cli.y() or zpm.cli.noInteractive() or _OPTIONS["allow-trust"] or io.read())
-    print(answer, type(answer), "@@@@@@@@@@@@@@@")
     if answer == "Y" or
         answer == "y" or
         answer == "" or
