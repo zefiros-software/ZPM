@@ -349,7 +349,8 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
 
     local checkPath = function(obj, dir, hash, tag)      
 
-        local found = zpm.util.indexTable(obj._definitionCache, {dir})
+        hash = iif(hash, hash, dir)
+        local found = zpm.util.indexTable(obj._definitionCache, {hash})
         if found and not table.isempty(found) then
             return found
         end
@@ -364,7 +365,7 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
             end
         end
         if not table.isempty(pkg) then
-            zpm.util.setTable(obj._definitionCache, {dir}, pkg)
+            zpm.util.setTable(obj._definitionCache, {hash}, pkg)
         end
         return pkg
     end
@@ -376,7 +377,6 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
         if self.manifest then
             dir = self.loader[self.manifest.name]:getExtractDirectory()
         end
-
         pkg = checkPath(self, self:getExtractDirectory(dir, extractedNode), hash, tag)
         if not table.isempty(pkg) then
             return pkg
@@ -624,6 +624,7 @@ function Package:_processPackageFile(package, hash, tag)
         end
     end
     
+
     -- load setting definitions
     self:_loadSettings(tag, package.settings)
 
