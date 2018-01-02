@@ -271,10 +271,10 @@ end
 function zpm.util.rmdir(folder)
 
     if os.ishost("windows") then
-        os.executef("del /f/s/q \"%s\" > NUL", folder)
-        os.executef("rmdir /s/q \"%s\" > NUL", folder)
+        os.outputoff("del /f/s/q \"%s\"", folder)
+        os.outputoff("rmdir /s/q \"%s\"", folder)
     else
-        os.executef("rm -rf \"%s\"", folder)
+        os.outputoff("rm -rf \"%s\"", folder)
     end
 
 end

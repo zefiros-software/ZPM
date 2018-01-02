@@ -48,11 +48,17 @@ function zpm.api.extract.export.extractdir(package)
             local fromPath = path.join( package.package:getRepository(), target )
             local targetPath = path.join( package.location, prefix, target )
 
+            if os.isdir(targetPath) and zpm.cli.force() then
+                zpm.util.rmdir(targetPath)
+            end
             
             noticef("   Copying '%s' to '%s'", target, path.join(prefix, target))
             if os.ishost("windows") then
                 os.outputoff("robocopy \"%s\" \"%s\" * /E /xd \".git\" /MT /J /FFT /XO", fromPath, targetPath)
             else
+                if not os.isdir(targetPath) then
+                    os.mkdir(targetPath)
+                end
                 os.outputoff("rsync -r --exclude=\"%s/.git\" \"%s/*\" \"%s\"", fromPath, fromPath, targetPath)
             end
         end
