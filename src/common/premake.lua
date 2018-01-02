@@ -150,22 +150,39 @@ premake.override(premake.main, "processCommandLine", function()
 
  
 premake.override(_G, "workspace", function(base, name)
-    if name and not zpm.meta.exporting then
-        zpm.meta.workspace = name
+    if not zpm.meta.exporting then
+        if name then
+            zpm.meta.workspace = name
+        else
+            zpm.meta.project = ""
+        end
     end
     return base(name)
 end)
 
 premake.override(_G, "project", function(base, name)
-    if name and not zpm.meta.exporting then
+    if name then
         zpm.meta.project = name
-        
-        if not zpm.meta.building then
+        if not zpm.meta.building and not zpm.meta.exporting then
             zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
         end
     end
 
     return base(name)
+end)
+
+premake.override(_G, "cppdialect", function(base, dialect)
+
+    if dialect and not zpm.meta.exporting then
+        if not zpm.meta.building then
+            zpm.loader.project.builder.cursor.cppdialect = base
+            if zpm.meta.project ~= "" then
+                zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
+            else
+                zpm.util.insertTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
+            end
+        end
+    end
 end)
 
 premake.override(_G, "group", function(base, name)
