@@ -59,7 +59,7 @@ function zpm.api.extract.export.extractdir(package)
                 if not os.isdir(targetPath) then
                     os.mkdir(targetPath)
                 end
-                os.outputoff("rsync -r --exclude=\"%s/.git\" \"%s/*\" \"%s\"", fromPath, fromPath, targetPath)
+                os.outputoff("rsync -r --exclude=\"%s/.git\" \"%s\" \"%s\"", fromPath, fromPath, targetPath)
             end
         end
     end
