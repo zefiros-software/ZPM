@@ -143,7 +143,8 @@ function zpm.cli.askTrustStoreConfirmation(question, yesFunc, noFunc)
         answer == "y" or
         answer == "" or
         answer == true or
-        answer == "true" then
+        answer == "true" or
+        answer == "True" then
         return yesFunc()
     else
         return noFunc()
@@ -165,7 +166,8 @@ function zpm.cli.askModuleConfirmation(question, yesFunc, noFunc)
         answer == "y" or
         answer == "" or
         answer == true or
-        answer == "true" then
+        answer == "true" or
+        answer == "True" then
         return yesFunc()
     else
         return noFunc()
@@ -215,6 +217,7 @@ function zpm.cli.askConfirmation(question, yesFunc, noFunc, pred)
     interactf(answer)
     if answer == true or
         answer == "true" or
+        answer == "True" or
         answer == "Y" or
         answer == "y" or
         answer == "" then
