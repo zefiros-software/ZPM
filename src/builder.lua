@@ -227,6 +227,7 @@ function Builder:buildPackage(package, name, type)
         local prevGroup = zpm.meta.group
         local prevProject = zpm.meta.project
         local prevFilter = zpm.meta.filter
+        local extractDir = self.loader[type]:getExtractDirectory()
 
         filter {}
         group(("Extern/%s"):format(package.name))
