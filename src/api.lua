@@ -45,11 +45,12 @@ function zpm.uses(libraries)
     return found
 end
 
-function zpm.has(library)
+function zpm.has(library, tpe)
 
+    tpe = iif(tpe, tpe, "libraries")
     for _, access in ipairs({"public", "private"}) do
-        if zpm.loader.project.builder.cursor[access] and zpm.loader.project.builder.cursor[access]["libraries"] then
-            for _, pkg in ipairs(zpm.loader.project.builder.cursor[access]["libraries"]) do
+        if zpm.loader.project.builder.cursor[access] and zpm.loader.project.builder.cursor[access][tpe] then
+            for _, pkg in ipairs(zpm.loader.project.builder.cursor[access][tpe]) do
                 if pkg.name == library then
                     return true
                 end
@@ -57,7 +58,7 @@ function zpm.has(library)
         end
     end
 
-    return zpm.loader.project.builder.solution.tree.closed.public["libraries"][library]
+    return zpm.loader.project.builder.solution.tree.closed.public[tpe][library]
 end
 
 function zpm.export(commands)
