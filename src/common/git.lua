@@ -82,7 +82,7 @@ function zpm.git.setOrigin(destination, url)
     os.chdir(current)
 end
 
-function zpm.git.checkout(destination, hash, callback)
+function zpm.git.checkout(destination, hash, callback, callback2)
 
     local current = os.getcwd()
 
@@ -96,6 +96,10 @@ function zpm.git.checkout(destination, hash, callback)
         end
         os.executef("git checkout -q -f %s", hash)
         os.execute("git submodule update --init --recursive -j 8 --recommend-shallow --force")
+
+        if callback2 then
+            callback2()
+        end
     end
 
     os.chdir(current)
