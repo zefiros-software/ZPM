@@ -633,7 +633,7 @@ end
 
 function Package:pullRepository()
 
-    zpm.git.cloneOrFetch(self:getRepository(), self.repository, nil, false)
+    zpm.git.cloneOrFetch(self:getRepository(), self.repository, nil, self.repository ~= self.definition)
 end
 
 function Package:pullDefinition()
