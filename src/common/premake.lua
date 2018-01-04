@@ -30,7 +30,7 @@ end
 function os.fexecutef(...)
     local result, f, code = os.executef(...)
     if code ~= 0 then
-        printf("Failed to execute command!")
+        printf("Failed to execute command '%s' exited with code '%s'!", string.format(...), code)
         os.exit(1)
     end
 end
