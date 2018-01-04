@@ -187,7 +187,7 @@ function zpm.git.clone(destination, url, branch, recursive)
 
     recursive = iif(recursive == nil, true, recursive)
     if recursive then
-        recursive = "--recursive "
+        recursive = "--recurse "
     else
         recursive = ""
     end
