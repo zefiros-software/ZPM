@@ -183,13 +183,19 @@ function zpm.git.clean(destination)
     os.chdir(current)
 end
 
-function zpm.git.clone(destination, url, branch)
+function zpm.git.clone(destination, url, branch, recursive)
 
+    recursive = iif(recursive == nil, true, recursive)
+    if recursive then
+        recursive = "--recursive "
+    else
+        recursive = ""
+    end
     local branchStr = ""
     if branch then
         branchStr = string.format(" -b %s ", branch)
     end
-    os.executef( "git clone -v --recurse -j8 --progress \"%s\" \"%s\" %s", url, destination, branchStr )
+    os.executef( "git clone -v -j8 --progress \"%s\" \"%s\" %s", recursive, url, destination, branchStr )
     
     
 
@@ -204,7 +210,7 @@ function zpm.git.clone(destination, url, branch)
     os.chdir(current)
 end
 
-function zpm.git.cloneOrFetch(destination, url, branch)
+function zpm.git.cloneOrFetch(destination, url, branch, recursive)
 
     if os.isdir(destination) then
 
@@ -213,7 +219,7 @@ function zpm.git.cloneOrFetch(destination, url, branch)
         return true
     else
 
-        zpm.git.clone(destination, url, branch)
+        zpm.git.clone(destination, url, branch, recursive)
 
         return true
     end
