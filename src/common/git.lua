@@ -195,7 +195,7 @@ function zpm.git.clone(destination, url, branch, recursive)
     if branch then
         branchStr = string.format(" -b %s ", branch)
     end
-    os.executef( "git clone -v -j8 --progress \"%s\" \"%s\" %s", recursive, url, destination, branchStr )
+    os.executef( "git clone -v %s -j8 --progress \"%s\" \"%s\" %s", recursive, url, destination, branchStr )
     
     
 
