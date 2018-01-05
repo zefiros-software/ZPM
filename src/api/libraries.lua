@@ -114,7 +114,11 @@ function zpm.api.libraries.global.project(package)
         if not os.isdir(path.join(package.location, ".zpm")) then
             os.mkdir(path.join(package.location, ".zpm"))
         end
-        dummyFile = path.join(package.location, ".zpm/dummy.cpp")
+        local ignore = path.join(package.location, ".zpm/.gitignore")
+        if not os.isfile(ignore) then
+            os.writefile_ifnotequal("*", ignore)
+        end
+        local dummyFile = path.join(package.location, ".zpm/dummy.cpp")
         os.writefile_ifnotequal(("void Dummy%s(){  return; }"):format(string.sha1(dummyFile)), dummyFile)
         files(dummyFile)
     end
