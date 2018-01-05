@@ -38,10 +38,24 @@ function Http:get(url, headers, extra)
     return response
 end
 
-function Http:download(url, outFile, headers)
+function Http:download(url, outFile, headers, showProgress)
     
+    local mayWrite = true
+    function progress(total, current)
+        local ratio = current / total;
+        ratio = math.min(math.max(ratio, 0), 1);
+        local percent = math.floor(ratio * 100);
+        if mayWrite then
+            io.write("\rDownload progress (" .. percent .. "%/100%)")
+        end
+        if percent == 100.0 and mayWrite then
+            io.write("\n")
+            mayWrite = false
+        end
+    end
     local response, code = http.download(url, outFile, { 
-        headers = self:_convertHeaders(headers)
+        headers = self:_convertHeaders(headers),
+        progress = iif(showProgress, progress, nil)
     })
    
     return response

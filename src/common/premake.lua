@@ -51,6 +51,14 @@ premake.override(os, "outputof", function(base, exec)
     return base(exec)
 end )
 
+premake.override(os, "getenv", function(base, varname, default)
+    local val = base(varname)
+    if val and default then
+        val = default
+    end
+    return val
+end )
+
 -- Unfortunately premake normalises most paths,
 -- which results in some links like http:// to be 
 -- reduced to http:/ which of course is incorrect

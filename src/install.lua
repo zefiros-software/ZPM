@@ -271,6 +271,7 @@ function Installer:_installInPath()
 
         local cPath = os.getenv("PATH")
         local dir = zpm.env.getBinDirectory()
+        local tools = zpm.env.getToolsDirectory()
         if not string.contains(cPath, dir) then
             printf("- Installing zpm in path")
 
@@ -281,6 +282,9 @@ function Installer:_installInPath()
                             $path = $key.GetValue('Path',$null,'DoNotExpandEnvironmentNames')
                             if( $PATH -notlike "*]] .. dir .. [[*" ){
                                 $key.SetValue('Path', $path + ';]] .. dir .. [[', 'ExpandString')
+                            }                            
+                            if( $PATH -notlike "*]] .. tools .. [[*" ){
+                                $key.SetValue('Path', $path + ';]] .. tools .. [[', 'ExpandString')
                             }
                             $key.Dispose()
                         ]])
@@ -299,7 +303,7 @@ end
 function Installer:_exportPath()
 
     local prof = path.join(os.getenv("HOME"), ".profile")
-    local line =("export PATH=\"$PATH:%s\""):format(zpm.env.getBinDirectory())
+    local line =("export PATH=\"$PATH:%s:%s\""):format(zpm.env.getBinDirectory(),  zpm.env.getToolsDirectory())
 
     if not os.isfile(prof) then
         warningf("Tried to add ZPM to your path by writing '%s' in '%s', but the file did not exist!\nWe created the file instead.", line, prof)
