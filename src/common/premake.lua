@@ -53,7 +53,7 @@ end )
 
 premake.override(os, "getenv", function(base, varname, default)
     local val = base(varname)
-    if val and default then
+    if val == nil and default ~= nil then
         val = default
     end
     return val
