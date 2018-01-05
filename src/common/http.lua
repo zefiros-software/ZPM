@@ -72,12 +72,13 @@ end
 function Http:downloadFromZipTo(url, destination, pattern)
 
     pattern = iif(pattern == nil and type(pattern) ~= "boolean", "*", pattern)
+    destination = iif(destination == nil and type(destination) ~= "boolean", path.join(self.loader.temp, os.uuid()), destination)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".zip")
 
     self:download(url, zipFile)
     zip.extract(zipFile, destination)
     
-    if pattern then
+    if pattern and pattern ~= "*" then
         return os.matchfiles(path.join(destination, pattern))
     else
         return destination

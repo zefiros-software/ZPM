@@ -268,6 +268,13 @@ function zpm.util.split(s, delimiter)
     return result
 end
 
+function zpm.util.magiclines(s)
+    if s:sub(-1)~="\n" then 
+        s=s.."\n" 
+    end
+    return s:gmatch("(.-)\n")
+end
+
 function zpm.util.rmdir(folder)
 
     if os.ishost("windows") then
