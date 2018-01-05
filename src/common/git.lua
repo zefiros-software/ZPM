@@ -105,7 +105,9 @@ function zpm.git.checkout(destination, hash, callback, callback2)
     os.chdir(current)
 end
 
-function zpm.git.fetch(destination, url, branch)
+function zpm.git.fetch(destination, url, branch, recursive)
+
+    recursive = iif(recursive == nil, true, recursive)
 
     zpm.git.setOrigin(destination, url)
 
@@ -119,12 +121,14 @@ function zpm.git.fetch(destination, url, branch)
         os.executef("git checkout -q origin/%s", branch)
     end
 
-    -- only update submodules if the root repository was updated, otherwise
-    -- this update operation was already done
-    if (updateOutput:contains("[new branch]") or updateOutput:contains("..")) or branch then   
-        local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
-        if output and output:len() > 0 then
-            os.execute("git submodule update --init --recursive -j 8 --recommend-shallow --force")
+    if recursive then
+        -- only update submodules if the root repository was updated, otherwise
+        -- this update operation was already done
+        if (updateOutput:contains("[new branch]") or updateOutput:contains("..")) or branch then   
+            local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+            if output and output:len() > 0 then
+                os.execute("git submodule update --init --recursive -j 8 --recommend-shallow --force")
+            end
         end
     end
 
@@ -142,8 +146,9 @@ function zpm.git.pull(destination)
     os.chdir(current)
 end
 
-function zpm.git.reset(destination)
+function zpm.git.reset(destination, resetSubmodules)
 
+    resetSubmodules = iif(resetSubmodules == nil, true, resetSubmodules)
     local current = os.getcwd()
 
     os.chdir(destination)
@@ -157,10 +162,12 @@ function zpm.git.reset(destination)
         os.executef("git reset -q --hard")
     end
 
-    -- also reset the submodules
-    local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
-    if output and output:len() > 0 then
-        os.execute("git submodule --quiet foreach --recursive git reset --hard -q")
+    if resetSubmodules then
+        -- also reset the submodules
+        local output = os.outputof("git config --file .gitmodules --name-only --get-regexp path")
+        if output and output:len() > 0 then
+            os.execute("git submodule --quiet foreach --recursive git reset --hard -q")
+        end
     end
 
     os.chdir(current)
@@ -214,7 +221,7 @@ function zpm.git.cloneOrFetch(destination, url, branch, recursive)
 
     if os.isdir(destination) then
 
-        zpm.git.fetch(destination, url, branch)
+        zpm.git.fetch(destination, url, branch, recursive)
 
         return true
     else

@@ -639,7 +639,7 @@ end
 function Package:pullDefinition()
 
     zpm.git.cloneOrFetch(self:getDefinition(), self.definition)
-    zpm.git.reset(self:getDefinition())
+    zpm.git.reset(self:getDefinition(), false)
 end
 
 function Package:pull(hash)
