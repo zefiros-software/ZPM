@@ -180,14 +180,14 @@ premake.override(_G, "project", function(base, name)
 end)
 
 premake.override(_G, "cppdialect", function(base, dialect)
-
-    if dialect and not zpm.meta.exporting then
+    
+    if dialect then
         if not zpm.meta.building then
             zpm.loader.project.builder.cursor.cppdialect = base
             if zpm.meta.project ~= "" then
-                zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
+                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
             else
-                zpm.util.insertTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
+                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
             end
         end
     end

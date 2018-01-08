@@ -79,34 +79,6 @@ function Builder:walkDependencies()
         end
     end, true)
 
-    self.solution:iterateDFS(function(node, type, parent, index)
-
-        if node.projects then
-            for name, proj in pairs(node.projects) do
-                if proj.workspaces then
-            
-                    local workspaces = table.deepcopy(proj.workspaces)
-                    table.sort(workspaces)
-
-                    
-                    for _, wrkspace in ipairs(workspaces) do
-                        filter {}
-                        workspace(wrkspace)
-                        project(name)
-                        local dialects = iif(node['cppdialects'], node['cppdialects'], {})
-                        dialects = zpm.util.concat(node['cppdialects'], iif(proj['cppdialects'], proj['cppdialects'], {}))
-                        if #dialects > 0 then                        
-                            table.sort(dialects, function(a,b)
-                                return a:lower() > b:lower()
-                            end)
-                            node.cppdialect(dialects[1])
-                        end           
-                    end
-                end    
-            end
-        end
-    end, true)
-
     self.solution:iterateDFS(function(node)
         if node.projects then
             for name, proj in pairs(node.projects) do
@@ -134,6 +106,30 @@ function Builder:walkDependencies()
                                 end
                             end
                         end
+                    end
+                end    
+            end
+        end
+    end, true)
+
+    self.solution:iterateDFS(function(node, type, parent, index)
+        if node.projects then
+            for name, proj in pairs(node.projects) do
+                if proj.workspaces then            
+                    local workspaces = table.deepcopy(proj.workspaces)
+                    table.sort(workspaces)                    
+                    for _, wrkspace in ipairs(workspaces) do
+                        filter {}
+                        workspace(wrkspace)
+                        project(name)
+                        local dialects = iif(node['cppdialects'], node['cppdialects'], {})
+                        dialects = zpm.util.concat(node['cppdialects'], iif(proj['cppdialects'], proj['cppdialects'], {}))
+                        if #dialects > 0 then                        
+                            table.sort(dialects, function(a,b)
+                                return a:lower() > b:lower()
+                            end)
+                            node.cppdialect(dialects[1])
+                        end           
                     end
                 end    
             end
