@@ -63,6 +63,8 @@ end
 
 function Http:downloadFromArchive(url, pattern, iszip)
 
+    pattern = iif(pattern == nil and type(pattern) ~= "boolean", false, pattern)
+
     if url:contains(".zip") or iszip then
         return self:downloadFromZip(url, pattern)
     end
@@ -102,6 +104,8 @@ function Http:downloadFromTarGzTo(url, destination, pattern)
 end
 
 function Http:downloadFromZip(url, pattern)
+
+    pattern = iif(pattern == nil and type(pattern) ~= "boolean", false, pattern)
 
     local dest = path.join(self.loader.temp, os.uuid())
     zpm.assert(os.mkdir(dest), "Failed to create temporary directory '%s'!", dest)
