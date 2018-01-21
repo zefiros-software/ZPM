@@ -34,6 +34,7 @@
     <Compile Include="src\api\extract.lua" />
     <Compile Include="src\api\libraries.lua" />
     <Compile Include="src\cli\run.lua" />
+    <Compile Include="src\common\yq.lua" />
     <Compile Include="src\settings.lua" />
     <Compile Include="src\builder.lua" />
     <Compile Include="src\cli\cli.lua" />

@@ -43,6 +43,7 @@ function Loader:init()
     self.install = Installer(self)
     self.github = Github(self)
     self.http = Http(self)
+    self.definition = Definition(self)
 
     self.registries = Registries(self)
     self.registries.isRoot = true

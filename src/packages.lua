@@ -41,6 +41,32 @@ function Packages:init(loader, settings, name, nameSingle)
 
     if _ACTION == self:getNameSingle() then
         zpm.util.disableMainScript()
+        
+        newoption {
+            trigger = "public",
+            description = "Mark this package as public"
+        }
+        
+        newoption {
+            trigger = "private",
+            description = "Mark this package as private"
+        }
+        
+        newoption {
+            trigger = "development",
+            description = "Mark this package as development"
+        }
+        
+        newoption {
+            trigger = "versions",
+            description = "Mark this package to use these versions",
+            default = "*"
+        }
+        
+        newoption {
+            trigger = "preload",
+            description = "Mark this package to be preloaded"
+        }
     end
 
     newaction {
@@ -129,7 +155,9 @@ function Packages:install(vendor, name)
 
         printf("\nInstalling %s...", self:getName())
         for _, mod in ipairs(packages) do
+            --print(table.tostring(mod,2))
             mod:install()
+            self:addTodefinition(mod.vendor, mod.name)
         end
         return true
     end
@@ -143,6 +171,16 @@ function Packages:install(vendor, name)
         warningf("No %s were found.", self:getName())
         return false
     end
+end
+
+function Packages:addTodefinition(vendor, name)
+    self.loader.definition:add(("%s/%s"):format(vendor, name), self.name, {
+        development = _OPTIONS['development'],
+        public = _OPTIONS['public'],
+        private = _OPTIONS['private'],
+        version = _OPTIONS['versions'],
+        preload = _OPTIONS['preload']
+    })
 end
 
 function Packages:update(vendor, name)
