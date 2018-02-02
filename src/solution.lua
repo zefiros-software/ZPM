@@ -81,6 +81,10 @@ function Solution:_loadNodeFromLock(tree, node, lock)
 
                     local vendor, name = zpm.package.splitName(pkg.name)
                     local package = self.solver.loader[type]:get(vendor, name)
+
+                    if not package then
+                        return false
+                    end
                     
                     package.definition = pkg.definition
                     package.repository = pkg.repository
