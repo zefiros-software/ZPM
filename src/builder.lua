@@ -72,7 +72,8 @@ function Builder:walkDependencies()
                         filter {}
                         workspace(wrkspace)
                         project(name)
-                       self:_importUses(proj.uses, proj, node, name, wrkspace, parent)                
+                       self:_importUses(proj.uses, proj, node, name, wrkspace, parent) 
+                       self:_links(proj.links, proj, node, name, wrkspace, parent)                
                     end
                 end    
             end
@@ -196,6 +197,23 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                         end
                     end
                 end
+            end
+        end
+    end
+end
+
+function Builder:_links(llinks, proj, node, name, wrkspace, parent)
+
+    if llinks then
+        -- sort for deterministic anwsers
+        table.sort(llinks)
+
+        for _, lname in ipairs(llinks) do
+
+            if node.aliases and node.aliases[lname] then
+                links(node.aliases[lname])
+            else
+                links(lname)
             end
         end
     end

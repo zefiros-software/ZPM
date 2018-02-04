@@ -103,8 +103,9 @@ function zpm.api.libraries.global.project(package)
         zpm.util.setTable(package, {"aliases", name}, alias)
 
         location(path.join(package.location, ".zpm" ))
-        targetdir(path.join(package.bindir, name))
-        objdir(path.join(package.objdir, name))
+        targetdir(path.join(package.bindir, package.name))
+        objdir(path.join(package.objdir, package.name))        
+        targetname(name)
     
         warnings "Off"
         
@@ -121,6 +122,21 @@ function zpm.api.libraries.global.project(package)
         local dummyFile = path.join(package.location, ".zpm/dummy.cpp")
         os.writefile_ifnotequal(("void Dummy%s(){  return; }"):format(string.sha1(dummyFile)), dummyFile)
         files(dummyFile)
+    end
+end
+
+function zpm.api.libraries.global.links(package)
+
+    return function(libraries)
+        local found = true
+        if type(libraries) ~= "table" then
+            libraries = {libraries}
+        end
+
+        for _, library in ipairs(libraries) do
+            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "links"}, library)
+        end
+
     end
 end
 
