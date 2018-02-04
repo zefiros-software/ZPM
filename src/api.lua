@@ -65,6 +65,10 @@ function zpm.export(commands)
 
     local cursor = zpm.loader.project.builder.cursor
     local index = {"projects", zpm.meta.project, "exportFunctions"}
+    
+    local fltr = table.deepcopy(zpm.meta.filter)
+    local env = zpm.loader.project.builder:getEnv("libraries")
+    filter {}
 
     local func = function()
 
@@ -76,11 +80,8 @@ function zpm.export(commands)
     end
 
     zpm.util.insertTable(zpm.loader.project.builder.cursor, index, func)    
-    
-    local fltr = table.deepcopy(zpm.meta.filter)
-    filter {}
-    
-    zpm.sandbox.run(commands, {env = zpm.loader.project.builder:getEnv("libraries")})  
+
+    zpm.sandbox.run(commands, {env = env})  
         
     filter(fltr)
 end

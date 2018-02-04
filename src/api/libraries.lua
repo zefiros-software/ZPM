@@ -126,17 +126,16 @@ function zpm.api.libraries.global.project(package)
 end
 
 function zpm.api.libraries.global.links(package)
-
+    
     return function(libraries)
+        local fltr = table.deepcopy(zpm.meta.filter)
         local found = true
         if type(libraries) ~= "table" then
             libraries = {libraries}
         end
 
         for _, library in ipairs(libraries) do
-            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "links", library}, {
-                filter = zpm.meta.filter
-            })
+            zpm.util.setTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "links", library}, fltr)
         end
 
     end

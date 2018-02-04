@@ -56,7 +56,9 @@ zpm.api.common = {
     notice = notice,
     warning = warning,
     error = error,
-    zpm = {},
+    zpm = {
+        meta = {}
+    },
     string = string,
     table = table,
     print = print,
@@ -95,5 +97,6 @@ function zpm.api.load(type, cursor)
             env[name] = func(cursor)
         end
     end
+    
     return env
 end

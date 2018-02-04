@@ -194,14 +194,14 @@ premake.override(_G, "cppdialect", function(base, dialect)
 end)
 
 premake.override(_G, "group", function(base, name)
-    if (name or name == "") and not zpm.meta.exporting  then
+    if (name or name == "") and not zpm.meta.exporting then
         zpm.meta.group = name
     end
     return base(name)
 end)
 
 premake.override(_G, "filter", function(base, fltr)
-    if (fltr or fltr == "") and not zpm.meta.exporting  then
+    if (fltr or fltr == "") then
         zpm.meta.filter = fltr
     end
     return base(fltr)
