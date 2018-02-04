@@ -213,8 +213,7 @@ function Builder:_links(llinks, proj, node, name, wrkspace, parent)
 
             
             local prevFilter = zpm.meta.filter
-
-            filter(llinks[lname].filter)
+            filter(llinks[lname])
 
             if node.aliases and node.aliases[lname] then
                 links(node.aliases[lname])
