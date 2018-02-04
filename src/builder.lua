@@ -205,16 +205,24 @@ end
 function Builder:_links(llinks, proj, node, name, wrkspace, parent)
 
     if llinks then
+        local linkNames = table.keys(llinks)
         -- sort for deterministic anwsers
-        table.sort(llinks)
+        table.sort(linkNames)
 
-        for _, lname in ipairs(llinks) do
+        for _, lname in ipairs(linkNames) do
+
+            
+            local prevFilter = zpm.meta.filter
+
+            filter(llinks[lname].filter)
 
             if node.aliases and node.aliases[lname] then
                 links(node.aliases[lname])
             else
                 links(lname)
             end
+
+            filter(prevFilter)
         end
     end
 end

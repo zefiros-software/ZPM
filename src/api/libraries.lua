@@ -134,7 +134,9 @@ function zpm.api.libraries.global.links(package)
         end
 
         for _, library in ipairs(libraries) do
-            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "links"}, library)
+            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "links", library}, {
+                filter = zpm.meta.filter
+            })
         end
 
     end
