@@ -185,7 +185,7 @@ premake.override(_G, "cppdialect", function(base, dialect)
         if not zpm.meta.building then
             zpm.loader.project.builder.cursor.cppdialect = base
             if zpm.meta.project ~= "" then
-                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
+                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"workspaces", zpm.meta.workspace, "projects", zpm.meta.project, "cppdialects"}, dialect)
             else
                 tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
             end
