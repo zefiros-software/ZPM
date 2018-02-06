@@ -232,7 +232,7 @@ function Builder:build(package, type)
     local prev = self.cursor
     local found = nil
     local faccess = nil
-    for _, access in ipairs({"private", "public"}) do
+    for _, access in ipairs({"private"}) do
         local pkgs = zpm.util.indexTable(self.cursor,{access, type})
         if pkgs then
             for _, pkg in ipairs(pkgs) do
