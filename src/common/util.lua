@@ -342,6 +342,27 @@ function zpm.util.setTable(tab, index, value)
     return cursor
 end
 
+function zpm.util.insertUniqueTable(tab, index, value)
+
+    local cursor = tab
+    for i=1,#index do
+        if i == #index then        
+            if not cursor[index[i]] then
+                cursor[index[i]] = {}
+            end
+            if not table.contains(cursor[index[i]], value) then
+                table.insert(cursor[index[i]], value)
+            end
+        elseif cursor[index[i]] then
+            cursor = cursor[index[i]]
+        else
+            cursor[index[i]] = {}
+            cursor = cursor[index[i]]
+        end
+    end
+    return cursor
+end
+
 function zpm.util.insertTable(tab, index, value)
 
     local cursor = tab

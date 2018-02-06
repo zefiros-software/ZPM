@@ -171,8 +171,8 @@ end)
 premake.override(_G, "project", function(base, name)
     if name then
         zpm.meta.project = name
-        if not zpm.meta.building and not zpm.meta.exporting then
-            zpm.util.insertTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
+        if not zpm.meta.building then--and not zpm.meta.exporting then
+            zpm.util.insertUniqueTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
         end
     end
 
@@ -184,10 +184,10 @@ premake.override(_G, "cppdialect", function(base, dialect)
     if dialect then
         if not zpm.meta.building then
             zpm.loader.project.builder.cursor.cppdialect = base
-            if zpm.meta.project ~= "" then
-                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"workspaces", zpm.meta.workspace, "projects", zpm.meta.project, "cppdialects"}, dialect)
+            if zpm.meta.project ~= "" then 
+                tab = zpm.util.insertUniqueTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
             else
-                tab = zpm.util.insertTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
+                tab = zpm.util.insertUniqueTable(zpm.loader.project.builder.cursor, {"cppdialects"}, dialect)
             end
         end
     end
