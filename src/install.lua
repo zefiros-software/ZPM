@@ -230,7 +230,7 @@ function Installer:_getLatestPremake()
                 zip = cache.zip
             }
             allowCompilation = cache.allowCompilation
-        elseif self.__latestPremake then
+        else
             versions, allowCompilation = self:_getPremakeVersions()
             self.__latestPremake = versions[1]
             -- cache the value for a day
