@@ -80,7 +80,7 @@ function Http:downloadFromZipTo(url, destination, pattern)
     self:download(url, zipFile)
     zip.extract(zipFile, destination)
     
-    if pattern then
+    if pattern and pattern ~= "*" then
         return os.matchfiles(path.join(destination, pattern))
     else
         return destination
@@ -97,7 +97,7 @@ function Http:downloadFromTarGzTo(url, destination, pattern)
 
     os.executef("tar xzf %s -C %s", zipFile, destination)
     
-    if pattern then
+    if pattern and pattern ~= "*" then
         return os.matchfiles(path.join(destination, pattern))
     else
         return destination
