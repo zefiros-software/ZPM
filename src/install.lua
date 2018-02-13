@@ -234,13 +234,15 @@ function Installer:_getLatestPremake()
             versions, allowCompilation = self:_getPremakeVersions()
             self.__latestPremake = versions[1]
             -- cache the value for a day
-            self.loader.config:set("cache.premake", {
-                checkTime = os.time(),
-                version = tostring(self.__latestPremake.version),
-                assets = self.__latestPremake.assets,
-                zip = self.__latestPremake.zip,
-                allowCompilation = allowCompilation
-            }, true)
+            if self.__latestPremake then
+                self.loader.config:set("cache.premake", {
+                    checkTime = os.time(),
+                    version = tostring(self.__latestPremake.version),
+                    assets = self.__latestPremake.assets,
+                    zip = self.__latestPremake.zip,
+                    allowCompilation = allowCompilation
+                }, true)
+            end
         end
 
     end

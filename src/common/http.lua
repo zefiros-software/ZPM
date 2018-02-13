@@ -63,7 +63,7 @@ end
 
 function Http:downloadFromArchive(url, pattern, iszip)
 
-    pattern = iif(pattern == nil and type(pattern) ~= "boolean", false, pattern)
+    pattern = iif(pattern == nil or type(pattern) == "boolean", false, pattern)
 
     if url:contains(".zip") or iszip then
         return self:downloadFromZip(url, pattern)
@@ -73,8 +73,8 @@ end
 
 function Http:downloadFromZipTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil and type(pattern) ~= "boolean", "*", pattern)
-    destination = iif(destination == nil and type(destination) ~= "boolean", path.join(self.loader.temp, os.uuid()), destination)
+    pattern = iif(pattern == nil or type(pattern) == "boolean", "*", pattern)
+    destination = iif(destination == nil or type(destination) == "boolean", path.join(self.loader.temp, os.uuid()), destination)
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".zip")
 
     self:download(url, zipFile)
@@ -89,14 +89,15 @@ end
 
 function Http:downloadFromTarGzTo(url, destination, pattern)
 
-    pattern = iif(pattern == nil and type(pattern) ~= "boolean", "*", pattern)
+    pattern = iif(pattern == nil or type(pattern) == "boolean", "*", pattern)
+    destination = iif(destination == nil or type(destination) == "boolean", path.join(self.loader.temp, os.uuid()), destination)    
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".tar.gz")
 
     self:download(url, zipFile)
 
     os.executef("tar xzf %s -C %s", zipFile, destination)
     
-    if pattern then
+    if pattern and pattern ~= "*" then
         return os.matchfiles(path.join(destination, pattern))
     else
         return destination
@@ -105,7 +106,7 @@ end
 
 function Http:downloadFromZip(url, pattern)
 
-    pattern = iif(pattern == nil and type(pattern) ~= "boolean", false, pattern)
+    pattern = iif(pattern == nil or type(pattern) == "boolean", false, pattern)
 
     local dest = path.join(self.loader.temp, os.uuid())
     zpm.assert(os.mkdir(dest), "Failed to create temporary directory '%s'!", dest)
