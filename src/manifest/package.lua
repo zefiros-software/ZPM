@@ -242,11 +242,14 @@ function Package:getVersions(requirement)
                 table.insert(result, v)
             end
         end
-        for _, v in ipairs(self.branches) do
-            local version = iif(v.version ~= nil, v.version, v.tag)
-            if premake.checkVersion(version, requirement) then
-                v.cost = self:getCost(v)
-                table.insert(result, v)
+
+        if #result == 0 then
+            for _, v in ipairs(self.branches) do
+                local version = iif(v.version ~= nil, v.version, v.tag)
+                if premake.checkVersion(version, requirement) then
+                    v.cost = self:getCost(v)
+                    table.insert(result, v)
+                end
             end
         end
     end
