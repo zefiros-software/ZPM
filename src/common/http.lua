@@ -90,6 +90,7 @@ end
 function Http:downloadFromTarGzTo(url, destination, pattern)
 
     pattern = iif(pattern == nil or type(pattern) == "boolean", "*", pattern)
+    destination = iif(destination == nil or type(destination) == "boolean", path.join(self.loader.temp, os.uuid()), destination)    
     local zipFile = path.join(self.loader.temp, os.uuid() .. ".tar.gz")
 
     self:download(url, zipFile)
