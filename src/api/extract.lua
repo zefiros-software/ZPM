@@ -65,6 +65,44 @@ function zpm.api.extract.export.extractdir(package)
     end
 end
 
+function zpm.api.extract.export.extractfile(package)
+
+    return function(from, to)
+        local fromPath = path.join( package.package:getRepository(), from )
+        local targetPath = path.join( package.location, to )
+
+        if os.isfile(targetPath) and zpm.cli.force() then
+            os.remove(targetPath)
+        end
+            
+        noticef("   Copying '%s' to '%s'", fromPath, targetPath)
+        if not os.isfile(targetPath) then
+            os.copyfile(fromPath, targetPath)
+        end
+    end
+end
+
+function zpm.api.extract.export.exportpath()
+
+    return function()
+        return package.location
+    end
+end
+
+function zpm.api.extract.export.repository()
+
+    return function()
+        return package.package:getRepository()
+    end
+end
+
+function zpm.api.extract.export.definition()
+
+    return function()
+        return package.package:getDefinition()
+    end
+end
+
 function zpm.api.extract.export.setting(package)
 
     return zpm.setting

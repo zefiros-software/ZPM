@@ -179,6 +179,7 @@ function Package:extract(dir, node)
         noticef(" * Extracting %s to %s", self.manifest.manager.nameSingle, self:getExtractDirectory("", node))
 
         local version = iif(node.version == nil, node.tag, node.version)
+        local checkedOut = false
         local extract = self:findPackageExtract(version)
         if extract then
 
@@ -188,6 +189,8 @@ function Package:extract(dir, node)
                 zpm.git.checkout(self:getRepository(), node.hash, nil, function()
                     zpm.git.clean(self:getRepository())
                 end)
+
+                checkedOut = true
             end
 
             local current = os.getcwd()
@@ -209,6 +212,31 @@ function Package:extract(dir, node)
                 end
                 zpm.git.export(self:getRepository(), location, node.hash)
             end
+        end
+
+        
+        local postExtract = self:findPackagePostExtract(version)
+        if postExtract then
+
+            if not checkedOut and self:isGitRepo() then
+                noticef("   Checking out directory, this may take a while...")
+                
+                zpm.git.checkout(self:getRepository(), node.hash, nil, function()
+                    zpm.git.clean(self:getRepository())
+                end)
+            end
+
+            local current = os.getcwd()
+            os.chdir(self:getRepository())
+
+            self.loader.project.cursor = node
+
+            if self:isTrusted() then
+                zpm.sandbox.run(postExtract, { env = zpm.api.load("extract", node), quota = false })
+            end
+
+            self.loader.project.cursor = nil
+            os.chdir(current)
         end
 
         updated = true
@@ -524,6 +552,72 @@ function Package:_findExtractSeperated(tag)
 
     if not extract then
         for _, p in ipairs( { "extract.lua", ".extract.lua" }) do
+            local file = path.join(self:getDefinition(), p)
+            if os.isfile(file) then
+                local fextract = io.readfile(file)
+                if fextract then
+                    extract = fextract
+                    break
+                end
+            end
+        end
+    end
+
+    return extract
+end
+
+
+
+function Package:findPackagePostExtract(tag)
+
+    if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
+        return self:_findPostExtractSeperated(tag)
+    else
+        return self:_findPostExtract(tag)
+    end
+end
+
+function Package:_findPostExtract(tag)
+
+    local extract = nil
+    for _, p in ipairs( { "post-extract.lua", ".post-extract.lua" }) do
+
+        local contents = zpm.git.getFileContent(self:getDefinition(), p, tag)
+        if contents then
+
+            extract = contents
+            break
+        end
+    end
+
+    return extract
+end
+
+function Package:_findPostExtractSeperated(tag)
+
+    local extract = nil
+    for _, p in ipairs( { "post-extract.yml", ".post-extract.yml"}) do
+
+        local file = path.join(self:getDefinition(), p)
+        if os.isfile(file) then
+            local builds = zpm.ser.loadMultiYaml(file)
+            for _, build in ipairs(builds) do
+
+                if premake.checkVersion(tag, build.version) then
+                    if build.extract then
+                        extract = build.extract
+                    elseif build.file then
+                        extract = io.readfile(build.file)
+                    end
+                    break
+                end
+            end
+            break
+        end
+    end
+
+    if not extract then
+        for _, p in ipairs( { "post-extract.lua", ".post-extract.lua" }) do
             local file = path.join(self:getDefinition(), p)
             if os.isfile(file) then
                 local fextract = io.readfile(file)
