@@ -80,7 +80,9 @@ function Builder:walkDependencies()
         end
     end, true)
 
+
     self.solution:iterateDFS(function(node)
+
         if node.projects then
             for name, proj in pairs(node.projects) do
                 if proj.workspaces then
@@ -112,8 +114,12 @@ function Builder:walkDependencies()
             end
         end
     end, true)
+    
 
     self.solution:iterateDFS(function(node, type, parent, index)
+    
+
+
         if node.projects then
             for name, proj in pairs(node.projects) do
                 if proj.workspaces then            
@@ -228,34 +234,36 @@ end
 
 function Builder:build(package, type)
 
-    local extractDir = self.loader[type]:getExtractDirectory()
     local prev = self.cursor
+    local extractDir = self.loader[type]:getExtractDirectory()
     local found = nil
-    local faccess = nil
-    for _, access in ipairs({"private"}) do
-        local pkgs = zpm.util.indexTable(self.cursor,{access, type})
-        if pkgs then
-            for _, pkg in ipairs(pkgs) do
-                if pkg.name == package then          
-                    found = self:buildPackage(pkg, package, type)
-                    if found then
-                        faccess = access
-                        break
-                    end
-                end
-            end
-        end
-        if found then
-            break
-        end
-    end
-
     -- now search in the global package lists
     if not found and self.solution.tree.closed.public[type] and self.solution.tree.closed.public[type][package] then
         local node = self.solution.tree.closed.public[type][package]
         if node then
             found = self:buildPackage(node.node, package, type)
             faccess = "public"
+        end
+    end
+    
+    if not found and self.solution.tree.closed.public[type] then
+        local faccess = nil
+        for _, access in ipairs({"private"}) do
+            local pkgs = zpm.util.indexTable(self.cursor,{access, type})
+            if pkgs then
+                for _, pkg in ipairs(pkgs) do
+                    if pkg.name == package then          
+                        found = self:buildPackage(pkg, package, type)
+                        if found then
+                            faccess = access
+                            break
+                        end
+                    end
+                end
+            end
+            if found then
+                break
+            end
         end
     end
 

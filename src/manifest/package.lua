@@ -69,8 +69,9 @@ function Package:init(loader, manifest, settings)
     self.loaded = false
 
     self.costTranslation = 0
-
+    
     self.costCache = {}
+    self.requirementCache = {}
     self.versions = { }
     self.newest = nil
     self.oldest = nil
@@ -251,6 +252,10 @@ end
 
 function Package:getVersions(requirement)
 
+    if self.requirementCache[requirement] then
+        return self.requirementCache[requirement]
+    end
+
     local result = { }
 
     self:_loadTags()
@@ -270,17 +275,17 @@ function Package:getVersions(requirement)
                 table.insert(result, v)
             end
         end
-
-        if #result == 0 then
-            for _, v in ipairs(self.branches) do
-                local version = iif(v.version ~= nil, v.version, v.tag)
-                if premake.checkVersion(version, requirement) then
-                    v.cost = self:getCost(v)
-                    table.insert(result, v)
-                end
+        local allowBranchesAsTags = (#result == 0)
+        for _, v in ipairs(self.branches) do
+            local version = iif(allowBranchesAsTags, v.tag, "@" .. v.tag)
+            if premake.checkVersion(version, requirement) then
+                v.cost = self:getCost(v)
+                table.insert(result, v)
             end
         end
     end
+
+    self.requirementCache[requirement] = result
     
     return result
 end

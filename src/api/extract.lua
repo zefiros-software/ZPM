@@ -82,21 +82,21 @@ function zpm.api.extract.export.extractfile(package)
     end
 end
 
-function zpm.api.extract.export.exportpath()
+function zpm.api.extract.export.exportpath(package)
 
     return function()
         return package.location
     end
 end
 
-function zpm.api.extract.export.repository()
+function zpm.api.extract.export.repository(package)
 
     return function()
         return package.package:getRepository()
     end
 end
 
-function zpm.api.extract.export.definition()
+function zpm.api.extract.export.definition(package)
 
     return function()
         return package.package:getDefinition()
