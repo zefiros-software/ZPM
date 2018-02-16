@@ -69,8 +69,8 @@ function zpm.api.extract.export.extractfile(package)
 
     return function(from, to, definition)
         local definition = iif(definition == nil, false, true)
-        local fromPath = path.join(iif(definition, package.package:getDefinition(), package.package:getRepository()), from )
-        local targetPath = path.join( package.location, to )
+        local fromPath = path.join(iif(definition, package.package:getDefinition(), package.package:getRepository()), from:match("/?(.*)") )
+        local targetPath = path.join( package.location, to:match("/?(.*)") )
 
         if os.isfile(targetPath) and zpm.cli.force() then
             os.remove(targetPath)
