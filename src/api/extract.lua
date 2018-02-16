@@ -104,6 +104,28 @@ function zpm.api.extract.export.definition(package)
     end
 end
 
+function zpm.api.extract.export.autoreconf(package)
+
+    return function()
+
+        local current = os.getcwd()
+        os.chdir(package.location)
+        os.execute("autoreconf -i")
+        os.chdir(current)
+    end
+end
+
+function zpm.api.extract.export.configure(package)
+
+    return function()
+
+        local current = os.getcwd()
+        os.chdir(package.location)
+        os.execute("./configure")
+        os.chdir(current)
+    end
+end
+
 function zpm.api.extract.export.setting(package)
 
     return zpm.setting
