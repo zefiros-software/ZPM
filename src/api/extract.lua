@@ -122,7 +122,7 @@ function zpm.api.extract.export.configure(package)
         local current = os.getcwd()
         os.chdir(package.location)
         -- note that this could be missused
-        os.executef("./configure %s")
+        os.executef("./configure %s", options)
         os.chdir(current)
     end
 end
