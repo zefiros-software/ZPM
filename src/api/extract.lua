@@ -67,8 +67,9 @@ end
 
 function zpm.api.extract.export.extractfile(package)
 
-    return function(from, to)
-        local fromPath = path.join( package.package:getRepository(), from )
+    return function(from, to, definition)
+        local definition = iif(definition == nil, false, true)
+        local fromPath = path.join(iif(definition, package.package:getDefinition(), package.package:getRepository()), from )
         local targetPath = path.join( package.location, to )
 
         if os.isfile(targetPath) and zpm.cli.force() then
