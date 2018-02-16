@@ -117,11 +117,12 @@ end
 
 function zpm.api.extract.export.configure(package)
 
-    return function()
-
+    return function(options)
+        options = iif(options == nil, "", options)
         local current = os.getcwd()
         os.chdir(package.location)
-        os.execute("./configure")
+        -- note that this could be missused
+        os.executef("./configure %s")
         os.chdir(current)
     end
 end
