@@ -1,5 +1,23 @@
 #!/bin/bash
 
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -c|--compile)
+    COMPILE_PREMAKE=1
+    shift # past argument
+    ;;
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
 if  [ "$TRAVIS" = true ]; then
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         sudo add-apt-repository ppa:git-core/ppa -y
@@ -29,13 +47,19 @@ else
     premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-linux.tar.gz"
 fi
 
-curl -L -s -o premake5.tar.gz $premakeURL
-tar -xzf premake5.tar.gz
-chmod a+x premake5
+if [ "$COMPILE_PREMAKE" != "1" ]; then
+    curl -L -s -o premake5.tar.gz $premakeURL
+    tar -xzf premake5.tar.gz
+    chmod a+x premake5
 
-./premake5 --version > /dev/null
+    ./premake5 --version > /dev/null
+    
+    if [ $? -ne 0 ]; then
+        COMPILE_PREMAKE=1
+    fi
+fi
 
-if [ $? -ne 0 ]; then
+if [ "$COMPILE_PREMAKE" == "1" ]; then
     # compile premake5
     git clone https://github.com/Zefiros-Software/premake-core.git
     cd premake-core
