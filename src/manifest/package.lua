@@ -252,7 +252,7 @@ end
 
 function Package:getVersions(requirement)
 
-    if self.requirementCache[requirement] then
+    if requirement and self.requirementCache[requirement] then
         return self.requirementCache[requirement]
     end
 
@@ -285,8 +285,10 @@ function Package:getVersions(requirement)
         end
     end
 
-    self.requirementCache[requirement] = result
-    
+    if requirement then
+        self.requirementCache[requirement] = result
+    end
+
     return result
 end
 
