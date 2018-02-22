@@ -372,7 +372,7 @@ function Builder:_importPackage(name, package, project, node)
     end
     node.exportLinks[pname] = true
 
-    local funcs = table.deepcopy(package.exportFunctions)
+    local funcs = table.deepcopy(project.exportFunctions)
     if funcs then
 
         local export = function()
