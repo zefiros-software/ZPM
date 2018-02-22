@@ -94,7 +94,7 @@ function Builder:walkDependencies()
                             end
                         end
                     
-                        self:_links(proj.links, proj, node, name, wrkspace, parent)                
+                        self:_links(proj.links, node.exportLinks, proj, node, name, wrkspace, parent)                
                     end
                 end    
             end
@@ -170,7 +170,7 @@ end
 function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
 
     if uses and not table.isempty(uses) then
-                    
+
         local useNames = table.keys(uses)
         -- sort for deterministic anwsers
         table.sort(useNames)
@@ -194,7 +194,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                     table.sort(iprojs)
                     for _, iproj in ipairs(iprojs) do
                     
-                        local func = self:_importPackage(iproj, uproj.package.projects[iproj])
+                        local func = self:_importPackage(iproj, uproj.package, uproj.package.projects[iproj], node)
                         setParentExport(func)
                     end
                 end
@@ -202,7 +202,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                 if node.aliases and node.aliases[uname] then
                     local iproj = node.aliases[uname]
                     if node.projects and node.projects[iproj] then
-                        local func = self:_importPackage(iproj, node.projects[iproj])
+                        local func = self:_importPackage(iproj, uproj.package, node.projects[iproj], node)
                         setParentExport(func)
                     end
                 else
@@ -229,7 +229,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
     end
 end
 
-function Builder:_links(llinks, proj, node, name, wrkspace, parent)
+function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
 
     if llinks then
         local linkNames = table.keys(llinks)
@@ -250,6 +250,12 @@ function Builder:_links(llinks, proj, node, name, wrkspace, parent)
 
             filter(prevFilter)
         end
+    end
+
+    if exportLinks then
+        local keys = table.keys(exportLinks)
+        table.sort(keys)
+        links(keys)
     end
 end
 
@@ -350,15 +356,26 @@ function Builder:getEnv(type, cursor)
     return zpm.api.load(type, cursor)
 end
 
-function Builder:_importPackage(name, package)
+function Builder:_importPackage(name, package, project, node)
            
     local pname = name
-    local kind = package.kind
+    local kind = project.kind
+    
+    if not node.exportLinks then
+        if project.exportLinks then
+            node.exportLinks = table.deepcopy(package.exportLinks)
+        else 
+            node.exportLinks = {}
+        end
+    elseif package.exportLinks then
+        node.exportLinks = table.merge(node.exportLinks, package.exportLinks)
+    end
+    node.exportLinks[pname] = true
+
     local funcs = table.deepcopy(package.exportFunctions)
     if funcs then
 
         local export = function()
-
             if kind == "StaticLib" then        
                 filter {}
                 links(pname)
