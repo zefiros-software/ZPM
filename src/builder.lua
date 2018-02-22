@@ -72,8 +72,29 @@ function Builder:walkDependencies()
                         filter {}
                         workspace(wrkspace)
                         project(name)
-                       self:_importUses(proj.uses, proj, node, name, wrkspace, parent) 
-                       self:_links(proj.links, proj, node, name, wrkspace, parent)                
+
+                        local oldKeys = {}
+                        local foundNew = true
+                        while foundNew do 
+                            foundNew = false
+                            if proj.uses and not table.isempty(proj.uses) then
+                                local newUses = {}
+                                local currentKeys = table.keys(proj.uses)
+                                table.foreachi(currentKeys, function(key)                                
+                                    if not table.contains(oldKeys, key) then
+                                        newUses[key] = proj.uses[key]
+                                        foundNew = true
+                                    end
+                                end)
+
+                            
+                                self:_importUses(newUses, proj, node, name, wrkspace, parent) 
+
+                                oldKeys = currentKeys
+                            end
+                        end
+                    
+                        self:_links(proj.links, proj, node, name, wrkspace, parent)                
                     end
                 end    
             end
@@ -148,7 +169,7 @@ end
 
 function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
 
-    if uses then
+    if uses and not table.isempty(uses) then
                     
         local useNames = table.keys(uses)
         -- sort for deterministic anwsers
@@ -336,7 +357,9 @@ function Builder:_importPackage(name, package)
     if funcs then
 
         local export = function()
-            if kind == "StaticLib" then
+
+            if kind == "StaticLib" then        
+                filter {}
                 links(pname)
             end
 
