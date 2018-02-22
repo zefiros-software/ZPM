@@ -56,7 +56,10 @@ function Project:solve()
         self:_writeLock()
 
         self:bake()
-        self:extract()
+
+        if zpm.meta.mayExtract then
+            self:extract()
+        end
 
         self.builder = Builder(self.loader, self.solution)
         

@@ -87,5 +87,6 @@ zpm.newaction = zpm.cli.newRunAction
 zpm.newoption = zpm.cli.newRunOption
 
 if _ACTION == "run" then
+    zpm.meta.mayExtract = false
     zpm.util.disableMainScript()
 end

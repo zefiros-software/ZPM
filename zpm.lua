@@ -30,7 +30,8 @@ if not zpm then
         project = "",
         exporting = false,
         buiding = false,
-        package = nil
+        package = nil,
+        mayExtract = true
     }
     zpm._VERSION = "2.0.0"
 end
