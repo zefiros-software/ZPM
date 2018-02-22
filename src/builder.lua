@@ -258,16 +258,8 @@ function Builder:build(package, type)
     local prev = self.cursor
     local extractDir = self.loader[type]:getExtractDirectory()
     local found = nil
-    -- now search in the global package lists
-    if not found and self.solution.tree.closed.public[type] and self.solution.tree.closed.public[type][package] then
-        local node = self.solution.tree.closed.public[type][package]
-        if node then
-            found = self:buildPackage(node.node, package, type)
-            faccess = "public"
-        end
-    end
     
-    if not found and self.solution.tree.closed.public[type] then
+    if not found then
         local faccess = nil
         for _, access in ipairs({"private"}) do
             local pkgs = zpm.util.indexTable(self.cursor,{access, type})
@@ -288,6 +280,15 @@ function Builder:build(package, type)
         end
     end
 
+    -- now search in the global package lists
+    if not found and self.solution.tree.closed.public[type] and self.solution.tree.closed.public[type][package] then
+        local node = self.solution.tree.closed.public[type][package]
+        if node then
+            found = self:buildPackage(node.node, package, type)
+            faccess = "public"
+        end
+    end
+    
     self.cursor = prev
     zpm.meta.package = self.cursor
     return found, faccess
