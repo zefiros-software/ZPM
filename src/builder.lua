@@ -73,6 +73,9 @@ function Builder:walkDependencies()
                         workspace(wrkspace)
                         project(name)
 
+                        local prev = self.cursor
+                        self.cursor = node
+
                         local oldKeys = {}
                         local foundNew = true
                         while foundNew do 
@@ -94,7 +97,9 @@ function Builder:walkDependencies()
                             end
                         end
                     
-                        self:_links(proj.links, node.exportLinks, proj, node, name, wrkspace, parent)                
+                        self:_links(proj.links, node.exportLinks, proj, node, name, wrkspace, parent)      
+                        
+                        self.cursor = prev          
                     end
                 end    
             end
@@ -136,10 +141,7 @@ function Builder:walkDependencies()
         end
     end, true)
     
-
-    self.solution:iterateDFS(function(node, type, parent, index)
-    
-
+    self.solution:iterateDFS(function(node, type, parent, index)    
 
         if node.projects then
             for name, proj in pairs(node.projects) do
