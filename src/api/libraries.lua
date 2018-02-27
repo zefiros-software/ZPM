@@ -103,8 +103,8 @@ function zpm.api.libraries.global.project(package)
         zpm.util.setTable(package, {"aliases", name}, alias)
 
         location(path.join(package.location, ".zpm" ))
-        targetdir(path.join(package.bindir, package.name))
-        objdir(path.join(package.objdir, package.name))        
+        targetdir(package.bindir)
+        objdir(package.objdir)      
         targetname(name)
     
         warnings "Off"
