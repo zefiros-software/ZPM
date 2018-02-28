@@ -56,7 +56,7 @@ function Definition:add(name, tpe, options)
 
     local found = false
     local cursor = zpm.util.indexTable(self.content, idx)
-        if cursor then
+    if cursor then
         for i, tab in ipairs(cursor) do
             if tab.name == name then
                 warningf('You already have %s \'%s\' in your package file', tpe, name)

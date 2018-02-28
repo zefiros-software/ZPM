@@ -292,6 +292,7 @@ function Solution:nextCursor()
 
     if self.cursorPtr then
         self.cursor = zpm.util.indexTable(self.tree, self.cursorPtr)
+        self.cursor = iif(self.cursor ~= nil, self.cursor, self.tree)
         self.indices = nil
     end
 end
@@ -517,7 +518,7 @@ function Solution:_enumeratePublicVersions()
     
         for _, c in pairs(self.tree.closed.public) do
             c = zpm.util.indexTable(self.tree, c)
-            if d.package == c.package then
+            if c and d.package == c.package then
                 if c.path or premake.checkVersion(c.version, d.versionRequirement) then
                     table.insert(pubVersions, {c.version})
                 else
