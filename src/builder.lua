@@ -193,7 +193,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                     table.sort(iprojs)
                     for _, iproj in ipairs(iprojs) do
                     
-                        local func = self:_importPackage(iproj, uproj.package.projects[iproj], node)
+                        local func = self:_importPackage(iproj, uproj.package.projects[iproj], node, wrkspace)
                         setParentExport(func)
                     end
                 end
@@ -201,7 +201,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                 if node.aliases and node.aliases[uname] then
                     local iproj = node.aliases[uname]
                     if node.projects and node.projects[iproj] then
-                        local func = self:_importPackage(iproj, node.projects[iproj], node)
+                        local func = self:_importPackage(iproj, node.projects[iproj], node, wrkspace)
                         setParentExport(func)
                     end
                 else
@@ -230,8 +230,8 @@ end
 
 function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
 
-    if llinks then
-        local linkNames = table.keys(llinks)
+    if llinks and llinks[wrkspace] then
+        local linkNames = table.keys(llinks[wrkspace])
         -- sort for deterministic anwsers
         table.sort(linkNames)
 
@@ -239,7 +239,7 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
 
             
             local prevFilter = zpm.meta.filter
-            filter(llinks[lname])
+            filter(llinks[wrkspace][lname])
 
             if node.aliases and node.aliases[lname] then
                 links(node.aliases[lname])
@@ -251,13 +251,12 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
         end
     end
 
-    if exportLinks then
-
+    if exportLinks and exportLinks[wrkspace] then
             
         local prevFilter = zpm.meta.filter
         filter {}
 
-        local keys = table.keys(exportLinks)
+        local keys = table.keys(exportLinks[wrkspace])
         table.sort(keys)
         links(keys)
 
@@ -362,29 +361,30 @@ function Builder:getEnv(type, cursor)
     return zpm.api.load(type, cursor)
 end
 
-function Builder:_importPackage(name, project, node)
+function Builder:_importPackage(name, project, node, wrkspace)
            
     local pname = name
     local kind = project.kind
     
     if node.name then
-        local idx = {"uses", pname, node.name}
+        local idx = {wrkspace, "uses", pname, node.name}
         if zpm.util.indexTable(self.cache, idx) then
             return function() end
         end
         zpm.util.setTable(self.cache, idx, true)
     end
-
-    if not node.exportLinks then
-        if project.exportLinks then
-            node.exportLinks = table.deepcopy(project.exportLinks)
-        else 
-            node.exportLinks = {}
-        end
-    elseif project.exportLinks then
-        node.exportLinks = table.merge(node.exportLinks, project.exportLinks)
-    end
-    node.exportLinks[pname] = true
+    
+    local childExports = table.deepcopy(zpm.util.indexTable(project.exportLinks, {wrkspace}))
+    childExports = iif(childExports ~= nil, childExports, {})
+    
+    node.exportLinks = iif(node.exportLinks ~= nil, node.exportLinks, {})
+    
+    local localExports = table.deepcopy(zpm.util.indexTable(node.exportLinks, {wrskpace}))
+    localExports = iif(localExports ~= nil, localExports, {})
+    
+    zpm.util.setTable(node.exportLinks, {wrkspace}, table.merge(localExports, childExports))
+    zpm.util.setTable(node.exportLinks, {wrkspace, pname}, true)
+ 
 
     local funcs = table.deepcopy(project.exportFunctions)
     if funcs then

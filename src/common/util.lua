@@ -118,12 +118,15 @@ zpm.util = { }
 
 function zpm.util.indexTable(tab, arr)
 
-    local cursor = tab
-    for i=1,#arr do
-        if cursor then
-            cursor = cursor[arr[i]]
-        else
-            return nil
+    local cursor =  nil 
+    if tab then 
+        cursor = tab[arr[1]]
+        for i=2,#arr do
+            if cursor then
+                cursor = cursor[arr[i]]
+            else
+                return nil
+            end
         end
     end
     return cursor
