@@ -35,6 +35,8 @@ function Builder:init(loader, solution)
     -- which is not in our solution yet
     self.cursor.location = _WORKING_DIR
     zpm.meta.package = self.cursor
+
+    self.cache = {}
 end
 
 function Builder:walkDependencies()
@@ -49,19 +51,12 @@ function Builder:walkDependencies()
     
     zpm.meta.exporting = true
 
-    local taggedWorkspaces = {}
+
     self.solution:iterateDFS(function(node, type, parent, index)
-    
-        local index = {node.name, node.tag}
-        if node.name and node.tag and zpm.util.indexTable(taggedWorkspaces, index) then
-            return
-        end
-
-        zpm.util.setTable(taggedWorkspaces, index, true)
-
-        
         if node.projects then
             for name, proj in pairs(node.projects) do
+
+                --print(name,"##############")
                 if proj.workspaces then
             
                     local workspaces = table.deepcopy(proj.workspaces)
@@ -91,12 +86,14 @@ function Builder:walkDependencies()
                                 end)
 
                             
+                                --print(name, table.tostring(newUses))
                                 self:_importUses(newUses, proj, node, name, wrkspace, parent) 
 
                                 oldKeys = currentKeys
                             end
                         end
                     
+                        --print(name, table.tostring(proj.links), table.tostring(node.exportLinks))
                         self:_links(proj.links, node.exportLinks, proj, node, name, wrkspace, parent)      
                         
                         self.cursor = prev          
@@ -196,7 +193,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                     table.sort(iprojs)
                     for _, iproj in ipairs(iprojs) do
                     
-                        local func = self:_importPackage(iproj, uproj.package, uproj.package.projects[iproj], node)
+                        local func = self:_importPackage(iproj, uproj.package.projects[iproj], node)
                         setParentExport(func)
                     end
                 end
@@ -204,7 +201,7 @@ function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
                 if node.aliases and node.aliases[uname] then
                     local iproj = node.aliases[uname]
                     if node.projects and node.projects[iproj] then
-                        local func = self:_importPackage(iproj, uproj.package, node.projects[iproj], node)
+                        local func = self:_importPackage(iproj, node.projects[iproj], node)
                         setParentExport(func)
                     end
                 else
@@ -255,9 +252,16 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
     end
 
     if exportLinks then
+
+            
+        local prevFilter = zpm.meta.filter
+        filter {}
+
         local keys = table.keys(exportLinks)
         table.sort(keys)
         links(keys)
+
+        filter(prevFilter)
     end
 end
 
@@ -358,19 +362,27 @@ function Builder:getEnv(type, cursor)
     return zpm.api.load(type, cursor)
 end
 
-function Builder:_importPackage(name, package, project, node)
+function Builder:_importPackage(name, project, node)
            
     local pname = name
     local kind = project.kind
     
+    if node.name then
+        local idx = {"uses", pname, node.name}
+        if zpm.util.indexTable(self.cache, idx) then
+            return function() end
+        end
+        zpm.util.setTable(self.cache, idx, true)
+    end
+
     if not node.exportLinks then
         if project.exportLinks then
-            node.exportLinks = table.deepcopy(package.exportLinks)
+            node.exportLinks = table.deepcopy(project.exportLinks)
         else 
             node.exportLinks = {}
         end
-    elseif package.exportLinks then
-        node.exportLinks = table.merge(node.exportLinks, package.exportLinks)
+    elseif project.exportLinks then
+        node.exportLinks = table.merge(node.exportLinks, project.exportLinks)
     end
     node.exportLinks[pname] = true
 
