@@ -258,8 +258,6 @@ function Package:getVersions(requirement)
 
     local result = { }
 
-    self:_loadTags()
-
     --print(self:isGitRepo(), self.name, requirement)
     if not self:isGitRepo() then
         table.insert(result, {
@@ -268,6 +266,9 @@ function Package:getVersions(requirement)
             cost = 0
         })
     else
+
+        self:_loadTags()
+
         for _, v in ipairs(self.tags) do
             local version = iif(v.version ~= nil, v.version, v.tag)
             if premake.checkVersion(version, requirement) then
@@ -780,18 +781,14 @@ function Package:_loadTags()
     end
     self._loadedTags = true
 
-    if os.isdir(self.repository) then
 
-        local tags = zpm.git.getTags(self:getRepository())
+    local tags = zpm.git.getTags(self:getRepository())
 
-        self.newest = tags[1]
-        self.oldest = tags[#tags]
-        self.branches = zpm.git.getBranches(self:getRepository())
-        self.tags = tags
-        self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
-    else
-        self.versions = {}
-    end
+    self.newest = tags[1]
+    self.oldest = tags[#tags]
+    self.branches = zpm.git.getBranches(self:getRepository())
+    self.tags = tags
+    self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
 
     -- make sure all cost function values are positive
     for _, v in ipairs(self.versions) do
