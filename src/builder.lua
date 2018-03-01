@@ -254,8 +254,6 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
         end
     end
 
-    --print(name, table.tostring(exportLinks,2))
-
     
     if exportLinks and exportLinks[wrkspace] then
             
@@ -263,9 +261,11 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
         filter {}
 
         local keys = table.keys(exportLinks[wrkspace])
-        keys = table.difference({name}, keys)
+        keys = table.difference(keys, {name})
         table.sort(keys)
         links(keys)
+
+        --print(name, table.tostring(keys,2))
 
         filter(prevFilter)
     end
