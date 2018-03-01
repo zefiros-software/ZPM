@@ -67,7 +67,6 @@ function Manifest:search(vendorPattern, namePattern, pred)
             end
         end
     end
-
     return results
 end
 

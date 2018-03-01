@@ -251,7 +251,7 @@ end
 
 function Packages:get(vendor, name)
 
-    return self.loader.manifests(self:getName(), vendor, name)[1]
+    return self.loader.manifests(self:getName(), vendor, name, function(n) return n.vendor == vendor and n.name == name end)[1]
 end
 
 function Packages:_search(vendor, name, action, pred)
