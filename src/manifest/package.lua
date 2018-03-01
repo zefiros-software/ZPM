@@ -780,7 +780,7 @@ function Package:_loadTags()
     end
     self._loadedTags = true
 
-    if os.isdir(self:getRepository()) then
+    if os.isdir(self.repository) then
 
         local tags = zpm.git.getTags(self:getRepository())
 
