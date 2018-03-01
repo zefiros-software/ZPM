@@ -780,13 +780,18 @@ function Package:_loadTags()
     end
     self._loadedTags = true
 
-    local tags = zpm.git.getTags(self:getRepository())
+    if os.isdir(self:getRepository()) then
 
-    self.newest = tags[1]
-    self.oldest = tags[#tags]
-    self.branches = zpm.git.getBranches(self:getRepository())
-    self.tags = tags
-    self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
+        local tags = zpm.git.getTags(self:getRepository())
+
+        self.newest = tags[1]
+        self.oldest = tags[#tags]
+        self.branches = zpm.git.getBranches(self:getRepository())
+        self.tags = tags
+        self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
+    else
+        self.versions = {}
+    end
 
     -- make sure all cost function values are positive
     for _, v in ipairs(self.versions) do
