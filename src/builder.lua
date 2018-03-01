@@ -256,12 +256,14 @@ function Builder:_links(llinks, exportLinks, proj, node, name, wrkspace, parent)
 
     --print(name, table.tostring(exportLinks,2))
 
+    
     if exportLinks and exportLinks[wrkspace] then
             
         local prevFilter = zpm.meta.filter
         filter {}
 
         local keys = table.keys(exportLinks[wrkspace])
+        keys = table.difference({name}, keys)
         table.sort(keys)
         links(keys)
 
