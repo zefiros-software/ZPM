@@ -364,8 +364,8 @@ function zpm.git.getBranches(from)
 
     for _, s in ipairs(output:explode("\n")) do
         s = s:gsub("%w*%->.*", "")
-        local tag = s:match("origin/(.*)%s*"):match("^%s*(.*%S)") or ""
         print(s, "$$$$")
+        local tag = s:match("origin/(.*)%s*"):match("^%s*(.*%S)") or ""
         table.insert(branches, {
             tag = tag,
             hash = zpm.git.getHash(from, "origin/"..tag)
