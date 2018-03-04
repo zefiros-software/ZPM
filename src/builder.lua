@@ -374,14 +374,19 @@ function Builder:_importPackage(name, package, project, node, wrkspace)
     local pname = name
     local kind = project.kind
     
-    if node.name then
+    --[[
+    -- this caching strategy is still buggy,
+    -- for now just accept duplicates
+    -- @todo
+    if tostring(package) then
         local idx = {wrkspace, "uses", pname, tostring(package)}
         if zpm.util.indexTable(self.cache, idx) then
             return function() end
         end
-        zpm.util.setTable(self.cache, idx, true)
+        --zpm.util.setTable(self.cache, idx, true)
     end
-    
+    --]]
+
     local childExports = table.deepcopy(zpm.util.indexTable(package.exportLinks, {wrkspace}))
     childExports = iif(childExports ~= nil, childExports, {})
     
