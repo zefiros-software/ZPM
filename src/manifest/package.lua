@@ -285,6 +285,7 @@ function Package:getVersions(requirement)
             end
         end
     end
+    --print(table.tostring(result,2), self.name, "$$$$$$$$$$")
 
     if requirement then
         self.requirementCache[requirement] = result
@@ -295,6 +296,7 @@ end
 
 function Package:getCost(v)
 
+    --print(v.hash, self.costCache[v.hash])
     if self.costCache[v.hash] then
         return self.costCache[v.hash]
     end
@@ -305,22 +307,39 @@ function Package:getCost(v)
     end
 
     self:_loadTags()
+    
+    local cost = 0
 
     if self.newest then
         if v.version then
 
-            return zpm.package.semverDist(self.newest.semver, v.semver) + self.costTranslation
+            cost = zpm.package.semverDist(self.newest.semver, v.semver) + self.costTranslation
         else
-            if not self.totalCommits then
-                self.totalCommits = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
-            end
-            local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
 
-            local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
-            local distancePerCommit = math.min(totalDistance / self.totalCommits, 1)
-            local guessedDistance =(behind - ahead) * distancePerCommit
+            if self.newest.tag ~= self.oldest.tag then
+                if not self.totalCommits then
+                    self.totalCommits = zpm.git.getCommitCountBetween(self:getRepository(), self.newest.tag, self.oldest.tag)
+                end
+                local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
+
+                local totalDistance = zpm.package.semverDist(self.newest.semver, self.oldest.semver)
+                local distancePerCommit = math.max(totalDistance / self.totalCommits, 1)
+                local guessedDistance = (behind - ahead) * distancePerCommit
             
-            self.costCache[v.hash] = guessedDistance + self.costTranslation
+                cost = guessedDistance + self.costTranslation
+            else
+    
+                if not self.totalCommits then
+                    self.totalCommits = zpm.git.getCommitCount(self:getRepository(), self.newest.tag)
+                end
+                local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), self.newest.tag, v.hash)
+
+                local totalDistance = zpm.package.semverDist(self.newest.semver, zpm.semver(0,0,0))
+                local distancePerCommit = math.max(totalDistance / self.totalCommits, 1)
+                local guessedDistance = (behind - ahead) * distancePerCommit
+
+                cost = guessedDistance + self.costTranslation
+            end
         end
     else
     
@@ -330,12 +349,16 @@ function Package:getCost(v)
         local ahead, behind = zpm.git.getCommitAheadBehind(self:getRepository(), "HEAD", v.hash)
 
         local totalDistance = zpm.package.semverDist(zpm.semver(1, 0, 0), zpm.semver(0, 0, 0))
-        local distancePerCommit = math.min(totalDistance / self.totalCommits, 1)
+        local distancePerCommit = math.max(totalDistance / self.totalCommits, 1)
         local guessedDistance =(behind - ahead) * distancePerCommit
-        self.costCache[v.hash] = guessedDistance + self.costTranslation
+        cost = guessedDistance + self.costTranslation
     end
 
-    return self.costCache[v.hash]
+    self.costCache[v.hash] = cost
+
+    --print(self.name, v.tag, cost, "#########")
+
+    return cost
 end
 
 function Package:load(hash)
@@ -446,13 +469,11 @@ function Package:findPackageDefinition(hash, tag, extractedNode)
 end
 
 function Package:findPackageExport(tag, hash)
-    
     if self:isDefinitionSeperate() or not self:isDefinitionRepo() then
         return self:_findExportSeperated(self:getDefinition(), tag)
     else
         return self:_findExport(hash)
     end
-    return export
 end
 
 function Package:_findExport(hash)
@@ -786,19 +807,35 @@ function Package:_loadTags()
 
     self.newest = tags[1]
     self.oldest = tags[#tags]
+
+    --print(table.tostring(self.newest), table.tostring(self.oldest))
     self.branches = zpm.git.getBranches(self:getRepository())
+    --print(table.tostring(self.branches,2))
     self.tags = tags
     self.versions = zpm.util.concat(table.deepcopy(self.branches), table.deepcopy(tags))
 
+    self.costTranslation = 0
+    local translation = 0
     -- make sure all cost function values are positive
     for _, v in ipairs(self.versions) do
         local c = self:getCost(v)
-        if c < self.costTranslation then
-            self.costTranslation = c
+        if c < translation then
+            translation = c
         end
     end
 
-    self.costTranslation = math.abs(self.costTranslation)
+    self.costTranslation = math.abs(translation)
+    
+    if self:isGitRepo() then
+        local hashes = {}
+        for _, v in ipairs(self.versions) do
+            table.insert(hashes, v.hash)
+        end
+        -- translate to have a minimum of 0
+        for _, h in ipairs(table.unique(hashes)) do
+            self.costCache[h] = self.costCache[h] + self.costTranslation
+        end
+    end
 end
 
 function Package:_getRepositoryPkgDir()

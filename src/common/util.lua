@@ -385,6 +385,14 @@ function zpm.util.insertTable(tab, index, value)
     return cursor
 end
 
+function zpm.util.reverseTable(a)
+    local res = {}
+    for i = #a, 1, -1 do
+        res[#res+1] = a[i]
+    end
+    return res
+end
+
 function zpm.util.zip(...)
   local arrays, ans = {...}, {}
   local index = 0

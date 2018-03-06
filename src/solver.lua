@@ -51,6 +51,8 @@ function Solver:solve(lock)
         local stack = Stack()
         stack:put(rootSolution,rootSolution:getCost())
         cost, heuristic, succeeded = self:_branchAndBound(stack, math.huge, nil, 5, false, true)
+
+        --print(cost)
     end
     
     if (zpm.cli.update() or not lock) and (succeeded or hasInitial) then
@@ -60,6 +62,8 @@ function Solver:solve(lock)
         local rootSolution = self:getRootSolution()
         queue:put(rootSolution,rootSolution:getCost())
         cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 5)
+
+        --print(cost)
     end
 
     return cost, heuristic, succeeded

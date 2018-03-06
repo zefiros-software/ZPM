@@ -212,7 +212,10 @@ function Solution:expand(best, beam)
             break
         end
 
+        --print(table.tostring(versions,2))
+
         local l = self:_carthesian(table.deepcopy(versions), beam)
+        --print(table.tostring(l,2))
 
         for _, solved in ipairs(l) do
     
@@ -239,6 +242,7 @@ function Solution:expand(best, beam)
                     self.cursor.private[i].tag
                 }
 
+                --print(self.cursor.private[i].tag, solved[i].cost)
                 zpm.util.setTable(solution.tree.closed.all, index, {
                     cost = solved[i].cost,
                     package = self.cursor.private[i].package,
@@ -253,8 +257,9 @@ function Solution:expand(best, beam)
                     self.cursor.public[i].package:getHash(),
                     self.cursor.public[i].tag
                 }
+                --print(self.cursor.public[i].tag, solved[#self.cursor.private + i].cost)
                 local package = {
-                    cost = solved[i].cost,
+                    cost = solved[#self.cursor.private + i].cost,
                     package = self.cursor.public[i].package,
                     version = iif(self.cursor.public[i].version, self.cursor.public[i].version, self.cursor.public[i].tag)
                 }
@@ -312,6 +317,7 @@ function Solution:_copyTree()
                 
                 if access == "all" then
                     for version, pkg in pairs(versions) do
+                        --print(table.tostring(pkg))
                         zpm.util.setTable(root.closed, {access, type, hash, version},{
                             cost = pkg.cost,
                             version = pkg.version,
@@ -319,6 +325,7 @@ function Solution:_copyTree()
                         })
                     end
                 else
+                    --print(table.tostring(versions))
                     zpm.util.setTable(root.closed, {access, type, hash},{
                         cost = versions.cost,
                         version = versions.version,
@@ -384,8 +391,10 @@ function Solution:getCost()
     -- such that we also try to minimise the amount of libraries (HEAD is 0 cost)
 
     for type, libs in pairs(self.tree.closed.all) do
-        for _, lib  in pairs(libs) do
-            for _, v in pairs(lib) do
+        for name, lib  in pairs(libs) do
+            for tag, v in pairs(lib) do
+
+                --print(name, tag, v.cost)
                 cost = cost + v.cost + zpm.package.semverDist(zpm.semver(1,0,0), zpm.semver(0,0,0))
             end
         end
