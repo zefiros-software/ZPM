@@ -226,5 +226,22 @@ premake.override(premake.main, "preBake", function(base)
     return base()
 end)
 
+premake.override(_G, "flags", function(base, flgs)
+
+    if os.istarget("linux") then
+        if type(flgs) ~= "table" then
+            flgs = {flgs}
+        end
+
+        for _, f in ipairs(flgs) do
+            if f == "LinkTimeOptimization" then
+                warningOncef("You are using LinkTimeOptimization, make sure to run make with a lto compatible 'ar' command, such as 'gcc-ar'.\nRun 'zpm gmake --cc=gcc' explicitly or use 'make AR=gcc-ar'.")
+            end
+        end
+    end
+
+    return base(flgs)
+end)
+
 -- we need a lto compatible version of ar
 premake.tools.gcc.ar = "gcc-ar"
