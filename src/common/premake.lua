@@ -225,3 +225,6 @@ premake.override(premake.main, "preBake", function(base)
     end
     return base()
 end)
+
+-- we need a lto compatible version of ar
+premake.tools.gcc.ar = "gcc-ar"
