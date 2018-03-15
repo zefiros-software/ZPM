@@ -10,9 +10,9 @@ cd "%USERPROFILE%/zpm-install"
 if exist "premake5.zip" del /q "premake5.zip"
 
 if defined GH_TOKEN (
-    powershell -command "Invoke-WebRequest -Uri https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-windows.zip -OutFile premake5.zip -Headers @{'Authorization'='token %GH_TOKEN%'}"
+    powershell -command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-windows.zip -OutFile premake5.zip -Headers @{'Authorization'='token %GH_TOKEN%'}"
 ) else (
-    powershell -command "Invoke-WebRequest -Uri https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-windows.zip -OutFile premake5.zip"
+    powershell -command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-windows.zip -OutFile premake5.zip"
 )
 echo Finished downloading premake...
 
