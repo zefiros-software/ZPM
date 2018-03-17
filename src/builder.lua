@@ -175,7 +175,7 @@ function Builder:walkDependencies()
                             filter {}
                             workspace(wrkspace)
                             project(name)
-                            node.cppdialect(allDialects[1])
+                            zpm.cppdialect(allDialects[1])
                         end
                     end    
                 end

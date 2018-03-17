@@ -179,11 +179,14 @@ premake.override(_G, "project", function(base, name)
     return base(name)
 end)
 
+zpm.cppdialect = nil
 premake.override(_G, "cppdialect", function(base, dialect)
     
     if dialect then
         if not zpm.meta.building then
-            zpm.loader.project.builder.cursor.cppdialect = base
+            if not zpm.cppdialect then
+                zpm.cppdialect = base
+            end
             if zpm.meta.project ~= "" then 
                 tab = zpm.util.insertUniqueTable(zpm.loader.project.builder.cursor, {"projects", zpm.meta.project, "cppdialects"}, dialect)
             else
