@@ -59,7 +59,7 @@ install:
     # ZPM by default uses the master branch, but it 
     # can be switched to a more unstable branch to 
     # get new features early
-    branch: features/refactor
+    branch: master
   premake:
     vendor: Zefiros-Software
     name: premake-core
