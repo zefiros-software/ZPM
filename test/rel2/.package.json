@@ -1,9 +1,0 @@
-{
-    "name": "root/local2",
-    "requires": [
-        {
-            "name": "root/local",
-            "path": "../rel1"
-        }
-    ]
-}

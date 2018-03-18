@@ -22,40 +22,30 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
+Libraries = newclass("Libraries", Packages)
+
+function Libraries:init(loader)
+
+    self.super:init(loader)
+end
+
+function Libraries:getSettings()
+    
+    return {
+        install = false,
+        update = false,
+        uninstall = false,
+        show = false,
+        search = true
     }
-    zpm._VERSION = "2.0.0"
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
+function Libraries:getName()
     
-    if not zpm._mayLoad() then
-        return
-    end
+    return "libraries"
+end
+
+function Libraries:getNameSingle()
     
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    return "library"
 end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
-end
-
-return zpm

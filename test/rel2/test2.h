@@ -1,3 +1,0 @@
-
-
-int GetNum2();

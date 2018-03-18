@@ -22,40 +22,46 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+function Test:testEnv_scriptPath()
+
+    u.assertNotNil(zpm.env.getScriptPath())
+    u.assertStrContains(zpm.env.getScriptPath(), "src")
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function Test:testEnv_getCacheDirectory()
 
-function zpm.onLoad()
+    local dir = zpm.env.getCacheDirectory()
+    u.assertNotNil(dir)
+    u.assertStrContains(dir, "zpm")
+end
+
+function Test:testEnv_getCacheDirectory_SetENV()
     
-    if not zpm._mayLoad() then
-        return
-    end
+    local mock = os.getenv
+    os.getenv = function() return "foo" end
+   
+    local dir = zpm.env.getCacheDirectory()
+    u.assertNotNil(dir)
+    u.assertEquals(dir, "foo")
     
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    os.getenv = mock
 end
 
-function zpm._mayLoad()
+function Test:testEnv_getDataDirectory()
 
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
+    local dir = zpm.env.getDataDirectory()
+    u.assertNotNil(dir)
+    u.assertStrContains(dir, "zpm")
 end
 
-return zpm
+function Test:testEnv_getDataDirectory_SetENV()
+    
+    local mock = os.getenv
+    os.getenv = function() return "foo2" end
+   
+    local dir = zpm.env.getDataDirectory()
+    u.assertNotNil(dir)
+    u.assertEquals(dir, "foo2")
+    
+    os.getenv = mock
+end

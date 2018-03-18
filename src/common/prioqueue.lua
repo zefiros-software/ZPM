@@ -22,40 +22,42 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+PriorityQueue = newclass "PriorityQueue"
+
+function PriorityQueue:init()
+    self.size = 0
+    self.values = {}
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
+function PriorityQueue:getSize()
     
-    if not zpm._mayLoad() then
-        return
+    return self.size
+end
+
+function PriorityQueue:put(v, p)
+    local q = self.values[p]
+    if not q then
+        q = {first = 1, last = 0}
+        self.values[p] = q
     end
-    
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    q.last = q.last + 1
+    q[q.last] = v
+
+    self.size = self.size + 1
 end
 
-function zpm._mayLoad()
+function PriorityQueue:pop()
+    for p, q in pairs(self.values) do
+        if q.first <= q.last then
+            local v = q[q.first]
+            q[q.first] = nil
+            q.first = q.first + 1
 
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
+            self.size = self.size - 1
+            return v, p
+        else
+
+            self.values[p] = nil
+        end
+    end
 end
-
-return zpm

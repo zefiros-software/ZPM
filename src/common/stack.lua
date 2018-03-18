@@ -22,40 +22,25 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+Stack = newclass "Stack"
+
+function Stack:init()
+    self.size = 0
+    self.values = {}
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
+function Stack:getSize()
     
-    if not zpm._mayLoad() then
-        return
-    end
-    
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    return self.size
 end
 
-function zpm._mayLoad()
+function Stack:put(v, p)
 
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
+    table.insert(self.values,{v, p})
+    self.size = self.size + 1
 end
 
-return zpm
+function Stack:pop()
+    self.size = self.size - 1
+    return table.unpack(table.remove(self.values))
+end

@@ -22,40 +22,16 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+require "class"
+
+zpm.sandbox = require "sandbox"
+zpm.colors = require "ansicolors"
+
+
+dofile "pepperfish_profiler.lua"
+
+if bootstrap and bootstrap.semver then
+    zpm.semver = bootstrap.semver
+else
+    zpm.semver = require "semver"
 end
-
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
-    
-    if not zpm._mayLoad() then
-        return
-    end
-    
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
-end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
-end
-
-return zpm

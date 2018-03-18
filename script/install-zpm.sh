@@ -1,64 +1,96 @@
 #!/bin/bash
-install_dir=~/.zpm_install/
-shared_dir=~/.zpm/zpm/
-cache_dir=~/.zpm/zpm-cache/
-local_install=true
 
-while getopts "g" opt; do
-    case "$opt" in
-    g)        
-        shared_dir=/usr/local/zpm/
-        cache_dir=/var/tmp/zpm-cache/
-        local_install=false
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+key="$1"
+
+case $key in
+    -c|--compile)
+    COMPILE_PREMAKE=1
+    shift # past argument
     ;;
-    esac
+    *)    # unknown option
+    POSITIONAL+=("$1") # save it in an array for later
+    shift # past argument
+    ;;
+esac
 done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
-SUD=""
-if [ "$local_install" == false ]; then
-  SUD="sudo"
+if  [ "$TRAVIS" = true ]; then
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        sudo add-apt-repository ppa:git-core/ppa -y
+        sudo apt-get install git -y
+    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+        brew update
+        brew outdated git || brew upgrade git
+    fi
 fi
 
-echo "Shared directory:"
-echo $shared_dir
-echo "Cache directory:"
-echo $cache_dir
+
+install_dir=~/.zpm_install/
+
+root=$(pwd)
+OS=$(uname)
 
 rm -rf $install_dir || true
-rm -rf $shared_dir || true
-rm -rf $cache_dir || true
 
 mkdir -p $install_dir
 cd $install_dir
 
 rm -f premake5.tar.gz || true
-rm -f premake5 || true
+if [[ "$OS" == "Darwin" ]]; then
 
-wget -O premake5.tar.gz https://github.com/premake/premake-core/releases/download/v5.0.0-alpha11/premake-5.0.0-alpha11-linux.tar.gz
-
-tar xvzf premake5.tar.gz
-chmod a+x premake5
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm
-
-${SUD} mkdir -p $shared_dir || true
-${SUD} mkdir -p $cache_dir || true
-
-${SUD} chmod -R 775 $shared_dir
-${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
-
-${SUD} chmod -R 775 $cache_dir
-${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
-
-if [ -z "$GH_TOKEN" ]; then
-    ./premake5 --file=zpm/zpm.lua install-zpm
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-macosx.tar.gz"
 else
-    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install-zpm
+    premakeURL="https://github.com/Zefiros-Software/premake-core/releases/download/v5.0.0-zpm-alpha12.2-dev/premake-linux.tar.gz"
 fi
 
-${SUD} chmod -R 775 $shared_dir
-${SUD} setfacl -d -m u::rwX,g::rwX,o::- $shared_dir
+if [ "$COMPILE_PREMAKE" != "1" ]; then
+    curl -L -s -o premake5.tar.gz $premakeURL
+    tar -xzf premake5.tar.gz
+    chmod a+x premake5
 
-${SUD} chmod -R 775 $cache_dir
-${SUD} setfacl -d -m u::rwX,g::rwX,o::- $cache_dir
+    ./premake5 --version > /dev/null
+    
+    if [ $? -ne 0 ]; then
+        COMPILE_PREMAKE=1
+    fi
+fi
+
+if [ "$COMPILE_PREMAKE" == "1" ]; then
+    # compile premake5
+    git clone https://github.com/Zefiros-Software/premake-core.git
+    cd premake-core
+
+    if [[ "$OS" == "Darwin" ]]; then
+        make -f Bootstrap.mak osx
+    else    
+        make -f Bootstrap.mak linux
+    fi
+
+    make -C build/bootstrap -j config=debug
+    cd ../
+    mv premake-core/bin/release/premake5 premake5
+
+    # continue installation
+    chmod a+x premake5
+fi
+
+
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b features/refactor
+
+ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua | xargs) 
+
+if [ -z "$GH_TOKEN" ]; then
+    ./premake5 --file=zpm/zpm.lua install zpm --verbose
+else
+    ./premake5 --github-token=$GH_TOKEN --file=zpm/zpm.lua install zpm --verbose
+fi
+
+cd $root
 
 rm -rf $install_dir
+
+source ~/.profile

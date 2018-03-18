@@ -22,40 +22,40 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
-end
+newaction {
+    trigger = "show",
+    description = "Shows various ZPM settings",
+    execute = function()
+        local help = false
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+        if #_ARGS == 1 then
+            if _ARGS[1] == "cache" then
+                print(zpm.env.getCacheDirectory())
+            elseif _ARGS[1] == "install" then
+                print(zpm.env.getDataDirectory())
+            elseif _ARGS[1] == "tools" then
+                print(zpm.env.getToolsDirectory())
+            else
+                help = true
+            end
+        else
+            help = true
+        end
 
-function zpm.onLoad()
-    
-    if not zpm._mayLoad() then
-        return
+        if help or zpm.cli.showHelp() then
+            printf("%%{yellow}Show action must be one of the following commands:\n" ..
+            " - cache \tShows the cache directory\n" ..
+            " - install \tShows the installation directory\n" ..
+            " - tools \tShows the tools directory")
+        end
     end
-    
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+}
+
+function zpm.cli.show()
+
+    return _ACTION == "show"
 end
 
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
+if _ACTION == "show" then
+    zpm.util.disableMainScript()
 end
-
-return zpm

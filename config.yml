@@ -1,0 +1,114 @@
+# The github settings, which specify how the github api should be used
+github: 
+  # This is how we construct github urls if we need to
+  host: https://github.com/
+  # The api url for github requests
+  apiHost: https://api.github.com/
+  # Your github token gets stored here,
+  # when this if false or nil it is ignored.
+  # Otherwise this value is used to authenticate 
+  # the api requests, and prevent limit rating 
+  # from blocking interaction.
+  token: false
+# ZPM caches various settings, mainly
+# to prevent too much work to be done
+# every ZPM run.
+cache: 
+  premake: 
+    # Check the new premake version once a day
+    cacheTime: 86400
+  registry: 
+    # Check the registries for a new version once 
+    # every second. Upping this value can be useful
+    # when you use ZPM on slow connections
+    cacheTime: 1
+  temp:
+    # Delete the ZPM's temp folder once a week
+    cacheTime: 604800
+registries: []
+install:
+  # Bootstrap is the wrapper that allows for more complex module loading.
+  # In special we can load modules from specific versions, with a 
+  # directory structure we handle during module installation.
+  bootstrap: 
+    # You can switch the default boostrap repository to a fork
+    repository: https://github.com/Zefiros-Software/Bootstrap.git
+    # This specifies where boostrap gets installed in the default
+    # ZPM installation.
+    directory: bootstrap
+    # Boostrap by default uses the master branch, but it can be
+    # switched to a more unstable branch.
+    branch: master
+  registry: 
+    # This is the default registry repository we use,
+    # of course you can either override it, or add
+    # new registries.
+    repository: https://github.com/Zefiros-Software/Manifest.git
+    # This is the default directory wherein we store the registry
+    directory: registry
+    # The default branch for the registry is the master branch
+    branch: dev
+    # The root manifest, and root pacakge may define new registries that get loaded
+    # by default. This manifest file holds these registries.
+    manifest: registries.yml
+  zpm: 
+    # ZPM uses this directory to install from,
+    # You can switch this respository to a fork of ZPM
+    # so the updater uses that repository instead.
+    repository: https://github.com/Zefiros-Software/ZPM
+    # ZPM by default uses the master branch, but it 
+    # can be switched to a more unstable branch to 
+    # get new features early
+    branch: features/refactor
+  premake:
+    vendor: Zefiros-Software
+    name: premake-core
+    release:
+      match: 
+        - zpm
+        - dev
+      except: []
+  manifests:
+    # These key value defines what kind of packages 
+    # may be loaded withing ZPM. To add new package
+    # types just specify a key with at least a value 'manifest'
+    # The 'manifest' value holds the package manifest for that type.
+    # All other values can be used for configuration
+    #
+    # Example:
+    #   plugins:
+    #       manifest: plugins.yml
+    #       order: 100
+    modules:
+      class: Modules
+      install: true
+      manifest: modules.yml
+      name: module
+      package: Module
+      search: true
+      show: true
+      uninstall: true
+      extract: false
+      order: 100
+    libraries:
+      buildFile: build.lua
+      manifest: libraries.yml
+      # libraries may declare private packages that 
+      # are not exported to other packages
+      allowPrivate: true
+      lazyLoading: true
+      name: library
+      order: 200
+    assets:
+      manifest: assets.yml
+      name: asset
+      extract: assets
+      order: 300
+  extern:
+    # When ZPM needs to download packages, we store it in this directory 
+    directory: extern
+  package:
+    # The package definition resided in this definition
+    fileName: package.yml
+configuration: {}
+trustStore: {}

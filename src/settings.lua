@@ -22,40 +22,54 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+zpm.settings = {
+    reduce={}
+}
+
+function zpm.settings.reduce.first(conflicts)
+
+    return conflicts[1]
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function zpm.settings.reduce.last(conflicts)
 
-function zpm.onLoad()
-    
-    if not zpm._mayLoad() then
-        return
+    return conflicts[#conflicts]
+end
+
+function zpm.settings.reduce.anyTrue(conflicts)
+
+    for _, c in ipairs(conflicts) do
+        if c then
+            return true
+        end
     end
+    return false 
+end
+
+function zpm.settings.reduce.anyFalse(conflicts)
+
+    for _, c in ipairs(conflicts) do
+        if not c then
+            return true
+        end
+    end
+    return false
+end
+
+function zpm.settings.reduce.allTrue(conflicts)
     
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    local all = true
+    for _, c in ipairs(conflicts) do
+        all = all and c
+    end
+    return all
 end
 
-function zpm._mayLoad()
+function zpm.settings.reduce.allFalse(conflicts)
 
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
+    local all = true
+    for _, c in ipairs(conflicts) do
+        all = all and not c
+    end
+    return all
 end
-
-return zpm

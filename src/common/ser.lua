@@ -22,40 +22,41 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+zpm.ser = { }
+
+function zpm.ser.loadMultiYaml(file)    
+
+    local ljson = zpm.util.readAll(file)
+    --print(ljson)
+    local a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z = yaml.decode(ljson, {load_nulls_as_nil = true})
+    return {a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z}
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
+function zpm.ser.loadYaml(ljson)    
 
-function zpm.onLoad()
+    return yaml.decode(ljson, {load_nulls_as_nil = true})
+end
+
+function zpm.ser.loadFile(file)    
+
+    local ljson = {}
+    if os.isfile(file) then
+        ljson = zpm.util.readAll(file)
+        if zpm.ser.isYAML(file) then
+            ljson = zpm.ser.loadYaml(ljson)
+        else
+            ljson = json.decode(ljson)
+        end
+    end    
+    return ljson
+end
+
+function zpm.ser.isYAML(file)
     
-    if not zpm._mayLoad() then
-        return
-    end
+    return file:endswith(".yml") or file:endswith(".yaml")
+end
+
+function zpm.ser.isJSON(file)
     
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    return file:endswith(".json")
 end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
-end
-
-return zpm

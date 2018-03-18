@@ -22,40 +22,34 @@
 -- @endcond
 --]]
 
-if not zpm then
-    zpm = {}
-    zpm.meta = {
-        workspace = "",
-        group = "",
-        project = "",
-        exporting = false,
-        buiding = false,
-        package = nil,
-        mayExtract = true
-    }
-    zpm._VERSION = "2.0.0"
+Queue = newclass "Queue"
+
+function Queue:init()
+    self.size = 0
+    self.values = {}
+    self.first = 0
+    self.last = -1
 end
 
-dofile "extern/load.lua"
-dofile "src/load.lua"
-
-function zpm.onLoad()
+function Queue:getSize()
     
-    if not zpm._mayLoad() then
-        return
+    return self.size
+end
+
+function Queue:put(v,p)
+    self.last = self.last + 1
+    self.values[self.last] = {v,p}
+    self.size = self.size + 1
+end
+
+function Queue:pop()
+    if self.first > self.last then
+        return nil
     end
-    
-    zpm.loader = Loader()
-    zpm.loader.install:checkVersion()
-    zpm.loader.registries:load()
-    zpm.loader.manifests:load()
-    zpm.loader:solve()
+    self.size = self.size - 1
+ 
+    local val = self.values[self.first]
+    self.values[self.first] = nil
+    self.first = self.first + 1
+    return table.unpack(val)
 end
-
-function zpm._mayLoad()
-
-    return not zpm.cli.showVersion() and
-           not zpm.cli.show()
-end
-
-return zpm
