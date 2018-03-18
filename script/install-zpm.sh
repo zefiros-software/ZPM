@@ -79,7 +79,7 @@ if [ "$COMPILE_PREMAKE" == "1" ]; then
 fi
 
 
-git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b master
+git clone https://github.com/Zefiros-Software/ZPM.git ./zpm --depth 1 --quiet -b dev
 
 ZPM_DIR=$(./premake5 show install --file=zpm/zpm.lua | xargs) 
 
