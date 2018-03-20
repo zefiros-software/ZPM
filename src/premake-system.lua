@@ -7,7 +7,7 @@ local function _updateRepo(destination, url, name, branch)
         printf(" - Updating '%s'", name)
         os.chdir(destination)
         if branch then        
-            os.executef("git checkout %s", branch)
+            os.executef("git checkout --track origin/%s", branch)
         else
             os.execute("git checkout .")
         end
