@@ -449,6 +449,7 @@ function Solution:load()
                     end
                     zpm.util.insertTable(self.cursor.optionals, {type}, {
                         name = d.name,
+                        settings = d.settings,
                         versionRequirement = d.version
                     })
                 end

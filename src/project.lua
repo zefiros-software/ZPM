@@ -91,6 +91,26 @@ function Project:bake()
                     self.loader.settings:add({type, node.name, node.tag, setting, "values"}, value)
                 end
             end
+        end        
+        
+        if node.optionals then
+            for type, pkgs in pairs(node.optionals) do
+                for _, pkg in ipairs(pkgs) do
+                    if pkg.settings then
+                        local closed = zpm.util.indexTable(self.solution.tree.closed.public, {type,pkg.name}) 
+                        print(table.tostring(closed), pkg.settings)
+                        if closed and premake.checkVersion(closed.version, pkg.versionRequirement) then
+                            
+                            for setting, value in pairs(pkg.settings) do
+                                print(type, pkg.name, closed.version, setting)
+                                if self.loader.settings({type, pkg.name, closed.version, setting}) then
+                                    self.loader.settings:add({type, pkg.name, closed.version, setting, "values"}, value)
+                                end
+                            end
+                        end     
+                    end
+                end
+            end
         end
 
         return true
