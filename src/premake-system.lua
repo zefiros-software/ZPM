@@ -8,7 +8,7 @@ local function _updateRepo(destination, url, name, branch)
         os.chdir(destination)
         if branch then        
             os.executef("git config remote.origin.fetch \"+refs/heads/%s:refs/remotes/origin/%s\"", branch, branch)
-            os.executef("git checkout -b %s", branch)
+            os.executef("git checkout -B %s", branch)
         else
             os.execute("git checkout .")
         end
