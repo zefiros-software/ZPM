@@ -106,7 +106,7 @@ function zpm.setting(setting)
 
     if tab.reduce then
         if zpm.settings.reduce[tab.reduce] then
-            zpm.settings.reduce[tab.reduce](values)
+            return zpm.settings.reduce[tab.reduce](values)
         else
             -- @todo
         end
