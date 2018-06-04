@@ -53,20 +53,30 @@ function Manifest:load(directory)
 end
 
 function Manifest:search(vendorPattern, namePattern, pred)
-    
-    pred = iif(pred ~= nil, pred, function(m) return true end)
-    local results = {}
-    for vendor, v in pairs(self.packages) do
+    local _search = function()
+        pred = iif(pred ~= nil, pred, function(m) return true end)
+        local results = {}
+        for vendor, v in pairs(self.packages) do
 
-        if zpm.util.patternMatch(vendor,vendorPattern) then
+            if zpm.util.patternMatch(vendor,vendorPattern) then
 
-            for name, n in pairs(v) do
-                if zpm.util.patternMatch(name,namePattern) and pred(n) then
-                    table.insert(results, n)
+                for name, n in pairs(v) do
+                    if zpm.util.patternMatch(name,namePattern) and pred(n) then
+                        table.insert(results, n)
+                    end
                 end
             end
         end
+        return results
     end
+
+    local results = _search()
+
+    if #results == 0 then
+        self.loader.registries:loadRegistries(true)
+        results = _search()
+    end
+
     return results
 end
 
@@ -98,6 +108,10 @@ function Manifest:_savePackage(fullName, name, vendor, package)
 
     if not self.packages[vendor] then
         self.packages[vendor] = {}
+    end
+
+    if self.packages[vendor][name] then
+        return
     end
 
     local factory = self:_getFactory()

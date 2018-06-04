@@ -36,6 +36,11 @@ function Manifests:load()
     for name, ext in pairs(self.loader.config("install.manifests")) do
 
         local ok, validOrMessage = pcall(zpm.validate.manifests, ext)
+
+        if not ok then
+            self.registries:loadRegistries()
+        end
+
         if ok and validOrMessage == true then 
             
             self.loader[name] = self:_createPackages(name, ext)

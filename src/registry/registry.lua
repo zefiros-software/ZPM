@@ -32,25 +32,25 @@ function Registry:init(loader, directory, repository, branch, mayCheck, mayLoadR
     self.mayCheck = mayCheck
     self.mayLoadRegistries = mayLoadRegistries
     self.branch = branch
-
+    self.updated = false
     self.registries = Registries(loader, mayCheck)
 end
 
-function Registry:load()
+function Registry:load(force)
 
-    self:_update()
+    self:update(force)
 
     self:_tryLoadRegistriesFile()
 
     self.registries:load()
 end
 
-function Registry:_update()
+function Registry:update(force)
 
-    if self:_mayUpdate() and self.repository then
-
+    if (self:_mayUpdate() or force) and self.repository and not self.updated then
         printf("%%{yellow}Hit: %s", self.repository)
         zpm.git.cloneOrFetch(self.directory, self.repository, self.branch)
+        self.updated = true
     end
 end
 

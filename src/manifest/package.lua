@@ -97,8 +97,7 @@ function Package:onLoad(version, tag)
 end
 
 function Package:isGitRepo()
-    
-    return not os.isdir(self.repository)
+    return self:isRepositoryRepo()
 end
 
 function Package:isTrusted(ask)
@@ -784,8 +783,7 @@ function Package:pull(hash)
 
         noticef("- '%s' pulling '%s'", self.fullName, self.repository)
         self:pullRepository()
-
-        if self.repository ~= self.definition and not os.isdir(self.definition) then
+        if self.repository ~= self.definition and self:isDefinitionRepo() then
             noticef("   with definition '%s'", self.definition)
             self:pullDefinition()
         end

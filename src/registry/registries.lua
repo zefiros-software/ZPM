@@ -37,10 +37,14 @@ end
 function Registries:load()
 
     self:_loadRoot()
+    self:loadRegistries()
+end
+
+function Registries:loadRegistries(force)
 
     for _, r in ipairs(self.registries) do
 
-        r:load()
+        r:load(force)
     end
 end
 
