@@ -80,8 +80,19 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                 for _, pkg in pairs(pkgs) do
 
                     local vendor, name = zpm.package.splitName(pkg.name)
-                    local package = self.solver.loader[type]:get(vendor, name)
-
+                    local package = nil
+                    if pkg.hash ~= "LOCAL" then
+                        package = self.solver.loader[type]:get(vendor, name)
+                    else
+                        package = Package(self.solver.loader, self.solver.loader[type], {
+                            name = name,
+                            vendor = vendor,
+                            fullName = pkg.name,
+                            repository = pkg.repository,
+                            definition = pkg.definition
+                        })
+                    end
+                    
                     if not package then
                         return false
                     end
