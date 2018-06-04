@@ -473,7 +473,17 @@ function Solution:_loadDependency(cursor, d, type, loader)
         settings = d.settings,
         type = type
     }
-
+    
+    if not dependency.package and d.repository then
+        dependency.package = Package(self.solver.loader, loader, {
+            name = name,
+            vendor = vendor,
+            fullName = d.name,
+            repository = d.repository,
+            isRoot = false
+        })
+    end
+    --print(d.name, d.definition)
     if self.isRoot then
     
         if d.repository then
