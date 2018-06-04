@@ -115,7 +115,7 @@ function Solver:_branchAndBound(container, b, best, beam, useCompleteSpace, retu
         end
 
         if container:getSize() == 0 and openSolutions:getSize() > 0 then
-            if useCompleteSpace or not best:isComplete() then
+            if useCompleteSpace or not (best and best:isComplete()) then
                 local nextSolution, cost = openSolutions:pop()
                 container:put(nextSolution, cost)
             else

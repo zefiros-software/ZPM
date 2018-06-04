@@ -525,7 +525,7 @@ function Solution:_loadDependency(cursor, d, type, loader)
         return dependency, idx
     end
 
-    warningf("Package '%s/%s' does not exist", vendor, name)
+    warningOncef("Package '%s/%s' does not exist", vendor, name)
     return nil
 end
 
