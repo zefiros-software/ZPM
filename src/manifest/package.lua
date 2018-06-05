@@ -158,7 +158,7 @@ end
 
 function Package:needsExtraction(dir, node)
 
-    if (not os.isdir(self:getExtractDirectory(dir, node)) or zpm.cli.force()) and not os.isdir(self.repository) then
+    if (not os.isdir(self:getExtractDirectory(dir, node)) or zpm.cli.force()) and self:isRepositoryRepo() then
         return true
     end
     return false

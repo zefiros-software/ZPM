@@ -42,6 +42,7 @@ function Solver:solve(lock)
             hasInitial = true
         else
             noticef("Current lockfile is invalid, generating a fresh one")
+            lock = nil
         end
     end
     if not hasInitial then

@@ -102,7 +102,11 @@ function zpm.api.libraries.global.project(package)
         filename(name)
         zpm.util.setTable(package, {"aliases", name}, alias)
 
-        location(path.join(package.location, ".zpm" ))
+        if package.hash ~= "LOCAL" then
+            location(path.join(package.location, ".zpm" ))
+        else
+            location(package.location)
+        end
         targetdir(package.bindir)
         objdir(package.objdir)      
         targetname(name)
@@ -144,6 +148,12 @@ end
 function zpm.api.libraries.global.filter(package)
 
     return filter
+end
+
+
+function zpm.api.libraries.global.group(package)
+
+    return group
 end
 
 function zpm.api.libraries.export.uses(package)
