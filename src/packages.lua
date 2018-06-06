@@ -249,14 +249,14 @@ function Packages:search(vendor, name)
     end
 end
 
-function Packages:get(vendor, name)
+function Packages:get(vendor, name, force)
 
     return self.loader.manifests(self:getName(), vendor, name, function(n) return n.vendor == vendor and n.name == name end)[1]
 end
 
 function Packages:getOrStore(vendor, name, settings)
 
-    local result = self.loader.manifests(self:getName(), vendor, name, function(n) return n.vendor == vendor and n.name == name end)[1]
+    local result = self.loader.manifests(self:getName(), vendor, name, function(n) return n.vendor == vendor and n.name == name end, force)[1]
 
     if not result and settings.repository then
         result = self.loader.manifests.manifests[self:getName()]:addPackage(string.format("%s/%s", vendor, name), vendor, name, settings)

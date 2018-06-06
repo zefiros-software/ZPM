@@ -52,7 +52,7 @@ function Manifest:load(directory)
     end
 end
 
-function Manifest:search(vendorPattern, namePattern, pred)
+function Manifest:search(vendorPattern, namePattern, pred, reload)
     local _search = function()
         pred = iif(pred ~= nil, pred, function(m) return true end)
         local results = {}
@@ -72,7 +72,7 @@ function Manifest:search(vendorPattern, namePattern, pred)
 
     local results = _search()
 
-    if #results == 0 then
+    if #results == 0 and reload then
         self.loader.registries:loadRegistries(true)
         results = _search()
     end

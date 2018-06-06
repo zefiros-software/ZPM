@@ -83,7 +83,7 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                     local package = self.solver.loader[type]:getOrStore(vendor, name, {
                         repository = pkg.repository,
                         definition = pkg.definition
-                    })
+                    }, not zpm.util.isGitUrl(pkg.repository))
                     
                     if not package then
                         return false
@@ -480,7 +480,7 @@ function Solution:_loadDependency(cursor, d, type, loader)
             fullName = d.name,
             repository = d.repository,
             isRoot = false
-        }),
+        }, not zpm.util.isGitUrl(d.repository)),
         settings = d.settings,
         type = type
     }

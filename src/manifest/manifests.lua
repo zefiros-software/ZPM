@@ -72,13 +72,13 @@ function Manifests:getLoadOrder()
     return result
 end
 
-function Manifests:__call(tpe, vendorPattern, namePattern, pred)
+function Manifests:__call(tpe, vendorPattern, namePattern, pred, force)
 
     if not self.manifests[tpe] then
         return {}
     end
 
-    return self.manifests[tpe]:search(vendorPattern, namePattern, pred)
+    return self.manifests[tpe]:search(vendorPattern, namePattern, pred, force)
 end
 
 function Manifests:_createPackages(name, ext)
