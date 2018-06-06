@@ -139,6 +139,7 @@ function Project:extract()
         local extractDir = self.loader[type]:getExtractDirectory()
         if extractDir then   
             node.location = node.package:getExtractDirectory(extractDir, node)
+            node.abslocation = path.getabsolute(node.location, _MAIN_SCRIPT_DIR)
             if node.package:needsExtraction(extractDir, node) then   
             
                 if not os.isdir(extractDir) then

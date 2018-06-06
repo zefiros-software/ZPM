@@ -97,21 +97,21 @@ function Manifest:_loadFile(file)
         if ok and validOrMessage == true then        
             local mod = bootstrap.getModule(package.name)
             local vendor, name = mod[1], mod[2]
-            self:_savePackage(package.name, name, vendor, package)
+            self:addPackage(package.name, name, vendor, package)
         else
             warningf("Failed to load manifest file '%s':\n%s\n^~~~~~~~\n\n%s", file, json.encode_pretty(package), validOrMessage)
         end
     end
 end
 
-function Manifest:_savePackage(fullName, name, vendor, package)
+function Manifest:addPackage(fullName, name, vendor, package)
 
     if not self.packages[vendor] then
         self.packages[vendor] = {}
     end
 
     if self.packages[vendor][name] then
-        return
+        return self.packages[vendor][name]
     end
 
     local factory = self:_getFactory()
@@ -123,6 +123,7 @@ function Manifest:_savePackage(fullName, name, vendor, package)
         repository = package.repository,
         definition = package.definition
     })
+    return self.packages[vendor][name]
 end
 
 

@@ -46,7 +46,7 @@ function zpm.api.extract.export.extractdir(package)
     
         for i, target in ipairs(targets) do
             local fromPath = path.join( package.package:getRepository(), target )
-            local targetPath = path.join( package.location, prefix, target )
+            local targetPath = path.join( package.abslocation, prefix, target )
 
             if os.isdir(targetPath) and zpm.cli.force() then
                 zpm.util.rmdir(targetPath)
@@ -70,7 +70,7 @@ function zpm.api.extract.export.extractfile(package)
     return function(from, to, definition)
         local definition = iif(definition == nil, false, true)
         local fromPath = path.join(iif(definition, package.package:getDefinition(), package.package:getRepository()), from:match("/?(.*)") )
-        local targetPath = path.join( package.location, to:match("/?(.*)") )
+        local targetPath = path.join( package.abslocation, to:match("/?(.*)") )
 
         if os.isfile(targetPath) and zpm.cli.force() then
             os.remove(targetPath)
@@ -86,7 +86,7 @@ end
 function zpm.api.extract.export.exportpath(package)
 
     return function()
-        return package.location
+        return package.abslocation
     end
 end
 
@@ -109,7 +109,7 @@ function zpm.api.extract.export.autoreconf(package)
     return function()
 
         local current = os.getcwd()
-        os.chdir(package.location)
+        os.chdir(package.abslocation)
         os.execute("autoreconf -i")
         os.chdir(current)
     end
@@ -120,7 +120,7 @@ function zpm.api.extract.export.configure(package)
     return function(options)
         options = iif(options == nil, "", options)
         local current = os.getcwd()
-        os.chdir(package.location)
+        os.chdir(package.abslocation)
         -- note that this could be missused
         os.executef("./configure %s", options)
         os.chdir(current)

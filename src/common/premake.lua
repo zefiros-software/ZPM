@@ -173,6 +173,7 @@ premake.override(_G, "project", function(base, name)
         zpm.meta.project = name
         if not zpm.meta.building and not zpm.meta.exporting then
             zpm.util.insertUniqueTable(zpm.loader.project.builder.cursor, {"projects", name, "workspaces"}, zpm.meta.workspace)
+            --print(table.tostring(zpm.util.indexTable(zpm.loader.project.builder.cursor, {"projects"}), 3))
         end
     end
 

@@ -85,8 +85,6 @@ function Builder:walkDependencies()
                                     end
                                 end)
 
-                            
-                                --print(name, table.tostring(newUses))
                                 self:_importUses(newUses, proj, node, name, wrkspace, parent) 
 
                                 oldKeys = currentKeys
@@ -188,13 +186,14 @@ end
 
 function Builder:_importUses(uses, proj, node, name, wrkspace, parent)
 
+
     if uses and not table.isempty(uses) then
 
         local useNames = table.keys(uses)
         -- sort for deterministic anwsers
         table.sort(useNames)
 
-        for _, uname in ipairs(useNames) do
+        for _, uname in ipairs(useNames) do    
 
             local setParentExport = function(func)
                 if parent then
@@ -388,11 +387,11 @@ function Builder:getEnv(type, cursor)
     return zpm.api.load(type, cursor)
 end
 
-function Builder:_importPackage(name, package, project, node, wrkspace)
+function Builder:_importPackage(name, package, proj, node, wrkspace)
            
 
     local pname = name
-    local kind = project.kind
+    local kind = proj.kind
     
     --[[
     -- this caching strategy is still buggy,
@@ -418,7 +417,8 @@ function Builder:_importPackage(name, package, project, node, wrkspace)
     zpm.util.setTable(node.exportLinks, {wrkspace}, table.merge(localExports, childExports))
     zpm.util.setTable(node.exportLinks, {wrkspace, pname}, true)
     
-    local funcs = table.deepcopy(project.exportFunctions)
+    local funcs = table.deepcopy(proj.exportFunctions)
+    
     if funcs then
 
         local export = function()
@@ -426,9 +426,9 @@ function Builder:_importPackage(name, package, project, node, wrkspace)
                 filter {}
                 links(pname)
             end
-
             for _, func in ipairs(funcs) do
                 filter {}
+                
                 func()
             end
         end

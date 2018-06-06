@@ -268,14 +268,15 @@ function Package:getVersions(requirement)
 
         self:_loadTags()
 
+        local tresult = { }
         for _, v in ipairs(self.tags) do
             local version = iif(v.version ~= nil, v.version, v.tag)
             if premake.checkVersion(version, requirement) then
                 v.cost = self:getCost(v)
-                table.insert(result, v)
+                table.insert(tresult, v)
             end
         end
-        local allowBranchesAsTags = (#result == 0)
+        local allowBranchesAsTags = (#tresult == 0)
         for _, v in ipairs(self.branches) do
             local version = iif(allowBranchesAsTags, v.tag, "@" .. v.tag)
             if premake.checkVersion(version, requirement) then
@@ -283,6 +284,8 @@ function Package:getVersions(requirement)
                 table.insert(result, v)
             end
         end
+
+        result = zpm.util.concat(result, tresult)
     end
     --print(table.tostring(result,2), self.name, "$$$$$$$$$$")
 

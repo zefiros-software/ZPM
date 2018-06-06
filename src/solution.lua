@@ -80,18 +80,10 @@ function Solution:_loadNodeFromLock(tree, node, lock)
                 for _, pkg in pairs(pkgs) do
 
                     local vendor, name = zpm.package.splitName(pkg.name)
-                    local package = nil
-                    if pkg.hash ~= "LOCAL" then
-                        package = self.solver.loader[type]:get(vendor, name)
-                    else
-                        package = Package(self.solver.loader, self.solver.loader[type], {
-                            name = name,
-                            vendor = vendor,
-                            fullName = pkg.name,
-                            repository = pkg.repository,
-                            definition = pkg.definition
-                        })
-                    end
+                    local package = self.solver.loader[type]:getOrStore(vendor, name, {
+                        repository = pkg.repository,
+                        definition = pkg.definition
+                    })
                     
                     if not package then
                         return false
@@ -216,6 +208,7 @@ function Solution:expand(best, beam)
                 return {}
             end
         end
+        
 
         local versions = self:_enumerateVersions()
         -- when no versions are valid we skip this expension round
@@ -224,7 +217,6 @@ function Solution:expand(best, beam)
         end
 
         --print(table.tostring(versions,2))
-
         local l = self:_carthesian(table.deepcopy(versions), beam)
         --print(table.tostring(l,2))
 
@@ -375,6 +367,7 @@ function Solution:_copyNode(node)
         settings = node.settings,
         version = node.version,
         definition = node.definition,
+        repository = node.repository,
         optionals = table.deepcopy(node.optionals),
         versionRequirement = node.versionRequirement,
         tag = node.tag,
@@ -424,12 +417,13 @@ function Solution:load()
         self.cursor.public = {}
     end
     
-    for _, type in ipairs(self.solver.loader.manifests:getLoadOrder()) do
+    for _, tpe in ipairs(self.solver.loader.manifests:getLoadOrder()) do
 
-        if self.cursor.definition.private and self.cursor.definition.private[type] then
+        if self.cursor.definition.private and type(self.cursor.definition.private[tpe]) == "table" then
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"private"})
-            for _, d in pairs(self.cursor.definition.private[type]) do
-                local dep, idx = self:_loadDependency(self.cursor.private, d, type, self.solver.loader[type])
+            
+            for _, d in pairs(self.cursor.definition.private[tpe]) do
+                local dep, idx = self:_loadDependency(self.cursor.private, d, tpe, self.solver.loader[tpe])
                 if not dep then
                     self.failed = true
                     return
@@ -439,15 +433,15 @@ function Solution:load()
             end
         end
     
-        if self.cursor.definition.public and self.cursor.definition.public[type] then
+        if self.cursor.definition.public and type(self.cursor.definition.public[tpe]) == "table" then
         
             local ptr = zpm.util.concat(table.deepcopy(self.cursorPtr), {"public"})
-            for _, d in pairs(self.cursor.definition.public[type]) do
-            
+            for _, d in pairs(self.cursor.definition.public[tpe]) do
+                
 
                 if not d.optional then
                 
-                    local dep, idx = self:_loadDependency(self.cursor.public, d, type, self.solver.loader[type])
+                    local dep, idx = self:_loadDependency(self.cursor.public, d, tpe, self.solver.loader[tpe])
                     if not dep then
                         self.failed = true
                         return
@@ -458,7 +452,7 @@ function Solution:load()
                     if not self.cursor.optionals then
                         self.cursor.optionals = {}
                     end
-                    zpm.util.insertTable(self.cursor.optionals, {type}, {
+                    zpm.util.insertTable(self.cursor.optionals, {tpe}, {
                         name = d.name,
                         settings = d.settings,
                         versionRequirement = d.version
@@ -480,20 +474,17 @@ function Solution:_loadDependency(cursor, d, type, loader)
     local dependency = {
         name = d.name,
         versionRequirement = d.version,
-        package = loader:get(vendor, name),
-        settings = d.settings,
-        type = type
-    }
-    
-    if not dependency.package and d.repository then
-        dependency.package = Package(self.solver.loader, loader, {
+        package = loader:getOrStore(vendor, name, {
             name = name,
             vendor = vendor,
             fullName = d.name,
             repository = d.repository,
             isRoot = false
-        })
-    end
+        }),
+        settings = d.settings,
+        type = type
+    }
+    
     --print(d.name, d.definition)
     if self.isRoot then
     

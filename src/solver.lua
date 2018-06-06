@@ -57,12 +57,11 @@ function Solver:solve(lock)
     end
     
     if (zpm.cli.update() or not lock) and (succeeded or hasInitial) then
-    
         -- use a BFS method to optimise
         local queue = Queue()
         local rootSolution = self:getRootSolution()
         queue:put(rootSolution,rootSolution:getCost())
-        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 5)
+        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 2, false)
 
         --print(cost)
     end

@@ -55,7 +55,7 @@ function zpm.api.libraries.default(env, package)
                         end
 
                         for i, dir in ipairs(args) do
-                            args[i] = path.join(package.location, dir)
+                            args[i] = path.join(package.abslocation, dir)
                         end
 
                         _G[name](args)
@@ -70,7 +70,7 @@ function zpm.api.libraries.default(env, package)
                             end
 
                             for i, dir in ipairs(args) do
-                                args[i] = path.join(package.location, dir)
+                                args[i] = path.join(package.abslocation, dir)
                             end
 
                             _G["remove" .. name](args)
@@ -103,9 +103,9 @@ function zpm.api.libraries.global.project(package)
         zpm.util.setTable(package, {"aliases", name}, alias)
 
         if package.hash ~= "LOCAL" then
-            location(path.join(package.location, ".zpm" ))
+            location(path.join(package.abslocation, ".zpm" ))
         else
-            location(package.location)
+            location(package.abslocation)
         end
         targetdir(package.bindir)
         objdir(package.objdir)      
@@ -116,14 +116,14 @@ function zpm.api.libraries.global.project(package)
 
         -- make sure we can actually 'compile' header only libraries
         -- (lame I know)
-        if not os.isdir(path.join(package.location, ".zpm")) then
-            os.mkdir(path.join(package.location, ".zpm"))
+        if not os.isdir(path.join(package.abslocation, ".zpm")) then
+            os.mkdir(path.join(package.abslocation, ".zpm"))
         end
-        local ignore = path.join(package.location, ".zpm/.gitignore")
+        local ignore = path.join(package.abslocation, ".zpm/.gitignore")
         if not os.isfile(ignore) then
             os.writefile_ifnotequal("*", ignore)
         end
-        local dummyFile = path.join(package.location, ".zpm/dummy.cpp")
+        local dummyFile = path.join(package.abslocation, ".zpm/dummy.cpp")
         os.writefile_ifnotequal(("void Dummy%s(){  return; }"):format(string.sha1(dummyFile)), dummyFile)
         files(dummyFile)
     end
