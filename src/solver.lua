@@ -61,7 +61,7 @@ function Solver:solve(lock)
         local queue = Queue()
         local rootSolution = self:getRootSolution()
         queue:put(rootSolution,rootSolution:getCost())
-        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 2, false)
+        cost, heuristic, succeeded = self:_branchAndBound(queue, cost, heuristic, 5, true)
 
         --print(cost)
     end
