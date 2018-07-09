@@ -145,6 +145,23 @@ function zpm.api.libraries.global.links(package)
     end
 end
 
+function zpm.api.libraries.global.linksfiles(package)
+    
+    return function(libraries)
+        local fltr = table.deepcopy(zpm.meta.filter)
+        local found = true
+        if type(libraries) ~= "table" then
+            libraries = {libraries}
+        end
+
+        for i, file in ipairs(libraries) do
+            libraries[i] = path.join(package.abslocation, file)
+        end
+
+        links(libraries)
+    end
+end
+
 function zpm.api.libraries.global.filter(package)
 
     return filter

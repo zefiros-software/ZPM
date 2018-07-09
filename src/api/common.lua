@@ -57,6 +57,9 @@ zpm.api.common = {
     warning = warning,
     error = error,
     zpm = {
+        env = {
+            getTempDirectory = zpm.env.getTempDirectory
+        },
         meta = {}
     },
     string = string,

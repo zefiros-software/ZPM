@@ -83,6 +83,13 @@ function zpm.api.extract.export.extractfile(package)
     end
 end
 
+function zpm.api.extract.export.unzip(package)
+
+    return function(dir, to)
+        return zip.extract(dir, path.join(package.abslocation, to))
+    end
+end
+
 function zpm.api.extract.export.exportpath(package)
 
     return function()
