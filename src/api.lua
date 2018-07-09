@@ -87,11 +87,10 @@ function zpm.export(commands)
 end
 
 function zpm.setting(setting)
-    
     local cursor = iif(zpm.loader.project.from, zpm.loader.project.from, zpm.loader.project.cursor)
     
     local tab = zpm.loader.settings({cursor.package.manifest.name, cursor.name, cursor.tag, setting})
-
+    
     if not tab then
         warningf("Setting '%s' does not exist on package '%s'", setting, zpm.loader.project.cursor.name)
 
@@ -100,18 +99,26 @@ function zpm.setting(setting)
     
     local values = tab.values
     if not values then
-        return tab.default
+        local value = tab.default
+        if value and type(value) == "string" and #value == 0 then
+            value = nil
+        end
+        return value
     end
     values = zpm.util.reverse(values)
 
     if tab.reduce then
         if zpm.settings.reduce[tab.reduce] then
-            return zpm.settings.reduce[tab.reduce](values)
+            local value = zpm.settings.reduce[tab.reduce](values)
+
+            if value and type(value) == "string" and #value == 0 then
+                value = nil
+            end
+            return value
         else
             -- @todo
         end
     end
-
     return values
 end
 
