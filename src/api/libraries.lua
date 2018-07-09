@@ -35,13 +35,7 @@ function zpm.api.libraries.default(env, package)
             if name:contains("command") then
 
                 env[name] = function(command)
-                    local c = function()     
-                        _G[name](command)
-                    end
-                    local no = function()
-                        warningf("Command not accepted, build may not work properly!")
-                    end 
-                    zpm.cli.askConfirmation(("Allow usage of command '%s'"):format(command), c, no)
+                    _G[name](command)                    
                 end
             else
 
@@ -196,4 +190,25 @@ end
 function zpm.api.libraries.export.export(package)
 
     return zpm.export
+end
+
+function zpm.api.libraries.export.repository(package)
+
+    return function()
+        return package.package:getRepository()
+    end
+end
+
+function zpm.api.libraries.export.definition(package)
+
+    return function()
+        return package.package:getDefinition()
+    end
+end
+
+function zpm.api.libraries.export.exportpath(package)
+
+    return function()
+        return package.abslocation
+    end
 end
