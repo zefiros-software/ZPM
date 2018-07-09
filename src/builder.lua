@@ -53,6 +53,7 @@ function Builder:walkDependencies()
 
 
     self.solution:iterateDFS(function(node, type, parent, index)
+
         if node.projects then
             for name, proj in pairs(node.projects) do
 
@@ -91,7 +92,6 @@ function Builder:walkDependencies()
                             end
                         end
                     
-                        --print(name, table.tostring(proj.links), table.tostring(node.exportLinks))
                         self:_links(proj.links, node.exportLinks, proj, node, name, wrkspace, parent)      
                         
                         self.cursor = prev          
@@ -389,7 +389,6 @@ end
 
 function Builder:_importPackage(name, package, proj, node, wrkspace)
            
-
     local pname = name
     local kind = proj.kind
     
@@ -397,14 +396,14 @@ function Builder:_importPackage(name, package, proj, node, wrkspace)
     -- this caching strategy is still buggy,
     -- for now just accept duplicates
     -- @todo
+    --]]
     if tostring(package) then
-        local idx = {wrkspace, "uses", pname, tostring(package)}
+        local idx = {wrkspace, "uses", pname, tostring(node)}
         if zpm.util.indexTable(self.cache, idx) then
             return function() end
         end
-        --zpm.util.setTable(self.cache, idx, true)
+        zpm.util.setTable(self.cache, idx, true)
     end
-    --]]
 
     local childExports = table.deepcopy(zpm.util.indexTable(package.exportLinks, {wrkspace}))
     childExports = iif(childExports ~= nil, childExports, {})
@@ -424,6 +423,7 @@ function Builder:_importPackage(name, package, proj, node, wrkspace)
         local export = function()
             if kind == "StaticLib" then        
                 filter {}
+                
                 links(pname)
             end
             for _, func in ipairs(funcs) do
